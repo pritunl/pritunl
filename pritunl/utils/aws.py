@@ -2,6 +2,7 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 
+import boto.utils
 import boto3
 import requests
 import time
@@ -28,10 +29,41 @@ def get_instance_id():
     except:
         pass
 
-def add_vpc_route(region, vpc_id, network, resource_id):
+def get_metadata():
+    metadata = boto.utils.get_instance_metadata()
+
+    instance_id = metadata['instance-id']
+    availability_zone = metadata['placement']['availability-zone']
+    vpc_id = None
+    region = None
+
+    for aws_region in AWS_REGIONS:
+        if availability_zone.startswith(aws_region):
+            region = aws_region
+            break
+
+    for iface in metadata['network']['interfaces']['macs'].values():
+        vpc_id = iface['vpc-id']
+        break
+
+    if not vpc_id:
+        raise ValueError('Failed to get AWS VPC ID')
+
+    if not region:
+        raise ValueError('Failed to get AWS region')
+
+    return {
+        'instance_id': instance_id,
+        'availability_zone': availability_zone,
+        'vpc_id': vpc_id,
+        'region': region,
+    }
+
+def add_vpc_route(network):
     time.sleep(0.1)
 
-    region_key = region.replace('-', '_')
+    mdata = get_metadata()
+    region_key = mdata['region'].replace('-', '_')
     aws_key = getattr(settings.app, region_key + '_access_key')
     aws_secret = getattr(settings.app, region_key + '_secret_key')
     ipv6 = ':' in network
@@ -44,14 +76,14 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     if aws_secret == 'role':
         aws_secret = None
 
-    ec2_conn = connect_ec2(aws_key, aws_secret, region)
+    ec2_conn = connect_ec2(aws_key, aws_secret, mdata['region'])
 
     response = ec2_conn.describe_route_tables(
         Filters=[
             {
                 'Name': 'vpc-id',
                 'Values': [
-                    vpc_id,
+                    mdata['vpc_id'],
                 ],
             },
         ],
@@ -59,12 +91,8 @@ def add_vpc_route(region, vpc_id, network, resource_id):
     if not response:
         raise VpcRouteTableNotFound('Failed to find VPC routing table')
 
-    instance_id = None
+    instance_id = mdata['instance_id']
     interface_id = None
-    if resource_id.startswith('eni-'):
-        interface_id = resource_id
-    else:
-        instance_id = resource_id
 
     for table in response['RouteTables']:
         table_id = table.get('RouteTableId')
