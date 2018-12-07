@@ -1,4 +1,4 @@
-from pritunl.link.link import Link, Host
+from pritunl.link.link import Link, Location, Host
 
 from pritunl import settings
 from pritunl import mongo
@@ -15,6 +15,9 @@ def get_by_name(name, fields=None):
 
     if doc:
         return Link(doc=doc, fields=fields)
+
+def get_location(id):
+    return Location(id=id)
 
 def get_host(host_id):
     return Host(id=host_id)
