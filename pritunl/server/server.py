@@ -554,6 +554,7 @@ class Server(mongo.MongoObject):
         routes_dict = {}
         virtual_comment = None
         virtual_metric = None
+        virtual_advertise = None
         virtual_vpc_region = None
         virtual_vpc_id = None
 
@@ -567,6 +568,7 @@ class Server(mongo.MongoObject):
                 'metric': 0,
                 'nat': False,
                 'nat_interface': None,
+                'advertise': None,
                 'vpc_region': None,
                 'vpc_id': None,
                 'net_gateway': False,
@@ -593,6 +595,7 @@ class Server(mongo.MongoObject):
                     data['metric'] = route.get('metric')
                     data['nat'] = route['nat']
                     data['nat_interface'] = route['nat_interface']
+                    data['advertise'] = None
                     data['vpc_region'] = None
                     data['vpc_id'] = None
                     data['net_gateway'] = route['net_gateway']
@@ -619,6 +622,7 @@ class Server(mongo.MongoObject):
                     'metric': route.get('metric'),
                     'nat': route.get('nat', True),
                     'nat_interface': route.get('nat_interface'),
+                    'advertise': route.get('advertise', None),
                     'vpc_region': route.get('vpc_region', None),
                     'vpc_id': route.get('vpc_id', None),
                     'net_gateway': route.get('net_gateway', False),
@@ -637,6 +641,7 @@ class Server(mongo.MongoObject):
                         'metric': route.get('metric'),
                         'nat': route.get('nat', True),
                         'nat_interface': route.get('nat_interface'),
+                        'advertise': route.get('advertise'),
                         'vpc_region': route.get('vpc_region'),
                         'vpc_id': route.get('vpc_id'),
                         'net_gateway': route.get('net_gateway', False),
@@ -648,6 +653,7 @@ class Server(mongo.MongoObject):
             elif route_network == 'virtual':
                 virtual_comment = route.get('comment', None)
                 virtual_metric = route.get('metric', None)
+                virtual_advertise = route.get('advertise', None)
                 virtual_vpc_region = route.get('vpc_region', None)
                 virtual_vpc_id = route.get('vpc_id', None)
             elif route_network == self.network or \
@@ -664,6 +670,8 @@ class Server(mongo.MongoObject):
                         'comment')
                     routes_dict[route_network]['metric'] = route.get(
                         'metric')
+                    routes_dict[route_network]['advertise'] = route.get(
+                        'advertise')
                     routes_dict[route_network]['vpc_region'] = route.get(
                         'vpc_region')
                     routes_dict[route_network]['vpc_id'] = route.get(
@@ -681,6 +689,7 @@ class Server(mongo.MongoObject):
                         'metric': route.get('metric'),
                         'nat': route.get('nat', True),
                         'nat_interface': route.get('nat_interface'),
+                        'advertise': route.get('advertise', None),
                         'vpc_region': route.get('vpc_region', None),
                         'vpc_id': route.get('vpc_id', None),
                         'net_gateway': route.get('net_gateway', False),
@@ -698,6 +707,7 @@ class Server(mongo.MongoObject):
             'metric': virtual_metric,
             'nat': False,
             'nat_interface': None,
+            'advertise': virtual_advertise,
             'vpc_region': virtual_vpc_region,
             'vpc_id': virtual_vpc_id,
             'net_gateway': False,
@@ -716,6 +726,7 @@ class Server(mongo.MongoObject):
                 'metric': virtual_metric,
                 'nat': False,
                 'nat_interface': None,
+                'advertise': virtual_advertise,
                 'vpc_region': virtual_vpc_region,
                 'vpc_id': virtual_vpc_id,
                 'net_gateway': False,
@@ -734,7 +745,7 @@ class Server(mongo.MongoObject):
         return routes + link_routes
 
     def upsert_route(self, network, nat_route, nat_interface,
-            vpc_region, vpc_id, net_gateway, comment, metric):
+            advertise, vpc_region, vpc_id, net_gateway, comment, metric):
         exists = False
 
         if self.status == ONLINE:
@@ -777,6 +788,7 @@ class Server(mongo.MongoObject):
                     route['nat_interface'] = nat_interface
                 route['comment'] = comment
                 route['metric'] = metric
+                route['advertise'] = advertise
                 route['vpc_region'] = vpc_region
                 route['vpc_id'] = vpc_id
                 route['net_gateway'] = net_gateway
@@ -791,6 +803,7 @@ class Server(mongo.MongoObject):
                 'metric': metric,
                 'nat': nat_route,
                 'nat_interface': nat_interface,
+                'advertise': advertise,
                 'vpc_region': vpc_region,
                 'vpc_id': vpc_id,
                 'net_gateway': net_gateway,
@@ -805,6 +818,7 @@ class Server(mongo.MongoObject):
             'metric': metric,
             'nat': nat_route,
             'nat_interface': nat_interface,
+            'advertise': advertise,
             'vpc_region': vpc_region,
             'vpc_id': vpc_id,
             'net_gateway': net_gateway,
