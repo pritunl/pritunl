@@ -19,37 +19,9 @@
   </div>
 </div>
 <div class="route-advertisement-toggle toggle-form form-group">
-  <label>Route Advertisement</label>
-  <div class="selector <%= vpc_id ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable VPC route advertisement">
+  <label>Cloud Route Advertisement</label>
+  <div class="selector <%= (advertise || vpc_id) ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable cloud route advertisement">
     <span class="selector-inner glyphicon glyphicon-ok"></span>
-  </div>
-</div>
-<div class="route-advertisement" <%= vpc_id ? '' : 'style="display: none"' %>>
-  <div class="vpc-region form-group">
-    <label>VPC Route Advertisement Region</label>
-    <select class="form-control" data-toggle="tooltip" title="VPC region for route advertisement">
-      <option value="us-east-1" <%= vpc_region === 'us-east-1' ? 'selected' : '' %>>US East (N. Virginia)</option>
-      <option value="us-east-2" <%= vpc_region === 'us-east-2' ? 'selected' : '' %>>US East (Ohio)</option>
-      <option value="us-west-1" <%= vpc_region === 'us-west-1' ? 'selected' : '' %>>US West (N. California)</option>
-      <option value="us-west-2" <%= vpc_region === 'us-west-2' ? 'selected' : '' %>>US West (Oregon)</option>
-      <option value="us-gov-west-1" <%= vpc_region === 'us-gov-west-1' ? 'selected' : '' %>>US GovCloud (West)</option>
-      <option value="eu-west-1" <%= vpc_region === 'eu-west-1' ? 'selected' : '' %>>EU (Ireland)</option>
-      <option value="eu-west-2" <%= vpc_region === 'eu-west-2' ? 'selected' : '' %>>EU (London)</option>
-      <option value="eu-central-1" <%= vpc_region === 'eu-central-1' ? 'selected' : '' %>>EU (Frankfurt)</option>
-      <option value="ca-central-1" <%= vpc_region === 'ca-central-1' ? 'selected' : '' %>>Canada (Central)</option>
-      <option value="ap-northeast-1" <%= vpc_region === 'ap-northeast-1' ? 'selected' : '' %>>Asia Pacific (Tokyo)</option>
-      <option value="ap-northeast-2" <%= vpc_region === 'ap-northeast-2' ? 'selected' : '' %>>Asia Pacific (Seoul)</option>
-      <option value="ap-southeast-1" <%= vpc_region === 'ap-southeast-1' ? 'selected' : '' %>>Asia Pacific (Singapore)</option>
-      <option value="ap-southeast-2" <%= vpc_region === 'ap-southeast-2' ? 'selected' : '' %>>Asia Pacific (Sydney)</option>
-      <option value="ap-south-1" <%= vpc_region === 'ap-south-1' ? 'selected' : '' %>>Asia Pacific (Mumbai)</option>
-      <option value="sa-east-1" <%= vpc_region === 'sa-east-1' ? 'selected' : '' %>>South America (Sao Paulo)</option>
-    </select>
-  </div>
-  <div class="vpc-id form-group">
-    <label>VPC Route Advertisement ID</label>
-    <select class="form-control" data-toggle="tooltip" title="VPC ID for route advertisement. EC2 server must be connected to the VPC">
-      <option selected value="">No VPCs available</option>
-    </select>
   </div>
 </div>
 <div class="advanced form-group">
