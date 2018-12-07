@@ -292,7 +292,7 @@
 
       .alert {
         display: none;
-        width: 282px;
+        width: 350px;
         margin: 11px auto 0 auto;
         padding: 10px;
         -webkit-transition: background-color 175ms;
@@ -347,6 +347,19 @@
       #qrcode img {
         margin: 0 !important;
       }
+
+      #no-servers-box {
+        display: none;
+      }
+      .no-servers #key-box {
+        display: none;
+      }
+      .no-servers #no-servers-box {
+        display: block;
+      }
+      #no-servers-box .alert {
+        display: block;
+      }
     </style>
   </head>
   <body class="<%= header_class %>">
@@ -372,6 +385,13 @@
         <button id="change-pin" class="btn" onclick="changePin()">Change Pin</button>
         <button class="btn btn-danger" onclick="deleteKey()">Delete Temporary Profile Link</button>
         <div id="toggle-show">Show More</div>
+      </div>
+    </div>
+
+    <div id="no-servers-box" class="key-box">
+      <h2 class="key-header">pritunl user profile</h2>
+      <div class="key-body">
+        <div class="alert danger">No server profiles are available on this account</div>
       </div>
     </div>
 
