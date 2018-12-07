@@ -831,6 +831,14 @@ class Link(mongo.MongoObject):
     def collection(cls):
         return mongo.get_collection('links')
 
+    @cached_static_property
+    def location_collection(cls):
+        return mongo.get_collection('links_locations')
+
+    @cached_static_property
+    def host_collection(cls):
+        return mongo.get_collection('links_hosts')
+
     def dict(self):
         return {
             'id': self.id,
@@ -841,10 +849,10 @@ class Link(mongo.MongoObject):
         }
 
     def remove(self):
-        Host.collection.remove({
+        self.host_collection.remove({
             'link_id': self.id,
         })
-        Location.collection.remove({
+        self.location_collection.remove({
             'link_id': self.id,
         })
         mongo.MongoObject.remove(self)
@@ -877,7 +885,7 @@ class Link(mongo.MongoObject):
             yield Location(link=self, doc=doc)
 
     def iter_locations_dict(self):
-        cursor = Location.collection.find({
+        cursor = self.location_collection.find({
             'link_id': self.id,
         }).sort('_id')
 
