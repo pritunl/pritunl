@@ -708,6 +708,15 @@ class Location(mongo.MongoObject):
     def get_host(self, host_id):
         return Host(link=self.link, location=self, id=host_id)
 
+    def get_host_by_name(self, host_name):
+        doc = self.host_collection.find_one({
+            'location_id': self.id,
+            'name': host_name,
+        })
+
+        if doc:
+            return Host(link=self, doc=doc)
+
     def iter_hosts(self):
         cursor = Host.collection.find({
             'location_id': self.id,
