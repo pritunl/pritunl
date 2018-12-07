@@ -980,6 +980,11 @@ class ServerInstance(object):
                 utils.add_vpc_route(network)
             elif settings.app.cloud_provider == 'oracle':
                 utils.oracle_add_route(network)
+            else:
+                logger.error('Unknown cloud provider type', 'server',
+                    cloud_provider=settings.app.cloud_provider,
+                    network=network,
+                )
 
             self.route_advertisements.add(ra_id)
         except pymongo.errors.DuplicateKeyError:
