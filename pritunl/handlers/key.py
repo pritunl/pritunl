@@ -321,7 +321,6 @@ def user_linked_key_page_get(short_code):
 
     key_page = static.StaticFile(settings.conf.www_path, view_name,
         cache=False, gzip=False).data
-    key_page = key_page.replace('<%= header_class %>', header_class)
 
     uri_url = (utils.get_url_root() + '/ku/' + doc['short_id']).encode()
     if uri_url.startswith('https'):
@@ -362,12 +361,18 @@ def user_linked_key_page_get(short_code):
             'href="/key_onc/%s.onc">Download Chrome OS Profile</a>\n' % (
                 doc['key_id'])
 
+    has_servers = False
     for server in usr.iter_servers():
+        has_servers = True
         conf_links += '<a class="btn btn-sm download-profile" ' + \
             'title="Download Profile" ' + \
             'href="/key/%s/%s.key">Download Profile (%s)</a>\n' % (
                 doc['key_id'], server.id, server.name)
     key_page = key_page.replace('<%= conf_links %>', conf_links)
+
+    if not has_servers:
+        header_class += 'no-servers'
+    key_page = key_page.replace('<%= header_class %>', header_class)
 
     return key_page
 
