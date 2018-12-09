@@ -94,16 +94,12 @@ class Host(mongo.MongoObject):
         return self.link_address or self.auto_public_host or \
             self.public_address or self.auto_public_address
 
-    @property
-    def aws_id(self):
-        return self.instance_id or self.auto_instance_id
-
     def dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'hostname': self.hostname,
-            'instance_id': self.aws_id,
+            'instance_id': None,
             'status': self.status,
             'uptime': self.uptime,
             'version': self.version,
