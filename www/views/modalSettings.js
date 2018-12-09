@@ -706,10 +706,16 @@ define([
     },
     onCloudProviderChange: function() {
       if (this.$('.cloud-provider select').val() === 'aws') {
+        this.$('.oracle-settings').slideUp(window.slideTime);
         this.$('.aws-settings').slideDown(window.slideTime);
+      }
+      else if (this.$('.cloud-provider select').val() === 'oracle') {
+        this.$('.aws-settings').slideUp(window.slideTime);
+        this.$('.oracle-settings').slideDown(window.slideTime);
       }
       else {
         this.$('.aws-settings').slideUp(window.slideTime);
+        this.$('.oracle-settings').slideUp(window.slideTime);
       }
     },
     onMonitoringChange: function() {
@@ -780,6 +786,10 @@ define([
       var clientReconnect = this.getClientReconnect();
       var ssoCache = this.getSsoCacheSelect();
       var ssoClientCache = this.getSsoClientCacheSelect();
+      var oracleUserOcid = this.$(
+        '.oracle-user-ocid input').val();
+      var oraclePublicKey = this.$(
+        '.oracle-public-key textarea').val();
       var usEast1AccessKey = this.$(
         '.us-east-1-access-key input').val();
       var usEast1SecretKey = this.$(
@@ -857,6 +867,10 @@ define([
         reverseProxy = true;
       } else {
         reverseProxy = false;
+      }
+
+      if (!oraclePublicKey.trim()) {
+        oraclePublicKey = 'reset';
       }
 
       var i;
@@ -1020,6 +1034,8 @@ define([
         cloud_provider: cloudProvider,
         route53_region: route53Region,
         route53_zone: route53Zone,
+        oracle_user_ocid: oracleUserOcid,
+        oracle_public_key: oraclePublicKey,
         us_east_1_access_key: usEast1AccessKey,
         us_east_1_secret_key: usEast1SecretKey,
         us_east_2_access_key: usEast2AccessKey,
