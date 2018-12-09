@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add support for Oracle Cloud routing
 Improve load balancer support
 
 Version 1.29.1902.39 2018-11-27
