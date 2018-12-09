@@ -32,7 +32,7 @@ class SettingsApp(SettingsGroupMongo):
         'settings_check_interval': 60,
         'key_link_timeout': 86400,
         'password_len_limit': 128,
-        'public_ip_server': 'https://app.pritunl.com/ip',
+        'public_ip_server': 'https://app4.pritunl.com/ip',
         'public_ip6_server': 'https://app6.pritunl.com/ip',
         'notification_server': 'https://app.pritunl.com/notification',
         'update_check_rate': 3600,
