@@ -19,3 +19,4 @@ twisted==18.9.0
 pyopenssl==18.0.0
 cryptography==2.3.1
 certifi==2018.10.15
+pyasn1==0.4.4
