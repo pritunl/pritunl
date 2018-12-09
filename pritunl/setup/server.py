@@ -209,6 +209,7 @@ def server_thread():
         stderr=subprocess.PIPE,
         env=dict(os.environ, **{
             'REVERSE_PROXY_HEADER': '',
+            'REVERSE_PROXY_PROTO_HEADER': '',
             'REDIRECT_SERVER': 'true',
             'BIND_HOST': settings.conf.bind_addr,
             'BIND_PORT': str(upgrade.get_server_port()),
