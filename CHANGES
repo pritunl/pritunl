@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve load balancer support
+
 Version 1.29.1902.39 2018-11-27
 -------------------------------
 
