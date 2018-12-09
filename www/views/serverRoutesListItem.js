@@ -62,7 +62,7 @@ define([
         this.$('.route-net-gateway').hide();
       }
 
-      if (this.mode.get('network') === '::/0' ||
+      if (this.model.get('network') === '::/0' ||
           this.model.get('virtual_network') ||
           this.model.get('network_link') ||
           this.model.get('server_link')) {
