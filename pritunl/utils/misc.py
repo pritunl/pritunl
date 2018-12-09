@@ -177,7 +177,6 @@ def check_output(*args, **kwargs):
     return_code = process.poll()
 
     if return_code:
-        from pritunl import logger
         cmd = kwargs.get('args', args[0])
 
         if ignore_states:
