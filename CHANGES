@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.1914.98 2018-12-09
+-------------------------------
 
 Add support for Oracle Cloud routing
 Improve AWS routing support
