@@ -57,6 +57,8 @@ define([
       'cloud_provider': null,
       'route53_region': null,
       'route53_zone': null,
+      'oracle_user_ocid': null,
+      'oracle_public_key': null,
       'us_east_1_access_key': null,
       'us_east_1_secret_key': null,
       'us_east_2_access_key': null,
