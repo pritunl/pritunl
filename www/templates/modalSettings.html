@@ -51,6 +51,9 @@
         <option value="saml_onelogin" <%= sso === 'saml_onelogin' ? 'selected' : '' %>>OneLogin</option>
         <option value="saml_onelogin_duo" <%= sso === 'saml_onelogin_duo' ? 'selected' : '' %>>OneLogin + Duo Security</option>
         <option value="saml_onelogin_yubico" <%= sso === 'saml_onelogin_yubico' ? 'selected' : '' %>>OneLogin + Yubico</option>
+        <option value="authzero" <%= sso === 'authzero' ? 'selected' : '' %>>Auth0</option>
+        <option value="authzero_duo" <%= sso === 'authzero_duo' ? 'selected' : '' %>>Auth0 + Duo Security</option>
+        <option value="authzero_yubico" <%= sso === 'authzero_yubico' ? 'selected' : '' %>>Auth0 + Yubico</option>
         <option value="slack" <%= sso === 'slack' ? 'selected' : '' %>>Slack</option>
         <option value="slack_duo" <%= sso === 'slack_duo' ? 'selected' : '' %>>Slack + Duo Security</option>
         <option value="slack_yubico" <%= sso === 'slack_yubico' ? 'selected' : '' %>>Slack + Yubico</option>
@@ -87,6 +90,10 @@
     <div class="sso-azure-directory-id form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
       <label>Azure Directory ID</label>
       <input type="text" class="form-control" placeholder="Enter Azure directory ID" value="<%- sso_azure_directory_id || '' %>" data-toggle="tooltip" title="Azure Directory ID">
+    </div>
+    <div class="sso-authzero-domain form-group" <%= !sso || sso.indexOf('authzero') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Auth0 Sub-Domain</label>
+      <input type="text" class="form-control" placeholder="Enter Auth0 sub-domain" value="<%- sso_authzero_domain || '' %>" data-toggle="tooltip" title="Subdomain of Auth0 application. Enter subdomain portion only such as 'pritunl' for pritunl.auth0.com">
     </div>
     <div class="sso-google-key form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google JSON Private Key</label><br>
@@ -201,6 +208,14 @@
     <div class="sso-google-email form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Admin Email</label>
       <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google admin email" value="<%- sso_google_email || '' %>" data-toggle="tooltip" title="Optional, the email address of an administrator user in the Google G Suite to delegate API access to. This user will be used to get the groups of Google users. Only needed when providing the Google private key.">
+    </div>
+    <div class="sso-authzero-app-id form-group" <%= !sso || sso.indexOf('authzero') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Auth0 Client ID</label>
+      <input type="text" class="form-control" placeholder="Enter Auth0 client ID" value="<%- sso_authzero_app_id || '' %>" data-toggle="tooltip" title="Auth0 application client ID">
+    </div>
+    <div class="sso-authzero-app-secret form-group" <%= !sso || sso.indexOf('authzero') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Auth0 Client Secret</label>
+      <input type="text" class="form-control" placeholder="Enter Auth0 client secret" value="<%- sso_authzero_app_secret || '' %>" data-toggle="tooltip" title="Auth0 application client secret">
     </div>
     <div class="sso-match-slack form-group" <%= !sso || sso.indexOf('slack') === -1 ? 'style="display: none;"' : '' %>>
       <label>Slack Team</label>
