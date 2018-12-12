@@ -189,6 +189,7 @@ def sso_request_get():
 
     if sso_mode not in (AZURE_AUTH, AZURE_DUO_AUTH, AZURE_YUBICO_AUTH,
             GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+            AUTHZERO_AUTH, AUTHZERO_DUO_AUTH, AUTHZERO_YUBICO_AUTH,
             SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
             SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
             SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
@@ -273,6 +274,45 @@ def sso_request_get():
         tokens_collection.insert({
             '_id': state,
             'type': GOOGLE_AUTH,
+            'secret': secret,
+            'timestamp': utils.now(),
+        })
+
+        data = resp.json()
+
+        return utils.redirect(data['url'])
+
+    elif AUTHZERO_AUTH in sso_mode:
+        resp = requests.post(auth_server + '/v1/request/authzero',
+            headers={
+                'Content-Type': 'application/json',
+            },
+            json={
+                'license': settings.app.license,
+                'callback': callback,
+                'state': state,
+                'secret': secret,
+                'app_domain': settings.app.sso_authzero_domain,
+                'app_id': settings.app.sso_authzero_app_id,
+                'app_secret': settings.app.sso_authzero_app_secret,
+            },
+        )
+
+        if resp.status_code != 200:
+            logger.error('Auth0 auth server error', 'sso',
+                status_code=resp.status_code,
+                content=resp.content,
+            )
+
+            if resp.status_code == 401:
+                return flask.abort(405)
+
+            return flask.abort(500)
+
+        tokens_collection = mongo.get_collection('sso_tokens')
+        tokens_collection.insert({
+            '_id': state,
+            'type': AUTHZERO_AUTH,
             'secret': secret,
             'timestamp': utils.now(),
         })
@@ -368,6 +408,7 @@ def sso_callback_get():
 
     if sso_mode not in (AZURE_AUTH, AZURE_DUO_AUTH, AZURE_YUBICO_AUTH,
             GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+            AUTHZERO_AUTH, AUTHZERO_DUO_AUTH, AUTHZERO_YUBICO_AUTH,
             SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
             SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
             SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
@@ -614,6 +655,56 @@ def sso_callback_get():
                     user_name=username,
                     user_email=email,
                     org_names=azure_groups,
+                )
+    elif doc.get('type') == AUTHZERO_AUTH:
+        username = params.get('username')[0]
+        email = None
+
+        valid, authzero_groups = sso.verify_authzero(username)
+        if not valid:
+            return flask.abort(401)
+
+        org_id = settings.app.sso_org
+
+        valid, org_id_new, groups = sso.plugin_sso_authenticate(
+            sso_type='authzero',
+            user_name=username,
+            user_email=email,
+            remote_ip=utils.get_remote_addr(),
+        )
+        if valid:
+            org_id = org_id_new or org_id
+        else:
+            logger.error('Auth0 plugin authentication not valid', 'sso',
+                username=username,
+            )
+            return flask.abort(401)
+        groups = set(groups or [])
+
+        if settings.app.sso_authzero_mode == 'groups':
+            groups = groups | set(authzero_groups)
+        else:
+            not_found = False
+            authzero_groups = sorted(authzero_groups)
+            for org_name in authzero_groups:
+                org = organization.get_by_name(
+                    utils.filter_unicode(org_name),
+                    fields=('_id'),
+                )
+                if org:
+                    not_found = False
+                    org_id = org.id
+                    break
+                else:
+                    not_found = True
+
+            if not_found:
+                logger.warning('Supplied org names do not exists',
+                    'sso',
+                    sso_type=doc.get('type'),
+                    user_name=username,
+                    user_email=email,
+                    org_names=authzero_groups,
                 )
     else:
         logger.error('Unknown sso type', 'sso',
