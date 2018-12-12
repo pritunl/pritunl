@@ -51,7 +51,7 @@ class User(mongo.MongoObject):
         'port_forwarding',
     }
     fields_default = {
-        'name': 'undefined',
+        'name': '',
         'disabled': False,
         'type': CERT_CLIENT,
         'auth_type': LOCAL_AUTH,
