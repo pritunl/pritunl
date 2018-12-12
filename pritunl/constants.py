@@ -537,6 +537,9 @@ AZURE_YUBICO_AUTH = 'azure_yubico'
 GOOGLE_AUTH = 'google'
 GOOGLE_DUO_AUTH = 'google_duo'
 GOOGLE_YUBICO_AUTH = 'google_yubico'
+AUTHZERO_AUTH = 'authzero'
+AUTHZERO_DUO_AUTH = 'authzero_duo'
+AUTHZERO_YUBICO_AUTH = 'authzero_yubico'
 SLACK_AUTH = 'slack'
 SLACK_DUO_AUTH = 'slack_duo'
 SLACK_YUBICO_AUTH = 'slack_yubico'
@@ -563,6 +566,9 @@ AUTH_TYPES = {
     GOOGLE_AUTH,
     GOOGLE_DUO_AUTH,
     GOOGLE_YUBICO_AUTH,
+    AUTHZERO_AUTH,
+    AUTHZERO_DUO_AUTH,
+    AUTHZERO_YUBICO_AUTH,
     SLACK_AUTH,
     SLACK_DUO_AUTH,
     SLACK_YUBICO_AUTH,
