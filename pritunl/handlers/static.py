@@ -105,6 +105,8 @@ def login_static_get():
                 body_class += 'sso-azure '
             elif GOOGLE_AUTH in settings.app.sso:
                 body_class += 'sso-google '
+            elif AUTHZERO_AUTH in settings.app.sso:
+                body_class += 'sso-authzero '
             elif SLACK_AUTH in settings.app.sso:
                 body_class += 'sso-slack '
             elif settings.app.sso == DUO_AUTH:
