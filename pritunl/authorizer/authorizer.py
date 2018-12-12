@@ -257,7 +257,7 @@ class Authorizer(object):
                 raise AuthError('Link user client type')
         elif self.user.type == CERT_SERVER:
             if not self.user.link_server_id:
-                raise AuthError('Link user missing servet id')
+                raise AuthError('Link user missing server id')
 
             link_matched = False
             for link in self.server.links:
