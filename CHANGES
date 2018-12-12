@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for Auth0 single sign-on
+
 Version 1.29.1914.98 2018-12-09
 -------------------------------
 
