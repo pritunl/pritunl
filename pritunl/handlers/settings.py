@@ -38,6 +38,9 @@ def _dict():
             'sso_azure_directory_id': 'demo',
             'sso_azure_app_id': 'demo',
             'sso_azure_app_secret': 'demo',
+            'sso_authzero_domain': 'demo',
+            'sso_authzero_app_id': 'demo',
+            'sso_authzero_app_secret': 'demo',
             'sso_google_key': 'demo',
             'sso_google_email': 'demo',
             'sso_duo_token': 'demo',
@@ -122,6 +125,9 @@ def _dict():
             'sso_azure_directory_id': settings.app.sso_azure_directory_id,
             'sso_azure_app_id': settings.app.sso_azure_app_id,
             'sso_azure_app_secret': settings.app.sso_azure_app_secret,
+            'sso_authzero_domain': settings.app.sso_authzero_domain,
+            'sso_authzero_app_id': settings.app.sso_authzero_app_id,
+            'sso_authzero_app_secret': settings.app.sso_authzero_app_secret,
             'sso_google_key': settings.app.sso_google_key,
             'sso_google_email': settings.app.sso_google_email,
             'sso_duo_token': settings.app.sso_duo_token,
@@ -421,6 +427,30 @@ def settings_put():
         if sso_azure_app_secret != settings.app.sso_azure_app_secret:
             changes.add('sso')
         settings.app.sso_azure_app_secret = sso_azure_app_secret
+
+    if 'sso_authzero_domain' in flask.request.json:
+        settings_commit = True
+        sso_authzero_domain = flask.request.json[
+            'sso_authzero_domain'] or None
+        if sso_authzero_domain != settings.app.sso_authzero_domain:
+            changes.add('sso')
+        settings.app.sso_authzero_domain = sso_authzero_domain
+
+    if 'sso_authzero_app_id' in flask.request.json:
+        settings_commit = True
+        sso_authzero_app_id = flask.request.json[
+            'sso_authzero_app_id'] or None
+        if sso_authzero_app_id != settings.app.sso_authzero_app_id:
+            changes.add('sso')
+        settings.app.sso_authzero_app_id = sso_authzero_app_id
+
+    if 'sso_authzero_app_secret' in flask.request.json:
+        settings_commit = True
+        sso_authzero_app_secret = flask.request.json[
+            'sso_authzero_app_secret'] or None
+        if sso_authzero_app_secret != settings.app.sso_authzero_app_secret:
+            changes.add('sso')
+        settings.app.sso_authzero_app_secret = sso_authzero_app_secret
 
     if 'sso_google_key' in flask.request.json:
         settings_commit = True
@@ -751,6 +781,9 @@ def settings_put():
         settings.app.sso_azure_directory_id = None
         settings.app.sso_azure_app_id = None
         settings.app.sso_azure_app_secret = None
+        settings.app.sso_authzero_directory_id = None
+        settings.app.sso_authzero_app_id = None
+        settings.app.sso_authzero_app_secret = None
         settings.app.sso_google_key = None
         settings.app.sso_google_email = None
         settings.app.sso_duo_token = None
