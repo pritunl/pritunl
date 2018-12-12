@@ -407,6 +407,37 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
+        elif AUTHZERO_AUTH in self.auth_type and AUTHZERO_AUTH in sso_mode:
+            if settings.user.skip_remote_sso_check:
+                return True
+
+            try:
+                resp = requests.get(auth_server +
+                    ('/update/authzero?user=%s&license=%s&' +
+                     'app_domain=%s&app_id=%s&app_secret=%s') % (
+                        urllib.quote(self.name),
+                        settings.app.license,
+                        urllib.quote(settings.app.sso_authzero_domain),
+                        urllib.quote(settings.app.sso_authzero_app_id),
+                        urllib.quote(settings.app.sso_authzero_app_secret),
+                ))
+
+                if resp.status_code != 200:
+                    logger.error('Auth0 auth check request error', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                        status_code=resp.status_code,
+                        content=resp.content,
+                    )
+                    return False
+
+                return True
+            except:
+                logger.exception('Auth0 auth check error', 'user',
+                    user_id=self.id,
+                    user_name=self.name,
+                )
+            return False
         elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
                 return True
