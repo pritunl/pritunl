@@ -121,6 +121,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-token').slideUp(window.slideTime);
@@ -157,6 +160,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -177,6 +183,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -205,6 +214,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -229,6 +241,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
@@ -249,6 +264,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
@@ -277,6 +295,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
@@ -301,6 +322,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -321,6 +345,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
@@ -346,6 +373,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-duo-mode').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
@@ -367,6 +397,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -388,6 +421,9 @@ define([
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideDown(window.slideTime);
       } else if (mode === 'azure') {
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -411,6 +447,33 @@ define([
         this.$('.sso-azure-directory-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-secret').slideDown(window.slideTime);
+      } else if (mode === 'authzero') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
+        this.$('.sso-token').slideUp(window.slideTime);
+        this.$('.sso-secret').slideUp(window.slideTime);
+        this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-duo-mode').slideUp(window.slideTime);
+        this.$('.sso-okta-app-id').slideUp(window.slideTime);
+        this.$('.sso-okta-token').slideUp(window.slideTime);
+        this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-secret').slideUp(window.slideTime);
+        this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-radius-host').slideUp(window.slideTime);
+        this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-match-slack').slideUp(window.slideTime);
+        this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-google-key').slideUp(window.slideTime);
+        this.$('.sso-google-email').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideDown(window.slideTime);
+        this.$('.sso-authzero-app-id').slideDown(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideDown(window.slideTime);
       } else if (mode === 'google') {
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
@@ -418,6 +481,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-token').slideUp(window.slideTime);
         this.$('.sso-secret').slideUp(window.slideTime);
         this.$('.sso-host').slideUp(window.slideTime);
@@ -439,6 +505,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -460,6 +529,36 @@ define([
         this.$('.sso-host').slideDown(window.slideTime);
         this.$('.sso-duo-mode').slideDown(window.slideTime);
       } else if (mode === 'azure_duo') {
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
+        this.$('.sso-okta-app-id').slideUp(window.slideTime);
+        this.$('.sso-okta-token').slideUp(window.slideTime);
+        this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-secret').slideUp(window.slideTime);
+        this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-radius-host').slideUp(window.slideTime);
+        this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-match-slack').slideUp(window.slideTime);
+        this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-google-key').slideUp(window.slideTime);
+        this.$('.sso-google-email').slideUp(window.slideTime);
+        this.$('.sso-azure-directory-id').slideDown(window.slideTime);
+        this.$('.sso-azure-app-id').slideDown(window.slideTime);
+        this.$('.sso-azure-app-secret').slideDown(window.slideTime);
+        this.$('.sso-token').slideDown(window.slideTime);
+        this.$('.sso-secret').slideDown(window.slideTime);
+        this.$('.sso-host').slideDown(window.slideTime);
+        this.$('.sso-duo-mode').slideDown(window.slideTime);
+      } else if (mode === 'authzero_duo') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -487,6 +586,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -511,6 +613,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -532,6 +637,9 @@ define([
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideDown(window.slideTime);
       } else if (mode === 'azure_yubico') {
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -555,10 +663,40 @@ define([
         this.$('.sso-azure-directory-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-secret').slideDown(window.slideTime);
+      } else if (mode === 'authzero_yubico') {
+        this.$('.sso-azure-directory-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-id').slideUp(window.slideTime);
+        this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-saml-url').slideUp(window.slideTime);
+        this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
+        this.$('.sso-saml-cert').slideUp(window.slideTime);
+        this.$('.sso-token').slideUp(window.slideTime);
+        this.$('.sso-secret').slideUp(window.slideTime);
+        this.$('.sso-host').slideUp(window.slideTime);
+        this.$('.sso-duo-mode').slideUp(window.slideTime);
+        this.$('.sso-okta-app-id').slideUp(window.slideTime);
+        this.$('.sso-okta-token').slideUp(window.slideTime);
+        this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-onelogin-app-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-id').slideUp(window.slideTime);
+        this.$('.sso-onelogin-secret').slideUp(window.slideTime);
+        this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-radius-host').slideUp(window.slideTime);
+        this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-match-slack').slideUp(window.slideTime);
+        this.$('.sso-match-google').slideUp(window.slideTime);
+        this.$('.sso-google-key').slideUp(window.slideTime);
+        this.$('.sso-google-email').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideDown(window.slideTime);
+        this.$('.sso-authzero-app-id').slideDown(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideDown(window.slideTime);
       } else if (mode === 'google_yubico') {
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -583,6 +721,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -607,6 +748,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -631,6 +775,9 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-authzero-domain').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-id').slideUp(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -880,6 +1027,9 @@ define([
       var ssoAzureDirectoryId = null;
       var ssoAzureAppId = null;
       var ssoAzureAppSecret = null;
+      var ssoAuthzeroDomain = null;
+      var ssoAuthzeroAppId = null;
+      var ssoAuthzeroAppSecret = null;
       var ssoGoogleKey = null;
       var ssoGoogleEmail = null;
       var ssoSamlUrl = null;
@@ -951,6 +1101,15 @@ define([
           ssoAzureAppSecret = this.$('.sso-azure-app-secret input').val();
         }
 
+        if (sso.indexOf('authzero') !== -1) {
+          ssoAuthzeroDomain = this.$(
+            '.sso-authzero-domain input').val();
+          ssoAuthzeroAppId = this.$(
+            '.sso-authzero-app-id input').val();
+          ssoAuthzeroAppSecret = this.$(
+            '.sso-authzero-app-secret input').val();
+        }
+
         if (sso.indexOf('google') !== -1) {
           ssoMatch = this.$('.sso-match-google input').val().split(',');
 
@@ -1005,6 +1164,9 @@ define([
         sso_azure_directory_id: ssoAzureDirectoryId,
         sso_azure_app_id: ssoAzureAppId,
         sso_azure_app_secret: ssoAzureAppSecret,
+        sso_authzero_domain: ssoAuthzeroDomain,
+        sso_authzero_app_id: ssoAuthzeroAppId,
+        sso_authzero_app_secret: ssoAuthzeroAppSecret,
         sso_google_key: ssoGoogleKey,
         sso_google_email: ssoGoogleEmail,
         sso_saml_url: ssoSamlUrl,
