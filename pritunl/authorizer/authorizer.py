@@ -232,6 +232,15 @@ class Authorizer(object):
         self.server_auth_token = auth_token
 
     def _check_primary(self):
+        org_matched = False
+        for org_id in self.server.organizations:
+            if self.user.org_id == org_id:
+                org_matched = True
+                break
+
+        if not org_matched:
+            raise AuthError('Unknown organization')
+
         if self.user.disabled:
             self.user.audit_event('user_connection',
                 'User connection to "%s" denied. User is disabled' % (
@@ -240,8 +249,31 @@ class Authorizer(object):
             )
             raise AuthError('User is disabled')
 
-        if self.user.link_server_id:
+        if not self.user.name:
+            raise AuthError('User name empty')
+
+        if self.user.type == CERT_CLIENT:
+            if self.user.link_server_id:
+                raise AuthError('Link user client type')
+        elif self.user.type == CERT_SERVER:
+            if not self.user.link_server_id:
+                raise AuthError('Link user missing servet id')
+
+            link_matched = False
+            for link in self.server.links:
+                if link.get('server_id') == self.user.link_server_id:
+                    if link.get('user_id') != self.user.id:
+                        raise AuthError('Link user mismatch')
+                    else:
+                        link_matched = True
+                    break
+
+            if not link_matched:
+                raise AuthError('Unknown link user')
+
             return
+        else:
+            raise AuthError('Unknown user type')
 
         if not self.server.check_groups(self.user.groups):
             self.user.audit_event(
