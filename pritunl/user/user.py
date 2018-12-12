@@ -431,6 +431,22 @@ class User(mongo.MongoObject):
                     )
                     return False
 
+                valid, authzero_groups = sso.verify_authzero(self.name)
+                if not valid:
+                    logger.error('Auth0 auth check failed', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                    )
+                    return False
+
+                if settings.app.sso_authzero_mode == 'groups':
+                    cur_groups = set(self.groups)
+                    new_groups = set(authzero_groups)
+
+                    if cur_groups != new_groups:
+                        self.groups = list(new_groups)
+                        self.commit('groups')
+
                 return True
             except:
                 logger.exception('Auth0 auth check error', 'user',
