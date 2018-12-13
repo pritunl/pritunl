@@ -110,6 +110,23 @@ VALID_CHARS = {
     '4', '5', '6', '7', '8', '9', '=',
 }
 
+INVALID_NAMES = {
+    'nil',
+    'null',
+    'none',
+    'undefined',
+    'empty',
+    'true',
+    'false',
+    '1',
+    '0',
+    'blocked',
+    'disabled',
+    'invalid',
+    'inactive',
+    'error',
+}
+
 LETS_ENCRYPT_INTER = """
 -----BEGIN CERTIFICATE-----
 MIIEqDCCA5CgAwIBAgIRAJgT9HUT5XULQ+dDHpceRL0wDQYJKoZIhvcNAQELBQAw
