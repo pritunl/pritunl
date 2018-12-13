@@ -152,26 +152,52 @@ class Host(mongo.MongoObject):
             'uri': self.get_uri(),
         }
 
-    def check_available(self):
+    def update_available(self, available_hosts):
         if self.is_available:
-            return True
+            return
+
+        if self.status == UNAVAILABLE and not self.active:
+            return
+
+        has_available = False
+        for hst in available_hosts:
+            if hst.id == self.id:
+                continue
+
+            if hst.is_available:
+                has_available = True
+                break
+
+        if has_available:
+            response = self.collection.update({
+                '_id': self.id,
+                'ping_timestamp_ttl': self.ping_timestamp_ttl,
+            }, {'$set': {
+                'status': UNAVAILABLE,
+                'active': False,
+                'ping_timestamp_ttl': None,
+            }})
+
+            if response['updatedExisting']:
+                self.active = False
+                self.status = UNAVAILABLE
+                self.ping_timestamp_ttl = None
+            return
+
+        if self.status == UNAVAILABLE:
+            return
 
         response = self.collection.update({
             '_id': self.id,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
         }, {'$set': {
             'status': UNAVAILABLE,
-            'active': False,
             'ping_timestamp_ttl': None,
         }})
 
         if response['updatedExisting']:
-            self.active = False
             self.status = UNAVAILABLE
             self.ping_timestamp_ttl = None
-            return False
-
-        return True
 
     def load_link(self):
         self.link = Link(id=self.link_id)
