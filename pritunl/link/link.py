@@ -118,8 +118,7 @@ class Host(mongo.MongoObject):
             'name': self.name,
             'link_id': self.link_id,
             'location_id': self.location_id,
-            'status': ACTIVE if self.active and \
-                self.link.status == ONLINE else self.status,
+            'status': self.state,
             'timeout': self.timeout,
             'priority': self.priority,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
