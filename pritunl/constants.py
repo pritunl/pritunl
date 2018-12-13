@@ -47,6 +47,8 @@ DIRECT = 'direct'
 DIRECT_SERVER = 'direct_server'
 DIRECT_CLIENT = 'direct_client'
 
+HOLD = 'hold'
+
 VERY_LOW = 0
 LOW = 1
 NORMAL = 2
