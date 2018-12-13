@@ -252,6 +252,10 @@ class Authorizer(object):
         if not self.user.name:
             raise AuthError('User name empty')
 
+        user_lower = self.user.name.lower()
+        if user_lower in INVALID_NAMES:
+            raise AuthError('User name invalid')
+
         if self.user.type == CERT_CLIENT:
             if self.user.link_server_id:
                 raise AuthError('Link user client type')
