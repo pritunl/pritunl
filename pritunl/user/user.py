@@ -856,9 +856,8 @@ class User(mongo.MongoObject):
             server_ref += '            "%s",\n' % cert_id
         server_ref = server_ref[:-2]
 
-        if svr.is_route_all():
-            other = '\n          "IgnoreDefaultRoute": false,'
-        else:
+        other = ''
+        if not svr.is_route_all():
             other = '\n          "IgnoreDefaultRoute": true,'
 
         password_mode = self._get_password_mode(svr)
