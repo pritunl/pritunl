@@ -818,6 +818,13 @@ class Location(mongo.MongoObject):
             break
 
         if not doc:
+            doc = Host.collection.find_one({
+                'location_id': self.id,
+                'active': True,
+            })
+
+            if doc:
+                return Host(link=self.link, location=self, doc=doc)
             return
 
         doc_id = doc['_id']
