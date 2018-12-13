@@ -102,6 +102,16 @@ class Host(mongo.MongoObject):
             return False
         return True
 
+    @property
+    def state(self):
+        if self.active and self.link.status == ONLINE:
+            if self.status == UNAVAILABLE:
+                return ACTIVE_UNAVAILABLE
+            else:
+                return ACTIVE
+        else:
+            return self.status
+
     def dict(self):
         return {
             'id': self.id,
