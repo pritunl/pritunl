@@ -27,6 +27,7 @@ OFFLINE = 'offline'
 
 AVAILABLE = 'available'
 UNAVAILABLE = 'unavailable'
+ACTIVE_UNAVAILABLE = 'active_unavailable'
 ACTIVE = 'active'
 
 CONNECTED = 'connected'
