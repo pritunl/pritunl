@@ -369,6 +369,14 @@ class Host(mongo.MongoObject):
                         'right_subnets': right_subnets,
                     })
 
+        for lnk in links:
+            link_hash = hashlib.md5(json.dumps(
+                lnk,
+                sort_keys=True,
+                default=lambda x: str(x),
+            )).hexdigest()
+            lnk['hash'] = link_hash
+
         state['hash'] = hashlib.md5(json.dumps(
             state,
             sort_keys=True,
