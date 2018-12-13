@@ -575,12 +575,16 @@ class Location(mongo.MongoObject):
 
     def dict(self, locations=None, locations_id=None):
         static_location = False
-
-        location_online = False
+        location_state = None
         hosts = []
+
         for hst in self.iter_hosts():
-            if hst.active:
-                location_online = True
+            host_state = hst.state
+            if host_state == ACTIVE:
+                location_state = ACTIVE
+            elif host_state == ACTIVE_UNAVAILABLE and \
+                    location_state != ACTIVE:
+                location_state = ACTIVE_UNAVAILABLE
 
             hosts.append(hst.dict())
             if hst.static:
@@ -594,7 +598,7 @@ class Location(mongo.MongoObject):
             routes.append(route)
 
         status = self.status or {}
-        if self.link.status != ONLINE or not location_online:
+        if self.link.status != ONLINE or location_state != ACTIVE:
             status = {}
 
         peers = []
@@ -631,15 +635,27 @@ class Location(mongo.MongoObject):
                             transit_id not in transit_excludes:
                         transited_ids.add(transit_id)
 
+                        if location_state == ACTIVE_UNAVAILABLE:
+                            transit_status = 'unknown'
+                        else:
+                            transit_status = status.get(str(i)) or \
+                                'disconnected'
+
                         transited_locations.append({
                             'id': transit_id,
                             'name': locations_id[transit_id].name,
                             'transit': transit_id in self.transits,
                             'transited_id': location.id,
                             'transited_name': location.name,
-                            'status': status.get(str(i)) or 'disconnected',
+                            'status': transit_status,
                             'static': static_location,
                         })
+
+
+                if location_state == ACTIVE_UNAVAILABLE:
+                    peer_status = 'unknown'
+                else:
+                    peer_status = status.get(str(i)) or 'disconnected'
 
                 peers_names.add(location.name)
                 peers_name[location.name].append({
@@ -648,7 +664,7 @@ class Location(mongo.MongoObject):
                     'transit': location.id in self.transits,
                     'transited_id': None,
                     'transited_name': None,
-                    'status': status.get(str(i)) or 'disconnected',
+                    'status': peer_status,
                     'static': static_location,
                 })
 
