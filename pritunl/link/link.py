@@ -870,7 +870,7 @@ class Link(mongo.MongoObject):
     fields_default = {
         'type': SITE_TO_SITE,
         'status': OFFLINE,
-        'action': HOLD,
+        'action': RESTART,
         'excludes': [],
     }
 
