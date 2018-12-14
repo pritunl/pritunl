@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve unavailable link reliability
+
 Version 1.29.1917.25 2018-12-12
 -------------------------------
 
