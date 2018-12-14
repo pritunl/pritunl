@@ -10,7 +10,7 @@ class SettingsVpn(SettingsGroupMongo):
         'client_ttl': 300,
         'peer_limit': 300,
         'peer_limit_timeout': 10,
-        'default_dh_param_bits': 1536,
+        'default_dh_param_bits': 2048,
         'otp_cache': True,
         'otp_cache_timeout': 28800,
         'log_lines': 5000,
