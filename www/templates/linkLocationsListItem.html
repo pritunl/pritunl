@@ -41,6 +41,7 @@
       <div class="link-host-static label label-success no-select" <%= host.static ? '' : 'style="display: none"' %>>Static</div>
       <div class="link-host-active label label-success no-select" <%= !host.static && host.status === 'active' ? '' : 'style="display: none"' %>>Active</div>
       <div class="link-host-available label label-primary no-select" <%= !host.static && host.status === 'available' ? '' : 'style="display: none"' %>>Available</div>
+      <div class="link-host-unavailable label label-danger no-select" <%= !host.static && host.status === 'active_unavailable' ? '' : 'style="display: none"' %>>Active Unavailable</div>
       <div class="link-host-unavailable label label-danger no-select" <%= !host.static && host.status === 'unavailable' ? '' : 'style="display: none"' %>>Unavailable</div>
       <button data-id="<%- host.id %>" type="button" class="link-ubnt-conf-host btn btn-primary btn-xs" <%= host.static ? '' : 'style="display: none"' %>>Get EdgeRouter Conf</button>
       <button data-id="<%- host.id %>" type="button" class="link-conf-host btn btn-primary btn-xs" <%= host.static ? '' : 'style="display: none"' %>>Get Conf</button>
@@ -61,6 +62,7 @@
     <div class="button-container">
       <div class="link-peer-connected label label-success no-select" <%= !peer.static && !peer.transited_name && peer.status === 'connected' ? '' : 'style="display: none"' %>>Connected</div>
       <div class="link-peer-connecting label label-primary no-select" <%= !peer.static && !peer.transited_name && peer.status === 'connecting' ? '' : 'style="display: none"' %>>Connecting</div>
+      <div class="link-peer-unknown label label-default no-select" <%= !peer.static && !peer.transited_name && peer.status === 'unknown' ? '' : 'style="display: none"' %>>Unknown</div>
       <div class="link-peer-disconnected label label-danger no-select" <%= !peer.static && !peer.transited_name && peer.status === 'disconnected' ? '' : 'style="display: none"' %>>Disconnected</div>
       <div class="link-peer-transited label no-select label-success" <%= !peer.static && peer.transited_name && peer.status === 'connected' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
       <div class="link-peer-transited label no-select label-primary" <%= !peer.static && peer.transited_name && peer.status === 'connecting' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
