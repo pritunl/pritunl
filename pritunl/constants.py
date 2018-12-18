@@ -1278,9 +1278,11 @@ set vpn ipsec site-to-site peer %s authentication pre-shared-secret %s
 set vpn ipsec site-to-site peer %s connection-type initiate
 set vpn ipsec site-to-site peer %s local-address %s
 set vpn ipsec site-to-site peer %s ike-group pritunl
-set vpn ipsec site-to-site peer %s tunnel 1 esp-group pritunl
-set vpn ipsec site-to-site peer %s tunnel 1 local prefix %s
-set vpn ipsec site-to-site peer %s tunnel 1 remote prefix %s
+"""
+
+UBNT_SUBNET = """set vpn ipsec site-to-site peer %s tunnel %d esp-group pritunl
+set vpn ipsec site-to-site peer %s tunnel %d local prefix %s
+set vpn ipsec site-to-site peer %s tunnel %d remote prefix %s
 """
 
 NDPPD_CONF = """\
