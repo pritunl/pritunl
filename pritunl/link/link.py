@@ -433,64 +433,56 @@ class Host(mongo.MongoObject):
                         location.id == self.location.id:
                     continue
 
-                active_host = location.get_active_host()
-                if not active_host:
-                    for host in location.iter_hosts():
-                        active_host = host
-                        break
+                for host in location.iter_hosts():
+                    excludes = set()
+                    transit_excludes = set(self.location.transit_excludes)
+                    for exclude in self.link.excludes:
+                        if location.id not in exclude:
+                            continue
 
-                if not active_host:
-                    continue
+                        if exclude[0] == location.id:
+                            exclude_id = exclude[1]
+                        else:
+                            exclude_id = exclude[0]
 
-                excludes = set()
-                transit_excludes = set(self.location.transit_excludes)
-                for exclude in self.link.excludes:
-                    if location.id not in exclude:
-                        continue
+                        excludes.add(exclude_id)
 
-                    if exclude[0] == location.id:
-                        exclude_id = exclude[1]
-                    else:
-                        exclude_id = exclude[0]
+                    left_subnets = []
+                    for route in self.location.routes.values():
+                        if route['network'] not in left_subnets:
+                            left_subnets.append(route['network'])
 
-                    excludes.add(exclude_id)
+                    for transit_id in self.location.transits:
+                        if transit_id != self.id and \
+                                transit_id in excludes and \
+                                transit_id in locations_id and \
+                                transit_id not in loc_transit_excludes:
+                            transit_loc = locations_id[transit_id]
+                            for route in transit_loc.routes.values():
+                                if route['network'] not in left_subnets:
+                                    left_subnets.append(route['network'])
 
-                left_subnets = []
-                for route in self.location.routes.values():
-                    if route['network'] not in left_subnets:
-                        left_subnets.append(route['network'])
+                    right_subnets = []
+                    for route in location.routes.values():
+                        right_subnets.append(route['network'])
 
-                for transit_id in self.location.transits:
-                    if transit_id != self.id and \
-                            transit_id in excludes and \
-                            transit_id in locations_id and \
-                            transit_id not in loc_transit_excludes:
-                        transit_loc = locations_id[transit_id]
-                        for route in transit_loc.routes.values():
-                            if route['network'] not in left_subnets:
-                                left_subnets.append(route['network'])
+                    for transit_id in location.transits:
+                        if transit_id != self.id and \
+                                transit_id in loc_excludes and \
+                                transit_id in locations_id and \
+                                transit_id not in transit_excludes:
+                            transit_loc = locations_id[transit_id]
+                            for route in transit_loc.routes.values():
+                                if route['network'] not in left_subnets:
+                                    right_subnets.append(route['network'])
 
-                right_subnets = []
-                for route in location.routes.values():
-                    right_subnets.append(route['network'])
-
-                for transit_id in location.transits:
-                    if transit_id != self.id and \
-                            transit_id in loc_excludes and \
-                            transit_id in locations_id and \
-                            transit_id not in transit_excludes:
-                        transit_loc = locations_id[transit_id]
-                        for route in transit_loc.routes.values():
-                            if route['network'] not in left_subnets:
-                                right_subnets.append(route['network'])
-
-                links.append({
-                    'pre_shared_key': self.link.key,
-                    'right': active_host.address6 \
-                        if self.link.ipv6 else active_host.public_address,
-                    'left_subnets': left_subnets,
-                    'right_subnets': right_subnets,
-                })
+                    links.append({
+                        'pre_shared_key': self.link.key,
+                        'right': host.address6 \
+                            if self.link.ipv6 else host.public_address,
+                        'left_subnets': left_subnets,
+                        'right_subnets': right_subnets,
+                    })
 
         return links
 
