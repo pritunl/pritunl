@@ -523,12 +523,22 @@ class Host(mongo.MongoObject):
                 lnk['right'],
                 self.public_address,
                 lnk['right'],
-                lnk['right'],
-                lnk['right'],
-                lnk['left_subnets'][0],
-                lnk['right'],
-                lnk['right_subnets'][0],
             )
+
+            n = 1
+            for left_subnet in lnk['left_subnets']:
+                for right_subnet in lnk['right_subnets']:
+                    conf += UBNT_SUBNET % (
+                        lnk['right'],
+                        n,
+                        lnk['right'],
+                        n,
+                        left_subnet,
+                        lnk['right'],
+                        n,
+                        right_subnet,
+                    )
+                    n += 1
 
         return conf.rstrip()
 
