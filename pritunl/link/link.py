@@ -303,9 +303,11 @@ class Host(mongo.MongoObject):
                         right_subnets = ['%s/32' % active_host.local_address]
 
                     links.append({
+                        'static': active_host.static,
                         'pre_shared_key': self.link.key,
                         'right': active_host.address6 \
-                            if self.link.ipv6 else active_host.public_address,
+                            if self.link.ipv6 else \
+                            active_host.public_address,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
                     })
@@ -362,9 +364,11 @@ class Host(mongo.MongoObject):
                                     right_subnets.append(route['network'])
 
                     links.append({
+                        'static': active_host.static,
                         'pre_shared_key': self.link.key,
                         'right': active_host.address6 \
-                            if self.link.ipv6 else active_host.public_address,
+                            if self.link.ipv6 else \
+                            active_host.public_address,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
                     })
@@ -421,6 +425,7 @@ class Host(mongo.MongoObject):
                     right_subnets = ['%s/32' % active_host.local_address]
 
                 links.append({
+                    'static': active_host.static,
                     'pre_shared_key': self.link.key,
                     'right': active_host.address6 \
                         if self.link.ipv6 else active_host.public_address,
@@ -477,6 +482,7 @@ class Host(mongo.MongoObject):
                                     right_subnets.append(route['network'])
 
                     links.append({
+                        'static': host.static,
                         'pre_shared_key': self.link.key,
                         'right': host.address6 \
                             if self.link.ipv6 else host.public_address,
