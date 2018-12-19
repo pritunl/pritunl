@@ -1276,7 +1276,7 @@ UBNT_PEER = """
 set vpn ipsec site-to-site peer %s authentication mode pre-shared-secret
 set vpn ipsec site-to-site peer %s authentication pre-shared-secret %s
 set vpn ipsec site-to-site peer %s connection-type initiate
-set vpn ipsec site-to-site peer %s local-address %s
+set vpn ipsec site-to-site peer %s local-address any
 set vpn ipsec site-to-site peer %s ike-group pritunl
 """
 
