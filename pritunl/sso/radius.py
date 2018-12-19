@@ -1,5 +1,6 @@
 from pritunl.constants import *
 from pritunl import settings
+from pritunl import logger
 from pritunl.pyrad import client
 from pritunl.pyrad import packet
 from pritunl.pyrad import dictionary
@@ -42,6 +43,10 @@ def verify_radius(username, password):
 
         if reply.code != packet.AccessAccept:
             if i == len(hosts) - 1:
+                logger.error('Radius server rejected authentication', 'sso',
+                    username=username,
+                    reply_code=reply.code,
+                )
                 return False, None, None
             else:
                 continue
