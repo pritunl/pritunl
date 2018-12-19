@@ -527,7 +527,6 @@ class Host(mongo.MongoObject):
                 lnk['pre_shared_key'],
                 lnk['right'],
                 lnk['right'],
-                self.public_address,
                 lnk['right'],
             )
 
