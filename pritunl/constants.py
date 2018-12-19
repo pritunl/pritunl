@@ -1262,14 +1262,14 @@ set vpn ipsec auto-firewall-nat-exclude enable
 
 set vpn ipsec ike-group pritunl lifetime 10800
 set vpn ipsec ike-group pritunl key-exchange ikev2
-set vpn ipsec ike-group pritunl proposal 1 dh-group 14
+set vpn ipsec ike-group pritunl proposal 1 dh-group 19
 set vpn ipsec ike-group pritunl proposal 1 encryption aes128
-set vpn ipsec ike-group pritunl proposal 1 hash sha1
+set vpn ipsec ike-group pritunl proposal 1 hash sha256
 
 set vpn ipsec esp-group pritunl lifetime 3600
-set vpn ipsec esp-group pritunl pfs dh-group14
+set vpn ipsec esp-group pritunl pfs dh-group19
 set vpn ipsec esp-group pritunl proposal 1 encryption aes128
-set vpn ipsec esp-group pritunl proposal 1 hash sha1
+set vpn ipsec esp-group pritunl proposal 1 hash sha256
 """
 
 UBNT_PEER = """
