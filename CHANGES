@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve static links
+
 Version 1.29.1923.80 2018-12-18
 -------------------------------
 
