@@ -43,7 +43,7 @@ def verify_radius(username, password):
 
         if reply.code != packet.AccessAccept:
             if i == len(hosts) - 1:
-                logger.error('Radius server rejected authentication', 'sso',
+                logger.warning('Radius server rejected authentication', 'sso',
                     username=username,
                     reply_code=reply.code,
                 )
