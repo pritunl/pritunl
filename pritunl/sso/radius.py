@@ -53,9 +53,28 @@ def verify_radius(username, password):
 
         break
 
-    org_names = reply.get((97, 0)) or []
+    org_names = []
+    try:
+        org_names = reply.get((97, 0)) or []
+    except:
+        pass
+
+    group_names = []
+    try:
+        group_names = reply.get((97, 1)) or []
+    except:
+        pass
+
+    org_names2 = []
+    try:
+        org_names2 = reply.get(97) or []
+    except:
+        pass
+
+    org_names = org_names or org_names2
+
     groups = set()
-    for group in reply.get((97, 1)) or []:
+    for group in group_names:
         groups.add(group)
 
     return True, org_names, groups
