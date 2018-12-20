@@ -26,11 +26,23 @@ def _auth_radius(username, password):
 
     org_id = settings.app.sso_org
     if org_names:
+        not_found = False
         for org_name in org_names:
             org = organization.get_by_name(org_name, fields=('_id'))
             if org:
+                not_found = False
                 org_id = org.id
                 break
+            else:
+                not_found = True
+
+        if not_found:
+            logger.warning('Supplied org names do not exists',
+                'sso',
+                sso_type='radius',
+                user_name=username,
+                org_names=org_names,
+            )
 
     valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
         sso_type='radius',
