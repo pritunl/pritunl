@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve Radius single sign-on support
+
 Version 1.29.1924.6 2018-12-19
 ------------------------------
 
