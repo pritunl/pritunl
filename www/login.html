@@ -423,6 +423,14 @@
         opacity: 0.8;
       }
 
+      #default-pass-alert {
+        display: none;
+      }
+
+      .default-pass #default-pass-alert {
+        display: block;
+      }
+
       #duo-login-form {
         padding-top: 25px;
         display: none;
@@ -441,6 +449,9 @@
         </h2>
         <form id="login-form" class="login-form" onsubmit="return onSubmit();">
           <div id="alert" class="alert"></div>
+          <div id="default-pass-alert" class="alert alert-danger">
+            Use "sudo pritunl default-password" to get default login information
+          </div>
           <input id="username" type="text" name="username" class="username form-control" placeholder="Username" autocapitalize="off" spellcheck="false" autofocus>
           <input id="password" type="password" name="password" class="password form-control" placeholder="Password">
           <input id="submit" class="login-button btn" type="submit" value="Sign in">
