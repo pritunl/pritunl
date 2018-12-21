@@ -447,11 +447,11 @@ def setup_mongo():
     upsert_indexes()
 
     if not auth.Administrator.collection.find_one():
-        auth.Administrator(
+        default_admin = auth.Administrator(
             username=DEFAULT_USERNAME,
-            password=DEFAULT_PASSWORD,
-            default=True,
-        ).commit()
+        )
+        default_admin.generate_default_password()
+        default_admin.commit()
 
     secret_key = settings.app.cookie_secret
     secret_key2 = settings.app.cookie_secret2
