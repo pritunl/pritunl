@@ -447,7 +447,7 @@ def get_by_username(username):
 
     return admin
 
-def reset_password(password=None):
+def reset_password():
     logger.info('Resetting administrator password', 'auth')
 
     admin_collection = mongo.get_collection('administrators')
@@ -460,15 +460,13 @@ def reset_password(password=None):
             'super_user': {'$ne': False},
         })
 
-    password = password or DEFAULT_PASSWORD
-
-    Administrator(
+    default_admin = Administrator(
         username=DEFAULT_USERNAME,
-        password=password,
-        default=True,
-    ).commit()
+    )
+    default_admin.generate_default_password()
+    default_admin.commit()
 
-    return DEFAULT_USERNAME, password
+    return DEFAULT_USERNAME, default_admin.default_password
 
 def iter_admins(fields=None):
     if fields:
