@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Use random default password
+
 Version 1.29.1925.81 2018-12-20
 -------------------------------
 
