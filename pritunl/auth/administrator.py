@@ -23,6 +23,7 @@ class Administrator(mongo.MongoObject):
     fields = {
         'username',
         'password',
+        'default_password',
         'yubikey_id',
         'otp_auth',
         'otp_secret',
@@ -218,6 +219,13 @@ class Administrator(mongo.MongoObject):
     def generate_secret(self):
         self.secret = utils.generate_secret()
 
+    def generate_default_password(self):
+        password = utils.rand_str(12)
+        self.password = password
+        self.default_password = password
+        self.default = True
+        self.secret = utils.generate_secret()
+
     def new_session(self):
         session_id = utils.generate_secret()
         self.collection.update({
@@ -243,6 +251,7 @@ class Administrator(mongo.MongoObject):
 
             if self.default and self.exists:
                 self.default = None
+                self.default_password = None
 
         if not self.token:
             self.generate_token()
