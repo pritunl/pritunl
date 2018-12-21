@@ -510,3 +510,17 @@ def super_user_count():
     }, {
         '_id': True,
     }).count()
+
+has_default_pass = None
+def has_default_password():
+    global has_default_pass
+
+    if has_default_pass is None or has_default_pass:
+        default_admin = find_user(username=DEFAULT_USERNAME)
+        if not default_admin:
+            has_default_pass = False
+            return has_default_pass
+
+        has_default_pass = bool(default_admin.default_password)
+        return has_default_pass
+    return False
