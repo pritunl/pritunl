@@ -91,6 +91,9 @@ def login_static_get():
         if settings.app.theme == 'dark':
             body_class += 'dark '
 
+        if auth.has_default_password():
+            body_class += 'default-pass '
+
         if settings.local.sub_plan and \
                 'enterprise' in settings.local.sub_plan:
             if not settings.app.sso:
