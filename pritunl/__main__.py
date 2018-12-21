@@ -14,6 +14,7 @@ Commands:
   start                 Start server
   version               Print the version and exit
   setup-key             Print the setup key and exit
+  default-password      Print the default administrator password
   reset-password        Reset administrator password
   reset-version         Reset database version to server version
   reset-ssl-cert        Reset the server ssl certificate
@@ -91,6 +92,20 @@ def main(default_conf=None):
 
         print 'Administrator password successfully reset:\n' + \
             '  username: "%s"\n  password: "%s"' % (username, password)
+
+        sys.exit(0)
+    elif cmd == 'default-password':
+        from pritunl import setup
+        from pritunl import auth
+
+        setup.setup_db()
+        username, password = auth.get_default_password()
+
+        if not password:
+            print 'No default password available, use reset-password'
+        else:
+            print 'Administrator default password:\n' + \
+                '  username: "%s"\n  password: "%s"' % (username, password)
 
         sys.exit(0)
     elif cmd == 'reconfigure':
