@@ -438,6 +438,15 @@ def check_session(csrf_check):
     flask.g.administrator = administrator
     return True
 
+def get_default_password():
+    logger.info('Getting default administrator password', 'auth')
+
+    default_admin = find_user(username=DEFAULT_USERNAME)
+    if not default_admin:
+        return None, None
+
+    return default_admin.username, default_admin.default_password
+
 def get_by_username(username):
     username = utils.filter_str(username).lower()
 
