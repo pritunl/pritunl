@@ -224,7 +224,6 @@ class Administrator(mongo.MongoObject):
         self.password = password
         self.default_password = password
         self.default = True
-        self.secret = utils.generate_secret()
 
     def new_session(self):
         session_id = utils.generate_secret()
