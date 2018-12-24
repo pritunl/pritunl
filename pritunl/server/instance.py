@@ -296,9 +296,6 @@ class ServerInstance(object):
         if self.server.mss_fix:
             server_conf += 'mssfix %s\n' % self.server.mss_fix
 
-        if not self.server.links:
-            server_conf += 'remote-cert-tls client\n'
-
         # Pritunl v0.10.x did not include comp-lzo in client conf
         # if lzo_compression is adaptive dont include comp-lzo in server conf
         if self.server.lzo_compression == ADAPTIVE:
