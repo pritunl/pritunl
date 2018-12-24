@@ -87,12 +87,12 @@ def login_static_get():
 
     body_class = ''
 
+    if auth.has_default_password():
+        body_class += 'default-pass '
+
     if settings.local.sub_active:
         if settings.app.theme == 'dark':
             body_class += 'dark '
-
-        if auth.has_default_password():
-            body_class += 'default-pass '
 
         if settings.local.sub_plan and \
                 'enterprise' in settings.local.sub_plan:
