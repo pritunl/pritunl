@@ -1,6 +1,7 @@
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import logger
+from pritunl import journal
 from pritunl import settings
 from pritunl import utils
 from pritunl import monitoring
@@ -131,6 +132,11 @@ def _run_server(restart):
         ).strip()
     except:
         context = 'none'
+
+    journal.entry(
+        journal.WEB_SERVER_START,
+        selinux_context=context,
+    )
 
     logger.info('Starting server', 'app',
         selinux_context=context,
