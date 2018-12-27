@@ -90,6 +90,14 @@ class Administrator(mongo.MongoObject):
             'super_user': self.super_user,
         }
 
+    @property
+    def journal_data(self):
+        return {
+            'admin_id': self.id,
+            'admin_name': self.username,
+            'admin_super_user': self.super_user,
+        }
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('administrators')
