@@ -94,6 +94,17 @@ class Host(mongo.MongoObject):
         return self.link_address or self.auto_public_host or \
             self.public_address or self.auto_public_address
 
+    @property
+    def journal_data(self):
+        return {
+            'host_id': self.id,
+            'host_name': self.name,
+            'host_public_address': self.public_addr,
+            'host_public_address6': self.public_addr6,
+            'host_local_address': self.local_addr,
+            'host_local_address6': self.local_addr6,
+        }
+
     def dict(self):
         return {
             'id': self.id,
