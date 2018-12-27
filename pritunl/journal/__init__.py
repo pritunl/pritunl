@@ -1,3 +1,5 @@
+from pritunl.journal.events import *
+
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import utils
