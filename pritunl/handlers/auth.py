@@ -8,6 +8,7 @@ from pritunl import event
 from pritunl import organization
 from pritunl import sso
 from pritunl import logger
+from pritunl import journal
 from pritunl import limiter
 
 import flask
@@ -260,6 +261,14 @@ def auth_session_post():
         }, 402)
 
     if not limiter.auth_check(admin.id):
+        journal.entry(
+            journal.ADMIN_AUTH_FAILURE,
+            admin.journal_data,
+            remote_address=remote_addr,
+            reason=journal.ADMIN_AUTH_REASON_RATE_LIMIT,
+            reason_long='Too many authentication attempts',
+        )
+
         return utils.jsonify({
             'error': AUTH_TOO_MANY,
             'error_msg': AUTH_TOO_MANY_MSG,
@@ -278,6 +287,13 @@ def auth_session_post():
     if not settings.app.server_ssl:
         flask.session['source'] = remote_addr
 
+    journal.entry(
+        journal.ADMIN_SESSION_START,
+        admin.journal_data,
+        remote_address=remote_addr,
+        session_id=flask.session['session_id'],
+    )
+
     utils.set_flask_sig()
 
     return utils.jsonify({
@@ -290,6 +306,15 @@ def auth_session_post():
 def auth_delete():
     admin_id = utils.session_opt_str('admin_id')
     session_id = utils.session_opt_str('session_id')
+    remote_addr = utils.get_remote_addr()
+
+    journal.entry(
+        journal.ADMIN_SESSION_END,
+        admin_id=admin_id,
+        session_id=session_id,
+        remote_address=remote_addr,
+    )
+
     if admin_id and session_id:
         admin_id = utils.ObjectId(admin_id)
         auth.clear_session(admin_id, str(session_id))
