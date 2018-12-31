@@ -266,10 +266,7 @@ class Authorizer(object):
             link_matched = False
             for link in self.server.links:
                 if link.get('server_id') == self.user.link_server_id:
-                    if link.get('user_id') != self.user.id:
-                        raise AuthError('Link user mismatch')
-                    else:
-                        link_matched = True
+                    link_matched = True
                     break
 
             if not link_matched:
