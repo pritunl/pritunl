@@ -7,6 +7,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
+from pritunl import journal
 from pritunl import plugins
 from pritunl import sso
 
@@ -141,6 +142,14 @@ class Administrator(mongo.MongoObject):
     def auth_check(self, password, otp_code=None, yubico_key=None,
             remote_addr=None):
         if not self.test_password(password):
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                self.journal_data,
+                remote_address=remote_addr,
+                reason=journal.ADMIN_AUTH_REASON_INVALID_PASSWORD,
+                reason_long='Invalid password',
+            )
+
             self.audit_event(
                 'admin_auth',
                 'Administrator login failed, invalid password',
@@ -149,6 +158,14 @@ class Administrator(mongo.MongoObject):
             return False
 
         if self.otp_auth and not self.verify_otp_code(otp_code):
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                self.journal_data,
+                remote_address=remote_addr,
+                reason=journal.ADMIN_AUTH_REASON_INVALID_OTP,
+                reason_long='Invalid two-factor authentication code',
+            )
+
             self.audit_event(
                 'admin_auth',
                 'Administrator login failed, ' +
@@ -160,6 +177,14 @@ class Administrator(mongo.MongoObject):
         if self.yubikey_id:
             valid, public_id = sso.auth_yubico(yubico_key)
             if not valid or self.yubikey_id != public_id:
+                journal.entry(
+                    journal.ADMIN_AUTH_FAILURE,
+                    self.journal_data,
+                    remote_address=remote_addr,
+                    reason=journal.ADMIN_AUTH_REASON_INVALID_YUBIKEY,
+                    reason_long='Invalid YubiKey',
+                )
+
                 self.audit_event(
                     'admin_auth',
                     'Administrator login failed, invalid YubiKey',
@@ -168,12 +193,26 @@ class Administrator(mongo.MongoObject):
                 return False
 
         if self.disabled:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                self.journal_data,
+                remote_address=remote_addr,
+                reason=journal.ADMIN_AUTH_REASON_DISABLED,
+                reason_long='Account is disabled',
+            )
+
             self.audit_event(
                 'admin_auth',
                 'Administrator login failed, administrator is disabled',
                 remote_addr=remote_addr,
             )
             return False
+
+        journal.entry(
+            journal.ADMIN_AUTH_SUCCESS,
+            self.journal_data,
+            remote_address=remote_addr,
+        )
 
         self.audit_event(
             'admin_auth',
