@@ -46,6 +46,13 @@ class Organization(mongo.MongoObject):
         if type is not None:
             self.type = type
 
+    @property
+    def journal_data(self):
+        return {
+            'organization_id': self.id,
+            'organization_name': self.name,
+        }
+
     def dict(self):
         return {
             'id': self.id,
