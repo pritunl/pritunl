@@ -18,10 +18,10 @@ def admin_get(admin_id=None):
             return utils.jsonify(resp)
 
     if not flask.g.administrator.super_user:
-            return utils.jsonify({
-                'error': REQUIRES_SUPER_USER,
-                'error_msg': REQUIRES_SUPER_USER_MSG,
-            }, 400)
+        return utils.jsonify({
+            'error': REQUIRES_SUPER_USER,
+            'error_msg': REQUIRES_SUPER_USER_MSG,
+        }, 400)
 
     if admin_id:
         return utils.jsonify(auth.get_by_id(admin_id).dict())
