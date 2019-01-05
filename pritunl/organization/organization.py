@@ -12,6 +12,7 @@ import uuid
 import math
 import pymongo
 import threading
+import hashlib
 
 class Organization(mongo.MongoObject):
     fields = {
@@ -288,7 +289,7 @@ class Organization(mongo.MongoObject):
     def create_user_key_link(self, user_id, one_time=False):
         success = False
         for _ in xrange(256):
-            key_id = uuid.uuid4().hex
+            key_id = utils.rand_str(32)
 
             if one_time:
                 short_id = utils.rand_str(settings.app.long_url_length)
