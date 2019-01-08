@@ -312,6 +312,15 @@ class Server(mongo.MongoObject):
     def org_collection(cls):
         return mongo.get_collection('organizations')
 
+    @property
+    def journal_data(self):
+        return {
+            'server_id': self.id,
+            'server_name': self.name,
+            'server_network': self.network,
+            'server_port': self.port,
+        }
+
     def dict(self):
         return {
             'id': self.id,
