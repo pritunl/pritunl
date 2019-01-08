@@ -11,6 +11,7 @@ from pritunl import mongo
 from pritunl import sso
 from pritunl import event
 from pritunl import logger
+from pritunl import journal
 
 import flask
 import hmac
@@ -19,7 +20,7 @@ import base64
 import urlparse
 import requests
 
-def _validate_user(username, email, sso_mode, org_id, groups,
+def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
         http_redirect=False, yubico_id=None):
     usr = user.find_user_auth(name=username, auth_type=sso_mode)
     if not usr:
@@ -36,7 +37,7 @@ def _validate_user(username, email, sso_mode, org_id, groups,
             logger.info('User organization changed, moving user', 'sso',
                 user_name=username,
                 user_email=email,
-                remote_ip=utils.get_remote_addr(),
+                remote_ip=remote_addr,
                 cur_org_id=usr.org_id,
                 new_org_id=org_id,
             )
@@ -78,13 +79,21 @@ def _validate_user(username, email, sso_mode, org_id, groups,
             auth_type=sso_mode, yubico_id=yubico_id,
             groups=list(groups) if groups else None)
         usr.audit_event('user_created', 'User created with single sign-on',
-            remote_addr=utils.get_remote_addr())
+            remote_addr=remote_addr)
 
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
     else:
         if yubico_id and usr.yubico_id and yubico_id != usr.yubico_id:
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_INVALID_YUBIKEY,
+                reason_long='Invalid username',
+            )
+
             return utils.jsonify({
                 'error': YUBIKEY_INVALID,
                 'error_msg': YUBIKEY_INVALID_MSG,
@@ -117,7 +126,14 @@ def _validate_user(username, email, sso_mode, org_id, groups,
 
     usr.audit_event('user_profile',
         'User profile viewed from single sign-on',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.SSO_AUTH_SUCCESS,
+        usr.journal_data,
+        key_id_hash=hashlib.md5(key_link['id']).hexdigest(),
+        remote_address=remote_addr,
     )
 
     if http_redirect:
@@ -134,6 +150,7 @@ def sso_authenticate_post():
         settings.app.sso_duo_mode == 'passcode':
         return flask.abort(405)
 
+    remote_addr = utils.get_remote_addr()
     username = utils.json_filter_str('username')
     usernames = [username]
     email = None
@@ -147,7 +164,7 @@ def sso_authenticate_post():
             duo_auth = sso.Duo(
                 username=username,
                 factor=settings.app.sso_duo_mode,
-                remote_ip=utils.get_remote_addr(),
+                remote_ip=remote_addr,
                 auth_type='Key',
             )
             valid = duo_auth.authenticate()
@@ -163,24 +180,43 @@ def sso_authenticate_post():
             sso_type='duo',
             user_name=username,
             user_email=email,
-            remote_ip=utils.get_remote_addr(),
+            remote_ip=remote_addr,
         )
         if not valid:
             logger.warning('Duo plugin authentication not valid', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+                reason_long='Duo plugin authentication failed',
+            )
+
             return flask.abort(401)
         groups = set(groups or [])
     else:
         logger.warning('Duo authentication not valid', 'sso',
             username=username,
         )
+
+        journal.entry(
+            journal.SSO_AUTH_FAILURE,
+            user_name=username,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_DUO_FAILED,
+            reason_long='Duo authentication failed',
+        )
+
         return flask.abort(401)
 
     if not org_id:
         org_id = settings.app.sso_org
 
-    return _validate_user(username, email, DUO_AUTH, org_id, groups)
+    return _validate_user(username, email, DUO_AUTH, org_id, groups,
+        remote_addr)
 
 @app.app.route('/sso/request', methods=['GET'])
 @auth.open_auth
@@ -415,6 +451,7 @@ def sso_callback_get():
             SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
         return flask.abort(405)
 
+    remote_addr = utils.get_remote_addr()
     state = flask.request.args.get('state')
     sig = flask.request.args.get('sig')
 
@@ -430,6 +467,13 @@ def sso_callback_get():
     test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']),
         query, hashlib.sha512).digest())
     if not utils.const_compare(sig, test_sig):
+        journal.entry(
+            journal.SSO_AUTH_FAILURE,
+            state=state,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_INVALID_CALLBACK,
+            reason_long='Signature mismatch',
+        )
         return flask.abort(401)
 
     params = urlparse.parse_qs(query)
@@ -489,7 +533,7 @@ def sso_callback_get():
             sso_type='saml',
             user_name=username,
             user_email=email,
-            remote_ip=utils.get_remote_addr(),
+            remote_ip=remote_addr,
             sso_org_names=org_names,
         )
         if valid:
@@ -498,6 +542,15 @@ def sso_callback_get():
             logger.error('Saml plugin authentication not valid', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+                reason_long='Saml plugin authentication failed',
+            )
+
             return flask.abort(401)
 
         groups = groups | set(groups2 or [])
@@ -538,7 +591,7 @@ def sso_callback_get():
             sso_type='slack',
             user_name=username,
             user_email=email,
-            remote_ip=utils.get_remote_addr(),
+            remote_ip=remote_addr,
             sso_org_names=org_names,
         )
         if valid:
@@ -547,6 +600,15 @@ def sso_callback_get():
             logger.error('Slack plugin authentication not valid', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+                reason_long='Slack plugin authentication failed',
+            )
+
             return flask.abort(401)
         groups = set(groups or [])
     elif doc.get('type') == GOOGLE_AUTH:
@@ -555,6 +617,14 @@ def sso_callback_get():
 
         valid, google_groups = sso.verify_google(username)
         if not valid:
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_GOOGLE_FAILED,
+                reason_long='Google authentication failed',
+            )
+
             return flask.abort(401)
 
         org_id = settings.app.sso_org
@@ -563,7 +633,7 @@ def sso_callback_get():
             sso_type='google',
             user_name=username,
             user_email=email,
-            remote_ip=utils.get_remote_addr(),
+            remote_ip=remote_addr,
         )
         if valid:
             org_id = org_id_new or org_id
@@ -571,6 +641,15 @@ def sso_callback_get():
             logger.error('Google plugin authentication not valid', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+                reason_long='Google plugin authentication failed',
+            )
+
             return flask.abort(401)
         groups = set(groups or [])
 
@@ -608,10 +687,28 @@ def sso_callback_get():
             logger.error('Azure directory ID mismatch', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                azure_tenant=tenant,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_AZURE_FAILED,
+                reason_long='Azure directory ID mismatch',
+            )
+
             return flask.abort(401)
 
         valid, azure_groups = sso.verify_azure(username)
         if not valid:
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_AZURE_FAILED,
+                reason_long='Azure authentication failed',
+            )
+
             return flask.abort(401)
 
         org_id = settings.app.sso_org
@@ -620,7 +717,7 @@ def sso_callback_get():
             sso_type='azure',
             user_name=username,
             user_email=email,
-            remote_ip=utils.get_remote_addr(),
+            remote_ip=remote_addr,
         )
         if valid:
             org_id = org_id_new or org_id
@@ -628,6 +725,15 @@ def sso_callback_get():
             logger.error('Azure plugin authentication not valid', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+                reason_long='Azure plugin authentication failed',
+            )
+
             return flask.abort(401)
         groups = set(groups or [])
 
@@ -662,6 +768,14 @@ def sso_callback_get():
 
         valid, authzero_groups = sso.verify_authzero(username)
         if not valid:
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_AUTHZERO_FAILED,
+                reason_long='Auth0 authentication failed',
+            )
+
             return flask.abort(401)
 
         org_id = settings.app.sso_org
@@ -670,7 +784,7 @@ def sso_callback_get():
             sso_type='authzero',
             user_name=username,
             user_email=email,
-            remote_ip=utils.get_remote_addr(),
+            remote_ip=remote_addr,
         )
         if valid:
             org_id = org_id_new or org_id
@@ -678,6 +792,15 @@ def sso_callback_get():
             logger.error('Auth0 plugin authentication not valid', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+                reason_long='Auth0 plugin authentication failed',
+            )
+
             return flask.abort(401)
         groups = set(groups or [])
 
@@ -772,11 +895,12 @@ def sso_callback_get():
         return yubico_page.get_response()
 
     return _validate_user(username, email, sso_mode, org_id, groups,
-        http_redirect=True)
+        remote_addr, http_redirect=True)
 
 @app.app.route('/sso/duo', methods=['POST'])
 @auth.open_auth
 def sso_duo_post():
+    remote_addr = utils.get_remote_addr()
     sso_mode = settings.app.sso
     token = utils.filter_str(flask.request.json.get('token')) or None
     passcode = utils.filter_str(flask.request.json.get('passcode')) or ''
@@ -797,6 +921,13 @@ def sso_duo_post():
         '_id': token,
     }, remove=True)
     if not doc or doc['_id'] != token or doc['type'] != DUO_AUTH:
+        journal.entry(
+            journal.SSO_AUTH_FAILURE,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_INVALID_TOKEN,
+            reason_long='Invalid Duo authentication token',
+        )
+
         return utils.jsonify({
             'error': TOKEN_INVALID,
             'error_msg': TOKEN_INVALID_MSG,
@@ -811,7 +942,7 @@ def sso_duo_post():
         duo_auth = sso.Duo(
             username=username,
             factor=settings.app.sso_duo_mode,
-            remote_ip=utils.get_remote_addr(),
+            remote_ip=remote_addr,
             auth_type='Key',
             passcode=passcode,
         )
@@ -820,6 +951,15 @@ def sso_duo_post():
             logger.warning('Duo authentication not valid', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                username=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_DUO_FAILED,
+                reason_long='Duo passcode authentication failed',
+            )
+
             return utils.jsonify({
                 'error': PASSCODE_INVALID,
                 'error_msg': PASSCODE_INVALID_MSG,
@@ -828,7 +968,7 @@ def sso_duo_post():
         duo_auth = sso.Duo(
             username=username,
             factor=settings.app.sso_duo_mode,
-            remote_ip=utils.get_remote_addr(),
+            remote_ip=remote_addr,
             auth_type='Key',
         )
         valid = duo_auth.authenticate()
@@ -836,6 +976,14 @@ def sso_duo_post():
             logger.warning('Duo authentication not valid', 'sso',
                 username=username,
             )
+
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_DUO_FAILED,
+                reason_long='Duo authentication failed',
+            )
+
             return utils.jsonify({
                 'error': DUO_FAILED,
                 'error_msg': DUO_FAILED_MSG,
@@ -845,7 +993,7 @@ def sso_duo_post():
         sso_type='duo',
         user_name=username,
         user_email=email,
-        remote_ip=utils.get_remote_addr(),
+        remote_ip=remote_addr,
     )
     if valid:
         org_id = org_id_new or org_id
@@ -853,15 +1001,26 @@ def sso_duo_post():
         logger.warning('Duo plugin authentication not valid', 'sso',
             username=username,
         )
+
+        journal.entry(
+            journal.SSO_AUTH_FAILURE,
+            user_name=username,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+            reason_long='Duo plugin authentication failed',
+        )
+
         return flask.abort(401)
 
     groups = groups | set(groups2 or [])
 
-    return _validate_user(username, email, sso_mode, org_id, groups)
+    return _validate_user(username, email, sso_mode, org_id, groups,
+        remote_addr)
 
 @app.app.route('/sso/yubico', methods=['POST'])
 @auth.open_auth
 def sso_yubico_post():
+    remote_addr = utils.get_remote_addr()
     sso_mode = settings.app.sso
     token = utils.filter_str(flask.request.json.get('token')) or None
     key = utils.filter_str(flask.request.json.get('key')) or None
@@ -882,6 +1041,13 @@ def sso_yubico_post():
         '_id': token,
     }, remove=True)
     if not doc or doc['_id'] != token or doc['type'] != YUBICO_AUTH:
+        journal.entry(
+            journal.SSO_AUTH_FAILURE,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_INVALID_TOKEN,
+            reason_long='Invalid Yubikey authentication token',
+        )
+
         return utils.jsonify({
             'error': TOKEN_INVALID,
             'error_msg': TOKEN_INVALID_MSG,
@@ -894,10 +1060,18 @@ def sso_yubico_post():
 
     valid, yubico_id = sso.auth_yubico(key)
     if not valid or not yubico_id:
+        journal.entry(
+            journal.SSO_AUTH_FAILURE,
+            username=username,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_YUBIKEY_FAILED,
+            reason_long='Yubikey authentication failed',
+        )
+
         return utils.jsonify({
             'error': YUBIKEY_INVALID,
             'error_msg': YUBIKEY_INVALID_MSG,
         }, 401)
 
     return _validate_user(username, email, sso_mode, org_id, groups,
-        yubico_id=yubico_id)
+        remote_addr, yubico_id=yubico_id)
