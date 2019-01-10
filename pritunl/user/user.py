@@ -693,7 +693,9 @@ class User(mongo.MongoObject):
             data['sync_token'] = self.sync_token
             data['sync_secret'] = self.sync_secret
 
-        return '#' + json.dumps(data, indent=1).replace('\n', '\n#')
+        return "#" + json.dumps(
+            data, indent=1, separators=(",", ": ")
+        ).replace("\n", "\n#")
 
     def _generate_conf(self, svr, include_user_cert=True):
         if not self.sync_token or not self.sync_secret:
