@@ -276,7 +276,7 @@ def upsert_indexes():
     upsert_index('otp', 'timestamp', background=True,
         expireAfterSeconds=120)
     upsert_index('otp_cache', 'timestamp',
-        background=True, expireAfterSeconds=settings.vpn.otp_cache_timeout)
+        background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
     upsert_index('yubikey', 'timestamp',
         background=True, expireAfterSeconds=86400)
     upsert_index('sso_tokens', 'timestamp',
