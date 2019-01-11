@@ -487,6 +487,8 @@ def check_session(csrf_check):
 def get_default_password():
     logger.info('Getting default administrator password', 'auth')
 
+    time.sleep(0.2)
+
     default_admin = find_user(username=DEFAULT_USERNAME)
     if not default_admin:
         return None, None
@@ -504,6 +506,8 @@ def get_by_username(username):
 
 def reset_password():
     logger.info('Resetting administrator password', 'auth')
+
+    time.sleep(0.2)
 
     admin_collection = mongo.get_collection('administrators')
 
