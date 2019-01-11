@@ -148,6 +148,23 @@ class User(mongo.MongoObject):
             YUBICO_AUTH in self.auth_type and \
             YUBICO_AUTH in settings.app.sso
 
+    @property
+    def journal_data(self):
+        try:
+            data = self.org.journal_data
+        except:
+            data = {}
+
+        data.update({
+            'user_id': self.id,
+            'user_name': self.name,
+            'user_email': self.email,
+            'user_type': self.type,
+            'user_auth_type': self.auth_type,
+        })
+
+        return data
+
     def dict(self):
         return {
             'id': self.id,
