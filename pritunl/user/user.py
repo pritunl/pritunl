@@ -526,7 +526,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                     password=password,
                     remote_ip=remote_ip,
-                )[0]
+                )[1]
             except:
                 logger.exception('Plugin auth check error', 'user',
                     user_id=self.id,
