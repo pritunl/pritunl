@@ -30,7 +30,6 @@ def _journal_thread():
         data.update(kwargs)
 
         line = json.dumps(data, default=lambda x: str(x))
-        print line
 
 def entry(event, *args, **kwargs):
     _journal_queue.put((event, args, kwargs))
