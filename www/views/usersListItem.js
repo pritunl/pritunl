@@ -186,6 +186,7 @@ define([
       if (this.model.get('bypass_secondary')) {
         this.$('.saml-logo').hide();
         this.$('.azure-logo').hide();
+        this.$('.authzero-logo').hide();
         this.$('.google-logo').hide();
         this.$('.slack-logo').hide();
         this.$('.duo-logo').hide();
@@ -206,6 +207,13 @@ define([
           this.$('.azure-logo').show();
         } else {
           this.$('.azure-logo').hide();
+        }
+
+        if (sso.indexOf('authzero') !== -1 &&
+          auth_type.indexOf('authzero') !== -1) {
+          this.$('.authzero-logo').show();
+        } else {
+          this.$('.authzero-logo').hide();
         }
 
         if (sso.indexOf('google') !== -1 &&
