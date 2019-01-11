@@ -73,7 +73,7 @@ class SettingsApp(SettingsGroupMongo):
         'email_from': None,
         'id': None,
         'sso': False,
-        'sso_cache': True,
+        'sso_cache': False,
         'sso_cache_timeout': 28800,
         'sso_whitelist': [],
         'sso_client_cache': False,
