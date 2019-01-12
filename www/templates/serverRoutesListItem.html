@@ -5,7 +5,7 @@
   <span class="route-comment title"><%- comment %></span>
 </div>
 <div class="button-container">
-  <div class="route-vpc-id label label-purple no-select" <%= vpc_id ? '' : 'style="display: none;"' %>><%- vpc_id %></div>
+  <div class="route-vpc-id label label-purple no-select" <%= (advertise || vpc_id) ? '' : 'style="display: none;"' %>>Cloud Advertise</div>
   <div class="route-virtual-network label label-danger no-select" <%= virtual_network ? '' : 'style="display: none;"' %>>Virtual Network</div>
   <div class="route-network-link label label-warning no-select" <%= network_link ? '' : 'style="display: none;"' %>>Network Link</div>
   <div class="route-nat label label-success no-select" <%= nat && !net_gateway ? '' : 'style="display: none;"' %>>NAT</div>
