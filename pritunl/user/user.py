@@ -698,10 +698,14 @@ class User(mongo.MongoObject):
             'push_auth': True if self.get_push_type() else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
             'disable_reconnect': not settings.user.reconnect,
-            'token': self._get_token_mode(),
             'token_ttl': settings.app.sso_client_cache_timeout,
-            'server_public_key': public_key.splitlines(),
         }
+
+        if settings.user.password_encryption:
+            data['token'] = self._get_token_mode()
+            data['server_public_key'] = public_key.splitlines()
+        else:
+            data['token'] = False
 
         if svr.pre_connect_msg:
             data['pre_connect_msg'] = svr.pre_connect_msg
