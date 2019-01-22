@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve user configuration
+
 Version 1.29.1952.27 2019-01-16
 -------------------------------
 
