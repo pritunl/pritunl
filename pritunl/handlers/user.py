@@ -13,6 +13,7 @@ from pritunl import mongo
 from pritunl import messenger
 from pritunl import ipaddress
 from pritunl import callqueue
+from pritunl import journal
 
 import flask
 import time
@@ -275,6 +276,13 @@ def _create_user(users, org, user_data, remote_addr, pool):
         remote_addr=remote_addr,
     )
 
+    journal.entry(
+        journal.USER_CREATE,
+        user.journal_data,
+        event_long='User created from web console',
+        remote_address=remote_addr,
+    )
+
     if network_links:
         for network_link in network_links:
             try:
@@ -380,6 +388,7 @@ def user_put(org_id, user_id):
     user = org.get_user(user_id)
     reset_user = False
     port_forwarding_event = False
+    remote_addr = utils.get_remote_addr()
 
     if 'name' in flask.request.json:
         name = utils.filter_str(flask.request.json['name']) or 'undefined'
@@ -387,7 +396,14 @@ def user_put(org_id, user_id):
         if name != user.name:
             user.audit_event('user_updated',
                 'User name changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.USER_UPDATE,
+                user.journal_data,
+                event_long='User name changed',
+                remote_address=remote_addr,
             )
 
         user.name = name
@@ -398,7 +414,14 @@ def user_put(org_id, user_id):
         if email != user.email:
             user.audit_event('user_updated',
                 'User email changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.USER_UPDATE,
+                user.journal_data,
+                event_long='User email changed',
+                remote_address=remote_addr,
             )
 
         user.email = email
@@ -418,7 +441,14 @@ def user_put(org_id, user_id):
         if groups != set(user.groups or []):
             user.audit_event('user_updated',
                 'User groups changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.USER_UPDATE,
+                user.journal_data,
+                event_long='User groups changed',
+                remote_address=remote_addr,
             )
 
         user.groups = list(groups)
@@ -455,7 +485,14 @@ def user_put(org_id, user_id):
             if user.set_pin(pin):
                 user.audit_event('user_updated',
                     'User pin changed',
-                    remote_addr=utils.get_remote_addr(),
+                    remote_addr=remote_addr,
+                )
+
+                journal.entry(
+                    journal.USER_UPDATE,
+                    user.journal_data,
+                    event_long='User pin changed',
+                    remote_address=remote_addr,
                 )
 
     if 'network_links' in flask.request.json:
@@ -476,7 +513,14 @@ def user_put(org_id, user_id):
             reset_user = True
             user.audit_event('user_updated',
                 'User network links updated',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.USER_UPDATE,
+                user.journal_data,
+                event_long='User network links updated',
+                remote_address=remote_addr,
             )
 
         try:
@@ -504,7 +548,14 @@ def user_put(org_id, user_id):
             port_forwarding_event = True
             user.audit_event('user_updated',
                 'User port forwarding changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.USER_UPDATE,
+                user.journal_data,
+                event_long='User port forwarding changed',
+                remote_address=remote_addr,
             )
 
         user.port_forwarding = port_forwarding
@@ -513,8 +564,16 @@ def user_put(org_id, user_id):
     if disabled != user.disabled:
         user.audit_event('user_updated',
             'User %s' % ('disabled' if disabled else 'enabled'),
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
         )
+
+        journal.entry(
+            journal.USER_UPDATE,
+            user.journal_data,
+            event_long='User %s' % ('disabled' if disabled else 'enabled'),
+            remote_address=remote_addr,
+        )
+
         if disabled:
             reset_user = True
     user.disabled = disabled
@@ -530,8 +589,16 @@ def user_put(org_id, user_id):
         if user.dns_servers != dns_servers:
             user.audit_event('user_updated',
                 'User dns servers changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
             )
+
+            journal.entry(
+                journal.USER_UPDATE,
+                user.journal_data,
+                event_long='User dns servers changed',
+                remote_address=remote_addr,
+            )
+
             reset_user = True
         user.dns_servers = dns_servers
 
@@ -541,8 +608,16 @@ def user_put(org_id, user_id):
         if user.dns_suffix != dns_suffix:
             user.audit_event('user_updated',
                 'User dns suffix changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
             )
+
+            journal.entry(
+                journal.USER_UPDATE,
+                user.journal_data,
+                event_long='User dns suffix changed',
+                remote_address=remote_addr,
+            )
+
             reset_user = True
         user.dns_suffix = dns_suffix
 
@@ -561,7 +636,14 @@ def user_put(org_id, user_id):
     if send_key_email and user.email:
         user.audit_event('user_emailed',
             'User key email sent to "%s"' % user.email,
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+
+        journal.entry(
+            journal.USER_PROFILE_EMAIL,
+            user.journal_data,
+            event_long='User key email sent to "%s"' % user.email,
+            remote_address=remote_addr,
         )
 
         try:
@@ -590,9 +672,18 @@ def user_delete(org_id, user_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
+    remote_addr = utils.get_remote_addr()
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
     name = user.name
+
+    journal.entry(
+        journal.USER_DELETE,
+        user.journal_data,
+        event_long='User deleted',
+        remote_address=remote_addr,
+    )
+
     user.remove()
 
     event.Event(type=ORGS_UPDATED)
@@ -612,10 +703,18 @@ def user_otp_secret_put(org_id, user_id):
 
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
+    remote_addr = utils.get_remote_addr()
 
     user.audit_event('user_updated',
         'User two step secret reset',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.USER_UPDATE,
+        user.journal_data,
+        event_long='User two step secret reset',
+        remote_address=remote_addr,
     )
 
     user.generate_otp_secret()
