@@ -3,6 +3,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import app
 from pritunl import acme
+from pritunl import journal
 from pritunl import auth
 from pritunl import event
 from pritunl import ipaddress
@@ -817,10 +818,17 @@ def settings_put():
             }, 400)
 
     for change in changes:
+        remote_addr = utils.get_remote_addr()
         flask.g.administrator.audit_event(
             'admin_settings',
             _changes_audit_text[change],
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+        journal.entry(
+            journal.SETTINGS_UPDATE,
+            remote_address=remote_addr,
+            event_long='Settings updated',
+            changed=_changes_audit_text[change],
         )
 
     if settings_commit:
