@@ -81,6 +81,13 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
         usr.audit_event('user_created', 'User created with single sign-on',
             remote_addr=remote_addr)
 
+        journal.entry(
+            journal.USER_CREATE,
+            usr.journal_data,
+            event_long='User created with single sign-on',
+            remote_address=remote_addr,
+        )
+
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
@@ -136,6 +143,13 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
         remote_address=remote_addr,
     )
 
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User profile viewed from single sign-on',
+    )
+
     if http_redirect:
         return utils.redirect(utils.get_url_root() + key_link['view_url'])
     else:
@@ -147,7 +161,7 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
 @auth.open_auth
 def sso_authenticate_post():
     if settings.app.sso != DUO_AUTH or \
-        settings.app.sso_duo_mode == 'passcode':
+            settings.app.sso_duo_mode == 'passcode':
         return flask.abort(405)
 
     remote_addr = utils.get_remote_addr()
