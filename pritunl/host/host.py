@@ -7,6 +7,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
 from pritunl import event
+from pritunl import journal
 
 class Host(mongo.MongoObject):
     fields = {
@@ -161,6 +162,13 @@ class Host(mongo.MongoObject):
 
                 usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
                     type=CERT_SERVER, resource_id=self.id)
+
+                journal.entry(
+                    journal.USER_CREATE,
+                    usr.journal_data,
+                    event_long='User created for host linking',
+                )
+
                 usr.audit_event('user_created',
                     'User created for host linking')
 
