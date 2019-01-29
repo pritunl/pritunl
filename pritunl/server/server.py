@@ -18,6 +18,7 @@ from pritunl import event
 from pritunl import messenger
 from pritunl import organization
 from pritunl import ipaddress
+from pritunl import journal
 
 import os
 import subprocess
@@ -1086,6 +1087,13 @@ class Server(mongo.MongoObject):
         usr = org.new_user(name=SERVER_USER_PREFIX + str(self.id),
             type=CERT_SERVER, resource_id=self.id)
         usr.audit_event('user_created', 'User created for server')
+
+        journal.entry(
+            journal.USER_CREATE,
+            usr.journal_data,
+            self.journal_data,
+            event_long='Server user created',
+        )
 
         self.primary_organization = org.id
         self.primary_user = usr.id
