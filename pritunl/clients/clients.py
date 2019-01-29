@@ -16,6 +16,7 @@ from pritunl import messenger
 from pritunl import monitoring
 from pritunl import plugins
 from pritunl import vxlan
+from pritunl import journal
 
 import time
 import collections
@@ -1198,13 +1199,20 @@ class Clients(object):
 
         org = self.get_org(org_id)
         if org:
-            user = org.get_user(user_id, fields=('_id', 'name'))
+            user = org.get_user(user_id)
             if user:
                 user.audit_event(
                     'user_connection',
                     'User disconnected from "%s"' % self.server.name,
                     remote_addr=remote_ip,
                     server_name=self.server.name,
+                )
+                journal.entry(
+                    journal.USER_DISCONNECT,
+                    user.journal_data,
+                    self.server.journal_data,
+                    remote_address=remote_ip,
+                    event_long='User disconnected',
                 )
                 monitoring.insert_point('user_disconnections', {
                     'host': settings.local.host.name,
