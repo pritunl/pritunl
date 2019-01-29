@@ -12,6 +12,7 @@ from pritunl import sso
 from pritunl import event
 from pritunl import logger
 from pritunl import limiter
+from pritunl import journal
 
 import flask
 import time
@@ -90,11 +91,19 @@ def _find_doc(query, one_time=None, one_time_new=False):
 @app.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
 @auth.session_light_auth
 def user_key_tar_archive_get(org_id, user_id):
+    remote_addr = utils.get_remote_addr()
     usr, resp = _get_key_tar_archive(org_id, user_id)
 
     usr.audit_event('user_profile',
         'User tar profile downloaded from web console',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User tar profile downloaded from web console',
     )
 
     return resp
@@ -102,11 +111,19 @@ def user_key_tar_archive_get(org_id, user_id):
 @app.app.route('/key/<org_id>/<user_id>.zip', methods=['GET'])
 @auth.session_light_auth
 def user_key_zip_archive_get(org_id, user_id):
+    remote_addr = utils.get_remote_addr()
     usr, resp = _get_key_zip_archive(org_id, user_id)
 
     usr.audit_event('user_profile',
         'User zip profile downloaded from web console',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User zip profile downloaded from web console',
     )
 
     return resp
@@ -114,11 +131,19 @@ def user_key_zip_archive_get(org_id, user_id):
 @app.app.route('/key_onc/<org_id>/<user_id>.onc', methods=['GET'])
 @auth.session_light_auth
 def user_key_onc_archive_get(org_id, user_id):
+    remote_addr = utils.get_remote_addr()
     usr, resp = _get_onc_archive(org_id, user_id)
 
     usr.audit_event('user_profile',
         'User onc profile downloaded from web console',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User onc profile downloaded from web console',
     )
 
     return resp
@@ -126,12 +151,20 @@ def user_key_onc_archive_get(org_id, user_id):
 @app.app.route('/key/<org_id>/<user_id>', methods=['GET'])
 @auth.session_auth
 def user_key_link_get(org_id, user_id):
+    remote_addr = utils.get_remote_addr()
     org = organization.get_by_id(org_id)
     usr = org.get_user(user_id)
 
     usr.audit_event('user_profile',
         'User temporary profile links created from web console',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User temporary profile links created from web console',
     )
 
     return utils.jsonify(org.create_user_key_link(user_id))
@@ -139,13 +172,21 @@ def user_key_link_get(org_id, user_id):
 @app.app.route('/key/<org_id>/<user_id>/<server_id>.key', methods=['GET'])
 @auth.session_light_auth
 def user_linked_key_conf_get(org_id, user_id, server_id):
+    remote_addr = utils.get_remote_addr()
     org = organization.get_by_id(org_id)
     usr = org.get_user(user_id)
     key_conf = usr.build_key_conf(server_id)
 
     usr.audit_event('user_profile',
         'User key profile downloaded from web console',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User key profile downloaded from web console',
     )
 
     response = flask.Response(response=key_conf['conf'],
@@ -158,19 +199,38 @@ def user_linked_key_conf_get(org_id, user_id, server_id):
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
 @auth.open_auth
 def user_linked_key_tar_archive_get(key_id):
+    remote_addr = utils.get_remote_addr()
     doc = _find_doc({
         'key_id': key_id,
     })
     if not doc:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            remote_address=remote_addr,
+            event_long='Key ID not found',
+        )
         return flask.abort(404)
 
     usr, resp = _get_key_tar_archive(doc['org_id'], doc['user_id'])
     if usr.disabled:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
         return flask.abort(403)
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User tar profile downloaded with temporary profile link',
+    )
 
     usr.audit_event('user_profile',
         'User tar profile downloaded with temporary profile link',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
     )
 
     return resp
@@ -178,19 +238,38 @@ def user_linked_key_tar_archive_get(key_id):
 @app.app.route('/key/<key_id>.zip', methods=['GET'])
 @auth.open_auth
 def user_linked_key_zip_archive_get(key_id):
+    remote_addr = utils.get_remote_addr()
     doc = _find_doc({
         'key_id': key_id,
     })
     if not doc:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            remote_address=remote_addr,
+            event_long='Key ID not found',
+        )
         return flask.abort(404)
 
     usr, resp = _get_key_zip_archive(doc['org_id'], doc['user_id'])
     if usr.disabled:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
         return flask.abort(403)
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User zip profile downloaded with temporary profile link',
+    )
 
     usr.audit_event('user_profile',
         'User zip profile downloaded with temporary profile link',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
     )
 
     return resp
@@ -198,19 +277,38 @@ def user_linked_key_zip_archive_get(key_id):
 @app.app.route('/key_onc/<key_id>.onc', methods=['GET'])
 @auth.open_auth
 def user_linked_key_onc_archive_get(key_id):
+    remote_addr = utils.get_remote_addr()
     doc = _find_doc({
         'key_id': key_id,
     })
     if not doc:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            remote_address=remote_addr,
+            event_long='Key ID not found',
+        )
         return flask.abort(404)
 
     usr, resp = _get_onc_archive(doc['org_id'], doc['user_id'])
     if usr.disabled:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
         return flask.abort(403)
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User onc profile downloaded with temporary profile link',
+    )
 
     usr.audit_event('user_profile',
         'User onc profile downloaded with temporary profile link',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
     )
 
     return resp
@@ -221,14 +319,18 @@ def user_key_pin_put(key_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
+    remote_addr = utils.get_remote_addr()
+
     doc = _find_doc({
         'key_id': key_id,
     })
     if not doc:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            remote_address=remote_addr,
+            event_long='Key ID not found',
+        )
         return flask.abort(404)
-
-    if settings.app.demo_mode:
-        return utils.demo_blocked()
 
     if settings.user.pin_mode == PIN_DISABLED:
         return utils.jsonify({
@@ -278,9 +380,16 @@ def user_key_pin_put(key_id):
             }, 400)
 
     if usr.set_pin(pin):
+        journal.entry(
+            journal.USER_PIN_UPDATE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User pin changed with temporary profile link',
+        )
+
         usr.audit_event('user_updated',
             'User pin changed with temporary profile link',
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
         )
 
     usr.commit()
@@ -292,20 +401,40 @@ def user_key_pin_put(key_id):
 @app.app.route('/k/<short_code>', methods=['GET'])
 @auth.open_auth
 def user_linked_key_page_get(short_code):
+    remote_addr = utils.get_remote_addr()
+
     doc = _find_doc({
         'short_id': short_code,
     }, one_time=True, one_time_new=True)
     if not doc:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            remote_address=remote_addr,
+            event_long='Key ID not found',
+        )
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
     usr = org.get_user(id=doc['user_id'])
     if usr.disabled:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
         return flask.abort(403)
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User temporary profile link viewed',
+    )
 
     usr.audit_event('user_profile',
         'User temporary profile link viewed',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
     )
 
     if settings.local.sub_active and settings.app.theme == 'dark':
@@ -380,6 +509,13 @@ def user_linked_key_page_get(short_code):
 @auth.open_auth
 def user_linked_key_page_delete(short_code):
     utils.rand_sleep()
+    remote_addr = utils.get_remote_addr()
+
+    journal.entry(
+        journal.USER_PROFILE_DELETE,
+        remote_address=remote_addr,
+        event_long='Temporary profile link deleted',
+    )
 
     collection = mongo.get_collection('users_key_link')
     collection.remove({
@@ -391,6 +527,8 @@ def user_linked_key_page_delete(short_code):
 @app.app.route('/ku/<short_code>', methods=['GET'])
 @auth.open_auth
 def user_uri_key_page_get(short_code):
+    remote_addr = utils.get_remote_addr()
+
     doc = _find_doc({
         'short_id': short_code,
     }, one_time=True)
@@ -402,9 +540,16 @@ def user_uri_key_page_get(short_code):
     if usr.disabled:
         return flask.abort(403)
 
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User temporary profile downloaded from pritunl client',
+    )
+
     usr.audit_event('user_profile',
         'User temporary profile downloaded from pritunl client',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
     )
 
     keys = {}
@@ -417,28 +562,58 @@ def user_uri_key_page_get(short_code):
 @app.app.route('/key/<key_id>/<server_id>.key', methods=['GET'])
 @auth.open_auth
 def user_linked_key_conf_get(key_id, server_id):
+    remote_addr = utils.get_remote_addr()
+
     doc = _find_doc({
         'key_id': key_id,
     })
     if not doc:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            remote_address=remote_addr,
+            event_long='Key ID not found',
+        )
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
     if not org:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            remote_address=remote_addr,
+            event_long='Organization not found',
+        )
         return flask.abort(404)
 
     usr = org.get_user(id=doc['user_id'])
     if not usr:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            remote_address=remote_addr,
+            event_long='User not found',
+        )
         return flask.abort(404)
 
     if usr.disabled:
+        journal.entry(
+            journal.USER_PROFILE_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
         return flask.abort(403)
 
     key_conf = usr.build_key_conf(server_id)
 
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User profile downloaded with temporary profile link',
+    )
+
     usr.audit_event('user_profile',
         'User profile downloaded with temporary profile link',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
     )
 
     response = flask.Response(response=key_conf['conf'],
@@ -452,6 +627,8 @@ def user_linked_key_conf_get(key_id, server_id):
     methods=['GET'])
 @auth.open_auth
 def key_sync_get(org_id, user_id, server_id, key_hash):
+    remote_addr = utils.get_remote_addr()
+
     if not settings.user.conf_sync:
         return utils.jsonify({})
 
@@ -466,30 +643,73 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
             not auth_signature:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            remote_address=remote_addr,
+            event_long='Missing auth header',
+        )
         return flask.abort(406)
     auth_nonce = auth_nonce[:32]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
                 settings.app.auth_time_window:
+            journal.entry(
+                journal.USER_SYNC_FAILURE,
+                remote_address=remote_addr,
+                event_long='Expired auth timestamp',
+            )
             return flask.abort(408)
     except ValueError:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            remote_address=remote_addr,
+            event_long='Invalid auth timestamp',
+        )
         return flask.abort(405)
 
     org = organization.get_by_id(org_id)
     if not org:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            remote_address=remote_addr,
+            event_long='Organization not found',
+        )
         return flask.abort(404)
 
     usr = org.get_user(id=user_id)
     if not usr:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            remote_address=remote_addr,
+            event_long='User not found',
+        )
         return flask.abort(404)
     elif not usr.sync_secret:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User missing sync secret',
+        )
         return flask.abort(410)
 
     if auth_token != usr.sync_token:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Sync token mismatch',
+        )
         return flask.abort(410)
 
     if usr.disabled:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
         return flask.abort(403)
 
     auth_string = '&'.join([
@@ -497,12 +717,24 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         flask.request.path])
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Auth string len limit exceeded',
+        )
         return flask.abort(413)
 
     auth_test_signature = base64.b64encode(hmac.new(
         usr.sync_secret.encode(), auth_string,
         hashlib.sha512).digest())
     if not utils.const_compare(auth_signature, auth_test_signature):
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Sync signature mismatch',
+        )
         return flask.abort(401)
 
     nonces_collection = mongo.get_collection('auth_nonces')
@@ -513,13 +745,26 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
             'timestamp': utils.now(),
         })
     except pymongo.errors.DuplicateKeyError:
+        journal.entry(
+            journal.USER_SYNC_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Duplicate key',
+        )
         return flask.abort(409)
 
     key_conf = usr.sync_conf(server_id, key_hash)
     if key_conf:
         usr.audit_event('user_profile',
             'User profile synced from pritunl client',
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+
+        journal.entry(
+            journal.USER_SYNC_SUCCESS,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User profile synced from pritunl client',
         )
 
         sync_signature = base64.b64encode(hmac.new(
