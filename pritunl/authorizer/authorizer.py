@@ -146,6 +146,13 @@ class Authorizer(object):
 
     def _callback(self, allow, reason=None):
         if allow:
+            journal.entry(
+                journal.USER_CONNECT_SUCCESS,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='User connected',
+            )
             try:
                 self._check_call(self._update_token)
             except:
@@ -205,9 +212,40 @@ class Authorizer(object):
             return
 
         if not self.auth_nonce:
+            self.user.audit_event(
+                'user_connection',
+                'User connection to "%s" denied. Auth data missing nonce' % \
+                    self.server.name,
+                remote_addr=self.remote_ip,
+            )
+
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Auth data missing nonce',
+            )
+
             raise AuthError('Auth data missing nonce')
 
         if not self.auth_timestamp:
+            self.user.audit_event(
+                'user_connection',
+                ('User connection to "%s" denied. ' +
+                    'Auth data missing timestamp') % \
+                    self.server.name,
+                remote_addr=self.remote_ip,
+            )
+
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Auth data missing timestamp',
+            )
+
             raise AuthError('Auth data missing timestamp')
 
         if abs(int(self.auth_timestamp) - int(utils.time_now())) > \
@@ -218,6 +256,15 @@ class Authorizer(object):
                     self.server.name,
                 remote_addr=self.remote_ip,
             )
+
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Auth timestamp expired',
+            )
+
             raise AuthError('Auth timestamp expired')
 
         if self.auth_token:
@@ -240,6 +287,15 @@ class Authorizer(object):
                 self.server.name,
                 remote_addr=self.remote_ip,
             )
+
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Duplicate nonce',
+            )
+
             raise AuthError('Duplicate nonce')
 
         self.password = self.auth_password
@@ -253,6 +309,13 @@ class Authorizer(object):
                 break
 
         if not org_matched:
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Unknown organization',
+            )
             raise AuthError('Unknown organization')
 
         if self.user.disabled:
@@ -261,20 +324,55 @@ class Authorizer(object):
                     self.server.name),
                 remote_addr=self.remote_ip,
             )
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='User disabled',
+            )
             raise AuthError('User is disabled')
 
         if not self.user.name:
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='User name empty',
+            )
             raise AuthError('User name empty')
 
         user_lower = self.user.name.lower()
         if user_lower in INVALID_NAMES:
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='User name invalid',
+            )
             raise AuthError('User name invalid')
 
         if self.user.type == CERT_CLIENT:
             if self.user.link_server_id:
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Link user client type',
+                )
                 raise AuthError('Link user client type')
         elif self.user.type == CERT_SERVER:
             if not self.user.link_server_id:
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Link user missing server id',
+                )
                 raise AuthError('Link user missing server id')
 
             link_matched = False
@@ -284,10 +382,24 @@ class Authorizer(object):
                     break
 
             if not link_matched:
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Unknown link user',
+                )
                 raise AuthError('Unknown link user')
 
             return
         else:
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Unknown user type',
+            )
             raise AuthError('Unknown user type')
 
         if not self.server.check_groups(self.user.groups):
@@ -296,6 +408,13 @@ class Authorizer(object):
                 ('User connection to "%s" denied. User not in ' +
                  'servers groups') % (self.server.name),
                 remote_addr=self.remote_ip,
+            )
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='User not in servers groups',
             )
             raise AuthError('User not in servers groups')
 
@@ -319,6 +438,13 @@ class Authorizer(object):
                      'not allowed') % (self.server.name),
                     remote_addr=self.remote_ip,
                 )
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='User platform not allowed',
+                )
                 raise AuthError(
                     'User platform %s not allowed' % self.platform)
 
@@ -333,6 +459,13 @@ class Authorizer(object):
                 org_name=self.user.org.name,
                 server_name=self.server.name,
             )
+            journal.entry(
+                journal.USER_CONNECT_BYPASS,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Bypass secondary enabled, skipping password',
+            )
             return
 
         if self.has_token:
@@ -341,6 +474,13 @@ class Authorizer(object):
                 user_name=self.user.name,
                 org_name=self.user.org.name,
                 server_name=self.server.name,
+            )
+            journal.entry(
+                journal.USER_CONNECT_CACHE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Client authentication cached, skipping password',
             )
             return
 
@@ -351,6 +491,13 @@ class Authorizer(object):
                 org_name=self.user.org.name,
                 server_name=self.server.name,
             )
+            journal.entry(
+                journal.USER_CONNECT_WHITELIST,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Client network whitelisted, skipping password',
+            )
             return
 
         if not limiter.auth_check(self.user.id):
@@ -359,6 +506,13 @@ class Authorizer(object):
                 ('User connection to "%s" denied. Too many ' +
                  'authentication attempts') % (self.server.name),
                 remote_addr=self.remote_ip,
+            )
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Too many authentication attempts',
             )
             raise AuthError('Too many authentication attempts')
 
@@ -378,6 +532,13 @@ class Authorizer(object):
         if has_duo_passcode or has_onelogin_passcode or has_okta_passcode:
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Failed pin authentication',
+                )
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
                      'User failed pin authentication') % (
@@ -439,6 +600,15 @@ class Authorizer(object):
                         server_name=self.server.name,
                     )
 
+                    journal.entry(
+                        journal.USER_CONNECT_CACHE,
+                        self.journal_data,
+                        self.user.journal_data,
+                        self.server.journal_data,
+                        event_long='Authentication cached, ' + \
+                            'skipping secondary passcode',
+                    )
+
             if not allow:
                 if DUO_AUTH in sso_mode:
                     label = 'Duo'
@@ -475,6 +645,13 @@ class Authorizer(object):
                          'User failed %s passcode authentication') % (
                             self.server.name, label),
                         remote_addr=self.remote_ip,
+                    )
+                    journal.entry(
+                        journal.USER_CONNECT_FAILURE,
+                        self.journal_data,
+                        self.user.journal_data,
+                        self.server.journal_data,
+                        event_long='Failed passcode authentication',
                     )
 
                     if self.has_challenge():
@@ -515,6 +692,13 @@ class Authorizer(object):
                      'User failed pin authentication') % (
                         self.server.name),
                     remote_addr=self.remote_ip,
+                )
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Failed pin authentication',
                 )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
@@ -573,6 +757,15 @@ class Authorizer(object):
                         server_name=self.server.name,
                     )
 
+                    journal.entry(
+                        journal.USER_CONNECT_CACHE,
+                        self.journal_data,
+                        self.user.journal_data,
+                        self.server.journal_data,
+                        event_long='Authentication cached, ' + \
+                            'skipping Yubikey',
+                    )
+
             if not allow:
                 valid, yubico_id = sso.auth_yubico(yubikey)
                 if yubico_id != self.user.yubico_id:
@@ -584,6 +777,13 @@ class Authorizer(object):
                          'User failed Yubico authentication') % (
                             self.server.name),
                         remote_addr=self.remote_ip,
+                    )
+                    journal.entry(
+                        journal.USER_CONNECT_FAILURE,
+                        self.journal_data,
+                        self.user.journal_data,
+                        self.server.journal_data,
+                        event_long='Failed Yubico authentication',
                     )
 
                     if self.has_challenge():
@@ -623,6 +823,13 @@ class Authorizer(object):
                      'User failed pin authentication') % (
                         self.server.name),
                     remote_addr=self.remote_ip,
+                )
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Failed pin authentication',
                 )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
@@ -677,6 +884,15 @@ class Authorizer(object):
                         server_name=self.server.name,
                     )
 
+                    journal.entry(
+                        journal.USER_CONNECT_CACHE,
+                        self.journal_data,
+                        self.user.journal_data,
+                        self.server.journal_data,
+                        event_long='Authentication cached, ' + \
+                            'skipping OTP',
+                    )
+
             if not allow:
                 if not self.user.verify_otp_code(otp_code):
                     self.user.audit_event('user_connection',
@@ -684,6 +900,13 @@ class Authorizer(object):
                          'User failed two-step authentication') % (
                             self.server.name),
                         remote_addr=self.remote_ip,
+                    )
+                    journal.entry(
+                        journal.USER_CONNECT_FAILURE,
+                        self.journal_data,
+                        self.user.journal_data,
+                        self.server.journal_data,
+                        event_long='Failed two-step authentication',
                     )
 
                     if self.has_challenge():
@@ -723,6 +946,13 @@ class Authorizer(object):
                         self.server.name),
                     remote_addr=self.remote_ip,
                 )
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Failed pin authentication',
+                )
 
                 if self.has_challenge():
                     self.set_challenge(None, 'Enter Pin', False)
@@ -734,6 +964,13 @@ class Authorizer(object):
                  'User does not have a pin set') % (
                     self.server.name),
                 remote_addr=self.remote_ip,
+            )
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='User does not have a pin set',
             )
             raise AuthError('User does not have a pin set')
 
@@ -748,6 +985,13 @@ class Authorizer(object):
                     self.server.name),
                 remote_addr=self.remote_ip,
             )
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Failed secondary authentication',
+            )
             raise AuthError('Failed secondary authentication')
 
         if not self.server.check_groups(self.user.groups):
@@ -756,6 +1000,13 @@ class Authorizer(object):
                 ('User connection to "%s" denied. User not in ' +
                  'servers groups') % (self.server.name),
                 remote_addr=self.remote_ip,
+            )
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='User not in servers groups',
             )
             raise AuthError('User not in servers groups')
 
@@ -781,6 +1032,13 @@ class Authorizer(object):
                 org_name=self.user.org.name,
                 server_name=self.server.name,
             )
+            journal.entry(
+                journal.USER_CONNECT_CACHE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Client authentication cached, skipping push',
+            )
             return
 
         if self.whitelisted:
@@ -788,6 +1046,13 @@ class Authorizer(object):
                 user_name=self.user.name,
                 org_name=self.user.org.name,
                 server_name=self.server.name,
+            )
+            journal.entry(
+                journal.USER_CONNECT_WHITELIST,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Client network whitelisted, skipping push',
             )
             return
 
@@ -824,6 +1089,15 @@ class Authorizer(object):
                     org_name=self.user.org.name,
                     server_name=self.server.name,
                 )
+
+                journal.entry(
+                    journal.USER_CONNECT_CACHE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Authentication cached, skipping push',
+                )
+
                 return
 
         def thread_func():
@@ -894,6 +1168,13 @@ class Authorizer(object):
                  'Push authentication failed') % (
                     self.server.name),
                 remote_addr=self.remote_ip,
+            )
+            journal.entry(
+                journal.USER_CONNECT_FAILURE,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='User failed push authentication',
             )
             raise AuthError('User failed push authentication')
 
