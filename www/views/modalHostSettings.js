@@ -48,7 +48,6 @@ define([
       var syncAddress = this.$('.sync-address input').val() || null;
       var availabilityGroup = this.$(
           '.availability-group input').val() || null;
-      var instanceId = this.$('.instance-id input').val() || null;
 
       this.setLoading('Saving host...');
       this.model.save({
@@ -61,8 +60,7 @@ define([
         local_address6: localAddress6,
         link_address: linkAddress,
         sync_address: syncAddress,
-        availability_group: availabilityGroup,
-        instance_id: instanceId
+        availability_group: availabilityGroup
       }, {
         success: function() {
           this.close(true);
