@@ -159,7 +159,14 @@ def _auth_radius(username, password, remote_addr):
         usr.audit_event(
             'user_created',
             'User created with single sign-on',
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+
+        journal.entry(
+            journal.USER_CREATE,
+            usr.journal_data,
+            event_long='User created with single sign-on',
+            remote_address=remote_addr,
         )
 
         event.Event(type=ORGS_UPDATED)
@@ -193,6 +200,13 @@ def _auth_radius(username, password, remote_addr):
     usr.audit_event('user_profile',
         'User profile viewed from single sign-on',
         remote_addr=utils.get_remote_addr(),
+    )
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        event_long='User profile viewed from single sign-on',
+        remote_address=remote_addr,
     )
 
     return utils.jsonify({
@@ -272,6 +286,13 @@ def _auth_plugin(username, password, remote_addr):
             remote_addr=utils.get_remote_addr(),
         )
 
+        journal.entry(
+            journal.USER_CREATE,
+            usr.journal_data,
+            event_long='User created with plugin authentication',
+            remote_address=remote_addr,
+        )
+
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
@@ -296,6 +317,13 @@ def _auth_plugin(username, password, remote_addr):
     usr.audit_event('user_profile',
         'User profile viewed from plugin authentication',
         remote_addr=utils.get_remote_addr(),
+    )
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        event_long='User profile viewed from plugin authentication',
+        remote_address=remote_addr,
     )
 
     return utils.jsonify({
