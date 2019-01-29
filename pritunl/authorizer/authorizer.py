@@ -9,6 +9,7 @@ from pritunl import tunldb
 from pritunl import ipaddress
 from pritunl import limiter
 from pritunl import utils
+from pritunl import journal
 
 import threading
 import uuid
@@ -73,6 +74,19 @@ class Authorizer(object):
     @property
     def nonces_collection(cls):
         return mongo.get_collection('auth_nonces')
+
+    @property
+    def journal_data(self):
+        return {
+            'remote_address': self.remote_ip,
+            'platform': self.platform,
+            'device_id': self.device_id,
+            'device_name': self.device_name,
+            'mac_addr': self.mac_addr,
+            'auth_nonce': self.auth_nonce,
+            'auth_timestamp': self.auth_timestamp,
+            'reauth': self.reauth,
+        }
 
     def authenticate(self):
         try:
