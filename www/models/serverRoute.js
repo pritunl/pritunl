@@ -17,6 +17,7 @@ define([
       'nat': null,
       'nat_interface': null,
       'net_gateway': null,
+      'advertise': null,
       'vpc_region': null,
       'vpc_id': null
     },
