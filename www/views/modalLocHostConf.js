@@ -14,9 +14,6 @@ define([
     okText: 'Close',
     initialize: function() {
       ModalLocHostConfView.__super__.initialize.call(this);
-      this.setAlert('danger', 'Static host configuration is not valid ' +
-        'when locations contain more then one host or all locations do ' +
-        'not yet have an active host.');
     },
     body: function() {
       return this.template();
