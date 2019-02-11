@@ -1028,6 +1028,7 @@ class ServerInstance(object):
             instance_id=self.id,
             instances=self.server.instances,
             instances_count=self.server.instances_count,
+            route_count=len(self.server.routes),
             network=self.server.network,
             network6=self.server.network6,
             host_id=settings.local.host.id,
@@ -1035,6 +1036,7 @@ class ServerInstance(object):
             host_address6=settings.local.host.local_addr6,
             host_networks=settings.local.host.local_networks,
             cur_timestamp=utils.now(),
+            libipt=settings.vpn.lib_iptables,
         )
 
         def timeout():
