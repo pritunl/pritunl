@@ -32,6 +32,7 @@ def update_server(delay=0):
     global _cur_cert
     global _cur_key
     global _cur_port
+    global _cur_redirect_server
     global _cur_reverse_proxy
 
     if not settings.local.server_ready.is_set():
@@ -43,6 +44,7 @@ def update_server(delay=0):
                 _cur_cert != settings.app.server_cert or \
                 _cur_key != settings.app.server_key or \
                 _cur_port != settings.app.server_port or \
+                _cur_redirect_server != settings.app.redirect_server or \
                 _cur_reverse_proxy != (settings.app.reverse_proxy_header if
                     settings.app.reverse_proxy else ''):
             logger.info('Settings changed, restarting server...', 'app',
@@ -50,6 +52,8 @@ def update_server(delay=0):
                 cert_changed=_cur_cert != settings.app.server_cert,
                 key_changed=_cur_key != settings.app.server_key,
                 port_changed=_cur_port != settings.app.server_port,
+                redirect_server_changed=_cur_redirect_server !=
+                    settings.app.redirect_server,
                 reverse_proxy_changed= _cur_reverse_proxy != (
                     settings.app.reverse_proxy_header if
                     settings.app.reverse_proxy else ''),
@@ -59,6 +63,7 @@ def update_server(delay=0):
             _cur_cert = settings.app.server_cert
             _cur_key = settings.app.server_key
             _cur_port = settings.app.server_port
+            _cur_redirect_server = settings.app.redirect_server
             _cur_reverse_proxy = settings.app.reverse_proxy_header if \
                 settings.app.reverse_proxy else ''
 
