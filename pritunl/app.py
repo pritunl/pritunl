@@ -185,8 +185,6 @@ def _run_server(restart):
     process_state = True
     process = subprocess.Popen(
         ['pritunl-web'],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
         env=dict(os.environ, **{
             'REVERSE_PROXY_HEADER': settings.app.reverse_proxy_header if \
                 settings.app.reverse_proxy else '',
