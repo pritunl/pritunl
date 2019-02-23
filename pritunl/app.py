@@ -261,11 +261,13 @@ def run_server():
     global _cur_cert
     global _cur_key
     global _cur_port
+    global _cur_redirect_server
     global _cur_reverse_proxy
     _cur_ssl = settings.app.server_ssl
     _cur_cert = settings.app.server_cert
     _cur_key = settings.app.server_key
     _cur_port = settings.app.server_port
+    _cur_redirect_server = settings.app.redirect_server
     _cur_reverse_proxy = settings.app.reverse_proxy_header if \
         settings.app.reverse_proxy else ''
 
