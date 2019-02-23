@@ -23,6 +23,7 @@ _cur_ssl = None
 _cur_cert = None
 _cur_key = None
 _cur_port = None
+_cur_redirect_server = None
 _cur_reverse_proxy = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
