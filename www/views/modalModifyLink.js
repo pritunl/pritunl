@@ -39,6 +39,7 @@ define([
     onOk: function() {
       var name = this.$('.name input').val();
       var ipv6 = this.getIpv6Select();
+      var linkAction = this.$('.link-action select').val();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -48,7 +49,8 @@ define([
       this.setLoading('Saving link...');
       this.model.save({
         name: name,
-        ipv6: ipv6
+        ipv6: ipv6,
+        action: linkAction
       }, {
         success: function() {
           this.close(true);
