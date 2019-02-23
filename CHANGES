@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with web server hanging
+
 Version 1.29.1979.98 2019-02-12
 -------------------------------
 
