@@ -25,8 +25,6 @@ def _dns_thread():
 
             process = subprocess.Popen(
                 ['pritunl-dns'],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
                 env=dict(os.environ, **{
                     'DB': settings.conf.mongodb_uri,
                     'DB_PREFIX': settings.conf.mongodb_collection_prefix or '',
