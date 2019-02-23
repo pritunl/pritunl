@@ -19,8 +19,6 @@ def _dns_thread():
                 yield interrupter_sleep(3)
                 continue
 
-            start = time.time()
-
             yield
 
             process = subprocess.Popen(
@@ -57,19 +55,6 @@ def _dns_thread():
 
                     yield interrupter_sleep(1)
 
-                    break
-                elif time.time() - start > settings.app.dns_server_restart:
-                    def kill_process():
-                        process.kill()
-                    timer = threading.Timer(3, kill_process)
-                    timer.start()
-
-                    process.terminate()
-                    process.wait()
-
-                    timer.cancel()
-
-                    process = None
                     break
 
                 time.sleep(0.5)
