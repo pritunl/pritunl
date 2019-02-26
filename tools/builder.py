@@ -679,17 +679,13 @@ if cmd == 'upload' or cmd == 'build-upload':
 
 
     # Sync mirror
-    for mir_url in test_mirror_url if is_snapshot else mirror_url:
-        subprocess.check_call(['rsync',
-            '--human-readable',
-            '--archive',
-            '--progress',
-            '--delete',
-            '--acls',
-            'mirror/',
-            mir_url,
-        ], cwd=pacur_path)
-
+    subprocess.check_call([
+        's3cmd',
+        'sync',
+        '--follow-symlinks',
+        'mirror/',
+        's3://dev/' if is_snapshot else 's3://stable/',
+    ], cwd=pacur_path)
 
     # Add to github
     for name, path in iter_packages():
