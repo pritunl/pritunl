@@ -5,11 +5,12 @@ from pritunl import settings
 from pritunl import utils
 
 import threading
+import collections
 import json
 
-_journal_queue = utils.PyQueue()
+journal_queue = collections.deque()
 
-def _get_base_entry(event):
+def get_base_entry(event):
     data = {
         'event': event,
         'timestamp': utils.time_now(),
@@ -19,21 +20,9 @@ def _get_base_entry(event):
 
     return data
 
-def _journal_thread():
-    while True:
-        event, args, kwargs = _journal_queue.get()
-        data = _get_base_entry(event)
-
-        for arg in args:
-            data.update(arg)
-
-        data.update(kwargs)
-
-        line = json.dumps(data, default=lambda x: str(x))
-
 def entry(event, *args, **kwargs):
-    _journal_queue.put((event, args, kwargs))
-
-_thread = threading.Thread(target=_journal_thread)
-_thread.daemon = True
-_thread.start()
+    event = get_base_entry(event)
+    for arg in args:
+        event.update(arg)
+    event.update(kwargs)
+    journal_queue.append(event)
