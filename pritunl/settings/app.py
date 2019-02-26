@@ -62,7 +62,7 @@ class SettingsApp(SettingsGroupMongo):
         'auth_limiter_count_max': 20,
         'org_pool_size': 1,
         'user_pool_size': 6,
-        'server_pool_size': 4,
+        'server_pool_size': 3,
         'server_user_pool_size': 2,
         'dh_param_bits_pool': [2048],
         'cookie_secret': None,
