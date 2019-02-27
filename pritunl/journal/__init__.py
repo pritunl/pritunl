@@ -4,14 +4,14 @@ from pritunl.constants import *
 from pritunl import settings
 from pritunl import utils
 
-import threading
 import collections
-import json
+import bson
 
 journal_queue = collections.deque()
 
 def get_base_entry(event):
     data = {
+        'id': bson.ObjectId(),
         'event': event,
         'timestamp': utils.time_now(),
     }
@@ -21,6 +21,9 @@ def get_base_entry(event):
     return data
 
 def entry(event, *args, **kwargs):
+    if settings.app.auditing != ALL:
+        return
+
     event = get_base_entry(event)
     for arg in args:
         event.update(arg)
