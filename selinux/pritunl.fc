@@ -4,6 +4,7 @@
 /var/lib/pritunl -d gen_context(system_u:object_r:pritunl_var_lib_t,s0)
 /var/lib/pritunl(/.*)? -- gen_context(system_u:object_r:pritunl_var_lib_t,s0)
 /var/log/pritunl.* -- gen_context(system_u:object_r:pritunl_var_log_t,s0)
+/var/log/pritunl_journal.* -- gen_context(system_u:object_r:pritunl_var_log_t,s0)
 /run/pritunl.* -- gen_context(system_u:object_r:pritunl_var_run_t,s0)
 /run/pritunl.* -s gen_context(system_u:object_r:pritunl_var_run_t,s0)
 /usr/lib/pritunl/bin/python -- gen_context(system_u:object_r:pritunl_exec_t,s0)
