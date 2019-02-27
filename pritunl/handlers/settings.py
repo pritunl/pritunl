@@ -330,6 +330,12 @@ def settings_put():
         settings_commit = True
         auditing = flask.request.json['auditing'] or None
 
+        if settings.app.auditing == ALL and auditing != ALL:
+            return utils.jsonify({
+                'error': CANNOT_DISABLE_AUTIDING,
+                'error_msg': CANNOT_DISABLE_AUTIDING_MSG,
+            }, 400)
+
         if settings.app.auditing != auditing:
             if not flask.g.administrator.super_user:
                 return utils.jsonify({
