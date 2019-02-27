@@ -14,6 +14,7 @@ class SettingsConf(SettingsGroupFile):
         'pooler': True,
         'temp_path': '/tmp/pritunl',
         'log_path': '/var/log/pritunl.log',
+        'journal_path': '/var/log/pritunl_journal.log',
         'www_path': '/usr/share/pritunl/www',
         'var_run_path': '/var/run',
         'uuid_path': '/var/lib/pritunl/pritunl.uuid',
