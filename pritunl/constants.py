@@ -971,6 +971,9 @@ REQUIRES_SUPER_USER = 'requires_super_user'
 REQUIRES_SUPER_USER_MSG = 'This administrator action can only be ' + \
     'performed by a super user.'
 
+CANNOT_DISABLE_AUTIDING = 'cannot_disable_autiding'
+CANNOT_DISABLE_AUTIDING_MSG = 'Auditing cannot be disabled from web console.'
+
 RANDOM_ONE = (
     'snowy',
     'restless',
