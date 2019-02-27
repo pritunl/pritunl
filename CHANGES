@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add audit journal
+
 Version 1.29.1990.10 2019-02-23
 -------------------------------
 
