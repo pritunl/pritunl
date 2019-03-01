@@ -297,11 +297,12 @@ def upsert_indexes():
 
 def setup_mongo():
     prefix = settings.conf.mongodb_collection_prefix or ''
+    read_pref = _get_read_pref(settings.conf.mongodb_read_preference)
+    max_pool = settings.conf.mongodb_max_pool_size or None
     last_error = time.time() - 24
 
     while True:
         try:
-            read_pref = _get_read_pref(settings.conf.mongodb_read_preference)
 
             if read_pref:
                 client = pymongo.MongoClient(
@@ -309,6 +310,7 @@ def setup_mongo():
                     connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
                     socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                     serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                    maxPoolSize=max_pool,
                     read_preference=read_pref,
                 )
             else:
@@ -317,6 +319,7 @@ def setup_mongo():
                     connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
                     socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                     serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                    maxPoolSize=max_pool,
                 )
 
             break
@@ -347,6 +350,7 @@ def setup_mongo():
                         connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
                         socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                         serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                        maxPoolSize=max_pool,
                         read_preference=read_pref,
                     )
                 else:
@@ -355,6 +359,7 @@ def setup_mongo():
                         connectTimeoutMS=MONGO_CONNECT_TIMEOUT,
                         socketTimeoutMS=MONGO_SOCKET_TIMEOUT,
                         serverSelectionTimeoutMS=MONGO_SOCKET_TIMEOUT,
+                        maxPoolSize=max_pool,
                     )
 
                 break
