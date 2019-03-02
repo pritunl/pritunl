@@ -23,6 +23,7 @@ class SettingsConf(SettingsGroupFile):
         'mongodb_uri': 'mongodb://localhost:27017/pritunl',
         'mongodb_collection_prefix': None,
         'mongodb_read_preference': None,
+        'mongodb_max_pool_size': None,
         'local_address_interface': 'auto',
     }
     commit_fields = {
