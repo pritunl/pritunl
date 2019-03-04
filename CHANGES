@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add mongodb max pool size to configuration
+
 Version 1.29.1994.1 2019-02-27
 ------------------------------
 
