@@ -992,6 +992,24 @@ class ServerInstance(object):
                     network=network,
                 )
 
+            if self.vxlan:
+                if network == self.server.network:
+                    vxlan_net = self.vxlan.vxlan_net
+                    if cloud_provider == 'aws':
+                        utils.add_vpc_route(vxlan_net)
+                    elif cloud_provider == 'oracle':
+                        utils.oracle_add_route(vxlan_net)
+
+                elif network == self.server.network6:
+                    vxlan_net6 = utils.net4to6x64(
+                        settings.vpn.ipv6_prefix,
+                        self.vxlan.vxlan_net,
+                    )
+                    if cloud_provider == 'aws':
+                        utils.add_vpc_route(vxlan_net6)
+                    elif cloud_provider == 'oracle':
+                        utils.oracle_add_route(vxlan_net6)
+
             self.route_advertisements.add(ra_id)
         except pymongo.errors.DuplicateKeyError:
             return
