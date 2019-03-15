@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for replicated servers with non-NAT routes
+
 Version 1.29.1999.88 2019-03-04
 -------------------------------
 
