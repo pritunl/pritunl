@@ -1591,9 +1591,6 @@ class Server(mongo.MongoObject):
         if self.links and self.replica_count > 1:
             return SERVER_LINKS_AND_REPLICA, SERVER_LINKS_AND_REPLICA_MSG
 
-        if self.vxlan and self.replicating and self.has_non_nat_route():
-            return SERVER_VXLAN_NON_NAT, SERVER_VXLAN_NON_NAT_MSG
-
         if self.search_domain and not self.dns_servers:
             return SERVER_DOMAIN_NO_DNS, SERVER_DOMAIN_NO_DNS_MSG
 
