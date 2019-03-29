@@ -812,7 +812,7 @@ def server_routes_post(server_id):
         metric = route_data.get('metric') or None
         nat_route = True if route_data.get('nat') else False
         nat_interface = route_data.get('nat_interface') or None
-        advertise = True if flask.request.json.get('advertise') else False
+        advertise = True if route_data.get('advertise') else False
         net_gateway = True if route_data.get('net_gateway') else False
 
         try:
