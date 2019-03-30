@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with API handler
+
 Version 1.29.2010.18 2019-03-15
 -------------------------------
 
