@@ -17,9 +17,9 @@ export VERSION=X.XX.XX.XX # Set current pritunl version here
 sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
 sudo yum -y install git bzr python2 python-devel python-pip net-tools openvpn bridge-utils psmisc gcc-c++
 
-wget https://dl.google.com/go/go1.11.2.linux-amd64.tar.gz
-sudo tar -C /usr/local -xf go1.11.2.linux-amd64.tar.gz
-rm -f go1.11.2.linux-amd64.tar.gz
+wget https://dl.google.com/go/go1.12.1.linux-amd64.tar.gz
+sudo tar -C /usr/local -xf go1.12.1.linux-amd64.tar.gz
+rm -f go1.12.1.linux-amd64.tar.gz
 tee -a ~/.bashrc << EOF
 export GOPATH=\$HOME/go
 export PATH=/usr/local/go/bin:\$PATH
