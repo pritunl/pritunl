@@ -183,7 +183,8 @@ class ServerInstance(object):
                         utils.parse_network(network) + (metric,))
             elif not route.get('network_link'):
                 if ':' in network:
-                    push += 'push "route-ipv6 %s%s"\n' % (network, metric_def)
+                    push += 'push "route-ipv6 %s%s"\n' % (
+                        network, metric_def)
                 else:
                     push += 'push "route %s %s%s"\n' % (
                         utils.parse_network(network) + (metric_def,))
@@ -215,8 +216,10 @@ class ServerInstance(object):
                         push += 'route-ipv6 %s %s%s\n' % (
                             network, gateway6, metric)
                     else:
-                        push += 'route %s %s %s%s\n' % (utils.parse_network(
-                            network) + (gateway, metric))
+                        push += 'route %s %s %s%s\n' % (
+                            utils.parse_network(network) +
+                            (gateway, metric)
+                        )
 
         if self.vxlan:
             push += 'push "route %s %s"\n' % utils.parse_network(
