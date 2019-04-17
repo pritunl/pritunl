@@ -184,14 +184,14 @@ class Server(mongo.MongoObject):
     }
     cache_prefix = 'server'
 
-    def __init__(self, name=None, groups=None, network=None, network_mode=None,
-            network_start=None, network_end=None, restrict_routes=None,
-            ipv6=None, ipv6_firewall=None,bind_address=None, port=None,
-            protocol=None, dh_param_bits=None, multi_device=None,
-            dns_servers=None, search_domain=None, otp_auth=None,
-            cipher=None, hash=None, block_outside_dns=None, jumbo_frames=None,
-            lzo_compression=None, inter_client=None, ping_interval=None,
-            ping_timeout=None, link_ping_interval=None,
+    def __init__(self, name=None, groups=None, network=None,
+            network_mode=None, network_start=None, network_end=None,
+            restrict_routes=None, ipv6=None, ipv6_firewall=None,
+            bind_address=None, port=None, protocol=None, dh_param_bits=None,
+            multi_device=None, dns_servers=None, search_domain=None,
+            otp_auth=None, cipher=None, hash=None, block_outside_dns=None,
+            jumbo_frames=None, lzo_compression=None, inter_client=None,
+            ping_interval=None, ping_timeout=None, link_ping_interval=None,
             link_ping_timeout=None, inactive_timeout=None,
             allowed_devices=None, max_clients=None, max_devices=None,
             replica_count=None, vxlan=None, dns_mapping=None, debug=None,
