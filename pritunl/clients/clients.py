@@ -1629,6 +1629,7 @@ class Clients(object):
         _port_listeners[self.instance.id] = self.on_port_forwarding
         _client_listeners[self.instance.id] = self.on_client
         host.global_servers.add(self.instance.id)
+
         if self.server.dns_mapping:
             host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(settings.vpn.call_queue_threads)
