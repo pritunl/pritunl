@@ -1,6 +1,6 @@
 flask==1.0.2
 cheroot==6.5.2
-jinja2==2.10
+jinja2==2.10.1
 pymongo==3.7.2
 netifaces==0.10.7
 boto==2.49.0
