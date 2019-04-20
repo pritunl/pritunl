@@ -1096,7 +1096,7 @@ class Iptables(object):
         try:
             for i in xrange(3):
                 if ipv6:
-                    if rule[0] == 'POSTROUTING':
+                    if rule[0] == 'POSTROUTING' or rule[0] == 'PREROUTING':
                         if tables:
                             table = tables['nat6']
                         else:
@@ -1107,7 +1107,7 @@ class Iptables(object):
                         else:
                             table = iptc.Table6(iptc.Table.FILTER)
                 else:
-                    if rule[0] == 'POSTROUTING':
+                    if rule[0] == 'POSTROUTING' or rule[0] == 'PREROUTING':
                         if tables:
                             table = tables['nat']
                         else:
