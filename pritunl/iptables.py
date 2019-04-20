@@ -24,6 +24,7 @@ class Iptables(object):
         self._nat_routes6 = {}
         self._nat_networks = set()
         self._nat_networks6 = set()
+        self._netmaps = {}
         self._accept = []
         self._accept6 = []
         self._drop = []
@@ -70,6 +71,9 @@ class Iptables(object):
             self._nat_networks6.add(network)
         else:
             self._nat_networks.add(network)
+
+    def add_netmap(self, network, mapping):
+        self._netmaps[mapping] = network
 
     def add_rule(self, rule):
         if self.cleared:
