@@ -805,6 +805,25 @@ class Iptables(object):
                 '-j', 'DROP',
             ])
 
+    def _generate_pre_routing(self):
+        for mapping, network in self._netmaps.items():
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
+                rule = self._init_rule()
+                rule.dst = mapping
+                rule.in_interface = self.virt_interface
+                tar = rule.create_target('NETMAP')
+                tar.to = network
+                self._accept.append(('PREROUTING', rule))
+            else:
+                self._accept.append([
+                    'PREROUTING',
+                    '-t', 'nat',
+                    '-d', mapping,
+                    '-i', self.virt_interface,
+                    '-j', 'NETMAP',
+                    '--to', network,
+                ])
+
     def _generate_post_routing(self):
         all_interface = None
         all_interface6 = None
@@ -964,6 +983,7 @@ class Iptables(object):
         self._generate_input()
         self._generate_output()
         self._generate_forward()
+        self._generate_pre_routing()
         self._generate_post_routing()
 
     def _init_rule(self):
