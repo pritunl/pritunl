@@ -123,6 +123,10 @@ class Clients(object):
                 if route['net_gateway']:
                     continue
 
+                netmap = route.get('nat_netmap')
+                if netmap:
+                    network = netmap
+
                 if ':' in network:
                     client_conf += 'iroute-ipv6 %s%s\n' % (
                         network, metric_def)
@@ -194,6 +198,10 @@ class Clients(object):
                     else:
                         metric_def = ''
                         metric = ''
+
+                    netmap = route.get('nat_netmap')
+                    if netmap:
+                        network = netmap
 
                     if route['net_gateway']:
                         if ':' in network:
