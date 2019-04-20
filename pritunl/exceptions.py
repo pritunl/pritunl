@@ -119,6 +119,9 @@ class ServerRouteGatewayNetworkLink(ServerError):
 class ServerRouteNatNetGateway(ServerError):
     pass
 
+class ServerRouteNonNatNetmap(ServerError):
+    pass
+
 
 class NotFound(BaseError):
     pass
