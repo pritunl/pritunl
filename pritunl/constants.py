@@ -897,6 +897,9 @@ SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG = 'Network link routes cannot use ' + \
 SERVER_ROUTE_NET_GATEWAY_NAT = 'server_route_net_gateway_nat'
 SERVER_ROUTE_NET_GATEWAY_NAT_MSG = 'Net gateway routes cannot use NAT.'
 
+SERVER_ROUTE_NON_NAT_NETMAP = 'server_route_non_nat_netmap'
+SERVER_ROUTE_NON_NAT_NETMAP_MSG = 'Cannot use network mapping without NAT.'
+
 SERVER_LINK_COMMON_HOST = 'server_link_common_host'
 SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
 
