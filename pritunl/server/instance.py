@@ -174,6 +174,10 @@ class ServerInstance(object):
                 metric = ''
 
             network = route['network']
+            netmap = route.get('nat_netmap')
+            if netmap:
+                network = netmap
+
             if route['net_gateway']:
                 if ':' in network:
                     push += 'push "route-ipv6 %s net_gateway%s"\n' % (
@@ -211,6 +215,10 @@ class ServerInstance(object):
 
                     if route['net_gateway']:
                         continue
+
+                    netmap = route.get('nat_netmap')
+                    if netmap:
+                        network = netmap
 
                     if ':' in network:
                         push += 'route-ipv6 %s %s%s\n' % (
@@ -587,6 +595,13 @@ class ServerInstance(object):
                     settings.local.host.routed_subnet6:
                 nat = False
 
+            if nat and route['nat_netmap']:
+                self.iptables.add_netmap(network, route['nat_netmap'])
+                self.iptables.add_route(
+                    route['nat_netmap'],
+                    nat=False,
+                )
+
             self.iptables.add_route(
                 network,
                 nat=nat,
@@ -952,6 +967,10 @@ class ServerInstance(object):
 
             if route['net_gateway']:
                 continue
+
+            netmap = route.get('nat_netmap')
+            if netmap:
+                network = netmap
 
             if advertise or (vpc_region and vpc_id):
                 self.reserve_route_advertisement(
