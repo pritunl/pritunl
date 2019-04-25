@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for network mapping
+
 Version 1.29.2026.90 2019-03-31
 -------------------------------
 
