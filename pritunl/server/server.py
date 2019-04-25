@@ -576,6 +576,7 @@ class Server(mongo.MongoObject):
                 'metric': 0,
                 'nat': False,
                 'nat_interface': None,
+                'nat_netmap': None,
                 'advertise': None,
                 'vpc_region': None,
                 'vpc_id': None,
@@ -603,6 +604,7 @@ class Server(mongo.MongoObject):
                     data['metric'] = route.get('metric')
                     data['nat'] = route['nat']
                     data['nat_interface'] = route['nat_interface']
+                    data['nat_netmap'] = route['nat_netmap']
                     data['advertise'] = None
                     data['vpc_region'] = None
                     data['vpc_id'] = None
@@ -630,6 +632,7 @@ class Server(mongo.MongoObject):
                     'metric': route.get('metric'),
                     'nat': route.get('nat', True),
                     'nat_interface': route.get('nat_interface'),
+                    'nat_netmap': route.get('nat_netmap'),
                     'advertise': route.get('advertise', None),
                     'vpc_region': route.get('vpc_region', None),
                     'vpc_id': route.get('vpc_id', None),
@@ -649,6 +652,7 @@ class Server(mongo.MongoObject):
                         'metric': route.get('metric'),
                         'nat': route.get('nat', True),
                         'nat_interface': route.get('nat_interface'),
+                        'nat_netmap': route.get('nat_netmap'),
                         'advertise': route.get('advertise'),
                         'vpc_region': route.get('vpc_region'),
                         'vpc_id': route.get('vpc_id'),
@@ -674,6 +678,8 @@ class Server(mongo.MongoObject):
                             'nat', True)
                         routes_dict[route_network]['nat_interface'] = \
                             route.get('nat_interface')
+                        routes_dict[route_network]['nat_netmap'] = \
+                            route.get('nat_netmap')
                     routes_dict[route_network]['comment'] = route.get(
                         'comment')
                     routes_dict[route_network]['metric'] = route.get(
@@ -697,6 +703,7 @@ class Server(mongo.MongoObject):
                         'metric': route.get('metric'),
                         'nat': route.get('nat', True),
                         'nat_interface': route.get('nat_interface'),
+                        'nat_netmap': route.get('nat_netmap'),
                         'advertise': route.get('advertise', None),
                         'vpc_region': route.get('vpc_region', None),
                         'vpc_id': route.get('vpc_id', None),
@@ -715,6 +722,7 @@ class Server(mongo.MongoObject):
             'metric': virtual_metric,
             'nat': False,
             'nat_interface': None,
+            'nat_netmap': None,
             'advertise': virtual_advertise,
             'vpc_region': virtual_vpc_region,
             'vpc_id': virtual_vpc_id,
@@ -734,6 +742,7 @@ class Server(mongo.MongoObject):
                 'metric': virtual_metric,
                 'nat': False,
                 'nat_interface': None,
+                'nat_netmap': None,
                 'advertise': virtual_advertise,
                 'vpc_region': virtual_vpc_region,
                 'vpc_id': virtual_vpc_id,
@@ -752,7 +761,7 @@ class Server(mongo.MongoObject):
 
         return routes + link_routes
 
-    def upsert_route(self, network, nat_route, nat_interface,
+    def upsert_route(self, network, nat_route, nat_interface, nat_netmap,
             advertise, vpc_region, vpc_id, net_gateway, comment, metric):
         exists = False
 
@@ -789,11 +798,15 @@ class Server(mongo.MongoObject):
         if net_gateway and nat_route:
             raise ServerRouteNatNetGateway('Cannot nat net gateway')
 
+        if not nat_route and nat_netmap:
+            raise ServerRouteNonNatNetmap('Cannot use netmap without nat')
+
         for route in self.routes:
             if route['network'] == network:
                 if not server_link:
                     route['nat'] = nat_route
                     route['nat_interface'] = nat_interface
+                    route['nat_netmap'] = nat_netmap
                 route['comment'] = comment
                 route['metric'] = metric
                 route['advertise'] = advertise
@@ -811,6 +824,7 @@ class Server(mongo.MongoObject):
                 'metric': metric,
                 'nat': nat_route,
                 'nat_interface': nat_interface,
+                'nat_netmap': nat_netmap,
                 'advertise': advertise,
                 'vpc_region': vpc_region,
                 'vpc_id': vpc_id,
@@ -826,6 +840,7 @@ class Server(mongo.MongoObject):
             'metric': metric,
             'nat': nat_route,
             'nat_interface': nat_interface,
+            'nat_netmap': nat_netmap,
             'advertise': advertise,
             'vpc_region': vpc_region,
             'vpc_id': vpc_id,
