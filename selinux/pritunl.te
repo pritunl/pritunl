@@ -108,6 +108,7 @@ allow pritunl_t pritunl_dns_exec_t:file { execute open read };
 allow pritunl_t self:fifo_file rw_fifo_file_perms;
 allow pritunl_t self:unix_stream_socket { create_stream_socket_perms connectto };
 
+domain_can_mmap_files(pritunl_t)
 domain_use_interactive_fds(pritunl_t)
 files_read_etc_files(pritunl_t)
 miscfiles_read_localization(pritunl_t)
