@@ -12,6 +12,7 @@ import threading
 import random
 import pyroute2.iproute
 import pyroute2.netlink
+import socket
 
 _used_interfaces = set()
 _tun_interfaces = collections.deque(['tun%s' % _x for _x in xrange(100)])
@@ -62,7 +63,7 @@ def get_interface_address(iface):
     except ValueError:
         return
 
-    addrs = addrs.get(netifaces.AF_INET)
+    addrs = addrs.get(socket.AF_INET)
     if not addrs:
         return
 
@@ -74,7 +75,7 @@ def get_interface_address6(iface):
     except ValueError:
         return
 
-    addrs = addrs.get(netifaces.AF_INET6)
+    addrs = addrs.get(socket.AF_INET6)
     if not addrs:
         return
 
@@ -136,7 +137,7 @@ def get_network_gateway(network):
 
 def get_default_interface():
     gateways = netifaces.gateways()
-    default_iface = gateways['default'].get(netifaces.AF_INET)
+    default_iface = gateways['default'].get(socket.AF_INET)
     if not default_iface:
         return
     return default_iface[1]
@@ -194,8 +195,8 @@ def get_interfaces():
     gateways = netifaces.gateways()
     interfaces = {}
 
-    default_gateway = gateways.get('default', {}).get(netifaces.AF_INET)
-    gateways = gateways.get(netifaces.AF_INET, []) + \
+    default_gateway = gateways.get('default', {}).get(socket.AF_INET)
+    gateways = gateways.get(socket.AF_INET, []) + \
         [default_gateway] if default_gateway else []
 
     for gateway in gateways:
@@ -207,7 +208,7 @@ def get_interfaces():
 
         ifaddrs = netifaces.ifaddresses(iface)
 
-        addrs = ifaddrs.get(netifaces.AF_INET)
+        addrs = ifaddrs.get(socket.AF_INET)
         if not addrs:
             continue
         addrs = addrs[0]
@@ -398,7 +399,7 @@ def add_route6(dst_addr, via_addr):
     try:
         _ip_route.route(
             'add',
-            family=pyroute2.iproute.AF_INET6,
+            family=socket.AF_INET6,
             dst=dst_addr,
             gateway=via_addr,
         )
@@ -407,7 +408,7 @@ def add_route6(dst_addr, via_addr):
             try:
                 _ip_route.route(
                     'del',
-                    family=pyroute2.iproute.AF_INET6,
+                    family=socket.AF_INET6,
                     dst=dst_addr,
                 )
             except pyroute2.netlink.exceptions.NetlinkError as err:
@@ -415,7 +416,7 @@ def add_route6(dst_addr, via_addr):
                     raise
             _ip_route.route(
                 'add',
-                family=pyroute2.iproute.AF_INET6,
+                family=socket.AF_INET6,
                 dst=dst_addr,
                 gateway=via_addr,
             )
@@ -432,7 +433,7 @@ def del_route6(dst_addr):
     try:
         _ip_route.route(
             'del',
-            family=pyroute2.iproute.AF_INET6,
+            family=socket.AF_INET6,
             dst=dst_addr,
         )
     except pyroute2.netlink.exceptions.NetlinkError as err:

@@ -1,6 +1,7 @@
 from pritunl import settings
 
 import logging
+import json
 
 class LogFormatter(logging.Formatter):
     def format(self, record):
@@ -43,8 +44,10 @@ class LogFormatter(logging.Formatter):
             if record.data:
                 width = len(max(record.data, key=len))
                 for key, val in record.data.items():
-                    formatted_record += '\n  %s = %r' % (
-                        key.ljust(width), val)
+                    formatted_record += '\n  %s = %s' % (
+                        key.ljust(width),
+                        json.dumps(val, default=lambda x: str(x)),
+                    )
 
             if stdout:
                 formatted_record += '\nProcess stdout:'

@@ -6,26 +6,32 @@ define([
   'models/linkHost',
   'models/linkHostUri',
   'models/linkHostConf',
-  'models/linkExclude',
+  'models/linkPeer',
+  'models/linkTransit',
   'views/alert',
   'views/modalAddLocRoute',
   'views/modalAddLocHost',
-  'views/modalAddLocExclude',
+  'views/modalAddLocPeer',
+  'views/modalAddLocTransit',
+  'views/modalDeleteLocTransit',
   'views/modalDeleteLocRoute',
   'views/modalModifyLocHost',
   'views/modalLocHostUri',
   'views/modalLocHostConf',
+  'views/modalLocHostUbntConf',
   'views/modalDeleteLocHost',
-  'views/modalDeleteLocExclude',
+  'views/modalDeleteLocPeer',
   'views/modalModifyLocation',
   'views/modalDeleteLocation',
   'text!templates/linkLocationsListItem.html'
 ], function($, _, Backbone, LinkRouteModel, LinkHostModel, LinkHostUriModel,
-    LinkHostConfModel, LinkExcludeModel, AlertView, ModalAddLocRouteView,
-    ModalAddLocHostView, ModalAddLocExcludeView, ModalDeleteLocRouteView,
-    ModalModifyLocHostView, ModalLocHostUriView, ModalLocHostConfView,
-    ModalDeleteLocHostView, ModalDeleteLocExcludeView, ModalModifyLocationView,
-    ModalDeleteLocationView, linkLocationsListItemTemplate) {
+    LinkHostConfModel, LinkPeerModel, LinkTransitModel, AlertView,
+    ModalAddLocRouteView, ModalAddLocHostView, ModalAddLocPeerView,
+    ModalAddLocTransitView, ModalDeleteLocTransitView,
+    ModalDeleteLocRouteView, ModalModifyLocHostView, ModalLocHostUriView,
+    ModalLocHostConfView, ModalLocHostUbntConfView, ModalDeleteLocHostView,
+    ModalDeleteLocPeerView, ModalModifyLocationView, ModalDeleteLocationView,
+    linkLocationsListItemTemplate) {
   'use strict';
   var LinkLocationsListItemView = Backbone.View.extend({
     className: 'link-location',
@@ -33,12 +39,15 @@ define([
     events: {
       'mousedown .location-add-route': 'onAddRoute',
       'mousedown .location-add-host': 'onAddHost',
-      'mousedown .location-add-exclude': 'onAddExclude',
+      'mousedown .location-add-peer': 'onAddPeer',
       'mousedown .link-remove-route': 'onRemoveRoute',
       'mousedown .link-remove-host': 'onRemoveHost',
-      'mousedown .link-remove-exclude': 'onRemoveExclude',
+      'mousedown .link-remove-peer': 'onRemovePeer',
+      'mousedown .link-add-transit': 'onAddTransit',
+      'mousedown .link-remove-transit': 'onRemoveTransit',
       'mousedown .link-uri-host': 'onHostUri',
       'mousedown .link-conf-host': 'onHostConf',
+      'mousedown .link-ubnt-conf-host': 'onHostUbntConf',
       'mousedown .host-name': 'onModifyHost',
       'mousedown .location-settings': 'onSettings',
       'mousedown .location-del': 'onDelete'
@@ -91,11 +100,11 @@ define([
       }.bind(this));
       this.addView(modal);
     },
-    onAddExclude: function() {
+    onAddPeer: function() {
       if (this.collection.length < 2) {
         var alertView = new AlertView({
           type: 'danger',
-          message: 'Two locations must be created before creating an exclude.',
+          message: 'Two locations must be created before creating an peer.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
@@ -103,7 +112,7 @@ define([
         return;
       }
 
-      var modal = new ModalAddLocExcludeView({
+      var modal = new ModalAddLocPeerView({
         location: this.model.get('id'),
         link: this.model.get('link_id'),
         locations: this.collection
@@ -111,7 +120,7 @@ define([
       this.listenToOnce(modal, 'applied', function() {
         var alertView = new AlertView({
           type: 'success',
-          message: 'Successfully added location exclude.',
+          message: 'Successfully added location peer.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
@@ -137,11 +146,12 @@ define([
       });
       this.addView(modal);
     },
-    onRemoveExclude: function(evt) {
-      var model = new LinkExcludeModel({
+    onRemovePeer: function(evt) {
+      var model = new LinkPeerModel({
         'id': $(evt.currentTarget).attr('data-id'),
         'link_id': this.model.get('link_id'),
-        'location_id': this.model.get('id')
+        'location_id': this.model.get('id'),
+        'name': $(evt.currentTarget).attr('data-name')
       });
 
       if (evt.shiftKey && evt.ctrlKey && evt.altKey) {
@@ -149,7 +159,33 @@ define([
         return;
       }
 
-      var modal = new ModalDeleteLocExcludeView({
+      var modal = new ModalDeleteLocPeerView({
+        model: model
+      });
+      this.addView(modal);
+    },
+    onAddTransit: function(evt) {
+      var model = new LinkTransitModel({
+        'link_id': this.model.get('link_id'),
+        'location_id': this.model.get('id'),
+        'transit_id': $(evt.currentTarget).attr('data-id'),
+        'name': $(evt.currentTarget).attr('data-name')
+      });
+
+      var modal = new ModalAddLocTransitView({
+        model: model
+      });
+      this.addView(modal);
+    },
+    onRemoveTransit: function(evt) {
+      var model = new LinkTransitModel({
+        'id': $(evt.currentTarget).attr('data-id'),
+        'link_id': this.model.get('link_id'),
+        'location_id': this.model.get('id'),
+        'name': $(evt.currentTarget).attr('data-name')
+      });
+
+      var modal = new ModalDeleteLocTransitView({
         model: model
       });
       this.addView(modal);
@@ -168,6 +204,15 @@ define([
         this.getHost($(evt.currentTarget).attr('data-id')));
 
       var modal = new ModalLocHostConfView({
+        model: model
+      });
+      this.addView(modal);
+    },
+    onHostUbntConf: function(evt) {
+      var model = new LinkHostConfModel(
+        this.getHost($(evt.currentTarget).attr('data-id')));
+
+      var modal = new ModalLocHostUbntConfView({
         model: model
       });
       this.addView(modal);

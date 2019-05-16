@@ -40,7 +40,7 @@ def verify_google(user_email):
     results = service.groups().list(userKey=user_email).execute()
 
     groups = []
-    for group in results['groups']:
+    for group in results.get('groups') or []:
         groups.append(group['name'].replace(' ', ''))
 
     return True, groups

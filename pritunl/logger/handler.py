@@ -34,7 +34,9 @@ class LogHandler(logging.Handler):
 
         if settings.conf.log_path:
             self.file_handler.emit(record)
-        log_queue.append(msg)
+
+        if not hasattr(record, 'type') or record.type != 'audit':
+            log_queue.append(msg)
 
         if not settings.local.quiet:
             print self.log_view.format_line(msg)

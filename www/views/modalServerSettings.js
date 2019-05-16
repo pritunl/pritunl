@@ -14,6 +14,7 @@ define([
     okText: 'Save',
     loadingMsg: 'Saving server...',
     errorMsg: 'Failed to saving server, server error occurred.',
+    enterOk: false,
     hasAdvanced: true,
     events: function() {
       return _.extend({
@@ -367,7 +368,6 @@ define([
       var multiDevice = this.getMultiDeviceSelect();
       var dnsServers = this.getDnsServers();
       var searchDomain = this.$('.search-domain input').val();
-      var oncHostname = this.$('.onc-hostname input').val();
       var interClient = this.getInterClientSelect();
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
@@ -379,6 +379,7 @@ define([
         this.$('.inactive-timeout input').val(), 10);
       var allowedDevices = this.$('.allowed-devices select').val();
       var maxClients = parseInt(this.$('.max-clients input').val(), 10);
+      var maxDevices = parseInt(this.$('.max-devices input').val(), 10);
       var replicaCount = parseInt(this.$('.replica-count input').val(), 10);
       var dnsMapping = this.getDnsMappingSelect();
       var debug = this.getDebugSelect();
@@ -396,7 +397,9 @@ define([
       var networkStart = this.$('.network-start input').val();
       var networkEnd = this.$('.network-end input').val();
       var groups = this.getGroups();
-      var policy = this.$('.policy textarea').val().trim() || null;
+      var preConnectMsg = this.$(
+        '.pre-connect-msg textarea').val().trim() || null;
+      var mssFix = this.$('.mss-fix input').val() || null;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -412,9 +415,6 @@ define([
       }
       if (!searchDomain) {
         searchDomain = null;
-      }
-      if (!oncHostname) {
-        oncHostname = null;
       }
       if (isNaN(replicaCount) || replicaCount === 0) {
         replicaCount = 1;
@@ -457,14 +457,15 @@ define([
         'link_ping_interval': linkPingInterval,
         'link_ping_timeout': linkPingTimeout,
         'inactive_timeout': inactiveTimeout,
-        'onc_hostname': oncHostname,
         'allowed_devices': allowedDevices,
         'max_clients': maxClients,
+        'max_devices': maxDevices,
         'replica_count': replicaCount,
         'vxlan': vxlan,
         'dns_mapping': dnsMapping,
         'debug': debug,
-        'policy': policy
+        'mss_fix': mssFix,
+        'pre_connect_msg': preConnectMsg
       };
 
       this.setLoading(this.loadingMsg);

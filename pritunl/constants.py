@@ -27,6 +27,7 @@ OFFLINE = 'offline'
 
 AVAILABLE = 'available'
 UNAVAILABLE = 'unavailable'
+ACTIVE_UNAVAILABLE = 'active_unavailable'
 ACTIVE = 'active'
 
 CONNECTED = 'connected'
@@ -45,6 +46,8 @@ SITE_TO_SITE = 'site_to_site'
 DIRECT = 'direct'
 DIRECT_SERVER = 'direct_server'
 DIRECT_CLIENT = 'direct_client'
+
+HOLD = 'hold'
 
 VERY_LOW = 0
 LOW = 1
@@ -107,6 +110,23 @@ VALID_CHARS = {
     'Q', 'R', 'S', 'T', 'U', 'V', 'W',
     'X', 'Y', 'Z', '0', '1', '2', '3',
     '4', '5', '6', '7', '8', '9', '=',
+}
+
+INVALID_NAMES = {
+    'nil',
+    'null',
+    'none',
+    'undefined',
+    'empty',
+    'true',
+    'false',
+    '1',
+    '0',
+    'blocked',
+    'disabled',
+    'invalid',
+    'inactive',
+    'error',
 }
 
 LETS_ENCRYPT_INTER = """
@@ -531,9 +551,15 @@ ALL = 'all'
 LOCAL_AUTH = 'local'
 DUO_AUTH = 'duo'
 YUBICO_AUTH = 'yubico'
+AZURE_AUTH = 'azure'
+AZURE_DUO_AUTH = 'azure_duo'
+AZURE_YUBICO_AUTH = 'azure_yubico'
 GOOGLE_AUTH = 'google'
 GOOGLE_DUO_AUTH = 'google_duo'
 GOOGLE_YUBICO_AUTH = 'google_yubico'
+AUTHZERO_AUTH = 'authzero'
+AUTHZERO_DUO_AUTH = 'authzero_duo'
+AUTHZERO_YUBICO_AUTH = 'authzero_yubico'
 SLACK_AUTH = 'slack'
 SLACK_DUO_AUTH = 'slack_duo'
 SLACK_YUBICO_AUTH = 'slack_yubico'
@@ -554,9 +580,15 @@ AUTH_TYPES = {
     LOCAL_AUTH,
     DUO_AUTH,
     YUBICO_AUTH,
+    AZURE_AUTH,
+    AZURE_DUO_AUTH,
+    AZURE_YUBICO_AUTH,
     GOOGLE_AUTH,
     GOOGLE_DUO_AUTH,
     GOOGLE_YUBICO_AUTH,
+    AUTHZERO_AUTH,
+    AUTHZERO_DUO_AUTH,
+    AUTHZERO_YUBICO_AUTH,
     SLACK_AUTH,
     SLACK_DUO_AUTH,
     SLACK_YUBICO_AUTH,
@@ -767,6 +799,9 @@ USERS_BACKGROUND_BUSY = 'users_background_busy'
 USERS_BACKGROUND_BUSY_MSG = 'Users are already being created in ' + \
     'background. Wait for task to complete before adding more users.'
 
+AUTH_TOO_MANY = 'auth_too_many'
+AUTH_TOO_MANY_MSG = 'Too many authentication attempts.'
+
 PIN_INVALID = 'pin_invalid'
 PIN_INVALID_MSG = 'Current pin is invalid.'
 
@@ -855,11 +890,15 @@ SERVER_ROUTE_VIRTUAL_NAT_MSG = 'Virtual network routes cannot use NAT.'
 SERVER_ROUTE_SERVER_LINK_NAT = 'server_route_server_link_nat'
 SERVER_ROUTE_SERVER_LINK_NAT_MSG = 'Server link routes cannot modify NAT.'
 
-SERVER_ROUTE_NETWORK_LINK_NAT = 'server_route_network_link_nat'
-SERVER_ROUTE_NETWORK_LINK_NAT_MSG = 'Network link routes cannot use NAT.'
+SERVER_ROUTE_NETWORK_LINK_GATEWAY = 'server_route_network_link_gateway'
+SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG = 'Network link routes cannot use ' + \
+    'net gateway.'
 
 SERVER_ROUTE_NET_GATEWAY_NAT = 'server_route_net_gateway_nat'
 SERVER_ROUTE_NET_GATEWAY_NAT_MSG = 'Net gateway routes cannot use NAT.'
+
+SERVER_ROUTE_NON_NAT_NETMAP = 'server_route_non_nat_netmap'
+SERVER_ROUTE_NON_NAT_NETMAP_MSG = 'Cannot use network mapping without NAT.'
 
 SERVER_LINK_COMMON_HOST = 'server_link_common_host'
 SERVER_LINK_COMMON_HOST_MSG = 'Linked servers cannot have a common host.'
@@ -934,6 +973,9 @@ ADMIN_USERNAME_EXISTS_MSG = 'Administrator username already exists.'
 REQUIRES_SUPER_USER = 'requires_super_user'
 REQUIRES_SUPER_USER_MSG = 'This administrator action can only be ' + \
     'performed by a super user.'
+
+CANNOT_DISABLE_AUTIDING = 'cannot_disable_autiding'
+CANNOT_DISABLE_AUTIDING_MSG = 'Auditing cannot be disabled from web console.'
 
 RANDOM_ONE = (
     'snowy',
@@ -1100,64 +1142,77 @@ remote-cert-tls server
 OVPN_ONC_CLIENT_CONF = """\
 {
   "Type": "UnencryptedConfiguration",
-  "NetworkConfigurations": [{
-    "GUID": "%s",
-    "Name": "%s",
-    "Type": "VPN",
-    "VPN": {
-      "Host": "%s",
-      "Type": "OpenVPN",
-      "OpenVPN": {
-        "AuthRetry": "interact",
-        "Auth": "%s",
-        "Cipher": "%s",
-        "IgnoreDefaultRoute": %s,
-        "ClientCertType": "Pattern",
-        "ClientCertPattern": {
-          "IssuerCARef": [
+  "NetworkConfigurations": [
 %s
-          ]
-        },
-        "CompLZO": "%s",
-        "Port": %s,
-        "Proto": "%s",
-        "PushPeerInfo": true,
-        "RenegSec": 2592000,
-        "ServerCARefs": [
+  ],
+  "Certificates": [
 %s
-        ],
-        "ServerPollTimeout": 4,%s
-        "RemoteCertTLS": "server",%s
-        "Verb": "2"
-      }
-    }
-  }],
-%s}
+  ]
+}
 """
+
+OVPN_ONC_NET_CONF = """\
+    {
+      "GUID": "%s",
+      "Name": "%s",
+      "Type": "VPN",
+      "VPN": {
+        "Host": "%s",
+        "Type": "OpenVPN",
+        "OpenVPN": {
+          "AuthRetry": "interact",
+          "Auth": "%s",
+          "Cipher": "%s",
+          "ClientCertType": "Ref",
+          "ClientCertRef": "%s",
+          "CompLZO": "%s",%s
+          "Port": %s,
+          "Proto": "%s",
+          "PushPeerInfo": true,
+          "RenegSec": 2592000,
+          "ServerCARefs": [
+%s
+          ],
+          "ServerPollTimeout": 4,%s
+          "RemoteCertTLS": "server",%s
+          "Verb": "2"
+        }
+      }
+    }"""
 
 OVPN_ONC_AUTH_NONE = """
-        "SaveCredentials": true,
-        "UserAuthenticationType": "Password",
-        "Username": "%s",
-        "Password": "chrome","""
+          "SaveCredentials": false,
+          "UserAuthenticationType": "Password",
+          "Username": "%s","""
 
 OVPN_ONC_AUTH_OTP = """
-        "SaveCredentials": false,
-        "UserAuthenticationType": "OTP",
-        "Username": "%s","""
+          "SaveCredentials": false,
+          "UserAuthenticationType": "OTP",
+          "Username": "%s","""
 
 OVPN_ONC_AUTH_PASS = """
-        "SaveCredentials": false,
-        "UserAuthenticationType": "Password",
-        "Username": "%s","""
+          "SaveCredentials": false,
+          "UserAuthenticationType": "Password",
+          "Username": "%s","""
+
+OVPN_ONC_AUTH_PASS_OTP = """
+          "SaveCredentials": false,
+          "UserAuthenticationType": "Password",
+          "Username": "%s","""
 
 OVPN_ONC_CA_CERT = """\
-  "Certificates": [{
-    "GUID": "%s",
-    "Type": "Authority",
-    "X509": "%s"
-  }]
-"""
+    {
+      "GUID": "%s",
+      "Type": "Authority",
+      "X509": "%s"
+    }"""
+
+OVPN_ONC_CLIENT_CERT = """\
+    {
+      "GUID": "%s",
+      "Type": "Client",
+      "PKCS12": "%s"
+    }"""
 
 OVPN_INLINE_LINK_CONF = """\
 client
@@ -1206,6 +1261,34 @@ conn %s
 	rightsubnet=%s
 	auto=start
 
+"""
+
+UBNT_CONF = """\
+set vpn ipsec auto-firewall-nat-exclude enable
+
+set vpn ipsec ike-group pritunl lifetime 10800
+set vpn ipsec ike-group pritunl key-exchange ikev2
+set vpn ipsec ike-group pritunl proposal 1 dh-group 19
+set vpn ipsec ike-group pritunl proposal 1 encryption aes128
+set vpn ipsec ike-group pritunl proposal 1 hash sha256
+
+set vpn ipsec esp-group pritunl lifetime 3600
+set vpn ipsec esp-group pritunl pfs dh-group19
+set vpn ipsec esp-group pritunl proposal 1 encryption aes128
+set vpn ipsec esp-group pritunl proposal 1 hash sha256
+"""
+
+UBNT_PEER = """
+set vpn ipsec site-to-site peer %s authentication mode pre-shared-secret
+set vpn ipsec site-to-site peer %s authentication pre-shared-secret %s
+set vpn ipsec site-to-site peer %s connection-type initiate
+set vpn ipsec site-to-site peer %s local-address any
+set vpn ipsec site-to-site peer %s ike-group pritunl
+"""
+
+UBNT_SUBNET = """set vpn ipsec site-to-site peer %s tunnel %d esp-group pritunl
+set vpn ipsec site-to-site peer %s tunnel %d local prefix %s
+set vpn ipsec site-to-site peer %s tunnel %d remote prefix %s
 """
 
 NDPPD_CONF = """\

@@ -7,6 +7,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
 from pritunl import event
+from pritunl import journal
 
 class Host(mongo.MongoObject):
     fields = {
@@ -17,6 +18,7 @@ class Host(mongo.MongoObject):
         'auto_instance_id',
         'status',
         'start_timestamp',
+        'version',
         'public_address',
         'public_address6',
         'auto_public_address',
@@ -94,17 +96,25 @@ class Host(mongo.MongoObject):
             self.public_address or self.auto_public_address
 
     @property
-    def aws_id(self):
-        return self.instance_id or self.auto_instance_id
+    def journal_data(self):
+        return {
+            'host_id': self.id,
+            'host_name': self.name,
+            'host_public_address': self.public_addr,
+            'host_public_address6': self.public_addr6,
+            'host_local_address': self.local_addr,
+            'host_local_address6': self.local_addr6,
+        }
 
     def dict(self):
         return {
             'id': self.id,
             'name': self.name,
             'hostname': self.hostname,
-            'instance_id': self.aws_id,
+            'instance_id': None,
             'status': self.status,
             'uptime': self.uptime,
+            'version': self.version,
             'user_count': self.user_count,
             'users_online': self.users_online,
             'local_networks': self.local_networks,
@@ -152,6 +162,13 @@ class Host(mongo.MongoObject):
 
                 usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
                     type=CERT_SERVER, resource_id=self.id)
+
+                journal.entry(
+                    journal.USER_CREATE,
+                    usr.journal_data,
+                    event_long='User created for host linking',
+                )
+
                 usr.audit_event('user_created',
                     'User created for host linking')
 

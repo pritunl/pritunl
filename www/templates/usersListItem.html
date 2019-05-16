@@ -1,6 +1,4 @@
 <%
-name = name + (email ? ' (' + email + ')' : '');
-
 if (name.length > 40) {
   name = name.substr(0, 40);
   if (name.substr(39, 1) === '.') {
@@ -32,8 +30,16 @@ if (name.length > 40) {
         class="title link"><%- network_links[i] %></span>
     <% } %>
   </div>
+  <div class="user-groups" data-toggle="tooltip" title="User groups">
+    <% for (var i in groups) { %>
+    <span class="fa fa-compass"></span><span
+      class="title group"><%- groups[i] %></span>
+    <% } %>
+  </div>
   <div class="sso-logos">
     <div class="saml-logo" data-toggle="tooltip" title="User authenticated with SAML" <%= bypass_secondary !== true && sso && sso.indexOf('saml') !== -1 && auth_type.indexOf('saml') !== -1 ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
+    <div class="azure-logo" data-toggle="tooltip" title="User is authenticating with Azure" <%= bypass_secondary !== true && sso && sso.indexOf('azure') !== -1 && auth_type.indexOf('azure') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="authzero-logo" data-toggle="tooltip" title="User is authenticating with Auth0" <%= bypass_secondary !== true && sso && sso.indexOf('authzero') !== -1 && auth_type.indexOf('authzero') !== -1 ? '' : 'style="display: none"' %>></div>
     <div class="google-logo" data-toggle="tooltip" title="User is authenticating with Google Apps" <%= bypass_secondary !== true && sso && sso.indexOf('google') !== -1 && auth_type.indexOf('google') !== -1 ? '' : 'style="display: none"' %>></div>
     <div class="slack-logo" data-toggle="tooltip" title="User is authenticating with Slack" <%= bypass_secondary !== true && sso && sso.indexOf('slack') !== -1 && auth_type.indexOf('slack') !== -1 ? '' : 'style="display: none"' %>></div>
     <div class="okta-logo" data-toggle="tooltip" title="User is authenticating with Okta" <%= bypass_secondary !== true && sso && sso.indexOf('okta') !== -1 && auth_type.indexOf('okta') !== -1 ? '' : 'style="display: none"' %>></div>

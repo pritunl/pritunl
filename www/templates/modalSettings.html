@@ -51,12 +51,18 @@
         <option value="saml_onelogin" <%= sso === 'saml_onelogin' ? 'selected' : '' %>>OneLogin</option>
         <option value="saml_onelogin_duo" <%= sso === 'saml_onelogin_duo' ? 'selected' : '' %>>OneLogin + Duo Security</option>
         <option value="saml_onelogin_yubico" <%= sso === 'saml_onelogin_yubico' ? 'selected' : '' %>>OneLogin + Yubico</option>
+        <option value="authzero" <%= sso === 'authzero' ? 'selected' : '' %>>Auth0</option>
+        <option value="authzero_duo" <%= sso === 'authzero_duo' ? 'selected' : '' %>>Auth0 + Duo Security</option>
+        <option value="authzero_yubico" <%= sso === 'authzero_yubico' ? 'selected' : '' %>>Auth0 + Yubico</option>
         <option value="slack" <%= sso === 'slack' ? 'selected' : '' %>>Slack</option>
         <option value="slack_duo" <%= sso === 'slack_duo' ? 'selected' : '' %>>Slack + Duo Security</option>
         <option value="slack_yubico" <%= sso === 'slack_yubico' ? 'selected' : '' %>>Slack + Yubico</option>
         <option value="google" <%= sso === 'google' ? 'selected' : '' %>>Google Apps</option>
         <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Apps + Duo Security</option>
         <option value="google_yubico" <%= sso === 'google_yubico' ? 'selected' : '' %>>Google Apps + Yubico</option>
+        <option value="azure" <%= sso === 'azure' ? 'selected' : '' %>>Azure</option>
+        <option value="azure_duo" <%= sso === 'azure_duo' ? 'selected' : '' %>>Azure + Duo Security</option>
+        <option value="azure_yubico" <%= sso === 'azure_yubico' ? 'selected' : '' %>>Azure + Yubico</option>
         <option value="saml" <%= sso === 'saml' ? 'selected' : '' %>>SAML</option>
         <option value="saml_duo" <%= sso === 'saml_duo' ? 'selected' : '' %>>SAML + Duo Security</option>
         <option value="saml_yubico" <%= sso === 'saml_yubico' ? 'selected' : '' %>>SAML + Yubico</option>
@@ -66,7 +72,7 @@
       </select>
     </div>
     <div class="sso-org form-group" <%= sso ? '' : 'style="display: none;"' %>>
-      <label>Single Sign-On Organization</label>
+      <label>Default Single Sign-On Organization</label>
       <select class="form-control">
         <% _.each(orgs, function(org) { %>
         <option value="<%- org.id %>" <%= (sso_org === org.id) ? 'selected' : '' %>><%- org.name %></option>
@@ -80,6 +86,14 @@
     <div class="sso-saml-cert form-group" <%= !sso || sso.indexOf('saml') === -1 ? 'style="display: none;"' : '' %>>
       <label>SAML Certificate</label><br>
       <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="The SAML X.509 Certificate" placeholder="Enter saml certificate"><%- sso_saml_cert %></textarea>
+    </div>
+    <div class="sso-azure-directory-id form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Azure Directory ID</label>
+      <input type="text" class="form-control" placeholder="Enter Azure directory ID" value="<%- sso_azure_directory_id || '' %>" data-toggle="tooltip" title="Azure Directory ID">
+    </div>
+    <div class="sso-authzero-domain form-group" <%= !sso || sso.indexOf('authzero') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Auth0 Sub-Domain</label>
+      <input type="text" class="form-control" placeholder="Enter Auth0 sub-domain" value="<%- sso_authzero_domain || '' %>" data-toggle="tooltip" title="Subdomain of Auth0 application. Enter subdomain portion only such as 'pritunl' for pritunl.auth0.com">
     </div>
     <div class="sso-google-key form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google JSON Private Key</label><br>
@@ -97,8 +111,14 @@
       <label>Yubico Client ID</label>
       <input type="text" class="form-control" placeholder="Enter client ID" value="<%- sso_yubico_client || '' %>">
     </div>
-    <div class="sso-client-cache toggle-form form-group" data-toggle="tooltip" title="Enable a two day single sign-on authentication cache using a token stored on the client. This will allow clients to reconnect without two-factor authentication. Works with Duo push, Okta push, OneLogin push, Duo passcodes and YubiKeys. Only supported by Pritunl client" <%= sso ? '' : 'style="display: none;"' %>>
-      <label>Enable Authentication Cache</label>
+    <div class="sso-cache toggle-form form-group" data-toggle="tooltip" title="Enable an 8 hour secondary authentication cache using client ID, IP address and MAC address. This will allow clients to reconnect without secondary authentication. Works with Duo push, Okta push, OneLogin push, Duo passcodes and YubiKeys. Supported by all OpenVPN clients">
+      <label>OpenVPN Authentication Cache</label>
+      <div class="selector <%= sso_cache ? 'selected' : '' %> no-select">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
+    <div class="sso-client-cache toggle-form form-group" data-toggle="tooltip" title="Enable a two day secondary authentication cache using a token stored on the client. This will allow clients to reconnect without secondary authentication. Works with Duo push, Okta push, OneLogin push, Duo passcodes and YubiKeys. Only supported by Pritunl client">
+      <label>Pritunl Authentication Cache</label>
       <div class="selector <%= sso_client_cache ? 'selected' : '' %> no-select">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
@@ -146,6 +166,7 @@
       <select class="form-control" data-toggle="tooltip" title="Cloud provider for integration">
         <option value="none" <%= cloud_provider === 'none' ? 'selected' : '' %>>None</option>
         <option value="aws" <%= cloud_provider === 'aws' ? 'selected' : '' %>>AWS</option>
+        <option value="oracle" <%= cloud_provider === 'oracle' ? 'selected' : '' %>>Oracle</option>
       </select>
     </div>
     <div class="sso-okta-app-id form-group" <%= !sso || sso.indexOf('okta') === -1 ? 'style="display: none;"' : '' %>>
@@ -172,6 +193,14 @@
       <label>Okta API Token</label>
       <input type="text" class="form-control" placeholder="Enter Okta API token" value="<%- sso_okta_token || '' %>" data-toggle="tooltip" title="Okta API token">
     </div>
+    <div class="sso-azure-app-id form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Azure Application ID</label>
+      <input type="text" class="form-control" placeholder="Enter Azure application ID" value="<%- sso_azure_app_id || '' %>" data-toggle="tooltip" title="Azure Application ID">
+    </div>
+    <div class="sso-azure-app-secret form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Azure Application Secret</label>
+      <input type="text" class="form-control" placeholder="Enter Azure application secret" value="<%- sso_azure_app_secret || '' %>" data-toggle="tooltip" title="Azure Application Secret">
+    </div>
     <div class="sso-match-google form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Apps Domain</label>
       <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
@@ -179,6 +208,14 @@
     <div class="sso-google-email form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Admin Email</label>
       <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google admin email" value="<%- sso_google_email || '' %>" data-toggle="tooltip" title="Optional, the email address of an administrator user in the Google G Suite to delegate API access to. This user will be used to get the groups of Google users. Only needed when providing the Google private key.">
+    </div>
+    <div class="sso-authzero-app-id form-group" <%= !sso || sso.indexOf('authzero') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Auth0 Client ID</label>
+      <input type="text" class="form-control" placeholder="Enter Auth0 client ID" value="<%- sso_authzero_app_id || '' %>" data-toggle="tooltip" title="Auth0 application client ID">
+    </div>
+    <div class="sso-authzero-app-secret form-group" <%= !sso || sso.indexOf('authzero') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Auth0 Client Secret</label>
+      <input type="text" class="form-control" placeholder="Enter Auth0 client secret" value="<%- sso_authzero_app_secret || '' %>" data-toggle="tooltip" title="Auth0 application client secret">
     </div>
     <div class="sso-match-slack form-group" <%= !sso || sso.indexOf('slack') === -1 ? 'style="display: none;"' : '' %>>
       <label>Slack Team</label>
@@ -205,17 +242,23 @@
         <option value="passcode" <%= sso_duo_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
       </select>
     </div>
-    <div class="sso-onelogin-push toggle-form form-group" data-toggle="tooltip" title="Enable OneLogin Push for connection authentication when it is available" <%= (sso === 'saml_onelogin' || sso === 'saml_onelogin_yubico') ? '' : 'style="display: none;"' %>>
-      <label>Enable OneLogin Push</label>
-      <div class="selector <%= sso_onelogin_push ? 'selected' : '' %> no-select">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
+    <div class="sso-onelogin-mode form-group" <%= sso === 'saml_onelogin' ? '' : 'style="display: none;"' %>>
+      <label>OneLogin Secondary Factor</label>
+      <select class="form-control" data-toggle="tooltip" title="Secondary factor for OneLogin users. Push when available will skip authentication for users who do not have push configured.">
+        <option value="" <%= !sso_onelogin_mode ? 'selected' : '' %>>Disabled</option>
+        <option value="passcode" <%= sso_onelogin_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
+        <option value="push" <%= sso_onelogin_mode === 'push' ? 'selected' : '' %>>Push</option>
+        <option value="push_none" <%= sso_onelogin_mode === 'push_none' ? 'selected' : '' %>>Push when available</option>
+      </select>
     </div>
-    <div class="sso-okta-push toggle-form form-group" data-toggle="tooltip" title="Enable Okta Push for connection authentication when it is available" <%= (sso === 'saml_okta' || sso === 'saml_okta_yubico') ? '' : 'style="display: none;"' %>>
-      <label>Enable Okta Push</label>
-      <div class="selector <%= sso_okta_push ? 'selected' : '' %> no-select">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
+    <div class="sso-okta-mode form-group" <%= sso === 'saml_okta' ? '' : 'style="display: none;"' %>>
+      <label>Okta Secondary Factor</label>
+      <select class="form-control" data-toggle="tooltip" title="Secondary factor for Okta users. Push when available will skip authentication for users who do not have push configured.">
+        <option value="" <%= !sso_okta_mode ? 'selected' : '' %>>Disabled</option>
+        <option value="passcode" <%= sso_okta_mode === 'passcode' ? 'selected' : '' %>>Passcode</option>
+        <option value="push" <%= sso_okta_mode === 'push' ? 'selected' : '' %>>Push</option>
+        <option value="push_none" <%= sso_okta_mode === 'push_none' ? 'selected' : '' %>>Push when available</option>
+      </select>
     </div>
     <div class="sso-yubico-secret form-group">
       <label>Yubico Secret Key</label>
@@ -381,6 +424,20 @@
       <input type="text" class="form-control" placeholder="Enter secret key" data-toggle="tooltip" title="Enter secret key or 'role' to use the instance IAM role" value="<%- sa_east_1_secret_key || '' %>">
     </div>
   </div>
+</div>
+<div class="oracle-settings layout-horizontal" <%= cloud_provider === 'oracle' ? '' : 'style="display: none;"' %>>
+<div class="settings-left layout-flex left">
+  <div class="oracle-user-ocid form-group">
+    <label>Oracle User OCID</label>
+    <input type="text" class="form-control" placeholder="Enter user OCID" data-toggle="tooltip" title="Enter the OCID of the Oracle Cloud user that is associated with the public key" value="<%- oracle_user_ocid || '' %>">
+  </div>
+</div>
+<div class="settings-right right">
+  <div class="oracle-public-key form-group">
+    <label>Oracle API Public Key</label><br>
+    <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="Generated public key for Oracle API. Copy this public key to the user API keys in the Oracle Cloud console. Clear the input field to generate a new key." ><%- oracle_public_key %></textarea>
+  </div>
+</div>
 </div>
 <div class="layout-horizontal">
   <div class="settings-left layout-flex left advanced">

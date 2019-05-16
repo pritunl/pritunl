@@ -17,6 +17,7 @@ def logs_get():
     log_view = logger.LogView()
     return utils.jsonify({
         'output': log_view.get_log_lines(
+            natural=True,
             formatted=False,
             reverse=True,
         ).split('\n'),

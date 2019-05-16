@@ -11,6 +11,7 @@ define([
       'instance_id': null,
       'status': null,
       'uptime': null,
+      'version': null,
       'user_count': null,
       'users_online': null,
       'public_address': null,

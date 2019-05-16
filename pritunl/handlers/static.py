@@ -87,6 +87,9 @@ def login_static_get():
 
     body_class = ''
 
+    if auth.has_default_password():
+        body_class += 'default-pass '
+
     if settings.local.sub_active:
         if settings.app.theme == 'dark':
             body_class += 'dark '
@@ -101,8 +104,12 @@ def login_static_get():
                 body_class += 'sso-okta '
             elif SAML_ONELOGIN_AUTH in settings.app.sso:
                 body_class += 'sso-onelogin '
+            elif AZURE_AUTH in settings.app.sso:
+                body_class += 'sso-azure '
             elif GOOGLE_AUTH in settings.app.sso:
                 body_class += 'sso-google '
+            elif AUTHZERO_AUTH in settings.app.sso:
+                body_class += 'sso-authzero '
             elif SLACK_AUTH in settings.app.sso:
                 body_class += 'sso-slack '
             elif settings.app.sso == DUO_AUTH:

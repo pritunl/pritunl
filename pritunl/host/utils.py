@@ -117,6 +117,7 @@ def init():
     except NotFound:
         pass
 
+    settings.local.host.version = settings.local.version
     settings.local.host.status = ONLINE
     settings.local.host.users_online = 0
     settings.local.host.start_timestamp = utils.now()

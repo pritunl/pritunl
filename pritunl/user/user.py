@@ -51,7 +51,7 @@ class User(mongo.MongoObject):
         'port_forwarding',
     }
     fields_default = {
-        'name': 'undefined',
+        'name': '',
         'disabled': False,
         'type': CERT_CLIENT,
         'auth_type': LOCAL_AUTH,
@@ -62,7 +62,8 @@ class User(mongo.MongoObject):
     def __init__(self, org, name=None, email=None, pin=None, type=None,
             groups=None, auth_type=None, yubico_id=None, disabled=None,
             resource_id=None, bypass_secondary=None, client_to_client=None,
-            dns_servers=None, dns_suffix=None, port_forwarding=None, **kwargs):
+            dns_servers=None, dns_suffix=None, port_forwarding=None,
+            **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if org:
@@ -123,15 +124,46 @@ class User(mongo.MongoObject):
     @property
     def has_duo_passcode(self):
         return settings.app.sso and self.auth_type and \
-            DUO_AUTH in self.auth_type and \
-            DUO_AUTH in settings.app.sso and \
-            settings.app.sso_duo_mode == 'passcode'
+           DUO_AUTH in self.auth_type and \
+           DUO_AUTH in settings.app.sso and \
+           settings.app.sso_duo_mode == 'passcode'
+
+    @property
+    def has_onelogin_passcode(self):
+        return settings.app.sso and self.auth_type and \
+           SAML_ONELOGIN_AUTH in self.auth_type and \
+           SAML_ONELOGIN_AUTH == settings.app.sso and \
+           'passcode' in utils.get_onelogin_mode()
+
+    @property
+    def has_okta_passcode(self):
+        return settings.app.sso and self.auth_type and \
+           SAML_OKTA_AUTH in self.auth_type and \
+           SAML_OKTA_AUTH == settings.app.sso and \
+           'passcode' in utils.get_okta_mode()
 
     @property
     def has_yubikey(self):
         return settings.app.sso and self.auth_type and \
             YUBICO_AUTH in self.auth_type and \
             YUBICO_AUTH in settings.app.sso
+
+    @property
+    def journal_data(self):
+        try:
+            data = self.org.journal_data
+        except:
+            data = {}
+
+        data.update({
+            'user_id': self.id,
+            'user_name': self.name,
+            'user_email': self.email,
+            'user_type': self.type,
+            'user_auth_type': self.auth_type,
+        })
+
+        return data
 
     def dict(self):
         return {
@@ -202,8 +234,10 @@ class User(mongo.MongoObject):
             self.org.queue_com.wait_status()
 
             if self.type != CERT_CA:
-                self.org.write_file('ca_certificate', ca_cert_path, chmod=0600)
-                self.org.write_file('ca_private_key', ca_key_path, chmod=0600)
+                self.org.write_file(
+                    'ca_certificate', ca_cert_path, chmod=0600)
+                self.org.write_file(
+                    'ca_private_key', ca_key_path, chmod=0600)
                 self.generate_otp_secret()
 
             try:
@@ -212,11 +246,13 @@ class User(mongo.MongoObject):
                     '-config', ssl_conf_path,
                     '-out', reqs_path,
                     '-keyout', key_path,
-                    '-reqexts', '%s_req_ext' % self.type.replace('_pool', ''),
+                    '-reqexts', '%s_req_ext' % self.type.replace(
+                        '_pool', ''),
                 ]
                 self.org.queue_com.popen(args)
             except (OSError, ValueError):
-                logger.exception('Failed to create user cert requests', 'user',
+                logger.exception(
+                    'Failed to create user cert requests', 'user',
                     org_id=self.org.id,
                     user_id=self.id,
                 )
@@ -309,11 +345,130 @@ class User(mongo.MongoObject):
                         settings.app.license,
                     ))
 
-                if resp.status_code == 200:
-                    return True
+                if resp.status_code != 200:
+                    logger.error('Google auth check request error', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                        status_code=resp.status_code,
+                        content=resp.content,
+                    )
+                    return False
+
+                valid, google_groups = sso.verify_google(self.email)
+                if not valid:
+                    logger.error('Google auth check failed', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                    )
+                    return False
+
+                if settings.app.sso_google_mode == 'groups':
+                    cur_groups = set(self.groups)
+                    new_groups = set(google_groups)
+
+                    if cur_groups != new_groups:
+                        self.groups = list(new_groups)
+                        self.commit('groups')
+
+                return True
             except:
                 logger.exception('Google auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
+                )
+            return False
+        elif AZURE_AUTH in self.auth_type and AZURE_AUTH in sso_mode:
+            if settings.user.skip_remote_sso_check:
+                return True
+
+            try:
+                resp = requests.get(auth_server +
+                    ('/update/azure?user=%s&license=%s&' +
+                    'directory_id=%s&app_id=%s&app_secret=%s') % (
+                        urllib.quote(self.name),
+                        settings.app.license,
+                        urllib.quote(settings.app.sso_azure_directory_id),
+                        urllib.quote(settings.app.sso_azure_app_id),
+                        urllib.quote(settings.app.sso_azure_app_secret),
+                ))
+
+                if resp.status_code != 200:
+                    logger.error('Azure auth check request error', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                        status_code=resp.status_code,
+                        content=resp.content,
+                    )
+                    return False
+
+                valid, azure_groups = sso.verify_azure(self.name)
+                if not valid:
+                    logger.error('Azure auth check failed', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                    )
+                    return False
+
+                if settings.app.sso_azure_mode == 'groups':
+                    cur_groups = set(self.groups)
+                    new_groups = set(azure_groups)
+
+                    if cur_groups != new_groups:
+                        self.groups = list(new_groups)
+                        self.commit('groups')
+
+                return True
+            except:
+                logger.exception('Azure auth check error', 'user',
+                    user_id=self.id,
+                    user_name=self.name,
+                )
+            return False
+        elif AUTHZERO_AUTH in self.auth_type and AUTHZERO_AUTH in sso_mode:
+            if settings.user.skip_remote_sso_check:
+                return True
+
+            try:
+                resp = requests.get(auth_server +
+                    ('/update/authzero?user=%s&license=%s&' +
+                     'app_domain=%s&app_id=%s&app_secret=%s') % (
+                        urllib.quote(self.name),
+                        settings.app.license,
+                        urllib.quote(settings.app.sso_authzero_domain),
+                        urllib.quote(settings.app.sso_authzero_app_id),
+                        urllib.quote(settings.app.sso_authzero_app_secret),
+                ))
+
+                if resp.status_code != 200:
+                    logger.error('Auth0 auth check request error', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                        status_code=resp.status_code,
+                        content=resp.content,
+                    )
+                    return False
+
+                valid, authzero_groups = sso.verify_authzero(self.name)
+                if not valid:
+                    logger.error('Auth0 auth check failed', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                    )
+                    return False
+
+                if settings.app.sso_authzero_mode == 'groups':
+                    cur_groups = set(self.groups)
+                    new_groups = set(authzero_groups)
+
+                    if cur_groups != new_groups:
+                        self.groups = list(new_groups)
+                        self.commit('groups')
+
+                return True
+            except:
+                logger.exception('Auth0 auth check error', 'user',
+                    user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
@@ -331,11 +486,20 @@ class User(mongo.MongoObject):
                         settings.app.license,
                     ))
 
-                if resp.status_code == 200:
-                    return True
+                if resp.status_code != 200:
+                    logger.error('Slack auth check request error', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                        status_code=resp.status_code,
+                        content=resp.content,
+                    )
+                    return False
+
+                return True
             except:
                 logger.exception('Slack auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif SAML_ONELOGIN_AUTH in self.auth_type and \
@@ -348,6 +512,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('OneLogin auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif SAML_OKTA_AUTH in self.auth_type and \
@@ -360,6 +525,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('Okta auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in sso_mode:
@@ -368,6 +534,7 @@ class User(mongo.MongoObject):
             except:
                 logger.exception('Radius auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
         elif PLUGIN_AUTH in self.auth_type:
@@ -376,10 +543,11 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                     password=password,
                     remote_ip=remote_ip,
-                )[0]
+                )[1]
             except:
                 logger.exception('Plugin auth check error', 'user',
                     user_id=self.id,
+                    user_name=self.name,
                 )
             return False
 
@@ -455,6 +623,10 @@ class User(mongo.MongoObject):
 
         if self.has_duo_passcode:
             password_mode = 'duo_otp'
+        elif self.has_onelogin_passcode:
+            password_mode = 'onelogin_otp'
+        elif self.has_okta_passcode:
+            password_mode = 'okta_otp'
         elif self.has_yubikey:
             password_mode = 'yubikey'
         elif svr.otp_auth:
@@ -479,7 +651,9 @@ class User(mongo.MongoObject):
         return bool(settings.app.sso_client_cache)
 
     def has_passcode(self, svr):
-        return bool(self.has_yubikey or self.has_duo_passcode or svr.otp_auth)
+        return bool(self.has_yubikey or self.has_duo_passcode or
+            self.has_onelogin_passcode or self.has_okta_passcode or
+            svr.otp_auth)
 
     def has_password(self, svr):
         return bool(self._get_password_mode(svr))
@@ -488,22 +662,28 @@ class User(mongo.MongoObject):
         return self.pin and settings.user.pin_mode != PIN_DISABLED
 
     def get_push_type(self):
+        onelogin_mode = utils.get_onelogin_mode()
+        okta_mode = utils.get_okta_mode()
+
         if settings.app.sso and DUO_AUTH in self.auth_type and \
-                DUO_AUTH in settings.app.sso and \
-                settings.app.sso_duo_mode != 'passcode':
-            return DUO_AUTH
+                DUO_AUTH in settings.app.sso:
+            if settings.app.sso_duo_mode != 'passcode':
+                return DUO_AUTH
+            return
         elif settings.app.sso and \
                 SAML_ONELOGIN_AUTH in self.auth_type and \
                 SAML_ONELOGIN_AUTH in settings.app.sso and \
-                settings.app.sso_onelogin_push:
+                'push' in onelogin_mode:
             return SAML_ONELOGIN_AUTH
         elif settings.app.sso and \
                 SAML_OKTA_AUTH in self.auth_type and \
                 SAML_OKTA_AUTH in settings.app.sso and \
-                settings.app.sso_okta_push:
+                'push' in okta_mode:
             return SAML_OKTA_AUTH
 
     def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
+        public_key, _ = svr.get_auth_key()
+
         data = {
             'version': CLIENT_CONF_VER,
             'user': self.name,
@@ -518,15 +698,25 @@ class User(mongo.MongoObject):
             'push_auth': True if self.get_push_type() else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
             'disable_reconnect': not settings.user.reconnect,
-            'token': self._get_token_mode(),
             'token_ttl': settings.app.sso_client_cache_timeout,
         }
+
+        if settings.user.password_encryption:
+            data['token'] = self._get_token_mode()
+            data['server_public_key'] = public_key.splitlines()
+        else:
+            data['token'] = False
+
+        if svr.pre_connect_msg:
+            data['pre_connect_msg'] = svr.pre_connect_msg
 
         if include_sync_keys:
             data['sync_token'] = self.sync_token
             data['sync_secret'] = self.sync_secret
 
-        return '#' + json.dumps(data, indent=1).replace('\n', '\n#')
+        return "#" + json.dumps(
+            data, indent=1, separators=(",", ": ")
+        ).replace("\n", "\n#")
 
     def _generate_conf(self, svr, include_user_cert=True):
         if not self.sync_token or not self.sync_secret:
@@ -557,6 +747,59 @@ class User(mongo.MongoObject):
         conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames])
         conf_hash.update(ca_certificate)
         conf_hash.update(self._get_key_info_str(svr, None, False))
+
+        plugin_config = ''
+        if settings.local.sub_plan and \
+                'enterprise' in settings.local.sub_plan:
+            returns = plugins.caller(
+                'user_config',
+                host_id=settings.local.host_id,
+                host_name=settings.local.host.name,
+                org_id=self.org_id,
+                user_id=self.id,
+                user_name=self.name,
+                server_id=svr.id,
+                server_name=svr.name,
+                server_port=svr.port,
+                server_protocol=svr.protocol,
+                server_ipv6=svr.ipv6,
+                server_ipv6_firewall=svr.ipv6_firewall,
+                server_network=svr.network,
+                server_network6=svr.network6,
+                server_network_mode=svr.network_mode,
+                server_network_start=svr.network_start,
+                server_network_stop=svr.network_end,
+                server_restrict_routes=svr.restrict_routes,
+                server_bind_address=svr.bind_address,
+                server_onc_hostname=None,
+                server_dh_param_bits=svr.dh_param_bits,
+                server_multi_device=svr.multi_device,
+                server_dns_servers=svr.dns_servers,
+                server_search_domain=svr.search_domain,
+                server_otp_auth=svr.otp_auth,
+                server_cipher=svr.cipher,
+                server_hash=svr.hash,
+                server_inter_client=svr.inter_client,
+                server_ping_interval=svr.ping_interval,
+                server_ping_timeout=svr.ping_timeout,
+                server_link_ping_interval=svr.link_ping_interval,
+                server_link_ping_timeout=svr.link_ping_timeout,
+                server_allowed_devices=svr.allowed_devices,
+                server_max_clients=svr.max_clients,
+                server_replica_count=svr.replica_count,
+                server_dns_mapping=svr.dns_mapping,
+                server_debug=svr.debug,
+            )
+
+            if returns:
+                for return_val in returns:
+                    if not return_val:
+                        continue
+
+                    val = return_val.strip()
+                    conf_hash.update(val)
+                    plugin_config += val + '\n'
+
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
@@ -586,6 +829,7 @@ class User(mongo.MongoObject):
             client_conf += 'key-direction 1\n'
 
         client_conf += JUMBO_FRAMES[svr.jumbo_frames]
+        client_conf += plugin_config
         client_conf += '<ca>\n%s\n</ca>\n' % ca_certificate
         if include_user_cert:
             if svr.tls_auth:
@@ -597,24 +841,22 @@ class User(mongo.MongoObject):
 
         return file_name, client_conf, conf_hash
 
-    def _generate_onc(self, svr):
+    def _generate_onc(self, svr, user_cert_id):
         if not svr.primary_organization or \
                 not svr.primary_user:
             svr.create_primary_user()
 
-        file_name = '%s_%s_%s.onc' % (
-            self.org.name, self.name, svr.name)
-
         conf_hash = hashlib.md5()
+        conf_hash.update(str(svr.id))
         conf_hash.update(str(self.org_id))
         conf_hash.update(str(self.id))
         conf_hash = '{%s}' % conf_hash.hexdigest()
 
-        host, port = svr.get_onc_host()
-        if not host:
+        hosts = svr.get_hosts()
+        if not hosts:
             return None, None
 
-        ca_certs = svr.ca_certificate_list
+        ca_certs = svr.ca_certificate_x509
 
         tls_auth = ''
         if svr.tls_auth:
@@ -622,61 +864,69 @@ class User(mongo.MongoObject):
                 if line.startswith('#'):
                     continue
                 tls_auth += line + '\\n'
-            tls_auth = '\n        "TLSAuthContents": "%s",' % tls_auth
-            tls_auth = '\n        "KeyDirection": "1",' + tls_auth
+            tls_auth = '\n          "TLSAuthContents": "%s",' % tls_auth
+            tls_auth = '\n          "KeyDirection": "1",' + tls_auth
 
-        certs = ""
+        onc_certs = {}
         cert_ids = []
-
         for cert in ca_certs:
             cert_id = '{%s}' % hashlib.md5(cert).hexdigest()
+            onc_certs[cert_id] = cert
             cert_ids.append(cert_id)
-            certs += OVPN_ONC_CA_CERT % (
-                cert_id,
-                cert,
-            )
-
-        client_ref = ''
-        for cert_id in cert_ids:
-            client_ref += '            "%s",\n' % cert_id
-        client_ref = client_ref[:-2]
 
         server_ref = ''
         for cert_id in cert_ids:
-            server_ref += '          "%s",\n' % cert_id
+            server_ref += '            "%s",\n' % cert_id
         server_ref = server_ref[:-2]
 
+        other = ''
+        if not svr.is_route_all():
+            other = '\n          "IgnoreDefaultRoute": true,'
+
         password_mode = self._get_password_mode(svr)
-        if password_mode == 'otp':
-            auth = OVPN_ONC_AUTH_OTP % self.id
-        elif password_mode:
-            auth = OVPN_ONC_AUTH_PASS % self.id
+        if not password_mode:
+            other += OVPN_ONC_AUTH_NONE % self.id
         else:
-            auth = OVPN_ONC_AUTH_NONE % self.id
+            has_otp = 'otp' in password_mode or 'yubikey' in password_mode
+            has_pass = 'password' in password_mode or 'pin' in password_mode
+            if has_otp and has_pass:
+                other += OVPN_ONC_AUTH_PASS_OTP % self.id
+            elif has_otp:
+                other += OVPN_ONC_AUTH_OTP % self.id
+            else:
+                other += OVPN_ONC_AUTH_PASS % self.id
 
-        if svr.is_route_all():
-            ignore_default = 'true'
-        else:
-            ignore_default = 'false'
+        primary_host = None
+        primary_port = None
+        extra_hosts = ''
+        for host, port in hosts:
+            if primary_host is None:
+                primary_host = host
+                primary_port = port
+            else:
+                extra_hosts += '            "%s:%s",\n' % (host, port)
+        extra_hosts = extra_hosts[:-2]
+        if extra_hosts:
+            extra_hosts = '\n          "ExtraHosts": [\n%s\n        ],' % \
+                extra_hosts
 
-        onc_conf = OVPN_ONC_CLIENT_CONF % (
+        onc_net = OVPN_ONC_NET_CONF % (
             conf_hash,
             '%s - %s (%s)' % (self.name, self.org.name, svr.name),
-            host,
+            primary_host,
             HASHES[svr.hash],
             ONC_CIPHERS[svr.cipher],
-            ignore_default,
-            client_ref,
+            user_cert_id,
             'adaptive' if svr.lzo_compression == ADAPTIVE else 'false',
-            port,
+            extra_hosts,
+            primary_port,
             svr.protocol,
             server_ref,
             tls_auth,
-            auth,
-            certs,
+            other,
         )
 
-        return file_name, onc_conf
+        return onc_net, onc_certs
 
     def iter_servers(self, fields=None):
         for svr in self.org.iter_servers(fields=fields):
@@ -745,65 +995,76 @@ class User(mongo.MongoObject):
 
         return key_archive
 
-    def build_onc_archive(self):
+    def build_onc(self):
         temp_path = utils.get_temp_path()
-        key_archive_path = os.path.join(temp_path, '%s.zip' % self.id)
 
         try:
             os.makedirs(temp_path)
-            zip_file = zipfile.ZipFile(key_archive_path, 'w')
-            try:
-                user_cert_path = os.path.join(temp_path, '%s.crt' % self.id)
-                user_key_path = os.path.join(temp_path, '%s.key' % self.id)
-                user_p12_path = os.path.join(temp_path, '%s.p12' % self.id)
 
-                with open(user_cert_path, 'w') as user_cert:
-                    user_cert.write(self.certificate)
+            user_cert_path = os.path.join(temp_path, '%s.crt' % self.id)
+            user_key_path = os.path.join(temp_path, '%s.key' % self.id)
+            user_p12_path = os.path.join(temp_path, '%s.p12' % self.id)
 
-                with open(user_key_path, 'w') as user_key:
-                    os.chmod(user_key_path, 0600)
-                    user_key.write(self.private_key)
+            with open(user_cert_path, 'w') as user_cert:
+                user_cert.write(self.certificate)
 
-                utils.check_output_logged([
-                    'openssl',
-                    'pkcs12',
-                    '-export',
-                    '-nodes',
-                    '-password', 'pass:',
-                    '-inkey', user_key_path,
-                    '-in', user_cert_path,
-                    '-out', user_p12_path,
-                ])
+            with open(user_key_path, 'w') as user_key:
+                os.chmod(user_key_path, 0600)
+                user_key.write(self.private_key)
 
-                zip_file.write(user_p12_path, arcname='%s.p12' % self.name)
+            utils.check_output_logged([
+                'openssl',
+                'pkcs12',
+                '-export',
+                '-nodes',
+                '-password', 'pass:',
+                '-inkey', user_key_path,
+                '-in', user_cert_path,
+                '-out', user_p12_path,
+            ])
 
-                os.remove(user_cert_path)
-                os.remove(user_key_path)
-                os.remove(user_p12_path)
+            with open(user_p12_path, 'r') as user_key_p12:
+                user_key_base64 = base64.b64encode(user_key_p12.read())
+                user_cert_id = '{%s}' % hashlib.md5(
+                    user_key_base64).hexdigest()
 
-                for svr in self.iter_servers():
-                    server_conf_path = os.path.join(temp_path,
-                        '%s_%s.onc' % (self.id, svr.id))
-                    conf_name, client_conf = self._generate_onc(svr)
-                    if not client_conf:
-                        continue
+            os.remove(user_cert_path)
+            os.remove(user_key_path)
+            os.remove(user_p12_path)
 
-                    with open(server_conf_path, 'w') as ovpn_conf:
-                        ovpn_conf.write(client_conf)
-                    zip_file.write(server_conf_path, arcname=conf_name)
-                    os.remove(server_conf_path)
-            finally:
-                zip_file.close()
+            onc_nets = ''
+            onc_certs_store = {}
 
-            with open(key_archive_path, 'r') as archive_file:
-                key_archive = archive_file.read()
+            for svr in self.iter_servers():
+                onc_net, onc_certs = self._generate_onc(
+                    svr, user_cert_id)
+                if not onc_net:
+                    continue
+                onc_certs_store.update(onc_certs)
+
+                onc_nets += onc_net + ',\n'
+            onc_nets = onc_nets[:-2]
+
+            if onc_nets == '':
+                return None
+
+            onc_certs = ''
+            for cert_id, cert in onc_certs_store.items():
+                onc_certs += OVPN_ONC_CA_CERT % (cert_id, cert) + ',\n'
+            onc_certs += OVPN_ONC_CLIENT_CERT % (
+                user_cert_id, user_key_base64)
+
+            onc_conf = OVPN_ONC_CLIENT_CONF % (onc_nets, onc_certs)
         finally:
             utils.rmtree(temp_path)
 
-        return key_archive
+        return onc_conf
 
     def build_key_conf(self, server_id, include_user_cert=True):
         svr = self.org.get_by_id(server_id)
+        if not svr:
+            raise NotFound('Server does not exists')
+
         if not svr.check_groups(self.groups):
             raise UserNotInServerGroups('User not in server groups')
 
@@ -819,7 +1080,7 @@ class User(mongo.MongoObject):
     def sync_conf(self, server_id, conf_hash):
         try:
             key = self.build_key_conf(server_id, False)
-        except UserNotInServerGroups:
+        except (NotFound, UserNotInServerGroups):
             return
 
         if key['hash'] != conf_hash:
@@ -921,15 +1182,21 @@ class User(mongo.MongoObject):
 
         return links
 
-    def audit_event(self, event_type, event_msg, remote_addr=None):
+    def audit_event(self, event_type, event_msg, remote_addr=None, **kwargs):
         if settings.app.auditing != ALL:
             return
 
         timestamp = utils.now()
 
+        org_name = None
+        if self.org:
+            org_name = self.org.name
+
         self.audit_collection.insert({
             'user_id': self.id,
+            'user_name': self.name,
             'org_id': self.org_id,
+            'org_name': org_name,
             'timestamp': timestamp,
             'type': event_type,
             'remote_addr': remote_addr,
@@ -941,22 +1208,28 @@ class User(mongo.MongoObject):
             host_id=settings.local.host_id,
             host_name=settings.local.host.name,
             user_id=self.id,
+            user_name=self.name,
             org_id=self.org_id,
+            org_name=org_name,
             timestamp=timestamp,
             type=event_type,
             remote_addr=remote_addr,
             message=event_msg,
+            **kwargs
         )
 
         logger.info(
             'Audit event',
             'audit',
             user_id=self.id,
+            user_name=self.name,
             org_id=self.org_id,
+            org_name=org_name,
             timestamp=timestamp,
             type=event_type,
             remote_addr=remote_addr,
             message=event_msg,
+            **kwargs
         )
 
     def get_audit_events(self):

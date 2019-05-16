@@ -3,7 +3,7 @@
   <h2 class="link-location-title title" <%= link_type === 'direct' ? '' : 'style="display: none"' %>><%- name %><span class="location-id title">(<%- id %>)</span></h2>
 
   <button type="button" class="location-del btn btn-danger btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Delete Location</button>
-  <button type="button" class="location-add-exclude btn btn-primary btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Add Exclude</button>
+  <button type="button" class="location-add-peer btn btn-primary btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Add Peer</button>
   <button type="button" class="location-add-host btn btn-primary btn-xs no-select">Add Host</button>
   <button type="button" class="location-add-route btn btn-primary btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Add Route</button>
 </div>
@@ -35,13 +35,15 @@
   <div class="link-host">
     <div class="name-container">
       <span class="name-icon glyphicon glyphicon-dashboard"></span>
-      <a data-id="<%- host.id %>" class="host-name title" data-toggle="tooltip" title="Click to modify this host"><%- host.name %><%- host.public_address ? ' (' + host.public_address + ')' : '' %><%- !host.static && host.version ? ' v' + host.version : '' %></a>
+      <a data-id="<%- host.id %>" class="host-name title" data-toggle="tooltip" title="Click to modify this host"><%- host.name %><%- ' (' + ((ipv6 ? host.address6 : host.public_address) || 'Unknown') + ')' %><%- !host.static && host.version ? ' v' + host.version : '' %></a>
     </div>
     <div class="button-container">
       <div class="link-host-static label label-success no-select" <%= host.static ? '' : 'style="display: none"' %>>Static</div>
       <div class="link-host-active label label-success no-select" <%= !host.static && host.status === 'active' ? '' : 'style="display: none"' %>>Active</div>
       <div class="link-host-available label label-primary no-select" <%= !host.static && host.status === 'available' ? '' : 'style="display: none"' %>>Available</div>
+      <div class="link-host-unavailable label label-danger no-select" <%= !host.static && host.status === 'active_unavailable' ? '' : 'style="display: none"' %>>Active Unavailable</div>
       <div class="link-host-unavailable label label-danger no-select" <%= !host.static && host.status === 'unavailable' ? '' : 'style="display: none"' %>>Unavailable</div>
+      <button data-id="<%- host.id %>" type="button" class="link-ubnt-conf-host btn btn-primary btn-xs" <%= host.static ? '' : 'style="display: none"' %>>Get EdgeRouter Conf</button>
       <button data-id="<%- host.id %>" type="button" class="link-conf-host btn btn-primary btn-xs" <%= host.static ? '' : 'style="display: none"' %>>Get Conf</button>
       <button data-id="<%- host.id %>" type="button" class="link-uri-host btn btn-primary btn-xs" <%= !host.static ? '' : 'style="display: none"' %>>Get URI</button>
       <button data-id="<%- host.id %>" type="button" class="link-remove-host btn btn-danger btn-xs">Remove Host</button>
@@ -49,15 +51,24 @@
   </div>
   <% }); %>
 </div>
-<div class="link-excludes">
-  <% _.each(excludes, function(exclude) { %>
-  <div class="link-exclude">
+<div class="link-peers">
+  <% _.each(peers, function(peer) { %>
+  <div class="link-peer">
     <div class="name-container">
-      <span class="name-icon glyphicon glyphicon-ban-circle"></span>
-      <span class="exclude-name title"><%- exclude.name %></span>
+      <span class="name-icon glyphicon glyphicon-transfer"></span>
+      <span class="peer-name title"><%- peer.name %></span>
     </div>
     <div class="button-container">
-      <button data-id="<%- exclude.id %>" type="button" class="link-remove-exclude btn btn-danger btn-xs">Remove Exclude</button>
+      <div class="link-peer-connected label label-success no-select" <%= !peer.static && !peer.transited_name && peer.status === 'connected' ? '' : 'style="display: none"' %>>Connected</div>
+      <div class="link-peer-connecting label label-primary no-select" <%= !peer.static && !peer.transited_name && peer.status === 'connecting' ? '' : 'style="display: none"' %>>Connecting</div>
+      <div class="link-peer-unknown label label-default no-select" <%= !peer.static && !peer.transited_name && peer.status === 'unknown' ? '' : 'style="display: none"' %>>Unknown</div>
+      <div class="link-peer-disconnected label label-danger no-select" <%= !peer.static && !peer.transited_name && peer.status === 'disconnected' ? '' : 'style="display: none"' %>>Disconnected</div>
+      <div class="link-peer-transited label no-select label-success" <%= !peer.static && peer.transited_name && peer.status === 'connected' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
+      <div class="link-peer-transited label no-select label-primary" <%= !peer.static && peer.transited_name && peer.status === 'connecting' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
+      <div class="link-peer-transited label no-select label-danger" <%= !peer.static && peer.transited_name && peer.status === 'disconnected' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
+      <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-add-transit btn btn-primary btn-xs" <%= link_type !== 'direct' && peer.transit === false ? '' : 'style="display: none"' %>>Transit Peer</button>
+      <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-remove-transit btn btn-warning btn-xs" <%= link_type !== 'direct' && peer.transit === true ? '' : 'style="display: none"' %>>Untransit Peer</button>
+      <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-remove-peer btn btn-danger btn-xs" <%= link_type !== 'direct' ? '' : 'style="display: none"' %>>Remove Peer</button>
     </div>
   </div>
   <% }); %>

@@ -1,7 +1,7 @@
 <div class="form-group">
-  <div class="form-group exclude-id">
-    <label>Exclude Location</label>
-    <select class="form-control" data-toggle="tooltip" title="Select location to exclude">
+  <div class="form-group peer-id">
+    <label>Peer Location</label>
+    <select class="form-control" data-toggle="tooltip" title="Select location to peer">
       <% _.each(locations, function(location) { %>
       <% if (location.id !== location_id) { %>
       <option value="<%- location.id %>"><%- location.name %></option>

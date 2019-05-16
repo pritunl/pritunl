@@ -5,6 +5,7 @@ import hmac
 import hashlib
 import base64
 import json
+import sys
 
 BASE_URL = 'https://server.domain'
 API_TOKEN = 'Hv2FxEMoa3moTVuRahMsMK3VUCwdmjmt'
@@ -40,8 +41,12 @@ def auth_request(method, path, headers=None, data=None):
     auth_nonce = uuid.uuid4().hex
     auth_string = '&'.join([API_TOKEN, auth_timestamp, auth_nonce,
         method.upper(), path])
-    auth_signature = base64.b64encode(hmac.new(
-        API_SECRET, auth_string, hashlib.sha256).digest())
+    if sys.version_info[0] < 3:
+        auth_signature = base64.b64encode(hmac.new(
+            API_SECRET, auth_string, hashlib.sha256).digest())
+    else:
+        auth_signature = base64.b64encode(hmac.new(
+            API_SECRET.encode('utf-8'), auth_string.encode('utf-8'), hashlib.sha256).digest())
     auth_headers = {
         'Auth-Token': API_TOKEN,
         'Auth-Timestamp': auth_timestamp,

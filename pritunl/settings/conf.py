@@ -9,11 +9,12 @@ class SettingsConf(SettingsGroupFile):
         'host_id': None,
         'ssl': True,
         'static_cache': True,
-        'port': 9700,
+        'port': 443,
         'internal_port': 9755,
         'pooler': True,
         'temp_path': '/tmp/pritunl',
         'log_path': '/var/log/pritunl.log',
+        'journal_path': '/var/log/pritunl_journal.log',
         'www_path': '/usr/share/pritunl/www',
         'var_run_path': '/var/run',
         'uuid_path': '/var/lib/pritunl/pritunl.uuid',
@@ -22,6 +23,7 @@ class SettingsConf(SettingsGroupFile):
         'mongodb_uri': 'mongodb://localhost:27017/pritunl',
         'mongodb_collection_prefix': None,
         'mongodb_read_preference': None,
+        'mongodb_max_pool_size': None,
         'local_address_interface': 'auto',
     }
     commit_fields = {

@@ -1,6 +1,9 @@
 from pritunl import settings
+from pritunl import mongo
+from pritunl import utils
 
 import time
+import datetime
 
 _get_time = time.time
 limiters = []
@@ -27,3 +30,25 @@ class Limiter(object):
         else:
             self.peers_expire_count[peer] = (cur_time + limit_timeout, 1)
         return True
+
+def auth_check(user_id):
+    collection = mongo.get_collection('auth_limiter')
+
+    doc = collection.find_and_modify({
+        '_id': user_id,
+    }, {
+        '$inc': {'count': 1},
+        '$setOnInsert': {'timestamp': utils.now()},
+    }, new=True, upsert=True)
+
+    if utils.now() > doc['timestamp'] + datetime.timedelta(
+            seconds=settings.app.auth_limiter_ttl):
+        doc = {
+            'count': 1,
+            'timestamp': utils.now(),
+        }
+        collection.update({
+            '_id': user_id,
+        }, doc, upsert=True)
+
+    return doc['count'] <= settings.app.auth_limiter_count_max

@@ -2,22 +2,22 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/linkExclude',
+  'models/linkPeer',
   'views/modal',
-  'text!templates/modalAddLocExclude.html'
-], function($, _, Backbone, LinkExcludeModel, ModalView,
-    modalAddLocExcludeTemplate) {
+  'text!templates/modalAddLocPeer.html'
+], function($, _, Backbone, LinkPeerModel, ModalView,
+    modalAddLocPeerTemplate) {
   'use strict';
-  var ModalAddLocExcludeView = ModalView.extend({
-    className: 'add-location-exclude-modal',
-    template: _.template(modalAddLocExcludeTemplate),
-    title: 'Add Location Exclude',
+  var ModalAddLocPeerView = ModalView.extend({
+    className: 'add-location-peer-modal',
+    template: _.template(modalAddLocPeerTemplate),
+    title: 'Add Location Peer',
     okText: 'Add',
     initialize: function(options) {
       this.link = options.link;
       this.location = options.location;
       this.locations = options.locations;
-      ModalAddLocExcludeView.__super__.initialize.call(this);
+      ModalAddLocPeerView.__super__.initialize.call(this);
     },
     body: function() {
       return this.template({
@@ -26,19 +26,19 @@ define([
       });
     },
     onOk: function() {
-      var excludeId = this.$('.exclude-id select').val();
+      var peerId = this.$('.peer-id select').val();
 
-      if (!excludeId) {
-        this.setAlert('danger', 'Missing exclude.', '.exclude-id');
+      if (!peerId) {
+        this.setAlert('danger', 'Missing peer.', '.peer-id');
         return;
       }
 
-      this.setLoading('Adding location exclude...');
-      var model = new LinkExcludeModel();
+      this.setLoading('Adding location peer...');
+      var model = new LinkPeerModel();
       model.save({
         link_id: this.link,
         location_id: this.location,
-        exclude_id: excludeId
+        peer_id: peerId
       }, {
         success: function() {
           this.close(true);
@@ -56,5 +56,5 @@ define([
     }
   });
 
-  return ModalAddLocExcludeView;
+  return ModalAddLocPeerView;
 });

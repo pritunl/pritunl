@@ -1,6 +1,238 @@
 Pritunl Changelog
 =================
 
+Version 1.29.2051.18 2019-04-25
+-------------------------------
+
+Add support for network mapping
+
+Version 1.29.2026.90 2019-03-31
+-------------------------------
+
+Fix issue with API handler
+
+Version 1.29.2010.18 2019-03-15
+-------------------------------
+
+Add support for replicated servers with non-NAT routes
+
+Version 1.29.1999.88 2019-03-04
+-------------------------------
+
+Add mongodb max pool size to configuration
+
+Version 1.29.1994.1 2019-02-27
+------------------------------
+
+Add audit journal
+
+Version 1.29.1990.10 2019-02-23
+-------------------------------
+
+Fix issue with web server hanging
+Fix issue with dns server hanging
+
+Version 1.29.1979.98 2019-02-12
+-------------------------------
+
+Server improvements
+
+Version 1.29.1958.76 2019-01-22
+-------------------------------
+
+Improve user configuration
+
+Version 1.29.1952.27 2019-01-16
+-------------------------------
+
+Interface improvements
+
+Version 1.29.1947.29 2019-01-11
+-------------------------------
+
+Server improvements
+
+Version 1.29.1929.33 2018-12-24
+-------------------------------
+
+Fix instance connection issue
+
+Version 1.29.1926.93 2018-12-21
+-------------------------------
+
+Use random default password
+
+Version 1.29.1925.81 2018-12-20
+-------------------------------
+
+Improve Radius single sign-on support
+
+Version 1.29.1924.6 2018-12-19
+------------------------------
+
+Improve static links
+
+Version 1.29.1923.80 2018-12-18
+-------------------------------
+
+Web interface improvements
+
+Version 1.29.1919.29 2018-12-14
+-------------------------------
+
+Improve unavailable link reliability
+
+Version 1.29.1917.25 2018-12-12
+-------------------------------
+
+Add support for Auth0 single sign-on
+
+Version 1.29.1914.98 2018-12-09
+-------------------------------
+
+Add support for Oracle Cloud routing
+Improve AWS routing support
+Improve load balancer support
+
+Version 1.29.1902.39 2018-11-27
+-------------------------------
+
+Fix connection issue with older clients
+
+Version 1.29.1891.28 2018-11-16
+-------------------------------
+
+Fix database initialization
+
+Version 1.29.1890.32 2018-11-15
+-------------------------------
+
+Fix issue with creating servers
+Add database repair command
+
+Version 1.29.1887.80 2018-11-12
+-------------------------------
+
+Fix issue with requirements
+
+Version 1.29.1887.37 2018-11-12
+-------------------------------
+
+Improve authentication cache
+Logging improvements
+
+Version 1.29.1827.6 2018-09-13
+------------------------------
+
+Improve Chrome OS support
+
+Version 1.29.1804.86 2018-08-21
+-------------------------------
+
+Single sign-on improvements
+Server management improvements
+
+Version 1.29.1789.87 2018-08-06
+-------------------------------
+
+Improve logging
+
+Version 1.29.1788.11 2018-08-05
+-------------------------------
+
+Improve user management
+
+Version 1.29.1787.23 2018-08-04
+-------------------------------
+
+Add support for Azure single sign-on
+Add support for OneLogin and Okta OTP passcodes
+
+Version 1.29.1765.91 2018-07-13
+-------------------------------
+
+Link improvements
+Add mss fix to server options
+
+Version 1.29.1758.63 2018-07-06
+-------------------------------
+
+Improvements to command line tools
+
+Version 1.29.1731.96 2018-06-09
+-------------------------------
+
+Add support for EdgeRouter IPsec links
+
+Version 1.29.1731.20 2018-06-09
+-------------------------------
+
+Improve Chrome OS support
+Improvements to plugin system
+
+Version 1.29.1721.99 2018-05-30
+-------------------------------
+
+Add IPv6 IPsec links
+
+Version 1.29.1705.7 2018-05-14
+------------------------------
+
+Improve DNS server
+
+Version 1.29.1695.84 2018-05-04
+-------------------------------
+
+Improve single sign-on
+
+Version 1.29.1680.74 2018-04-19
+-------------------------------
+
+Improve server routing
+
+Version 1.29.1675.99 2018-04-14
+-------------------------------
+
+Update Lets Encrypt support
+Fix routing issue
+
+Version 1.29.1670.66 2018-04-09
+-------------------------------
+
+Server routing improvements
+
+Version 1.29.1669.3 2018-04-08
+------------------------------
+
+Server NAT routing improvements
+
+Version 1.29.1666.76 2018-04-05
+-------------------------------
+
+Host interface improvements
+
+Version 1.29.1666.4 2018-04-05
+------------------------------
+
+Add link transit peers
+
+Version 1.29.1663.38 2018-04-02
+-------------------------------
+
+Logging improvements
+Added monitoring metrics
+Link improvements
+
+Version 1.29.1657.94 2018-03-27
+-------------------------------
+
+Single sign-on improvements
+
+Version 1.29.1651.76 2018-03-21
+-------------------------------
+
+Fix IPv6 issues
+
 Version 1.29.1640.83 2018-03-10
 -------------------------------
 

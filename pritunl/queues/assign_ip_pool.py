@@ -81,7 +81,7 @@ class QueueAssignIpPool(queue.Queue):
             'network_start': self.network_start,
             'network_end': self.network_end,
             'network_lock': self.id,
-            'network_lock_ttl': utils.now() + datetime.timedelta(minutes=6),
+            'network_lock_ttl': utils.now() + datetime.timedelta(minutes=3),
         }})
         if not response['updatedExisting']:
             raise ServerNetworkLocked('Server network is locked', {

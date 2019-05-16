@@ -51,6 +51,17 @@ def ObjectId(oid=None):
             )
     return oid
 
+def ObjectIdSilent(oid=None):
+    if oid is not None:
+        oid = str(oid)
+    if oid is None or len(oid) != 32:
+        return bson.ObjectId(oid)
+    return oid
+
+def ParseObjectId(oid):
+    if oid:
+        return bson.ObjectId(str(oid))
+
 def _now(ntp_time):
     start_time, sync_time = ntp_time
     return sync_time + (time.time() - start_time)
@@ -119,7 +130,8 @@ def set_db_ver(version, version_min=None):
     db_version = get_db_ver(False)
     db_min_version = get_min_db_ver(False)
 
-    if version != db_version or MIN_DATABASE_VER != db_min_version:
+    if (version != db_version or MIN_DATABASE_VER != db_min_version) and \
+            db_version:
         logger.info('Setting db version', 'utils',
             cur_ver=db_version,
             new_ver=version,
@@ -148,6 +160,34 @@ def set_db_ver(version, version_min=None):
     }, update_doc, upsert=True)
 
     return doc.get('version')
+
+def check_output(*args, **kwargs):
+    if 'stdout' in kwargs or 'stderr' in kwargs:
+        raise ValueError('Output arguments not allowed, it will be overridden')
+
+    try:
+        ignore_states = kwargs.pop('ignore_states')
+    except KeyError:
+        ignore_states = None
+
+    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+        *args, **kwargs)
+
+    stdoutdata, stderrdata = process.communicate()
+    return_code = process.poll()
+
+    if return_code:
+        cmd = kwargs.get('args', args[0])
+
+        if ignore_states:
+            for ignore_state in ignore_states:
+                if ignore_state in stdoutdata or ignore_state in stderrdata:
+                    return stdoutdata
+
+        raise subprocess.CalledProcessError(
+            return_code, cmd, output=stdoutdata)
+
+    return stdoutdata
 
 def check_output_logged(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
@@ -235,6 +275,11 @@ def rmtree(path):
 def filter_str(in_str):
     if in_str is not None:
         in_str = str(in_str)
+    if not in_str:
+        return in_str
+    return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
+
+def filter_unicode(in_str):
     if not in_str:
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)

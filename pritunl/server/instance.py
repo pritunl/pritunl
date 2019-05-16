@@ -174,6 +174,10 @@ class ServerInstance(object):
                 metric = ''
 
             network = route['network']
+            netmap = route.get('nat_netmap')
+            if netmap:
+                network = netmap
+
             if route['net_gateway']:
                 if ':' in network:
                     push += 'push "route-ipv6 %s net_gateway%s"\n' % (
@@ -183,7 +187,8 @@ class ServerInstance(object):
                         utils.parse_network(network) + (metric,))
             elif not route.get('network_link'):
                 if ':' in network:
-                    push += 'push "route-ipv6 %s%s"\n' % (network, metric_def)
+                    push += 'push "route-ipv6 %s%s"\n' % (
+                        network, metric_def)
                 else:
                     push += 'push "route %s %s%s"\n' % (
                         utils.parse_network(network) + (metric_def,))
@@ -197,8 +202,8 @@ class ServerInstance(object):
 
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'network', 'local_networks', 'network_start',
-                'network_end', 'organizations', 'routes', 'links', 'ipv6',
-                'replica_count', 'network_mode')):
+                'network_end', 'organizations', 'routes', 'links',
+                'ipv6', 'replica_count', 'network_mode')):
             if self.server.id < link_svr.id:
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
@@ -211,12 +216,18 @@ class ServerInstance(object):
                     if route['net_gateway']:
                         continue
 
+                    netmap = route.get('nat_netmap')
+                    if netmap:
+                        network = netmap
+
                     if ':' in network:
                         push += 'route-ipv6 %s %s%s\n' % (
                             network, gateway6, metric)
                     else:
-                        push += 'route %s %s %s%s\n' % (utils.parse_network(
-                            network) + (gateway, metric))
+                        push += 'route %s %s %s%s\n' % (
+                            utils.parse_network(network) +
+                            (gateway, metric)
+                        )
 
         if self.vxlan:
             push += 'push "route %s %s"\n' % utils.parse_network(
@@ -293,6 +304,9 @@ class ServerInstance(object):
         if self.server.protocol == 'udp':
             server_conf += 'replay-window 128\n'
 
+        if self.server.mss_fix:
+            server_conf += 'mssfix %s\n' % self.server.mss_fix
+
         # Pritunl v0.10.x did not include comp-lzo in client conf
         # if lzo_compression is adaptive dont include comp-lzo in server conf
         if self.server.lzo_compression == ADAPTIVE:
@@ -332,7 +346,7 @@ class ServerInstance(object):
                 network_stop=self.server.network_end,
                 restrict_routes=self.server.restrict_routes,
                 bind_address=self.server.bind_address,
-                onc_hostname=self.server.onc_hostname,
+                onc_hostname=None,
                 dh_param_bits=self.server.dh_param_bits,
                 multi_device=self.server.multi_device,
                 dns_servers=self.server.dns_servers,
@@ -365,7 +379,8 @@ class ServerInstance(object):
         server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
         if self.server.tls_auth:
-            server_conf += 'key-direction 0\n<tls-auth>\n%s\n</tls-auth>\n' % (
+            server_conf += \
+                'key-direction 0\n<tls-auth>\n%s\n</tls-auth>\n' % (
                 self.server.tls_auth_key)
 
         server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
@@ -579,6 +594,13 @@ class ServerInstance(object):
             if network == '::/0' and self.server.ipv6 and \
                     settings.local.host.routed_subnet6:
                 nat = False
+
+            if nat and route['nat_netmap']:
+                self.iptables.add_netmap(network, route['nat_netmap'])
+                self.iptables.add_route(
+                    route['nat_netmap'],
+                    nat=False,
+                )
 
             self.iptables.add_route(
                 network,
@@ -836,7 +858,8 @@ class ServerInstance(object):
                         doc_hosts = ((doc or {}).get('hosts') or [])
                         if settings.local.host_id in doc_hosts:
                             logger.error(
-                                'Instance doc lost, stopping server', 'server',
+                                'Instance doc lost, stopping server',
+                                'server',
                                 server_id=self.server.id,
                                 instance_id=self.id,
                                 cur_timestamp=utils.now(),
@@ -937,6 +960,7 @@ class ServerInstance(object):
 
     def init_route_advertisements(self):
         for route in self.server.get_routes(include_server_links=True):
+            advertise = route['advertise']
             vpc_region = route['vpc_region']
             vpc_id = route['vpc_id']
             network = route['network']
@@ -944,7 +968,11 @@ class ServerInstance(object):
             if route['net_gateway']:
                 continue
 
-            if vpc_region and vpc_id:
+            netmap = route.get('nat_netmap')
+            if netmap:
+                network = netmap
+
+            if advertise or (vpc_region and vpc_id):
                 self.reserve_route_advertisement(
                     vpc_region, vpc_id, network)
 
@@ -955,6 +983,10 @@ class ServerInstance(object):
             })
 
     def reserve_route_advertisement(self, vpc_region, vpc_id, network):
+        cloud_provider = settings.app.cloud_provider
+        if not cloud_provider:
+            return
+
         ra_id = '%s_%s_%s' % (self.server.id, vpc_id, network)
         timestamp_spec = utils.now() - datetime.timedelta(
             seconds=settings.vpn.route_ping_ttl)
@@ -972,8 +1004,33 @@ class ServerInstance(object):
                 'timestamp': utils.now(),
             }}, upsert=True)
 
-            utils.add_vpc_route(vpc_region, vpc_id, network,
-                settings.local.host.aws_id)
+            if cloud_provider == 'aws':
+                utils.add_vpc_route(network)
+            elif cloud_provider == 'oracle':
+                utils.oracle_add_route(network)
+            else:
+                logger.error('Unknown cloud provider type', 'server',
+                    cloud_provider=settings.app.cloud_provider,
+                    network=network,
+                )
+
+            if self.vxlan:
+                if network == self.server.network:
+                    vxlan_net = self.vxlan.vxlan_net
+                    if cloud_provider == 'aws':
+                        utils.add_vpc_route(vxlan_net)
+                    elif cloud_provider == 'oracle':
+                        utils.oracle_add_route(vxlan_net)
+
+                elif network == self.server.network6:
+                    vxlan_net6 = utils.net4to6x64(
+                        settings.vpn.ipv6_prefix,
+                        self.vxlan.vxlan_net,
+                    )
+                    if cloud_provider == 'aws':
+                        utils.add_vpc_route(vxlan_net6)
+                    elif cloud_provider == 'oracle':
+                        utils.oracle_add_route(vxlan_net6)
 
             self.route_advertisements.add(ra_id)
         except pymongo.errors.DuplicateKeyError:
@@ -1010,16 +1067,22 @@ class ServerInstance(object):
         logger.info('Starting vpn server', 'server',
             server_id=self.server.id,
             instance_id=self.id,
+            instances=self.server.instances,
+            instances_count=self.server.instances_count,
+            route_count=len(self.server.routes),
             network=self.server.network,
             network6=self.server.network6,
+            host_id=settings.local.host.id,
             host_address=settings.local.host.local_addr,
             host_address6=settings.local.host.local_addr6,
             host_networks=settings.local.host.local_networks,
             cur_timestamp=utils.now(),
+            libipt=settings.vpn.lib_iptables,
         )
 
         def timeout():
-            logger.error('Server startup timed out, stopping...', 'server',
+            logger.error('Server startup timed out, stopping server',
+                'server',
                 server_id=self.server.id,
                 instance_id=self.id,
                 state=self.state,
@@ -1181,7 +1244,7 @@ class ServerInstance(object):
                 network_stop=self.server.network_end,
                 restrict_routes=self.server.restrict_routes,
                 bind_address=self.server.bind_address,
-                onc_hostname=self.server.onc_hostname,
+                onc_hostname=None,
                 dh_param_bits=self.server.dh_param_bits,
                 multi_device=self.server.multi_device,
                 dns_servers=self.server.dns_servers,
@@ -1228,7 +1291,7 @@ class ServerInstance(object):
                     network_stop=self.server.network_end,
                     restrict_routes=self.server.restrict_routes,
                     bind_address=self.server.bind_address,
-                    onc_hostname=self.server.onc_hostname,
+                    onc_hostname=None,
                     dh_param_bits=self.server.dh_param_bits,
                     multi_device=self.server.multi_device,
                     dns_servers=self.server.dns_servers,

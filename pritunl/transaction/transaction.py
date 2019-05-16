@@ -27,11 +27,11 @@ class Transaction(mongo.MongoObject):
         'state': PENDING,
         'priority': NORMAL,
         'attempts': 0,
-        'ttl': settings.mongo.tran_ttl,
     }
 
     def __init__(self, lock_id=None, priority=None, ttl=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
+        self.ttl = settings.mongo.tran_ttl
 
         if lock_id is not None:
             self.lock_id = lock_id

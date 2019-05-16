@@ -27,7 +27,6 @@ define([
       'restrict_routes': null,
       'multi_device': null,
       'dns_servers': null,
-      'onc_hostname': null,
       'search_domain': null,
       'otp_auth': null,
       'cipher': null,
@@ -43,11 +42,13 @@ define([
       'inactive_timeout': null,
       'allowed_devices': null,
       'max_clients': null,
+      'max_devices': null,
       'replica_count': null,
       'vxlan': null,
       'dns_mapping': null,
       'debug': null,
-      'policy': null
+      'pre_connect_msg': null,
+      'mss_fix': null
     },
     url: function() {
       var url = '/server';

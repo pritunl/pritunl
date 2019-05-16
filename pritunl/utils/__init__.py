@@ -6,5 +6,7 @@ from pritunl.utils.mail import *
 from pritunl.utils.misc import *
 from pritunl.utils.network import *
 from pritunl.utils.aws import *
+from pritunl.utils.oracle import *
 from pritunl.utils.sig import *
 from pritunl.utils.none_queue import NoneQueue
+from pritunl.utils.auth import *

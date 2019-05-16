@@ -18,13 +18,16 @@ from pritunl import event
 from pritunl import messenger
 from pritunl import organization
 from pritunl import ipaddress
+from pritunl import journal
 
 import os
 import subprocess
-import threading
 import random
 import collections
 import datetime
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
 
 dict_fields = [
     'id',
@@ -45,7 +48,6 @@ dict_fields = [
     'bind_address',
     'port',
     'protocol',
-    'onc_hostname',
     'dh_param_bits',
     'dh_params',
     'multi_device',
@@ -65,11 +67,15 @@ dict_fields = [
     'inactive_timeout',
     'allowed_devices',
     'max_clients',
+    'max_devices',
     'replica_count',
     'vxlan',
     'dns_mapping',
     'debug',
-    'policy',
+    'pre_connect_msg',
+    'mss_fix',
+    'auth_public_key',
+    'auth_private_key',
 ]
 operation_fields = dict_fields + [
     'hosts',
@@ -109,10 +115,10 @@ class Server(mongo.MongoObject):
         'link_ping_interval',
         'link_ping_timeout',
         'inactive_timeout',
-        'onc_hostname',
         'dns_mapping',
         'debug',
-        'policy',
+        'pre_connect_msg',
+        'mss_fix',
         'cipher',
         'hash',
         'block_outside_dns',
@@ -129,11 +135,14 @@ class Server(mongo.MongoObject):
         'start_timestamp',
         'allowed_devices',
         'max_clients',
+        'max_devices',
         'replica_count',
         'vxlan',
         'instances',
         'instances_count',
         'availability_group',
+        'auth_public_key',
+        'auth_private_key',
     }
     fields_default = {
         'ipv6': False,
@@ -173,17 +182,18 @@ class Server(mongo.MongoObject):
     }
     cache_prefix = 'server'
 
-    def __init__(self, name=None, groups=None, network=None, network_mode=None,
-            network_start=None, network_end=None, restrict_routes=None,
-            ipv6=None, ipv6_firewall=None,bind_address=None, port=None,
-            protocol=None, dh_param_bits=None, multi_device=None,
-            dns_servers=None, search_domain=None, otp_auth=None,
-            cipher=None, hash=None, block_outside_dns=None, jumbo_frames=None,
-            lzo_compression=None, inter_client=None, ping_interval=None,
-            ping_timeout=None, link_ping_interval=None, link_ping_timeout=None,
-            inactive_timeout=None, onc_hostname=None, allowed_devices=None,
-            max_clients=None, replica_count=None, vxlan=None,
-            dns_mapping=None, debug=None, policy=None, **kwargs):
+    def __init__(self, name=None, groups=None, network=None,
+            network_mode=None, network_start=None, network_end=None,
+            restrict_routes=None, ipv6=None, ipv6_firewall=None,
+            bind_address=None, port=None, protocol=None, dh_param_bits=None,
+            multi_device=None, dns_servers=None, search_domain=None,
+            otp_auth=None, cipher=None, hash=None, block_outside_dns=None,
+            jumbo_frames=None, lzo_compression=None, inter_client=None,
+            ping_interval=None, ping_timeout=None, link_ping_interval=None,
+            link_ping_timeout=None, inactive_timeout=None,
+            allowed_devices=None, max_clients=None, max_devices=None,
+            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
+            pre_connect_msg=None, mss_fix=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if 'network' in self.loaded_fields:
@@ -250,12 +260,12 @@ class Server(mongo.MongoObject):
             self.link_ping_timeout = link_ping_timeout
         if inactive_timeout is not None:
             self.inactive_timeout = inactive_timeout
-        if onc_hostname is not None:
-            self.onc_hostname = onc_hostname
         if allowed_devices is not None:
             self.allowed_devices = allowed_devices
         if max_clients is not None:
             self.max_clients = max_clients
+        if max_devices is not None:
+            self.max_devices = max_devices
         if replica_count is not None:
             self.replica_count = replica_count
         if vxlan is not None:
@@ -264,8 +274,10 @@ class Server(mongo.MongoObject):
             self.dns_mapping = dns_mapping
         if debug is not None:
             self.debug = debug
-        if policy is not None:
-            self.policy = policy
+        if pre_connect_msg is not None:
+            self.pre_connect_msg = pre_connect_msg
+        if mss_fix is not None:
+            self.mss_fix = mss_fix
 
     @cached_static_property
     def collection(cls):
@@ -298,6 +310,15 @@ class Server(mongo.MongoObject):
     @cached_static_property
     def org_collection(cls):
         return mongo.get_collection('organizations')
+
+    @property
+    def journal_data(self):
+        return {
+            'server_id': self.id,
+            'server_name': self.name,
+            'server_network': self.network,
+            'server_port': self.port,
+        }
 
     def dict(self):
         return {
@@ -335,14 +356,15 @@ class Server(mongo.MongoObject):
             'link_ping_interval': self.link_ping_interval,
             'link_ping_timeout': self.link_ping_timeout,
             'inactive_timeout': self.inactive_timeout,
-            'onc_hostname': self.onc_hostname,
             'allowed_devices': self.allowed_devices,
             'max_clients': self.max_clients,
+            'max_devices': self.max_devices,
             'replica_count': self.replica_count,
             'vxlan': self.vxlan,
             'dns_mapping': True if self.dns_mapping else False,
             'debug': True if self.debug else False,
-            'policy': self.policy,
+            'pre_connect_msg': self.pre_connect_msg,
+            'mss_fix': self.mss_fix,
         }
 
     @property
@@ -455,7 +477,7 @@ class Server(mongo.MongoObject):
         return 'tap' if self.network_mode == BRIDGE else 'tun'
 
     @property
-    def ca_certificate_list(self):
+    def ca_certificate_x509(self):
         ca_split = self.ca_certificate.split('-----BEGIN CERTIFICATE-----')
         certs = []
 
@@ -473,6 +495,51 @@ class Server(mongo.MongoObject):
             self.generate_dh_param()
         finally:
             self.generate_tls_auth_wait()
+
+    def generate_auth_key(self):
+        if self.auth_public_key and self.auth_private_key:
+            return False
+
+        private_key = rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=4096,
+            backend=default_backend(),
+        )
+
+        private_pem = private_key.private_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PrivateFormat.TraditionalOpenSSL,
+            encryption_algorithm=serialization.NoEncryption(),
+        )
+
+        public_pem = private_key.public_key().public_bytes(
+            encoding=serialization.Encoding.PEM,
+            format=serialization.PublicFormat.PKCS1,
+        )
+
+        self.auth_public_key = public_pem
+        self.auth_private_key = private_pem
+
+        return True
+
+    def generate_auth_key_commit(self):
+        if self.generate_auth_key():
+            self.commit({'auth_public_key', 'auth_private_key'})
+
+    def get_auth_key(self):
+        self.generate_auth_key_commit()
+        return self.auth_public_key, self.auth_private_key
+
+    def get_auth_private_key(self):
+        self.generate_auth_key_commit()
+
+        private_key = serialization.load_pem_private_key(
+            self.auth_private_key.encode(),
+            password=None,
+            backend=default_backend(),
+        )
+
+        return private_key
 
     def queue_dh_params(self, block=False):
         queue.start('dh_params', block=block, server_id=self.id,
@@ -495,6 +562,7 @@ class Server(mongo.MongoObject):
         routes_dict = {}
         virtual_comment = None
         virtual_metric = None
+        virtual_advertise = None
         virtual_vpc_region = None
         virtual_vpc_id = None
 
@@ -508,6 +576,8 @@ class Server(mongo.MongoObject):
                 'metric': 0,
                 'nat': False,
                 'nat_interface': None,
+                'nat_netmap': None,
+                'advertise': None,
                 'vpc_region': None,
                 'vpc_id': None,
                 'net_gateway': False,
@@ -534,6 +604,8 @@ class Server(mongo.MongoObject):
                     data['metric'] = route.get('metric')
                     data['nat'] = route['nat']
                     data['nat_interface'] = route['nat_interface']
+                    data['nat_netmap'] = route['nat_netmap']
+                    data['advertise'] = None
                     data['vpc_region'] = None
                     data['vpc_id'] = None
                     data['net_gateway'] = route['net_gateway']
@@ -560,6 +632,8 @@ class Server(mongo.MongoObject):
                     'metric': route.get('metric'),
                     'nat': route.get('nat', True),
                     'nat_interface': route.get('nat_interface'),
+                    'nat_netmap': route.get('nat_netmap'),
+                    'advertise': route.get('advertise', None),
                     'vpc_region': route.get('vpc_region', None),
                     'vpc_id': route.get('vpc_id', None),
                     'net_gateway': route.get('net_gateway', False),
@@ -571,13 +645,15 @@ class Server(mongo.MongoObject):
 
                 if include_hidden and self.ipv6:
                     routes.append({
-                        'id': route_id,
+                        'id': '::/0'.encode('hex'),
                         'server': self.id,
                         'network': '::/0',
                         'comment': route.get('comment'),
                         'metric': route.get('metric'),
                         'nat': route.get('nat', True),
                         'nat_interface': route.get('nat_interface'),
+                        'nat_netmap': route.get('nat_netmap'),
+                        'advertise': route.get('advertise'),
                         'vpc_region': route.get('vpc_region'),
                         'vpc_id': route.get('vpc_id'),
                         'net_gateway': route.get('net_gateway', False),
@@ -589,6 +665,7 @@ class Server(mongo.MongoObject):
             elif route_network == 'virtual':
                 virtual_comment = route.get('comment', None)
                 virtual_metric = route.get('metric', None)
+                virtual_advertise = route.get('advertise', None)
                 virtual_vpc_region = route.get('vpc_region', None)
                 virtual_vpc_id = route.get('vpc_id', None)
             elif route_network == self.network or \
@@ -601,10 +678,14 @@ class Server(mongo.MongoObject):
                             'nat', True)
                         routes_dict[route_network]['nat_interface'] = \
                             route.get('nat_interface')
+                        routes_dict[route_network]['nat_netmap'] = \
+                            route.get('nat_netmap')
                     routes_dict[route_network]['comment'] = route.get(
                         'comment')
                     routes_dict[route_network]['metric'] = route.get(
                         'metric')
+                    routes_dict[route_network]['advertise'] = route.get(
+                        'advertise')
                     routes_dict[route_network]['vpc_region'] = route.get(
                         'vpc_region')
                     routes_dict[route_network]['vpc_id'] = route.get(
@@ -622,6 +703,8 @@ class Server(mongo.MongoObject):
                         'metric': route.get('metric'),
                         'nat': route.get('nat', True),
                         'nat_interface': route.get('nat_interface'),
+                        'nat_netmap': route.get('nat_netmap'),
+                        'advertise': route.get('advertise', None),
                         'vpc_region': route.get('vpc_region', None),
                         'vpc_id': route.get('vpc_id', None),
                         'net_gateway': route.get('net_gateway', False),
@@ -639,6 +722,8 @@ class Server(mongo.MongoObject):
             'metric': virtual_metric,
             'nat': False,
             'nat_interface': None,
+            'nat_netmap': None,
+            'advertise': virtual_advertise,
             'vpc_region': virtual_vpc_region,
             'vpc_id': virtual_vpc_id,
             'net_gateway': False,
@@ -657,6 +742,8 @@ class Server(mongo.MongoObject):
                 'metric': virtual_metric,
                 'nat': False,
                 'nat_interface': None,
+                'nat_netmap': None,
+                'advertise': virtual_advertise,
                 'vpc_region': virtual_vpc_region,
                 'vpc_id': virtual_vpc_id,
                 'net_gateway': False,
@@ -674,8 +761,8 @@ class Server(mongo.MongoObject):
 
         return routes + link_routes
 
-    def upsert_route(self, network, nat_route, nat_interface,
-            vpc_region, vpc_id, net_gateway, comment, metric):
+    def upsert_route(self, network, nat_route, nat_interface, nat_netmap,
+            advertise, vpc_region, vpc_id, net_gateway, comment, metric):
         exists = False
 
         if self.status == ONLINE:
@@ -696,8 +783,9 @@ class Server(mongo.MongoObject):
                 if server_link and route['nat'] != nat_route:
                     raise ServerRouteNatServerLink('Cannot nat server link')
 
-                if route['network_link'] and nat_route:
-                    raise ServerRouteNatNetworkLink('Cannot nat network link')
+                if route['network_link'] and net_gateway:
+                    raise ServerRouteGatewayNetworkLink(
+                        'Cannot use network gateway with network link')
 
         if network == self.network or network == self.network6:
             network = 'virtual'
@@ -710,13 +798,18 @@ class Server(mongo.MongoObject):
         if net_gateway and nat_route:
             raise ServerRouteNatNetGateway('Cannot nat net gateway')
 
+        if not nat_route and nat_netmap:
+            raise ServerRouteNonNatNetmap('Cannot use netmap without nat')
+
         for route in self.routes:
             if route['network'] == network:
                 if not server_link:
                     route['nat'] = nat_route
                     route['nat_interface'] = nat_interface
+                    route['nat_netmap'] = nat_netmap
                 route['comment'] = comment
                 route['metric'] = metric
+                route['advertise'] = advertise
                 route['vpc_region'] = vpc_region
                 route['vpc_id'] = vpc_id
                 route['net_gateway'] = net_gateway
@@ -731,6 +824,8 @@ class Server(mongo.MongoObject):
                 'metric': metric,
                 'nat': nat_route,
                 'nat_interface': nat_interface,
+                'nat_netmap': nat_netmap,
+                'advertise': advertise,
                 'vpc_region': vpc_region,
                 'vpc_id': vpc_id,
                 'net_gateway': net_gateway,
@@ -745,6 +840,8 @@ class Server(mongo.MongoObject):
             'metric': metric,
             'nat': nat_route,
             'nat_interface': nat_interface,
+            'nat_netmap': nat_netmap,
+            'advertise': advertise,
             'vpc_region': vpc_region,
             'vpc_id': vpc_id,
             'net_gateway': net_gateway,
@@ -905,15 +1002,6 @@ class Server(mongo.MongoObject):
 
         return '\n'.join(remotes)
 
-    def get_onc_host(self):
-        if self.onc_hostname:
-            return self.onc_hostname, self.port
-
-        for host, port in self.get_hosts():
-            return host, port
-
-        return None, None
-
     def get_hosts(self):
         hosts = []
         spec = {
@@ -1012,6 +1100,13 @@ class Server(mongo.MongoObject):
         usr = org.new_user(name=SERVER_USER_PREFIX + str(self.id),
             type=CERT_SERVER, resource_id=self.id)
         usr.audit_event('user_created', 'User created for server')
+
+        journal.entry(
+            journal.USER_CREATE,
+            usr.journal_data,
+            self.journal_data,
+            event_long='Server user created',
+        )
 
         self.primary_organization = org.id
         self.primary_user = usr.id
@@ -1468,7 +1563,8 @@ class Server(mongo.MongoObject):
 
             routes_set = set()
             for route in link_svr.get_routes():
-                routes_set.add(route['network'])
+                if route['network'] != '0.0.0.0/0':
+                    routes_set.add(route['network'])
             if routes & routes_set:
                 return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
             routes.update(routes_set)
@@ -1507,9 +1603,6 @@ class Server(mongo.MongoObject):
 
         if self.links and self.replica_count > 1:
             return SERVER_LINKS_AND_REPLICA, SERVER_LINKS_AND_REPLICA_MSG
-
-        if self.vxlan and self.replicating and self.has_non_nat_route():
-            return SERVER_VXLAN_NON_NAT, SERVER_VXLAN_NON_NAT_MSG
 
         if self.search_domain and not self.dns_servers:
             return SERVER_DOMAIN_NO_DNS, SERVER_DOMAIN_NO_DNS_MSG

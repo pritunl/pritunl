@@ -21,16 +21,16 @@ def _network_invalid():
     }, 400)
 
 def _port_invalid():
-        return utils.jsonify({
-            'error': PORT_INVALID,
-            'error_msg': PORT_INVALID_MSG,
-        }, 400)
+    return utils.jsonify({
+        'error': PORT_INVALID,
+        'error_msg': PORT_INVALID_MSG,
+    }, 400)
 
 def _dh_param_bits_invalid():
-        return utils.jsonify({
-            'error': DH_PARAM_BITS_INVALID,
-            'error_msg': DH_PARAM_BITS_INVALID_MSG,
-        }, 400)
+    return utils.jsonify({
+        'error': DH_PARAM_BITS_INVALID,
+        'error_msg': DH_PARAM_BITS_INVALID_MSG,
+    }, 400)
 
 def _local_network_invalid():
     return utils.jsonify({
@@ -321,12 +321,6 @@ def server_put_post(server_id=None):
         inactive_timeout = int(
             flask.request.json['inactive_timeout'] or 0) or None
 
-    onc_hostname = None
-    onc_hostname_def = False
-    if 'onc_hostname' in flask.request.json:
-        onc_hostname_def = True
-        onc_hostname = utils.filter_str(flask.request.json['onc_hostname'])
-
     allowed_devices = None
     allowed_devices_def = False
     if 'allowed_devices' in flask.request.json:
@@ -340,8 +334,18 @@ def server_put_post(server_id=None):
         max_clients = flask.request.json['max_clients']
         if max_clients:
             max_clients = int(max_clients)
-        if not max_clients:
+        else:
             max_clients = 2000
+
+    max_devices = None
+    max_devices_def = False
+    if 'max_devices' in flask.request.json:
+        max_devices_def = True
+        max_devices = flask.request.json['max_devices']
+        if max_devices:
+            max_devices = int(max_devices)
+        else:
+            max_devices = 0
 
     replica_count = None
     replica_count_def = False
@@ -371,18 +375,26 @@ def server_put_post(server_id=None):
         debug_def = True
         debug = True if flask.request.json['debug'] else False
 
-    policy = None
-    policy_def = False
-    if 'policy' in flask.request.json:
-        policy_def = True
-        if flask.request.json['policy']:
-            policy = flask.request.json['policy'].strip()
+    pre_connect_msg = None
+    pre_connect_msg_def = False
+    if 'pre_connect_msg' in flask.request.json:
+        pre_connect_msg_def = True
+        if flask.request.json['pre_connect_msg']:
+            pre_connect_msg = flask.request.json['pre_connect_msg'].strip()
 
     otp_auth = False
     otp_auth_def = False
     if 'otp_auth' in flask.request.json:
         otp_auth_def = True
         otp_auth = True if flask.request.json['otp_auth'] else False
+
+    mss_fix = None
+    mss_fix_def = False
+    if 'mss_fix' in flask.request.json:
+        mss_fix_def = True
+        mss_fix = flask.request.json['mss_fix'] or None
+        if mss_fix:
+            mss_fix = int(mss_fix) or None
 
     lzo_compression = False
     lzo_compression_def = False
@@ -504,14 +516,15 @@ def server_put_post(server_id=None):
             link_ping_interval=link_ping_interval,
             link_ping_timeout=link_ping_timeout,
             inactive_timeout=inactive_timeout,
-            onc_hostname=onc_hostname,
             allowed_devices=allowed_devices,
             max_clients=max_clients,
+            max_devices=max_devices,
             replica_count=replica_count,
             vxlan=vxlan,
             dns_mapping=dns_mapping,
             debug=debug,
-            policy=policy,
+            pre_connect_msg=pre_connect_msg,
+            mss_fix=mss_fix,
         )
         svr.add_host(settings.local.host_id)
     else:
@@ -574,12 +587,12 @@ def server_put_post(server_id=None):
             svr.link_ping_timeout = link_ping_timeout
         if inactive_timeout_def:
             svr.inactive_timeout = inactive_timeout
-        if onc_hostname_def:
-            svr.onc_hostname = onc_hostname
         if allowed_devices_def:
             svr.allowed_devices = allowed_devices
         if max_clients_def:
             svr.max_clients = max_clients
+        if max_devices_def:
+            svr.max_devices = max_devices
         if replica_count_def:
             svr.replica_count = replica_count
         if vxlan_def:
@@ -588,10 +601,14 @@ def server_put_post(server_id=None):
             svr.dns_mapping = dns_mapping
         if debug_def:
             svr.debug = debug
-        if policy_def:
-            svr.policy = policy
+        if pre_connect_msg_def:
+            svr.pre_connect_msg = pre_connect_msg
+        if mss_fix_def:
+            svr.mss_fix = mss_fix
 
         changed = svr.changed
+
+    svr.generate_auth_key()
 
     err, err_msg = svr.validate_conf()
     if err:
@@ -602,7 +619,9 @@ def server_put_post(server_id=None):
 
     svr.commit(changed)
 
-    logger.LogEntry(message='Created server "%s".' % svr.name)
+    if not server_id:
+        logger.LogEntry(message='Created server "%s".' % svr.name)
+
     event.Event(type=SERVERS_UPDATED)
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for org in svr.iter_orgs():
@@ -660,6 +679,7 @@ def server_org_put(server_id, org_id):
     svr.add_org(org)
     svr.commit(svr.changed)
     event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     event.Event(type=SERVER_ORGS_UPDATED, resource_id=svr.id)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({
@@ -691,6 +711,7 @@ def server_org_delete(server_id, org_id):
     svr.commit(svr.changed)
 
     event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     event.Event(type=SERVER_ORGS_UPDATED, resource_id=svr.id)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
 
@@ -707,7 +728,7 @@ def server_route_get(server_id):
     svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
         'network_start', 'network_end', 'routes', 'organizations', 'ipv6'))
 
-    resp = svr.get_routes(include_server_links=True)
+    resp = svr.get_routes(include_server_links=True, include_hidden=True)
     if settings.app.demo_mode:
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
@@ -724,13 +745,13 @@ def server_route_post(server_id):
     metric = flask.request.json.get('metric') or None
     nat_route = True if flask.request.json.get('nat') else False
     nat_interface = flask.request.json.get('nat_interface') or None
-    vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
-    vpc_id = utils.filter_str(flask.request.json.get('vpc_id')) or None
+    nat_netmap = flask.request.json.get('nat_netmap') or None
+    advertise = True if flask.request.json.get('advertise') else False
     net_gateway = True if flask.request.json.get('net_gateway') else False
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            vpc_region, vpc_id, net_gateway, comment, metric)
+            nat_netmap, advertise, None, None, net_gateway, comment, metric)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -751,15 +772,20 @@ def server_route_post(server_id):
             'error': SERVER_ROUTE_SERVER_LINK_NAT,
             'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
         }, 400)
-    except ServerRouteNatNetworkLink:
+    except ServerRouteGatewayNetworkLink:
         return utils.jsonify({
-            'error': SERVER_ROUTE_NETWORK_LINK_NAT,
-            'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+            'error': SERVER_ROUTE_NETWORK_LINK_GATEWAY,
+            'error_msg': SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG,
         }, 400)
     except ServerRouteNatNetGateway:
         return utils.jsonify({
             'error': SERVER_ROUTE_NET_GATEWAY_NAT,
             'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
+        }, 400)
+    except ServerRouteNonNatNetmap:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_NON_NAT_NETMAP,
+            'error_msg': SERVER_ROUTE_NON_NAT_NETMAP_MSG,
         }, 400)
 
     err, err_msg = svr.validate_conf()
@@ -792,13 +818,14 @@ def server_routes_post(server_id):
         metric = route_data.get('metric') or None
         nat_route = True if route_data.get('nat') else False
         nat_interface = route_data.get('nat_interface') or None
-        vpc_region = utils.filter_str(route_data.get('vpc_region')) or None
-        vpc_id = utils.filter_str(route_data.get('vpc_id')) or None
+        nat_netmap = route_data.get('nat_netmap') or None
+        advertise = True if route_data.get('advertise') else False
         net_gateway = True if route_data.get('net_gateway') else False
 
         try:
             route = svr.upsert_route(route_network, nat_route, nat_interface,
-                vpc_region, vpc_id, net_gateway, comment, metric)
+                nat_netmap, advertise, None, None, net_gateway, comment,
+                metric)
         except ServerOnlineError:
             return utils.jsonify({
                 'error': SERVER_ROUTE_ONLINE,
@@ -819,15 +846,20 @@ def server_routes_post(server_id):
                 'error': SERVER_ROUTE_SERVER_LINK_NAT,
                 'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
             }, 400)
-        except ServerRouteNatNetworkLink:
+        except ServerRouteGatewayNetworkLink:
             return utils.jsonify({
-                'error': SERVER_ROUTE_NETWORK_LINK_NAT,
-                'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+                'error': SERVER_ROUTE_NETWORK_LINK_GATEWAY,
+                'error_msg': SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG,
             }, 400)
         except ServerRouteNatNetGateway:
             return utils.jsonify({
                 'error': SERVER_ROUTE_NET_GATEWAY_NAT,
                 'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
+            }, 400)
+        except ServerRouteNonNatNetmap:
+            return utils.jsonify({
+                'error': SERVER_ROUTE_NON_NAT_NETMAP,
+                'error_msg': SERVER_ROUTE_NON_NAT_NETMAP_MSG,
             }, 400)
 
     err, err_msg = svr.validate_conf()
@@ -858,13 +890,13 @@ def server_route_put(server_id, route_network):
     metric = flask.request.json.get('metric') or None
     nat_route = True if flask.request.json.get('nat') else False
     nat_interface = flask.request.json.get('nat_interface') or None
-    vpc_region = utils.filter_str(flask.request.json.get('vpc_region')) or None
-    vpc_id = utils.filter_str(flask.request.json.get('vpc_id')) or None
+    nat_netmap = flask.request.json.get('nat_netmap') or None
+    advertise = True if flask.request.json.get('advertise') else False
     net_gateway = True if flask.request.json.get('net_gateway') else False
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            vpc_region, vpc_id, net_gateway, comment, metric)
+            nat_netmap, advertise, None, None, net_gateway, comment, metric)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -885,15 +917,20 @@ def server_route_put(server_id, route_network):
             'error': SERVER_ROUTE_SERVER_LINK_NAT,
             'error_msg': SERVER_ROUTE_SERVER_LINK_NAT_MSG,
         }, 400)
-    except ServerRouteNatNetworkLink:
+    except ServerRouteGatewayNetworkLink:
         return utils.jsonify({
-            'error': SERVER_ROUTE_NETWORK_LINK_NAT,
-            'error_msg': SERVER_ROUTE_NETWORK_LINK_NAT_MSG,
+            'error': SERVER_ROUTE_NETWORK_LINK_GATEWAY,
+            'error_msg': SERVER_ROUTE_NETWORK_LINK_GATEWAY_MSG,
         }, 400)
     except ServerRouteNatNetGateway:
         return utils.jsonify({
             'error': SERVER_ROUTE_NET_GATEWAY_NAT,
             'error_msg': SERVER_ROUTE_NET_GATEWAY_NAT_MSG,
+        }, 400)
+    except ServerRouteNonNatNetmap:
+        return utils.jsonify({
+            'error': SERVER_ROUTE_NON_NAT_NETMAP,
+            'error_msg': SERVER_ROUTE_NON_NAT_NETMAP_MSG,
         }, 400)
 
     err, err_msg = svr.validate_conf()
@@ -989,9 +1026,13 @@ def server_host_put(server_id, host_id):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id)
+    if not svr:
+        return flask.abort(404)
     hst = host.get_by_id(host_id, fields=('_id', 'name',
         'public_address', 'auto_public_address', 'auto_public_host',
         'public_address6', 'auto_public_address6', 'auto_public_host6'))
+    if not svr:
+        return flask.abort(404)
 
     try:
         svr.add_host(hst.id)
@@ -1027,7 +1068,11 @@ def server_host_delete(server_id, host_id):
 
     svr = server.get_by_id(server_id, fields=(
         '_id', 'hosts', 'replica_count'))
+    if not svr:
+        return flask.abort(404)
     hst = host.get_by_id(host_id, fields=('_id', 'name'))
+    if not hst:
+        return flask.abort(404)
 
     svr.remove_host(hst.id)
     svr.commit('hosts')
@@ -1048,6 +1093,8 @@ def server_link_get(server_id):
     links = []
     svr = server.get_by_id(server_id, fields=('_id', 'status', 'links',
         'replica_count', 'instances'))
+    if not svr:
+        return flask.abort(404)
     hosts_offline = svr.replica_count - len(svr.instances) > 0
 
     if svr.links:

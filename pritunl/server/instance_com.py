@@ -250,6 +250,13 @@ class ServerInstanceCom(object):
                     'bytes_recv': bytes_recv,
                 })
 
+                monitoring.insert_point('server', {
+                    'host': settings.local.host.name,
+                    'server': self.server.name,
+                }, {
+                    'device_count': self.clients.clients.count({}),
+                })
+
                 if bytes_recv != 0 or bytes_sent != 0:
                     self.server.bandwidth.add_data(
                         utils.now(), bytes_recv, bytes_sent)

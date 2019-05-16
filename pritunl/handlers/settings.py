@@ -3,6 +3,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import app
 from pritunl import acme
+from pritunl import journal
 from pritunl import auth
 from pritunl import event
 from pritunl import ipaddress
@@ -35,6 +36,12 @@ def _dict():
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
+            'sso_azure_directory_id': 'demo',
+            'sso_azure_app_id': 'demo',
+            'sso_azure_app_secret': 'demo',
+            'sso_authzero_domain': 'demo',
+            'sso_authzero_app_id': 'demo',
+            'sso_authzero_app_secret': 'demo',
             'sso_google_key': 'demo',
             'sso_google_email': 'demo',
             'sso_duo_token': 'demo',
@@ -49,13 +56,14 @@ def _dict():
             'sso_saml_cert': 'demo',
             'sso_okta_app_id': settings.app.sso_okta_app_id,
             'sso_okta_token': 'demo',
-            'sso_okta_push': settings.app.sso_okta_push,
+            'sso_okta_mode': utils.get_okta_mode(),
             'sso_onelogin_app_id': settings.app.sso_onelogin_app_id,
             'sso_onelogin_id': 'demo',
             'sso_onelogin_secret': 'demo',
-            'sso_onelogin_push': settings.app.sso_onelogin_push,
+            'sso_onelogin_mode': utils.get_onelogin_mode(),
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
+            'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
@@ -68,6 +76,8 @@ def _dict():
             'cloud_provider': settings.app.cloud_provider,
             'route53_region': settings.app.route53_region,
             'route53_zone': settings.app.route53_zone,
+            'oracle_user_ocid': settings.app.oracle_user_ocid,
+            'oracle_public_key': 'demo',
             'us_east_1_access_key': 'demo',
             'us_east_1_secret_key': 'demo',
             'us_east_2_access_key': 'demo',
@@ -113,6 +123,12 @@ def _dict():
             'pin_mode': settings.user.pin_mode,
             'sso': settings.app.sso,
             'sso_match': settings.app.sso_match,
+            'sso_azure_directory_id': settings.app.sso_azure_directory_id,
+            'sso_azure_app_id': settings.app.sso_azure_app_id,
+            'sso_azure_app_secret': settings.app.sso_azure_app_secret,
+            'sso_authzero_domain': settings.app.sso_authzero_domain,
+            'sso_authzero_app_id': settings.app.sso_authzero_app_id,
+            'sso_authzero_app_secret': settings.app.sso_authzero_app_secret,
             'sso_google_key': settings.app.sso_google_key,
             'sso_google_email': settings.app.sso_google_email,
             'sso_duo_token': settings.app.sso_duo_token,
@@ -127,13 +143,14 @@ def _dict():
             'sso_saml_cert': settings.app.sso_saml_cert,
             'sso_okta_app_id': settings.app.sso_okta_app_id,
             'sso_okta_token': settings.app.sso_okta_token,
-            'sso_okta_push': settings.app.sso_okta_push,
+            'sso_okta_mode': utils.get_okta_mode(),
             'sso_onelogin_app_id': settings.app.sso_onelogin_app_id,
             'sso_onelogin_id': settings.app.sso_onelogin_id,
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
-            'sso_onelogin_push': settings.app.sso_onelogin_push,
+            'sso_onelogin_mode': utils.get_onelogin_mode(),
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
+            'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
@@ -146,6 +163,8 @@ def _dict():
             'cloud_provider': settings.app.cloud_provider,
             'route53_region': settings.app.route53_region,
             'route53_zone': settings.app.route53_zone,
+            'oracle_user_ocid': settings.app.oracle_user_ocid,
+            'oracle_public_key': settings.app.oracle_public_key,
             'us_east_1_access_key': settings.app.us_east_1_access_key,
             'us_east_1_secret_key': settings.app.us_east_1_secret_key,
             'us_east_2_access_key': settings.app.us_east_2_access_key,
@@ -311,6 +330,12 @@ def settings_put():
         settings_commit = True
         auditing = flask.request.json['auditing'] or None
 
+        if settings.app.auditing == ALL and auditing != ALL:
+            return utils.jsonify({
+                'error': CANNOT_DISABLE_AUTIDING,
+                'error_msg': CANNOT_DISABLE_AUTIDING_MSG,
+            }, 400)
+
         if settings.app.auditing != auditing:
             if not flask.g.administrator.super_user:
                 return utils.jsonify({
@@ -386,6 +411,53 @@ def settings_put():
             settings.app.sso_match = sso_match
         else:
             settings.app.sso_match = None
+
+    if 'sso_azure_directory_id' in flask.request.json:
+        settings_commit = True
+        sso_azure_directory_id = flask.request.json[
+            'sso_azure_directory_id'] or None
+        if sso_azure_directory_id != settings.app.sso_azure_directory_id:
+            changes.add('sso')
+        settings.app.sso_azure_directory_id = sso_azure_directory_id
+
+    if 'sso_azure_app_id' in flask.request.json:
+        settings_commit = True
+        sso_azure_app_id = flask.request.json['sso_azure_app_id'] or None
+        if sso_azure_app_id != settings.app.sso_azure_app_id:
+            changes.add('sso')
+        settings.app.sso_azure_app_id = sso_azure_app_id
+
+    if 'sso_azure_app_secret' in flask.request.json:
+        settings_commit = True
+        sso_azure_app_secret = flask.request.json[
+            'sso_azure_app_secret'] or None
+        if sso_azure_app_secret != settings.app.sso_azure_app_secret:
+            changes.add('sso')
+        settings.app.sso_azure_app_secret = sso_azure_app_secret
+
+    if 'sso_authzero_domain' in flask.request.json:
+        settings_commit = True
+        sso_authzero_domain = flask.request.json[
+            'sso_authzero_domain'] or None
+        if sso_authzero_domain != settings.app.sso_authzero_domain:
+            changes.add('sso')
+        settings.app.sso_authzero_domain = sso_authzero_domain
+
+    if 'sso_authzero_app_id' in flask.request.json:
+        settings_commit = True
+        sso_authzero_app_id = flask.request.json[
+            'sso_authzero_app_id'] or None
+        if sso_authzero_app_id != settings.app.sso_authzero_app_id:
+            changes.add('sso')
+        settings.app.sso_authzero_app_id = sso_authzero_app_id
+
+    if 'sso_authzero_app_secret' in flask.request.json:
+        settings_commit = True
+        sso_authzero_app_secret = flask.request.json[
+            'sso_authzero_app_secret'] or None
+        if sso_authzero_app_secret != settings.app.sso_authzero_app_secret:
+            changes.add('sso')
+        settings.app.sso_authzero_app_secret = sso_authzero_app_secret
 
     if 'sso_google_key' in flask.request.json:
         settings_commit = True
@@ -472,7 +544,8 @@ def settings_put():
 
     if 'sso_saml_issuer_url' in flask.request.json:
         settings_commit = True
-        sso_saml_issuer_url = flask.request.json['sso_saml_issuer_url'] or None
+        sso_saml_issuer_url = flask.request.json['sso_saml_issuer_url'] or \
+            None
         if sso_saml_issuer_url != settings.app.sso_saml_issuer_url:
             changes.add('sso')
         settings.app.sso_saml_issuer_url = sso_saml_issuer_url
@@ -498,12 +571,12 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_okta_token = sso_okta_token
 
-    if 'sso_okta_push' in flask.request.json:
+    if 'sso_okta_mode' in flask.request.json:
         sso_mode = settings.app.sso
-        if sso_mode and sso_mode in (SAML_OKTA_AUTH, SAML_OKTA_YUBICO_AUTH):
+        if sso_mode and sso_mode == SAML_OKTA_AUTH:
             settings_commit = True
-            sso_okta_push = flask.request.json['sso_okta_push']
-            settings.app.sso_okta_push = True if sso_okta_push else False
+            sso_okta_mode = flask.request.json['sso_okta_mode']
+            settings.app.sso_okta_mode = sso_okta_mode
 
     if 'sso_onelogin_app_id' in flask.request.json:
         settings_commit = True
@@ -528,14 +601,20 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_onelogin_secret = sso_onelogin_secret
 
-    if 'sso_onelogin_push' in flask.request.json:
+    if 'sso_onelogin_mode' in flask.request.json:
         sso_mode = settings.app.sso
-        if sso_mode and sso_mode in (
-                SAML_ONELOGIN_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
+        if sso_mode and sso_mode == SAML_ONELOGIN_AUTH:
             settings_commit = True
-            sso_onelogin_push = flask.request.json['sso_onelogin_push']
-            settings.app.sso_onelogin_push = True if \
-                sso_onelogin_push else False
+            sso_onelogin_mode = flask.request.json['sso_onelogin_mode']
+            settings.app.sso_onelogin_mode = sso_onelogin_mode
+
+    if 'sso_cache' in flask.request.json:
+        settings_commit = True
+        sso_cache = True if \
+            flask.request.json['sso_cache'] else False
+        if sso_cache != settings.app.sso_cache:
+            changes.add('sso')
+        settings.app.sso_cache = sso_cache
 
     if 'sso_client_cache' in flask.request.json:
         settings_commit = True
@@ -644,6 +723,22 @@ def settings_put():
         settings.app.route53_zone = utils.filter_str(
             flask.request.json['route53_zone']) or None
 
+    if settings.app.cloud_provider == 'oracle':
+        if 'oracle_user_ocid' in flask.request.json:
+            settings_commit = True
+            settings.app.oracle_user_ocid = utils.filter_str(
+                flask.request.json['oracle_user_ocid']) or None
+    elif settings.app.oracle_user_ocid:
+        settings_commit = True
+        settings.app.oracle_user_ocid = None
+
+    if 'oracle_public_key' in flask.request.json:
+        if flask.request.json['oracle_public_key'] == 'reset':
+            settings_commit = True
+            private_key, public_key = utils.generate_rsa_key()
+            settings.app.oracle_private_key = private_key
+            settings.app.oracle_public_key = public_key
+
     for aws_key in (
                 'us_east_1_access_key',
                 'us_east_1_secret_key',
@@ -690,6 +785,14 @@ def settings_put():
 
     if not settings.app.sso:
         settings.app.sso_match = None
+        settings.app.sso_azure_directory_id = None
+        settings.app.sso_azure_app_id = None
+        settings.app.sso_azure_app_secret = None
+        settings.app.sso_authzero_directory_id = None
+        settings.app.sso_authzero_app_id = None
+        settings.app.sso_authzero_app_secret = None
+        settings.app.sso_google_key = None
+        settings.app.sso_google_email = None
         settings.app.sso_duo_token = None
         settings.app.sso_duo_secret = None
         settings.app.sso_duo_host = None
@@ -721,10 +824,17 @@ def settings_put():
             }, 400)
 
     for change in changes:
+        remote_addr = utils.get_remote_addr()
         flask.g.administrator.audit_event(
             'admin_settings',
             _changes_audit_text[change],
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+        journal.entry(
+            journal.SETTINGS_UPDATE,
+            remote_address=remote_addr,
+            event_long='Settings updated',
+            changed=_changes_audit_text[change],
         )
 
     if settings_commit:

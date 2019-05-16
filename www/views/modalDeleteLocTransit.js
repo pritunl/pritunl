@@ -4,20 +4,20 @@ define([
   'backbone',
   'views/modal',
   'views/alert',
-  'text!templates/modalDeleteLocExclude.html'
+  'text!templates/modalDeleteLocTransit.html'
 ], function($, _, Backbone, ModalView, AlertView,
-    modalDeleteLocExcludeTemplate) {
+    modalDeleteLocTransitTemplate) {
   'use strict';
-  var ModalDeleteLocExcludeView = ModalView.extend({
-    className: 'delete-location-exclude-modal',
-    template: _.template(modalDeleteLocExcludeTemplate),
-    title: 'Remove Location Exclude',
-    okText: 'Remove',
+  var ModalDeleteLocTransitView = ModalView.extend({
+    className: 'delete-location-transit-modal',
+    template: _.template(modalDeleteLocTransitTemplate),
+    title: 'Disable Peer Transit',
+    okText: 'Disable',
     body: function() {
       return this.template(this.model.toJSON());
     },
     onOk: function() {
-      this.setLoading('Removing location exclude...');
+      this.setLoading('Disabling location transit...');
       this.model.destroy({
         success: function() {
           this.close(true);
@@ -35,5 +35,5 @@ define([
     }
   });
 
-  return ModalDeleteLocExcludeView;
+  return ModalDeleteLocTransitView;
 });

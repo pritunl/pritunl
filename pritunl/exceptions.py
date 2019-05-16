@@ -113,14 +113,21 @@ class ServerRouteNatVirtual(ServerError):
 class ServerRouteNatServerLink(ServerError):
     pass
 
-class ServerRouteNatNetworkLink(ServerError):
+class ServerRouteGatewayNetworkLink(ServerError):
     pass
 
 class ServerRouteNatNetGateway(ServerError):
     pass
 
+class ServerRouteNonNatNetmap(ServerError):
+    pass
+
 
 class NotFound(BaseError):
+    pass
+
+
+class RequestError(BaseError):
     pass
 
 

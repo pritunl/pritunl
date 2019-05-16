@@ -53,13 +53,13 @@ def plugin_login_authenticate(user_name, password, remote_ip):
     )
 
     if not returns:
-        return False, None, None
+        return False, False, None, None
 
     org_name = None
     groups = set()
     for return_val in returns:
         if not return_val[0]:
-            return False, None, None
+            return True, False, None, None
         if return_val[1]:
             org_name = return_val[1]
 
@@ -73,4 +73,4 @@ def plugin_login_authenticate(user_name, password, remote_ip):
         if org:
             org_id = org.id
 
-    return True, org_id, groups or None
+    return True, True, org_id, groups or None

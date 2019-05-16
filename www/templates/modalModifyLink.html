@@ -4,3 +4,16 @@
     <input type="text" class="form-control" placeholder="Enter name" data-toggle="tooltip" title="Name of link" autofocus value="<%- name %>">
   </div>
 </div>
+<div class="ipv6-toggle toggle-form form-group">
+  <label>IPv6</label>
+  <div class="selector <%= ipv6 ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Connect link hosts with IPv6. All link hosts must have an IPv6 address.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
+<div class="form-group link-action">
+  <label>Action</label>
+  <select class="form-control" data-toggle="tooltip" title="Action for ipsec client to take when connection issue occurs. For most configurations hold will provide the best reliability.">
+    <option value="restart" <%= action === 'restart' ? 'selected' : '' %>>Restart</option>
+    <option value="hold" <%= action === 'hold' ? 'selected' : '' %>>Hold</option>
+  </select>
+</div>

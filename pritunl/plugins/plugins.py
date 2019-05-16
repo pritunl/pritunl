@@ -30,16 +30,17 @@ def init():
         x.strip() for x in (settings.app.plugin_requred or '').split(',') if x)
     plugins_loaded = set()
 
-    if not os.path.exists(plugin_dir):
-        return
-
-    for file_name in os.listdir(plugin_dir):
-        file_path = os.path.join(plugin_dir, file_name)
-        file_name, file_ext = os.path.splitext(file_name)
-        if file_ext != '.py':
-            continue
-        plugins_loaded.add(file_name)
-        modules.append(imp.load_source('plugin_' + file_name, file_path))
+    if os.path.exists(plugin_dir):
+        for file_name in os.listdir(plugin_dir):
+            file_path = os.path.join(plugin_dir, file_name)
+            file_name, file_ext = os.path.splitext(file_name)
+            if file_ext != '.py':
+                continue
+            logger.info('Loading plugin', 'plugins',
+                name=file_name,
+            )
+            plugins_loaded.add(file_name)
+            modules.append(imp.load_source('plugin_' + file_name, file_path))
 
     missing_plugins = plugins_required - plugins_loaded
     if missing_plugins:
@@ -67,7 +68,7 @@ def _event(event_type, **kwargs):
             handler(**kwargs)
         except:
             logger.exception('Error in plugin handler', 'plugins',
-                event_type=event_type,
+                handler=event_type,
             )
 
 def event(event_type, **kwargs):

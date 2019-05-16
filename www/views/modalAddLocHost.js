@@ -49,6 +49,7 @@ define([
       var staticHost = this.getStaticSelect();
       var publicAddress = this.$('.public-address input').val();
       var localAddress = this.$('.local-address input').val();
+      var address6 = this.$('.address6 input').val();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -65,7 +66,8 @@ define([
         priority: priority,
         static: staticHost,
         public_address: publicAddress,
-        local_address: localAddress
+        local_address: localAddress,
+        address6: address6
       }, {
         success: function() {
           this.close(true);

@@ -16,6 +16,7 @@ from pritunl import messenger
 from pritunl import monitoring
 from pritunl import plugins
 from pritunl import vxlan
+from pritunl import journal
 
 import time
 import collections
@@ -25,6 +26,9 @@ import base64
 import threading
 import uuid
 import pymongo
+import json
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives.asymmetric import padding
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 _port_listeners = {}
@@ -63,6 +67,8 @@ class Clients(object):
                 continue
             self.ip_pool.append(str(ip_addr))
         self.ip_pool.pop()
+
+        self.server_private_key = self.server.get_auth_private_key()
 
     @cached_static_property
     def collection(cls):
@@ -117,6 +123,10 @@ class Clients(object):
                 if route['net_gateway']:
                     continue
 
+                netmap = route.get('nat_netmap')
+                if netmap:
+                    network = netmap
+
                 if ':' in network:
                     client_conf += 'iroute-ipv6 %s%s\n' % (
                         network, metric_def)
@@ -133,9 +143,13 @@ class Clients(object):
 
                 if self.server.ipv6 or (settings.vpn.ipv6_route_all and (
                         platform == 'android' or platform == 'ios')):
-                    client_conf += 'push "redirect-gateway ipv6"\n'
-                    client_conf += 'push "redirect-gateway-ipv6 def1"\n'
-                    client_conf += 'push "route-ipv6 2000::/3"\n'
+                    if platform == 'chrome':
+                        client_conf += 'push "redirect-gateway ipv6"\n'
+                        client_conf += 'push "redirect-gateway-ipv6 def1"\n'
+                    else:
+                        client_conf += 'push "redirect-gateway ipv6"\n'
+                        client_conf += 'push "redirect-gateway-ipv6 def1"\n'
+                        client_conf += 'push "route-ipv6 2000::/3"\n'
 
             if self.server.dns_mapping:
                 client_conf += 'push "dhcp-option DNS %s"\n' % (
@@ -184,6 +198,10 @@ class Clients(object):
                     else:
                         metric_def = ''
                         metric = ''
+
+                    netmap = route.get('nat_netmap')
+                    if netmap:
+                        network = netmap
 
                     if route['net_gateway']:
                         if ':' in network:
@@ -520,7 +538,67 @@ class Clients(object):
                 user_count=self.server.user_count,
             )
 
-        return virt_address, address_dynamic
+        if self.server.multi_device and self.server.max_devices:
+            if self.server.replicating:
+                if not virt_address:
+                    raise ValueError('Failed to get virtual address')
+
+                cur_id = utils.ip_to_long(virt_address.split('/')[0])
+                conn_count = 0
+                docs = self.pool_collection.find({
+                    'server_id': self.server.id,
+                    'user_id': user_id,
+                })
+
+                for doc in docs:
+                    if doc['_id'] == cur_id:
+                        continue
+
+                    if conn_count > self.server.max_devices:
+                        messenger.publish('instance', [
+                            'user_disconnect_id',
+                            user_id,
+                            doc['client_id'],
+                            self.server.id,
+                        ])
+                        continue
+
+                    conn_count += 1
+
+                if conn_count >= self.server.max_devices:
+                    if address_dynamic:
+                        self.pool_collection.update({
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'client_id': doc_id,
+                        }, {'$set': {
+                            'user_id': None,
+                            'mac_addr': None,
+                            'client_id': None,
+                            'timestamp': None,
+                        }})
+                    else:
+                        self.pool_collection.remove({
+                            'server_id': self.server.id,
+                            'user_id': user_id,
+                            'client_id': doc_id,
+                        })
+                    return None, False, True
+            else:
+                conn_count = 0
+                for clnt in self.clients.find({
+                    'user_id': user_id,
+                }):
+                    if conn_count > self.server.max_devices:
+                        self.instance_com.client_kill(clnt['id'])
+                    conn_count += 1
+
+                if conn_count >= self.server.max_devices:
+                    if address_dynamic:
+                        self.ip_pool.append(virt_address.split('/')[0])
+                    return None, False, True
+
+        return virt_address, address_dynamic, False
 
     def allow_client(self, client_data, org, user, reauth=False):
         client_id = client_data['client_id']
@@ -548,6 +626,7 @@ class Clients(object):
                 'user_connection',
                 'User connected to "%s"' % self.server.name,
                 remote_addr=remote_ip,
+                server_name=self.server.name,
             )
             monitoring.insert_point('user_connections', {
                 'host': settings.local.host.name,
@@ -558,8 +637,13 @@ class Clients(object):
                 'remote_ip': remote_ip,
             })
 
-            virt_address, address_dynamic = self.get_virt_addr(
+            virt_address, address_dynamic, device_limit = self.get_virt_addr(
                 org_id, user_id, mac_addr, doc_id)
+
+            if device_limit:
+                self.instance_com.send_client_deny(client_id, key_id,
+                    'Too many devices')
+                return
 
             if not self.server.multi_device:
                 if self.server.replicating:
@@ -670,6 +754,28 @@ class Clients(object):
 
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
+    def decrypt_rsa(self, cipher_data):
+        cipher_data = base64.b64decode(cipher_data)
+
+        plaintext = self.server_private_key.decrypt(
+            cipher_data,
+            padding.OAEP(
+                mgf=padding.MGF1(algorithm=hashes.SHA512()),
+                algorithm=hashes.SHA512(),
+                label=None,
+            ),
+        )
+
+        data = json.loads(str(plaintext))
+
+        auth_password = data.get('password')
+        auth_password = str(auth_password) if auth_password else None
+        auth_token = utils.filter_str(data.get('token')) or None
+        auth_nonce = utils.filter_str(data.get('nonce')) or None
+        auth_timestamp = utils.filter_str(data.get('timestamp')) or None
+
+        return auth_password, auth_token, auth_nonce, auth_timestamp
+
     def _connect(self, client_data, reauth):
         client_id = client_data['client_id']
         key_id = client_data['key_id']
@@ -680,23 +786,22 @@ class Clients(object):
         device_id = client_data.get('device_id')
         device_name = client_data.get('device_name')
         password = client_data.get('password')
+        auth_password = None
         auth_token = None
+        auth_nonce = None
+        auth_timestamp = None
         mac_addr = client_data.get('mac_addr')
 
-        if password and '<%=PUSH_TOKEN=%>' in password:
-            auth_token, password = password.split('<%=PUSH_TOKEN=%>')
-            auth_token = utils.filter_str(auth_token)
+        if password and '<%=RSA_ENCRYPTED=%>' in password and \
+                self.server_private_key:
+            auth_password, auth_token, auth_nonce, auth_timestamp = \
+                self.decrypt_rsa(password.split('<%=RSA_ENCRYPTED=%>')[-1])
+        elif password and '<%=PUSH_TOKEN=%>' in password:
+            _, password = password.split('<%=PUSH_TOKEN=%>')
             password = password or None
-
-        if password and '<%=AUTH_TOKEN=%>' in password:
-            auth_token, password = password.split('<%=AUTH_TOKEN=%>')
-            auth_token = utils.filter_str(auth_token)
+        elif password and '<%=AUTH_TOKEN=%>' in password:
+            _, password = password.split('<%=AUTH_TOKEN=%>')
             password = password or None
-
-        if auth_token:
-            auth_token_hash = hashlib.sha512()
-            auth_token_hash.update(auth_token)
-            auth_token = base64.b64encode(auth_token_hash.digest())
 
         try:
             if not settings.vpn.stress_test and \
@@ -747,28 +852,41 @@ class Clients(object):
                         remote_ip=remote_ip,
                         mac_addr=mac_addr,
                         password=password,
+                        auth_password=auth_password,
                         auth_token=auth_token,
+                        auth_nonce=auth_nonce,
+                        auth_timestamp=auth_timestamp,
                         allow=allow,
                         reason=reason,
                     )
                 except:
-                    logger.exception('Error in authorizer callback', 'server',
+                    try:
+                        self.instance_com.send_client_deny(
+                            client_id, key_id, 'exception', auth.challenge)
+                    except:
+                        pass
+
+                    logger.exception(
+                        'Error in authorizer callback', 'server',
                         server_id=self.server.id,
                         instance_id=self.instance.id,
                     )
 
             auth = authorizer.Authorizer(
-                self.server,
-                user,
-                remote_ip,
-                platform,
-                device_id,
-                device_name,
-                mac_addr,
-                password,
-                auth_token,
-                reauth,
-                callback,
+                svr=self.server,
+                usr=user,
+                remote_ip=remote_ip,
+                platform=platform,
+                device_id=device_id,
+                device_name=device_name,
+                mac_addr=mac_addr,
+                password=password,
+                auth_password=auth_password,
+                auth_token=auth_token,
+                auth_nonce=auth_nonce,
+                auth_timestamp=auth_timestamp,
+                reauth=reauth,
+                callback=callback,
             )
 
             auth.authenticate()
@@ -1084,15 +1202,25 @@ class Clients(object):
         org_id = client['org_id']
         user_id = client['user_id']
         remote_ip = client['real_address']
+        virt_address = client['virt_address']
+        virt_address6 = client['virt_address6']
 
         org = self.get_org(org_id)
         if org:
-            user = org.get_user(user_id, fields=('_id', 'name'))
+            user = org.get_user(user_id)
             if user:
                 user.audit_event(
                     'user_connection',
                     'User disconnected from "%s"' % self.server.name,
                     remote_addr=remote_ip,
+                    server_name=self.server.name,
+                )
+                journal.entry(
+                    journal.USER_DISCONNECT,
+                    user.journal_data,
+                    self.server.journal_data,
+                    remote_address=remote_ip,
+                    event_long='User disconnected',
                 )
                 monitoring.insert_point('user_disconnections', {
                     'host': settings.local.host.name,
@@ -1112,6 +1240,8 @@ class Clients(object):
                     org_name=org.name,
                     user_name=user.name,
                     remote_ip=remote_ip,
+                    virtual_ip=virt_address,
+                    virtual_ip6=virt_address6,
                 )
 
         # if self.server.route_clients and not client.get('ignore_routes'):
@@ -1507,6 +1637,7 @@ class Clients(object):
         _port_listeners[self.instance.id] = self.on_port_forwarding
         _client_listeners[self.instance.id] = self.on_client
         host.global_servers.add(self.instance.id)
+
         if self.server.dns_mapping:
             host.dns_mapping_servers.add(self.instance.id)
         self.call_queue.start(settings.vpn.call_queue_threads)

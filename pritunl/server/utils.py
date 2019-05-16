@@ -169,7 +169,8 @@ def link_servers(server_id, link_server_id, use_local_address=False):
 
         routes_set = set()
         for route in svr.get_routes():
-            routes_set.add(route['network'])
+            if route['network'] != '0.0.0.0/0':
+                routes_set.add(route['network'])
         if routes & routes_set:
             return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
         routes.update(routes_set)

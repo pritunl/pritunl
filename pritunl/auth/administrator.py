@@ -7,6 +7,7 @@ from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import logger
+from pritunl import journal
 from pritunl import plugins
 from pritunl import sso
 
@@ -23,6 +24,7 @@ class Administrator(mongo.MongoObject):
     fields = {
         'username',
         'password',
+        'default_password',
         'yubikey_id',
         'otp_auth',
         'otp_secret',
@@ -89,6 +91,14 @@ class Administrator(mongo.MongoObject):
             'super_user': self.super_user,
         }
 
+    @property
+    def journal_data(self):
+        return {
+            'admin_id': self.id,
+            'admin_name': self.username,
+            'admin_super_user': self.super_user,
+        }
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('administrators')
@@ -132,6 +142,14 @@ class Administrator(mongo.MongoObject):
     def auth_check(self, password, otp_code=None, yubico_key=None,
             remote_addr=None):
         if not self.test_password(password):
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                self.journal_data,
+                remote_address=remote_addr,
+                reason=journal.ADMIN_AUTH_REASON_INVALID_PASSWORD,
+                reason_long='Invalid password',
+            )
+
             self.audit_event(
                 'admin_auth',
                 'Administrator login failed, invalid password',
@@ -140,6 +158,14 @@ class Administrator(mongo.MongoObject):
             return False
 
         if self.otp_auth and not self.verify_otp_code(otp_code):
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                self.journal_data,
+                remote_address=remote_addr,
+                reason=journal.ADMIN_AUTH_REASON_INVALID_OTP,
+                reason_long='Invalid two-factor authentication code',
+            )
+
             self.audit_event(
                 'admin_auth',
                 'Administrator login failed, ' +
@@ -151,6 +177,14 @@ class Administrator(mongo.MongoObject):
         if self.yubikey_id:
             valid, public_id = sso.auth_yubico(yubico_key)
             if not valid or self.yubikey_id != public_id:
+                journal.entry(
+                    journal.ADMIN_AUTH_FAILURE,
+                    self.journal_data,
+                    remote_address=remote_addr,
+                    reason=journal.ADMIN_AUTH_REASON_INVALID_YUBIKEY,
+                    reason_long='Invalid YubiKey',
+                )
+
                 self.audit_event(
                     'admin_auth',
                     'Administrator login failed, invalid YubiKey',
@@ -159,12 +193,26 @@ class Administrator(mongo.MongoObject):
                 return False
 
         if self.disabled:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                self.journal_data,
+                remote_address=remote_addr,
+                reason=journal.ADMIN_AUTH_REASON_DISABLED,
+                reason_long='Account is disabled',
+            )
+
             self.audit_event(
                 'admin_auth',
                 'Administrator login failed, administrator is disabled',
                 remote_addr=remote_addr,
             )
             return False
+
+        journal.entry(
+            journal.ADMIN_AUTH_SUCCESS,
+            self.journal_data,
+            remote_address=remote_addr,
+        )
 
         self.audit_event(
             'admin_auth',
@@ -218,6 +266,12 @@ class Administrator(mongo.MongoObject):
     def generate_secret(self):
         self.secret = utils.generate_secret()
 
+    def generate_default_password(self):
+        password = utils.rand_str(12)
+        self.password = password
+        self.default_password = password
+        self.default = True
+
     def new_session(self):
         session_id = utils.generate_secret()
         self.collection.update({
@@ -243,6 +297,7 @@ class Administrator(mongo.MongoObject):
 
             if self.default and self.exists:
                 self.default = None
+                self.default_password = None
 
         if not self.token:
             self.generate_token()
@@ -429,29 +484,19 @@ def check_session(csrf_check):
     flask.g.administrator = administrator
     return True
 
-def get_by_username(username, remote_addr=None):
+def get_default_password():
+    logger.info('Getting default administrator password', 'auth')
+
+    time.sleep(0.2)
+
+    default_admin = find_user(username=DEFAULT_USERNAME)
+    if not default_admin:
+        return None, None
+
+    return default_admin.username, default_admin.default_password
+
+def get_by_username(username):
     username = utils.filter_str(username).lower()
-
-    if remote_addr:
-        doc = Administrator.limiter_collection.find_and_modify({
-            '_id': remote_addr,
-        }, {
-            '$inc': {'count': 1},
-            '$setOnInsert': {'timestamp': utils.now()},
-        }, new=True, upsert=True)
-
-        if utils.now() > doc['timestamp'] + datetime.timedelta(
-                seconds=settings.app.auth_limiter_ttl):
-            doc = {
-                'count': 1,
-                'timestamp': utils.now(),
-            }
-            Administrator.limiter_collection.update({
-                '_id': remote_addr,
-            }, doc, upsert=True)
-
-        if doc['count'] > settings.app.auth_limiter_count_max:
-            raise flask.abort(403)
 
     admin = find_user(username=username)
     if not admin:
@@ -461,6 +506,8 @@ def get_by_username(username, remote_addr=None):
 
 def reset_password():
     logger.info('Resetting administrator password', 'auth')
+
+    time.sleep(0.2)
 
     admin_collection = mongo.get_collection('administrators')
 
@@ -472,13 +519,13 @@ def reset_password():
             'super_user': {'$ne': False},
         })
 
-    Administrator(
+    default_admin = Administrator(
         username=DEFAULT_USERNAME,
-        password=DEFAULT_PASSWORD,
-        default=True,
-    ).commit()
+    )
+    default_admin.generate_default_password()
+    default_admin.commit()
 
-    return DEFAULT_USERNAME, DEFAULT_PASSWORD
+    return DEFAULT_USERNAME, default_admin.default_password
 
 def iter_admins(fields=None):
     if fields:
@@ -513,3 +560,17 @@ def super_user_count():
     }, {
         '_id': True,
     }).count()
+
+has_default_pass = None
+def has_default_password():
+    global has_default_pass
+
+    if has_default_pass is None or has_default_pass:
+        default_admin = find_user(username=DEFAULT_USERNAME)
+        if not default_admin:
+            has_default_pass = False
+            return has_default_pass
+
+        has_default_pass = bool(default_admin.default_password)
+        return has_default_pass
+    return False

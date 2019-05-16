@@ -12,6 +12,7 @@ import uuid
 import math
 import pymongo
 import threading
+import hashlib
 
 class Organization(mongo.MongoObject):
     fields = {
@@ -45,6 +46,13 @@ class Organization(mongo.MongoObject):
             self.auth_api = auth_api
         if type is not None:
             self.type = type
+
+    @property
+    def journal_data(self):
+        return {
+            'organization_id': self.id,
+            'organization_name': self.name,
+        }
 
     def dict(self):
         return {
@@ -281,7 +289,7 @@ class Organization(mongo.MongoObject):
     def create_user_key_link(self, user_id, one_time=False):
         success = False
         for _ in xrange(256):
-            key_id = uuid.uuid4().hex
+            key_id = utils.rand_str(32)
 
             if one_time:
                 short_id = utils.rand_str(settings.app.long_url_length)
@@ -311,7 +319,7 @@ class Organization(mongo.MongoObject):
             'id': key_id,
             'key_url': '/key/%s.tar' % key_id,
             'key_zip_url': '/key/%s.zip' % key_id,
-            'key_onc_url': '/key_onc/%s.zip' % key_id,
+            'key_onc_url': '/key_onc/%s.onc' % key_id,
             'view_url': '/k/%s' % short_id,
             'uri_url': '/ku/%s' % short_id,
         }

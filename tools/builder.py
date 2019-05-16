@@ -8,13 +8,15 @@ import subprocess
 import time
 import math
 import requests
-import pymongo
 import zlib
-import werkzeug.http
 import getpass
 import base64
-import Crypto.Cipher.AES
-import Crypto.Protocol.KDF
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives.ciphers import (
+    Cipher, algorithms, modes
+)
+from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 
 USAGE = """Usage: builder [command] [options]
 Command Help: builder [command] --help
@@ -123,7 +125,9 @@ def iter_packages():
             yield name, path
 
 def generate_last_modifited_etag(file_path):
-    file_name = os.path.basename(file_path).encode(sys.getfilesystemencoding())
+    import werkzeug.http
+    file_name = os.path.basename(file_path).encode(
+        sys.getfilesystemencoding())
     file_mtime = datetime.datetime.utcfromtimestamp(
         os.path.getmtime(file_path))
     file_size = int(os.path.getsize(file_path))
@@ -136,6 +140,14 @@ def generate_last_modifited_etag(file_path):
     ))
 
 def sync_db():
+    import pymongo
+
+    releases_dbs = []
+    for mongodb_uri in mongodb_uris:
+        mongo_client = pymongo.MongoClient(mongodb_uri)
+        mongo_db = mongo_client.get_default_database()
+        releases_dbs.append(mongo_db.releases)
+
     for releases_db in releases_dbs:
         for file_name in os.listdir(RELEASES_DIR):
             file_path = os.path.join(RELEASES_DIR, file_name)
@@ -170,21 +182,24 @@ else:
 def aes_encrypt(passphrase, data):
     enc_salt = os.urandom(32)
     enc_iv = os.urandom(16)
-    enc_key = Crypto.Protocol.KDF.PBKDF2(
-        password=passphrase,
+
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA1(),
+        length=32,
         salt=enc_salt,
-        dkLen=32,
-        count=1000,
+        iterations=1000,
+        backend=default_backend(),
     )
+    enc_key = kdf.derive(passphrase)
 
     data += '\x00' * (16 - (len(data) % 16))
 
-    chiper = Crypto.Cipher.AES.new(
-        enc_key,
-        Crypto.Cipher.AES.MODE_CBC,
-        enc_iv,
-    )
-    enc_data = chiper.encrypt(data)
+    cipher = Cipher(
+        algorithms.AES(enc_key),
+        modes.CBC(enc_iv),
+        backend=default_backend()
+    ).encryptor()
+    enc_data = cipher.update(data) + cipher.finalize()
 
     return '\n'.join([
         base64.b64encode(enc_salt),
@@ -200,19 +215,22 @@ def aes_decrypt(passphrase, data):
     enc_salt = base64.b64decode(data[0])
     enc_iv = base64.b64decode(data[1])
     enc_data = base64.b64decode(data[2])
-    enc_key = Crypto.Protocol.KDF.PBKDF2(
-        password=passphrase,
-        salt=enc_salt,
-        dkLen=32,
-        count=1000,
-    )
 
-    chiper = Crypto.Cipher.AES.new(
-        enc_key,
-        Crypto.Cipher.AES.MODE_CBC,
-        enc_iv,
+    kdf = PBKDF2HMAC(
+        algorithm=hashes.SHA1(),
+        length=32,
+        salt=enc_salt,
+        iterations=1000,
+        backend=default_backend(),
     )
-    data = chiper.decrypt(enc_data)
+    enc_key = kdf.derive(passphrase)
+
+    cipher = Cipher(
+        algorithms.AES(enc_key),
+        modes.CBC(enc_iv),
+        backend=default_backend()
+    ).decryptor()
+    data = cipher.update(enc_data) + cipher.finalize()
 
     return data.replace('\x00', '')
 
@@ -257,13 +275,6 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     mirror_url = build_keys['mirror_url']
     test_mirror_url = build_keys['test_mirror_url']
     mongodb_uris = build_keys['mongodb_uris']
-
-releases_dbs = []
-for mongodb_uri in mongodb_uris:
-    mongo_client = pymongo.MongoClient(mongodb_uri)
-    mongo_db = mongo_client.get_default_database()
-    releases_dbs.append(mongo_db.releases)
-
 
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
@@ -325,7 +336,7 @@ if cmd == 'sync-releases':
 
             # Create gitlab release
             resp = requests.post(
-                'https://git.pritunl.com/api/v3/projects' + \
+                'https://git.pritunl.com/api/v4/projects' + \
                     '/%s%%2F%s/repository/tags/%s/release' % (
                     github_owner, pkg_name, release['tag_name']),
                 headers={
@@ -392,25 +403,55 @@ if cmd == 'set-version':
 
     # Build webapp
     subprocess.check_call([
+        'sudo',
         'docker',
         'run',
         '--rm',
         '-ti',
         '-u', 'docker',
-        '-v', '%s:/mount' % os.path.join(os.getcwd(), STYLES_DIR),
-        'arch',
+        '-v', '%s:/mount:Z' % os.path.join(os.getcwd(), STYLES_DIR),
+        'dev',
         'grunt',
         '--ver=%s' % get_int_ver(new_version)
     ])
     subprocess.check_call([
+        'sudo',
         'docker',
         'run',
         '--rm',
         '-ti',
         '-u', 'docker',
-        '-v', '%s:/mount' % os.path.join(os.getcwd(), WWW_DIR),
-        'arch',
+        '-v', '%s:/mount:Z' % os.path.join(os.getcwd(), WWW_DIR),
+        'dev',
         'grunt',
+    ])
+
+    css_hash = subprocess.check_output(
+        'md5sum www/vendor/dist/css/main.css | head -c 32',
+        shell=True).strip()
+    app_hash = subprocess.check_output(
+        'md5sum www/vendor/dist/js/main.js | head -c 32', shell=True).strip()
+    subprocess.check_call([
+        'mv',
+        'www/vendor/dist/css/main.css',
+        'www/vendor/dist/css/main.%s.css' % css_hash,
+    ])
+    subprocess.check_call([
+        'mv',
+        'www/vendor/dist/js/main.js',
+        'www/vendor/dist/js/main.%s.js' % app_hash,
+    ])
+    subprocess.check_call([
+        'sed',
+        '-i',
+        '-e', 's|s/css/main.css|s/css/main.%s.css|g' % css_hash,
+        'www/vendor/dist/index.html',
+    ])
+    subprocess.check_call([
+        'sed',
+        '-i',
+        '-e', 's|s/js/main.js|s/js/main.%s.js|g' % app_hash,
+        'www/vendor/dist/index.html',
     ])
 
     # Commit webapp
@@ -528,7 +569,7 @@ if cmd == 'set-version':
 
     # Create gitlab release
     response = requests.post(
-        'https://git.pritunl.com/api/v3/projects' + \
+        'https://git.pritunl.com/api/v4/projects' + \
             '/%s%%2F%s/repository/tags/%s/release' % (
             github_owner, pkg_name, new_version),
         headers={
@@ -638,17 +679,13 @@ if cmd == 'upload' or cmd == 'build-upload':
 
 
     # Sync mirror
-    for mir_url in test_mirror_url if is_snapshot else mirror_url:
-        subprocess.check_call(['rsync',
-            '--human-readable',
-            '--archive',
-            '--progress',
-            '--delete',
-            '--acls',
-            'mirror/',
-            mir_url,
-        ], cwd=pacur_path)
-
+    subprocess.check_call([
+        's3cmd',
+        'sync',
+        '--follow-symlinks',
+        'mirror/',
+        's3://dev/' if is_snapshot else 's3://stable/',
+    ], cwd=pacur_path)
 
     # Add to github
     for name, path in iter_packages():

@@ -78,7 +78,7 @@ def _ndppd_thread():
             process = subprocess.Popen([
                 'ndppd',
                 '-c', conf_path,
-            ], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            ])
 
             while True:
                 if host_routed_subnet6 != \

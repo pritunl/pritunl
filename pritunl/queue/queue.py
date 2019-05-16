@@ -33,7 +33,6 @@ class Queue(mongo.MongoObject):
         'priority': LOW,
         'retry': True,
         'attempts': 0,
-        'ttl': settings.mongo.queue_ttl,
     }
     type = None
     cpu_type = NORMAL_CPU
@@ -41,6 +40,7 @@ class Queue(mongo.MongoObject):
 
     def __init__(self, priority=None, retry=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
+        self.ttl = settings.mongo.queue_ttl
         self.type = self.type
         self.reserve_id = self.reserve_id
         self.runner_id = utils.ObjectId()

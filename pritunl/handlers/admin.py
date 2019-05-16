@@ -4,6 +4,7 @@ from pritunl import event
 from pritunl import app
 from pritunl import auth
 from pritunl import settings
+from pritunl import journal
 
 import flask
 import pymongo
@@ -18,10 +19,10 @@ def admin_get(admin_id=None):
             return utils.jsonify(resp)
 
     if not flask.g.administrator.super_user:
-            return utils.jsonify({
-                'error': REQUIRES_SUPER_USER,
-                'error_msg': REQUIRES_SUPER_USER_MSG,
-            }, 400)
+        return utils.jsonify({
+            'error': REQUIRES_SUPER_USER,
+            'error_msg': REQUIRES_SUPER_USER_MSG,
+        }, 400)
 
     if admin_id:
         return utils.jsonify(auth.get_by_id(admin_id).dict())
@@ -50,6 +51,7 @@ def admin_put(admin_id):
         }, 400)
 
     admin = auth.get_by_id(admin_id)
+    remote_addr = utils.get_remote_addr()
 
     if 'username' in flask.request.json:
         username = utils.filter_str(flask.request.json['username']) or \
@@ -60,7 +62,14 @@ def admin_put(admin_id):
         if username != admin.username:
             admin.audit_event('admin_updated',
                 'Administrator username changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.ADMIN_UPDATE,
+                admin.journal_data,
+                event_long='Administrator username changed',
+                remote_addr=remote_addr,
             )
 
         admin.username = username
@@ -71,7 +80,14 @@ def admin_put(admin_id):
         if password != admin.password:
             admin.audit_event('admin_updated',
                 'Administrator password changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.ADMIN_UPDATE,
+                admin.journal_data,
+                event_long='Administrator password changed',
+                remote_addr=remote_addr,
             )
 
         admin.password = password
@@ -82,7 +98,14 @@ def admin_put(admin_id):
         if yubikey_id != admin.yubikey_id:
             admin.audit_event('admin_updated',
                 'Administrator YubiKey ID changed',
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.ADMIN_UPDATE,
+                admin.journal_data,
+                event_long='Administrator YubiKey ID changed',
+                remote_addr=remote_addr,
             )
 
         admin.yubikey_id = yubikey_id[:12] if yubikey_id else None
@@ -99,7 +122,15 @@ def admin_put(admin_id):
             admin.audit_event('admin_updated',
                 'Administrator super user %s' % (
                     'disabled' if super_user else 'enabled'),
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.ADMIN_UPDATE,
+                admin.journal_data,
+                event_long='Administrator super user %s' % (
+                    'disabled' if super_user else 'enabled'),
+                remote_addr=remote_addr,
             )
 
         admin.super_user = super_user
@@ -117,7 +148,15 @@ def admin_put(admin_id):
             admin.audit_event('admin_updated',
                 'Administrator token authentication %s' % (
                     'disabled' if auth_api else 'enabled'),
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.ADMIN_UPDATE,
+                admin.journal_data,
+                event_long='Administrator token authentication %s' % (
+                    'disabled' if auth_api else 'enabled'),
+                remote_addr=remote_addr,
             )
 
         admin.auth_api = auth_api
@@ -126,14 +165,28 @@ def admin_put(admin_id):
         admin.generate_token()
         admin.audit_event('admin_updated',
             'Administrator api token changed',
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+
+        journal.entry(
+            journal.ADMIN_UPDATE,
+            admin.journal_data,
+            event_long='Administrator api token changed',
+            remote_addr=remote_addr,
         )
 
     if 'secret' in flask.request.json and flask.request.json['secret']:
         admin.generate_secret()
         admin.audit_event('admin_updated',
             'Administrator api secret changed',
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+
+        journal.entry(
+            journal.ADMIN_UPDATE,
+            admin.journal_data,
+            event_long='Administrator api secret changed',
+            remote_addr=remote_addr,
         )
 
     disabled = flask.request.json.get('disabled')
@@ -147,7 +200,15 @@ def admin_put(admin_id):
 
             admin.audit_event('admin_updated',
                 'Administrator %s' % ('disabled' if disabled else 'enabled'),
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.ADMIN_UPDATE,
+                admin.journal_data,
+                event_long='Administrator %s' % (
+                    'disabled' if disabled else 'enabled'),
+                remote_addr=remote_addr,
             )
 
         admin.disabled = disabled
@@ -163,7 +224,15 @@ def admin_put(admin_id):
             admin.audit_event('admin_updated',
                 'Administrator two-step authentication %s' % (
                     'disabled' if otp_auth else 'enabled'),
-                remote_addr=utils.get_remote_addr(),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.ADMIN_UPDATE,
+                admin.journal_data,
+                event_long='Administrator two-step authentication %s' % (
+                    'disabled' if otp_auth else 'enabled'),
+                remote_addr=remote_addr,
             )
 
         admin.otp_auth = otp_auth
@@ -172,7 +241,14 @@ def admin_put(admin_id):
     if otp_secret == True:
         admin.audit_event('admin_updated',
             'Administrator two-factor authentication secret reset',
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+
+        journal.entry(
+            journal.ADMIN_UPDATE,
+            admin.journal_data,
+            event_long='Administrator two-factor authentication secret reset',
+            remote_addr=remote_addr,
         )
         admin.generate_otp_secret()
 
@@ -208,6 +284,7 @@ def admin_post():
     auth_api = flask.request.json.get('auth_api', False)
     disabled = flask.request.json.get('disabled', False)
     super_user = flask.request.json.get('super_user', False)
+    remote_addr = utils.get_remote_addr()
 
     try:
         admin = auth.new_admin(
@@ -228,7 +305,14 @@ def admin_post():
 
     admin.audit_event('admin_created',
         'Administrator created',
-        remote_addr=utils.get_remote_addr(),
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.ADMIN_CREATE,
+        admin.journal_data,
+        event_long='Administrator created',
+        remote_addr=remote_addr,
     )
 
     event.Event(type=ADMINS_UPDATED)
@@ -248,12 +332,20 @@ def admin_delete(admin_id):
         }, 400)
 
     admin = auth.get_by_id(admin_id)
+    remote_addr = utils.get_remote_addr()
 
     if admin.super_user and auth.super_user_count() < 2:
         return utils.jsonify({
             'error': NO_ADMINS,
             'error_msg': NO_ADMINS_MSG,
         }, 400)
+
+    journal.entry(
+        journal.ADMIN_DELETE,
+        admin.journal_data,
+        event_long='Administrator deleted',
+        remote_addr=remote_addr,
+    )
 
     admin.remove()
     event.Event(type=ADMINS_UPDATED)

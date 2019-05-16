@@ -8,16 +8,26 @@ from pritunl import event
 from pritunl import organization
 from pritunl import sso
 from pritunl import logger
+from pritunl import journal
+from pritunl import limiter
 
 import flask
 import time
 import random
+import hashlib
 
-def _auth_radius(username, password):
+def _auth_radius(username, password, remote_addr):
     sso_mode = settings.app.sso
 
     valid, org_names, groups = sso.verify_radius(username, password)
     if not valid:
+        journal.entry(
+            journal.SSO_AUTH_FAILURE,
+            user_name=username,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_RADIUS_FAILED,
+            reason_long='Radius authentication failed',
+        )
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
@@ -25,11 +35,23 @@ def _auth_radius(username, password):
 
     org_id = settings.app.sso_org
     if org_names:
+        not_found = False
         for org_name in org_names:
             org = organization.get_by_name(org_name, fields=('_id'))
             if org:
+                not_found = False
                 org_id = org.id
                 break
+            else:
+                not_found = True
+
+        if not_found:
+            logger.warning('Supplied org names do not exists',
+                'sso',
+                sso_type='radius',
+                user_name=username,
+                org_names=org_names,
+            )
 
     valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
         sso_type='radius',
@@ -40,6 +62,13 @@ def _auth_radius(username, password):
     if valid:
         org_id = org_id_new or org_id
     else:
+        journal.entry(
+            journal.SSO_AUTH_FAILURE,
+            user_name=username,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+            reason_long='Radius plugin authentication failed',
+        )
         logger.error('Radius plugin authentication not valid', 'sso',
             username=username,
         )
@@ -63,6 +92,13 @@ def _auth_radius(username, password):
             logger.error('Duo authentication username not valid', 'sso',
                 username=username,
             )
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_DUO_FAILED,
+                reason_long='Duo authentication invalid username',
+            )
             return utils.jsonify({
                 'error': AUTH_INVALID,
                 'error_msg': AUTH_INVALID_MSG,
@@ -77,6 +113,13 @@ def _auth_radius(username, password):
             if valid:
                 org_id = org_id_new or org_id
             else:
+                journal.entry(
+                    journal.SSO_AUTH_FAILURE,
+                    user_name=username,
+                    remote_address=remote_addr,
+                    reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+                    reason_long='Duo plugin authentication failed',
+                )
                 logger.error('Duo plugin authentication not valid', 'sso',
                     username=username,
                 )
@@ -89,6 +132,13 @@ def _auth_radius(username, password):
         else:
             logger.error('Duo authentication not valid', 'sso',
                 username=username,
+            )
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_DUO_FAILED,
+                reason_long='Duo authentication failed',
             )
             return utils.jsonify({
                 'error': AUTH_INVALID,
@@ -109,7 +159,14 @@ def _auth_radius(username, password):
         usr.audit_event(
             'user_created',
             'User created with single sign-on',
-            remote_addr=utils.get_remote_addr(),
+            remote_addr=remote_addr,
+        )
+
+        journal.entry(
+            journal.USER_CREATE,
+            usr.journal_data,
+            event_long='User created with single sign-on',
+            remote_address=remote_addr,
         )
 
         event.Event(type=ORGS_UPDATED)
@@ -133,30 +190,71 @@ def _auth_radius(username, password):
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
 
+    journal.entry(
+        journal.SSO_AUTH_SUCCESS,
+        usr.journal_data,
+        key_id_hash=hashlib.md5(key_link['id']).hexdigest(),
+        remote_address=remote_addr,
+    )
+
     usr.audit_event('user_profile',
         'User profile viewed from single sign-on',
         remote_addr=utils.get_remote_addr(),
+    )
+
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        event_long='User profile viewed from single sign-on',
+        remote_address=remote_addr,
     )
 
     return utils.jsonify({
         'redirect': utils.get_url_root() + key_link['view_url'],
     }, 202)
 
-def _auth_plugin(username, password):
+def _auth_plugin(username, password, remote_addr):
     if not settings.local.sub_plan or \
             'enterprise' not in settings.local.sub_plan:
+        journal.entry(
+            journal.ADMIN_AUTH_FAILURE,
+            user_name=username,
+            remote_address=remote_addr,
+            reason=journal.ADMIN_AUTH_REASON_INVALID_USERNAME,
+            reason_long='Invalid username',
+        )
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
         }, 401)
 
-    valid, org_id, groups = sso.plugin_login_authenticate(
+    has_plugin, valid, org_id, groups = sso.plugin_login_authenticate(
         user_name=username,
         password=password,
-        remote_ip=utils.get_remote_addr(),
+        remote_ip=remote_addr,
     )
 
+    if not has_plugin:
+        journal.entry(
+            journal.ADMIN_AUTH_FAILURE,
+            user_name=username,
+            remote_address=remote_addr,
+            reason=journal.ADMIN_AUTH_REASON_INVALID_USERNAME,
+            reason_long='Invalid username',
+        )
+        return utils.jsonify({
+            'error': AUTH_INVALID,
+            'error_msg': AUTH_INVALID_MSG,
+        }, 401)
+
     if not valid:
+        journal.entry(
+            journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+            user_name=username,
+            remote_address=remote_addr,
+            reason=journal.SSO_AUTH_REASON_PLUGIN_FAILED,
+            reason_long='Plugin authentication failed',
+        )
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
@@ -188,6 +286,13 @@ def _auth_plugin(username, password):
             remote_addr=utils.get_remote_addr(),
         )
 
+        journal.entry(
+            journal.USER_CREATE,
+            usr.journal_data,
+            event_long='User created with plugin authentication',
+            remote_address=remote_addr,
+        )
+
         event.Event(type=ORGS_UPDATED)
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=SERVERS_UPDATED)
@@ -214,6 +319,13 @@ def _auth_plugin(username, password):
         remote_addr=utils.get_remote_addr(),
     )
 
+    journal.entry(
+        journal.USER_PROFILE_SUCCESS,
+        usr.journal_data,
+        event_long='User profile viewed from plugin authentication',
+        remote_address=remote_addr,
+    )
+
     return utils.jsonify({
         'redirect': utils.get_url_root() + key_link['view_url'],
     }, 202)
@@ -229,13 +341,13 @@ def auth_session_post():
 
     time.sleep(random.randint(50, 100) / 1000.)
 
-    admin = auth.get_by_username(username, remote_addr)
+    admin = auth.get_by_username(username)
     if not admin:
         if settings.app.sso and RADIUS_AUTH in settings.app.sso:
-            return _auth_radius(username, password)
+            return _auth_radius(username, password, remote_addr)
 
         time.sleep(random.randint(0, 100) / 1000.)
-        return _auth_plugin(username, password)
+        return _auth_plugin(username, password, remote_addr)
 
     if (not otp_code and admin.otp_auth) or \
             (not yubico_key and admin.yubikey_id):
@@ -245,6 +357,20 @@ def auth_session_post():
             'otp_auth': admin.otp_auth,
             'yubico_auth': bool(admin.yubikey_id),
         }, 402)
+
+    if not limiter.auth_check(admin.id):
+        journal.entry(
+            journal.ADMIN_AUTH_FAILURE,
+            admin.journal_data,
+            remote_address=remote_addr,
+            reason=journal.ADMIN_AUTH_REASON_RATE_LIMIT,
+            reason_long='Too many authentication attempts',
+        )
+
+        return utils.jsonify({
+            'error': AUTH_TOO_MANY,
+            'error_msg': AUTH_TOO_MANY_MSG,
+        }, 400)
 
     if not admin.auth_check(password, otp_code, yubico_key, remote_addr):
         time.sleep(random.randint(0, 100) / 1000.)
@@ -259,6 +385,13 @@ def auth_session_post():
     if not settings.app.server_ssl:
         flask.session['source'] = remote_addr
 
+    journal.entry(
+        journal.ADMIN_SESSION_START,
+        admin.journal_data,
+        remote_address=remote_addr,
+        session_id=flask.session['session_id'],
+    )
+
     utils.set_flask_sig()
 
     return utils.jsonify({
@@ -271,6 +404,15 @@ def auth_session_post():
 def auth_delete():
     admin_id = utils.session_opt_str('admin_id')
     session_id = utils.session_opt_str('session_id')
+    remote_addr = utils.get_remote_addr()
+
+    journal.entry(
+        journal.ADMIN_SESSION_END,
+        admin_id=admin_id,
+        session_id=session_id,
+        remote_address=remote_addr,
+    )
+
     if admin_id and session_id:
         admin_id = utils.ObjectId(admin_id)
         auth.clear_session(admin_id, str(session_id))

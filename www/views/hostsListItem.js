@@ -47,6 +47,7 @@ define([
     update: function() {
       var name = this.model.get('name');
       var hostname = this.model.get('hostname');
+      var version = this.model.get('version');
 
       if (hostname) {
         name += ' (' + hostname + ')';
@@ -55,7 +56,8 @@ define([
       this.$('.host-title a').text(name);
       this.$('.host-status .status-text').text(
         this.model.get('status').charAt(0).toUpperCase() +
-        this.model.get('status').slice(1));
+        this.model.get('status').slice(1) + (version ? (' (v' +
+        version + ')') : ''));
       if (this.model.get('uptime')) {
         this.$('.host-uptime .status-text').text(
           window.formatUptime(this.model.get('uptime')));

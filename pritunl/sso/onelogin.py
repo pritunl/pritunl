@@ -156,13 +156,15 @@ def auth_onelogin(username):
 
     return False
 
-def auth_onelogin_push(username, strong=False, ipaddr=None,
-        type=None, info=None):
-    if not settings.app.sso_onelogin_push:
-        return True
-
+def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     access_token = _get_access_token()
     if not access_token:
+        return False
+
+    if 'passcode' in onelogin_mode and not passcode:
+        logger.error('OneLogin passcode empty', 'sso',
+            username=username,
+        )
         return False
 
     response = requests.get(
@@ -209,6 +211,7 @@ def auth_onelogin_push(username, strong=False, ipaddr=None,
     if response.status_code != 200:
         logger.error('OneLogin api error', 'sso',
             username=username,
+            onelogin_mode=onelogin_mode,
             status_code=response.status_code,
             response=response.content,
         )
@@ -216,64 +219,74 @@ def auth_onelogin_push(username, strong=False, ipaddr=None,
 
     device_id = None
     devices = response.json()['data']['otp_devices']
+    needs_trigger = False
     for device in devices:
         if device['auth_factor_name'] != 'OneLogin Protect':
             continue
 
         if device['default']:
             device_id = device['id']
+            needs_trigger = bool(device.get('needs_trigger'))
             break
         elif not device_id:
             device_id = device['id']
+            needs_trigger = bool(device.get('needs_trigger'))
 
     if not device_id:
-        if settings.app.sso_onelogin_skip_unavailable:
-            logger.info('OneLogin push not available, skipped', 'sso',
+        if 'none' in onelogin_mode:
+            logger.info('OneLogin secondary not available, skipped', 'sso',
                 username=username,
+                onelogin_mode=onelogin_mode,
             )
             return True
 
-        logger.error('OneLogin push not available', 'sso',
+        logger.error('OneLogin secondary not available', 'sso',
             username=username,
+            onelogin_mode=onelogin_mode,
         )
 
         return False
 
-    response = requests.post(
-        _get_base_url() + '/api/1/users/%d/otp_devices/%d/trigger' % (
-            user_id, device_id),
-        headers={
-            'Authorization': 'bearer:%s' % access_token,
-            'Content-Type': 'application/json',
-            'X-Forwarded-For': ipaddr,
-        },
-        json={
-            'ipaddr': ipaddr,
-        },
-    )
-
-    if response.status_code != 200:
-        logger.error('OneLogin api error', 'sso',
-            username=username,
-            status_code=response.status_code,
-            response=response.content,
+    state_token = None
+    if needs_trigger or 'push' in onelogin_mode:
+        response = requests.post(
+            _get_base_url() + '/api/1/users/%d/otp_devices/%d/trigger' % (
+                user_id, device_id),
+            headers={
+                'Authorization': 'bearer:%s' % access_token,
+                'Content-Type': 'application/json',
+                'X-Forwarded-For': remote_ip,
+            },
+            json={
+                'ipaddr': remote_ip,
+            },
         )
-        return False
 
-    activate = response.json()['data']
-    if not activate:
-        logger.error('OneLogin activate empty', 'sso',
-            username=username,
-        )
-        return False
+        if response.status_code != 200:
+            logger.error('OneLogin api error', 'sso',
+                username=username,
+                onelogin_mode=onelogin_mode,
+                status_code=response.status_code,
+                response=response.content,
+            )
+            return False
 
-    state_token = activate[0]['state_token']
+        activate = response.json()['data']
+        if not activate:
+            logger.error('OneLogin activate empty', 'sso',
+                username=username,
+                onelogin_mode=onelogin_mode,
+            )
+            return False
+
+        state_token = activate[0]['state_token']
 
     start = utils.time_now()
     while True:
         if utils.time_now() - start > 45:
-            logger.error('OneLogin push timed out', 'sso',
+            logger.error('OneLogin secondary timed out', 'sso',
                 username=username,
+                onelogin_mode=onelogin_mode,
                 user_id=user_id,
             )
             return False
@@ -284,16 +297,18 @@ def auth_onelogin_push(username, strong=False, ipaddr=None,
             headers={
                 'Authorization': 'bearer:%s' % access_token,
                 'Content-Type': 'application/json',
-                'X-Forwarded-For': ipaddr,
+                'X-Forwarded-For': remote_ip,
             },
             json={
                 'state_token': state_token,
+                'otp_token': passcode,
             },
         )
 
         if response.status_code != 200 and response.status_code != 401:
             logger.error('OneLogin api error', 'sso',
                 username=username,
+                onelogin_mode=onelogin_mode,
                 status_code=response.status_code,
                 response=response.content,
             )
@@ -303,6 +318,7 @@ def auth_onelogin_push(username, strong=False, ipaddr=None,
         if not verify:
             logger.error('OneLogin verify empty', 'sso',
                 username=username,
+                onelogin_mode=onelogin_mode,
             )
             return False
 
@@ -311,8 +327,9 @@ def auth_onelogin_push(username, strong=False, ipaddr=None,
                 time.sleep(0.5)
                 continue
 
-            logger.error('OneLogin push rejected', 'sso',
+            logger.error('OneLogin secondary rejected', 'sso',
                 username=username,
+                onelogin_mode=onelogin_mode,
                 user_id=user_id,
             )
             return False
@@ -320,6 +337,7 @@ def auth_onelogin_push(username, strong=False, ipaddr=None,
         if response.status_code != 200 or verify['type'] != "success":
             logger.error('OneLogin verify bad data', 'sso',
                 username=username,
+                onelogin_mode=onelogin_mode,
                 status_code=response.status_code,
                 response=response.content,
             )

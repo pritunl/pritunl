@@ -1,6 +1,7 @@
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import logger
+from pritunl import journal
 from pritunl import settings
 from pritunl import utils
 from pritunl import monitoring
@@ -22,6 +23,7 @@ _cur_ssl = None
 _cur_cert = None
 _cur_key = None
 _cur_port = None
+_cur_redirect_server = None
 _cur_reverse_proxy = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
@@ -31,6 +33,7 @@ def update_server(delay=0):
     global _cur_cert
     global _cur_key
     global _cur_port
+    global _cur_redirect_server
     global _cur_reverse_proxy
 
     if not settings.local.server_ready.is_set():
@@ -42,6 +45,7 @@ def update_server(delay=0):
                 _cur_cert != settings.app.server_cert or \
                 _cur_key != settings.app.server_key or \
                 _cur_port != settings.app.server_port or \
+                _cur_redirect_server != settings.app.redirect_server or \
                 _cur_reverse_proxy != (settings.app.reverse_proxy_header if
                     settings.app.reverse_proxy else ''):
             logger.info('Settings changed, restarting server...', 'app',
@@ -49,6 +53,8 @@ def update_server(delay=0):
                 cert_changed=_cur_cert != settings.app.server_cert,
                 key_changed=_cur_key != settings.app.server_key,
                 port_changed=_cur_port != settings.app.server_port,
+                redirect_server_changed=_cur_redirect_server !=
+                    settings.app.redirect_server,
                 reverse_proxy_changed= _cur_reverse_proxy != (
                     settings.app.reverse_proxy_header if
                     settings.app.reverse_proxy else ''),
@@ -58,6 +64,7 @@ def update_server(delay=0):
             _cur_cert = settings.app.server_cert
             _cur_key = settings.app.server_key
             _cur_port = settings.app.server_port
+            _cur_redirect_server = settings.app.redirect_server
             _cur_reverse_proxy = settings.app.reverse_proxy_header if \
                 settings.app.reverse_proxy else ''
 
@@ -132,8 +139,13 @@ def _run_server(restart):
     except:
         context = 'none'
 
+    journal.entry(
+        journal.WEB_SERVER_START,
+        selinux_context=context,
+    )
+
     logger.info('Starting server', 'app',
-        context=context,
+        selinux_context=context,
     )
 
     app_server = cheroot.wsgi.Server(
@@ -173,10 +185,11 @@ def _run_server(restart):
     process_state = True
     process = subprocess.Popen(
         ['pritunl-web'],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
         env=dict(os.environ, **{
             'REVERSE_PROXY_HEADER': settings.app.reverse_proxy_header if \
+                settings.app.reverse_proxy else '',
+            'REVERSE_PROXY_PROTO_HEADER': \
+                settings.app.reverse_proxy_proto_header if \
                 settings.app.reverse_proxy else '',
             'REDIRECT_SERVER': redirect_server,
             'BIND_HOST': settings.conf.bind_addr,
@@ -232,21 +245,29 @@ def _run_wsgi():
             logger.info('Server restarting...', 'app')
 
 def setup_server_cert():
+    global _cur_cert
+    global _cur_key
+
     if not settings.app.server_cert or not settings.app.server_key:
         logger.info('Generating server certificate...', 'app')
         utils.create_server_cert()
         settings.commit()
+
+        _cur_cert = settings.app.server_cert
+        _cur_key = settings.app.server_key
 
 def run_server():
     global _cur_ssl
     global _cur_cert
     global _cur_key
     global _cur_port
+    global _cur_redirect_server
     global _cur_reverse_proxy
     _cur_ssl = settings.app.server_ssl
     _cur_cert = settings.app.server_cert
     _cur_key = settings.app.server_key
     _cur_port = settings.app.server_port
+    _cur_redirect_server = settings.app.redirect_server
     _cur_reverse_proxy = settings.app.reverse_proxy_header if \
         settings.app.reverse_proxy else ''
 
