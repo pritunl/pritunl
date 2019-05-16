@@ -293,12 +293,6 @@ def settings_put():
                 'error_msg': PORT_INVALID_MSG,
             }, 400)
 
-        if settings.app.redirect_server and server_port == 80:
-            return utils.jsonify({
-                'error': PORT_RESERVED,
-                'error_msg': PORT_RESERVED_MSG,
-            }, 400)
-
         if server_port != settings.app.server_port:
             update_server = True
 
