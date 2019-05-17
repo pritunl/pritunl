@@ -142,7 +142,8 @@ class ServerInstance(object):
             self.server.remove_primary_user()
             self.server.create_primary_user()
 
-        primary_org = organization.get_by_id(self.server.primary_organization)
+        primary_org = organization.get_by_id(
+            self.server.primary_organization)
         if not primary_org:
             self.server.create_primary_user()
             primary_org = organization.get_by_id(
