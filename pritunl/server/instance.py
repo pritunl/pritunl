@@ -154,7 +154,8 @@ class ServerInstance(object):
             self.server.create_primary_user()
             primary_org = organization.get_by_id(
                 id=self.server.primary_organization)
-            self.primary_user = primary_org.get_user(self.server.primary_user)
+            self.primary_user = primary_org.get_user(
+                self.server.primary_user)
 
         gateway = utils.get_network_gateway(self.server.network)
         gateway6 = utils.get_network_gateway(self.server.network6)
