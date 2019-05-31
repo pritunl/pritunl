@@ -50,10 +50,17 @@ define([
       } else {
         this.$('.route-server-link').hide();
       }
-      if (this.model.get('nat') && !this.model.get('net_gateway')) {
+      if (this.model.get('nat') && !this.model.get('net_gateway') &&
+          !this.model.get('nat_netmap')) {
         this.$('.route-nat').show();
       } else {
         this.$('.route-nat').hide();
+      }
+      if (this.model.get('nat') && !this.model.get('net_gateway') &&
+          this.model.get('nat_netmap')) {
+        this.$('.route-nat-netmap').show();
+      } else {
+        this.$('.route-nat-netmap').hide();
       }
       if (this.model.get('net_gateway')) {
         this.$('.route-net-gateway').show();
