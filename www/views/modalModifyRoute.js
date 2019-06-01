@@ -115,6 +115,7 @@ define([
       var metric = this.$('.route-metric input').val();
       var nat = this.getNatRouteSelect();
       var natInterface = this.$('.nat-interface input').val();
+      var natNetmap = this.$('.nat-netmap input').val();
       var netGateway = this.getNetGatewaySelect();
       var routeAd = this.getRotueAdSelect();
 
@@ -126,6 +127,7 @@ define([
         metric: metric,
         nat: nat,
         nat_interface: natInterface,
+        nat_netmap: natNetmap,
         net_gateway: netGateway,
         advertise: routeAd
       }, {
