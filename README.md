@@ -216,7 +216,7 @@ sudo systemctl enable mongod pritunl
 
 ```bash
 sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list << EOF
-deb https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse
+deb http://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse
 EOF
 
 sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
