@@ -183,6 +183,12 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
     if passcode:
         verify_data['passCode'] = passcode
 
+    logger.info('Sending Okta verify', 'sso',
+        username=username,
+        okta_user_id=user_id,
+        okta_factor_id=factor_id,
+    )
+
     try:
         response = requests.post(
             _getokta_url() + '/api/v1/users/%s/factors/%s/verify' % (
