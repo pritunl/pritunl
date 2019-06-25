@@ -3,10 +3,9 @@ define([
   'underscore',
   'backbone',
   'models/serverRoute',
-  'models/vpcs',
   'views/modal',
   'text!templates/modalAddRoute.html'
-], function($, _, Backbone, ServerRouteModel, VpcsModel, ModalView,
+], function($, _, Backbone, ServerRouteModel, ModalView,
     modalAddRouteTemplate) {
   'use strict';
   var lastServer;
