@@ -31,6 +31,7 @@ USER_CONNECT_FAILURE = 'user_connect_failure'
 USER_CONNECT_CACHE = 'user_connect_cache'
 USER_CONNECT_WHITELIST = 'user_connect_whitelist'
 USER_CONNECT_BYPASS = 'user_connect_bypass'
+USER_CONNECT_NETWORK = 'user_connect_network'
 USER_DISCONNECT = 'user_disconnect'
 
 SSO_AUTH_FAILURE = 'sso_auth_failure'
