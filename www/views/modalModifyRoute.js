@@ -22,7 +22,6 @@ define([
       }, ModalModifyRouteView.__super__.events);
     },
     initialize: function() {
-      this.vpcs = new VpcsModel();
       ModalModifyRouteView.__super__.initialize.call(this);
     },
     body: function() {
