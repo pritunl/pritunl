@@ -114,6 +114,36 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
 
     try:
         response = requests.get(
+            _getokta_url() + '/api/v1/users/%s/factors/catalog' % user_id,
+            headers={
+                'Accept': 'application/json',
+                'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
+            },
+        )
+    except httplib.HTTPException:
+        logger.exception('Okta api error', 'sso',
+                         username=username,
+                         okta_user_id=user_id,
+                         )
+        return False
+
+    if response.status_code != 200:
+        logger.error('Okta api error', 'sso',
+                     username=username,
+                     okta_user_id=user_id,
+                     status_code=response.status_code,
+                     response=response.content,
+                     )
+        return False
+    factors = response.json()
+    enabled_factors = []
+    for factor in factors:
+        if not factor.get('provider'):
+            continue
+        enabled_factors.append(factor.get('provider').lower())
+
+    try:
+        response = requests.get(
             _getokta_url() + '/api/v1/users/%s/factors' % user_id,
             headers={
                 'Accept': 'application/json',
@@ -144,7 +174,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 not factor.get('status'):
             continue
 
-        if factor.get('provider').lower() != 'okta' or \
+        if factor.get('provider').lower() not in enabled_factors or \
                 factor.get('status').lower() != 'active':
             continue
 
