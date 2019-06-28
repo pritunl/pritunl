@@ -2,10 +2,9 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/vpcs',
   'views/modal',
   'text!templates/modalModifyRoute.html'
-], function($, _, Backbone, VpcsModel, ModalView, modaleModifyRouteTemplate) {
+], function($, _, Backbone, ModalView, modaleModifyRouteTemplate) {
   'use strict';
   var ModalModifyRouteView = ModalView.extend({
     className: 'modify-route-modal',
