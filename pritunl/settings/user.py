@@ -18,4 +18,5 @@ class SettingsUser(SettingsGroupMongo):
         'page_count': 10,
         'skip_remote_sso_check': False,
         'conf_sync': True,
+        'restrict_import': False,
     }
