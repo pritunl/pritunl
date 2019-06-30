@@ -211,6 +211,9 @@ def user_linked_key_tar_archive_get(key_id):
         )
         return flask.abort(404)
 
+    if settings.user.restrict_import:
+        return flask.abort(404)
+
     usr, resp = _get_key_tar_archive(doc['org_id'], doc['user_id'])
     if usr.disabled:
         journal.entry(
@@ -250,6 +253,9 @@ def user_linked_key_zip_archive_get(key_id):
         )
         return flask.abort(404)
 
+    if settings.user.restrict_import:
+        return flask.abort(404)
+
     usr, resp = _get_key_zip_archive(doc['org_id'], doc['user_id'])
     if usr.disabled:
         journal.entry(
@@ -287,6 +293,9 @@ def user_linked_key_onc_archive_get(key_id):
             remote_address=remote_addr,
             event_long='Key ID not found',
         )
+        return flask.abort(404)
+
+    if settings.user.restrict_import:
         return flask.abort(404)
 
     usr, resp = _get_onc_archive(doc['org_id'], doc['user_id'])
@@ -573,6 +582,9 @@ def user_linked_key_conf_get(key_id, server_id):
             remote_address=remote_addr,
             event_long='Key ID not found',
         )
+        return flask.abort(404)
+
+    if settings.user.restrict_import:
         return flask.abort(404)
 
     org = organization.get_by_id(doc['org_id'])
