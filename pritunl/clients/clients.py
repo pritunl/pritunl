@@ -1126,6 +1126,23 @@ class Clients(object):
             self.instance_com.client_kill(client_id)
             return
 
+        journal.entry(
+            journal.USER_CONNECT_NETWORK,
+            self.journal_data,
+            self.user.journal_data,
+            self.server.journal_data,
+            platform=client['platform'],
+            type=client['user_type'],
+            device_name=client['device_name'],
+            mac_addr=client['mac_addr'],
+            real_address=client['real_address'],
+            virt_address=client['virt_address'],
+            virt_address6=client['virt_address6'],
+            host_address=self.route_addr,
+            host_address6=self.route_addr6,
+            event_long='User connected to network',
+        )
+
         self.set_iptables_rules(
             client['iptables_rules'],
             client['ip6tables_rules'],
