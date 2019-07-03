@@ -144,7 +144,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 not factor.get('status'):
             continue
 
-        if factor.get('provider').lower() != 'okta' or \
+        if factor.get('provider').lower() in ('okta', 'google') or \
                 factor.get('status').lower() != 'active':
             continue
 
