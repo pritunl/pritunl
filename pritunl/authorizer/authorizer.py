@@ -1209,7 +1209,9 @@ class Authorizer(object):
                 org_name=self.user.org.name,
                 user_name=self.user.name,
                 remote_ip=self.remote_ip,
+                mac_addr=self.mac_addr,
                 platform=self.platform,
+                device_id=self.device_id,
                 device_name=self.device_name,
                 password=self.password,
             )
