@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve profile management
+Support Google Authenticator on Okta
 
 Version 1.29.2051.18 2019-04-25
 -------------------------------
