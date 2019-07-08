@@ -16,7 +16,6 @@ import uuid
 import hashlib
 import base64
 import pymongo
-import datetime
 
 _states = tunldb.TunlDB()
 
