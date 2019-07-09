@@ -158,7 +158,8 @@ class Clients(object):
             if not self.server.dns_mapping or \
                     settings.vpn.dns_mapping_push_all:
                 for dns_server in self.server.dns_servers:
-                    client_conf += 'push "dhcp-option DNS %s"\n' % dns_server
+                    client_conf += 'push "dhcp-option DNS %s"\n' % \
+                        dns_server
 
             if self.server.search_domain:
                 for domain in self.server.search_domain.split(','):
