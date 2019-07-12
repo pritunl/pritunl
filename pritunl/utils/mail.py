@@ -27,9 +27,20 @@ def send_email(to_addr, subject, text_body, html_body):
     try:
         if not email_username and not email_password:
             smtp_conn = smtplib.SMTP(email_server)
+            if settings.app.email_tls:
+                smtp_conn.ehlo()
+                smtp_conn.starttls()
+                smtp_conn.ehlo()
         else:
-            smtp_conn = smtplib.SMTP_SSL(email_server)
-            smtp_conn.login(email_username, email_password)
+            if settings.app.email_tls:
+                smtp_conn = smtplib.SMTP(email_server)
+                smtp_conn.ehlo()
+                smtp_conn.starttls()
+                smtp_conn.ehlo()
+                smtp_conn.login(email_username, email_password)
+            else:
+                smtp_conn = smtplib.SMTP_SSL(email_server)
+                smtp_conn.login(email_username, email_password)
 
         smtp_conn.sendmail(email_from, to_addr, msg.as_string())
         smtp_conn.quit()
