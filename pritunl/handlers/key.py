@@ -509,7 +509,7 @@ def user_linked_key_page_get(short_code):
     key_page = key_page.replace('<%= conf_links %>', conf_links)
 
     if not has_servers:
-        header_class += 'no-servers'
+        header_class += ' no-servers'
     key_page = key_page.replace('<%= header_class %>', header_class)
 
     return key_page
