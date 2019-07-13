@@ -457,6 +457,9 @@ def user_linked_key_page_get(short_code):
     else:
         header_class = ''
 
+    if settings.user.restrict_import:
+        header_class += ' restrict-import'
+
     key_page = static.StaticFile(settings.conf.www_path, view_name,
         cache=False, gzip=False).data
 
