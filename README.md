@@ -158,6 +158,7 @@ EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get --assume-yes install apt-transport-https
 sudo apt-get update
 sudo apt-get --assume-yes install pritunl mongodb-org
 sudo systemctl start mongod pritunl
@@ -225,6 +226,7 @@ EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get --assume-yes install apt-transport-https
 sudo apt-get update
 sudo apt-get --assume-yes install pritunl mongodb-org
 sudo systemctl start pritunl mongod
