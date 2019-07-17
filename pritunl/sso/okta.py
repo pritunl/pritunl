@@ -157,7 +157,8 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
         else:
             continue
 
-        factor_id = factor['id']
+        if factor_id is None or factor.get('provider').lower() == 'okta':
+            factor_id = factor['id']
 
     if not factor_id:
         if 'none' in okta_mode:
