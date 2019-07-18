@@ -1129,9 +1129,10 @@ class Clients(object):
 
         journal.entry(
             journal.USER_CONNECT_NETWORK,
-            self.journal_data,
-            self.user.journal_data,
             self.server.journal_data,
+            user_id=client['user_id'],
+            user_name=client['user_name'],
+            user_type=client['user_type'],
             platform=client['platform'],
             type=client['user_type'],
             device_name=client['device_name'],
