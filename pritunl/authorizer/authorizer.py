@@ -375,26 +375,11 @@ class Authorizer(object):
                 raise AuthError('Link user missing server id')
 
             link_matched = False
-            link_mismatch = False
             for link in self.server.links:
                 if link.get('server_id') == self.user.link_server_id:
-                    if link.get('user_id') != self.user.id:
-                        link_mismatch = True
-                    else:
-                        link_matched = True
-                        break
+                    link_matched = True
 
             if not link_matched:
-                if link_mismatch:
-                    journal.entry(
-                        journal.USER_CONNECT_FAILURE,
-                        self.journal_data,
-                        self.user.journal_data,
-                        self.server.journal_data,
-                        event_long='Incorrect link user',
-                    )
-                    raise AuthError('Link user mismatch')
-
                 journal.entry(
                     journal.USER_CONNECT_FAILURE,
                     self.journal_data,
