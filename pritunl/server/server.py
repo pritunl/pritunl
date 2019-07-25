@@ -76,6 +76,8 @@ dict_fields = [
     'mss_fix',
     'auth_public_key',
     'auth_private_key',
+    'auth_box_public_key',
+    'auth_box_private_key',
 ]
 operation_fields = dict_fields + [
     'hosts',
@@ -143,6 +145,8 @@ class Server(mongo.MongoObject):
         'availability_group',
         'auth_public_key',
         'auth_private_key',
+        'auth_box_public_key',
+        'auth_box_private_key',
     }
     fields_default = {
         'ipv6': False,
