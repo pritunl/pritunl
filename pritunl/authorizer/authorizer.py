@@ -378,6 +378,7 @@ class Authorizer(object):
             for link in self.server.links:
                 if link.get('server_id') == self.user.link_server_id:
                     link_matched = True
+                    break
 
             if not link_matched:
                 journal.entry(
