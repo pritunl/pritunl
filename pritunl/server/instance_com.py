@@ -130,6 +130,8 @@ class ServerInstanceCom(object):
                     self.client['device_name'] = env_val
                 elif env_key == 'UV_PLATFORM':
                     self.client['platform'] = env_val
+                elif env_key == 'username':
+                    self.client['username'] = env_val
                 elif env_key == 'password':
                     self.client['password'] = env_val
             else:
