@@ -23,10 +23,12 @@ import collections
 import bson
 import hashlib
 import base64
+import binascii
 import threading
 import uuid
 import pymongo
 import json
+import nacl.public
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
@@ -775,6 +777,38 @@ class Clients(object):
         auth_token = utils.filter_str(data.get('token')) or None
         auth_nonce = utils.filter_str(data.get('nonce')) or None
         auth_timestamp = utils.filter_str(data.get('timestamp')) or None
+
+        return auth_password, auth_token, auth_nonce, auth_timestamp
+
+    def decrypt_box(self, sender_pub_key64, cipher_data64):
+        if len(sender_pub_key64) > 128:
+            raise ValueError('Sender pub key too long')
+
+        if len(cipher_data64) > 256:
+            raise ValueError('Sender cipher data too long')
+
+        sender_pub_key64 += '=' * (-len(sender_pub_key64) % 4)
+        cipher_data64 += '=' * (-len(cipher_data64) % 4)
+
+        sender_pub_key = nacl.public.PublicKey(
+            base64.b64decode(sender_pub_key64))
+
+        pub_key_hash = hashlib.sha256(bytes(sender_pub_key)).digest()
+        nonce = pub_key_hash[:24]
+        auth_nonce = binascii.hexlify(pub_key_hash)
+
+        priv_key = nacl.public.PrivateKey(
+            base64.b64decode(self.server.auth_box_private_key))
+
+        cipher_data = base64.b64decode(cipher_data64)
+
+        nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+
+        plaintext = nacl_box.decrypt(cipher_data, nonce).decode('utf-8')
+
+        auth_token = plaintext[:16]
+        auth_password = plaintext[26:]
+        auth_timestamp = int(plaintext[16:26])
 
         return auth_password, auth_token, auth_nonce, auth_timestamp
 
