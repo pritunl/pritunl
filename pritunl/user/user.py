@@ -682,7 +682,7 @@ class User(mongo.MongoObject):
             return SAML_OKTA_AUTH
 
     def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
-        public_key, _ = svr.get_auth_key()
+        svr.generate_auth_key_commit()
 
         data = {
             'version': CLIENT_CONF_VER,
@@ -703,7 +703,8 @@ class User(mongo.MongoObject):
 
         if settings.user.password_encryption:
             data['token'] = self._get_token_mode()
-            data['server_public_key'] = public_key.splitlines()
+            data['server_public_key'] = svr.auth_public_key.splitlines()
+            data['server_box_public_key'] = svr.auth_box_public_key
         else:
             data['token'] = False
 
