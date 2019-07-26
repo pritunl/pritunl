@@ -759,6 +759,9 @@ class Clients(object):
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
     def decrypt_rsa(self, cipher_data):
+        if len(cipher_data) > 1024:
+            raise ValueError('Sender cipher data too long')
+
         cipher_data = base64.b64decode(cipher_data)
 
         plaintext = self.server_private_key.decrypt(
