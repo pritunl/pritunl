@@ -541,7 +541,10 @@ class Server(mongo.MongoObject):
 
     def generate_auth_key_commit(self):
         if self.generate_auth_key():
-            self.commit({'auth_public_key', 'auth_private_key'})
+            self.commit({
+                'auth_public_key', 'auth_private_key',
+                'auth_box_public_key', 'auth_box_private_key',
+            })
 
     def get_auth_key(self):
         self.generate_auth_key_commit()
