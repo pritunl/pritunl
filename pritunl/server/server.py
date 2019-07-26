@@ -25,6 +25,9 @@ import subprocess
 import random
 import collections
 import datetime
+import base64
+import nacl.utils
+import nacl.public
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -501,28 +504,38 @@ class Server(mongo.MongoObject):
             self.generate_tls_auth_wait()
 
     def generate_auth_key(self):
-        if self.auth_public_key and self.auth_private_key:
+        if self.auth_public_key and self.auth_private_key and \
+                self.auth_box_public_key and self.auth_box_private_key:
             return False
 
-        private_key = rsa.generate_private_key(
-            public_exponent=65537,
-            key_size=4096,
-            backend=default_backend(),
-        )
+        if not self.auth_public_key or not self.auth_private_key:
+            private_key = rsa.generate_private_key(
+                public_exponent=65537,
+                key_size=4096,
+                backend=default_backend(),
+            )
 
-        private_pem = private_key.private_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.NoEncryption(),
-        )
+            private_pem = private_key.private_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PrivateFormat.TraditionalOpenSSL,
+                encryption_algorithm=serialization.NoEncryption(),
+            )
 
-        public_pem = private_key.public_key().public_bytes(
-            encoding=serialization.Encoding.PEM,
-            format=serialization.PublicFormat.PKCS1,
-        )
+            public_pem = private_key.public_key().public_bytes(
+                encoding=serialization.Encoding.PEM,
+                format=serialization.PublicFormat.PKCS1,
+            )
 
-        self.auth_public_key = public_pem
-        self.auth_private_key = private_pem
+            self.auth_public_key = public_pem
+            self.auth_private_key = private_pem
+
+        if not self.auth_box_public_key or not self.auth_box_private_key:
+            priv_key = nacl.public.PrivateKey.generate()
+
+            self.auth_box_public_key = base64.b64encode(
+                bytes(priv_key.public_key))
+            self.auth_box_private_key = base64.b64encode(
+                bytes(priv_key))
 
         return True
 
