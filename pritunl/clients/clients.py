@@ -821,6 +821,7 @@ class Clients(object):
         platform = client_data.get('platform')
         device_id = client_data.get('device_id')
         device_name = client_data.get('device_name')
+        username = client_data.get('username')
         password = client_data.get('password')
         auth_password = None
         auth_token = None
@@ -828,10 +829,16 @@ class Clients(object):
         auth_timestamp = None
         mac_addr = client_data.get('mac_addr')
 
-        if password and '<%=RSA_ENCRYPTED=%>' in password and \
+        if password and password.startswith('$x$') and \
+                len(username) > 24 and len(password) > 24 and \
                 self.server_private_key:
             auth_password, auth_token, auth_nonce, auth_timestamp = \
-                self.decrypt_rsa(password.split('<%=RSA_ENCRYPTED=%>')[-1])
+                self.decrypt_box(username, password[3:])
+        elif password and '<%=RSA_ENCRYPTED=%>' in password and \
+                self.server_private_key:
+            auth_password, auth_token, auth_nonce, auth_timestamp = \
+                self.decrypt_rsa(
+                    password.split('<%=RSA_ENCRYPTED=%>', 1)[-1])
         elif password and '<%=PUSH_TOKEN=%>' in password:
             _, password = password.split('<%=PUSH_TOKEN=%>')
             password = password or None
