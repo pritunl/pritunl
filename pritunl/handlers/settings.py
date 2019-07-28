@@ -17,7 +17,8 @@ _changes_audit_text = {
     'username': 'Administrator username changed',
     'password': 'Administrator password changed',
     'smtp': 'SMTP settings changed',
-    'pin_mode': 'User pin mode settings changed',
+    'pin_mode': 'User pin mode setting changed',
+    'restrict_import': 'Restrict import setting changed',
     'sso': 'Single sign-on settings changed',
 }
 
