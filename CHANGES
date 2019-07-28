@@ -6,6 +6,7 @@ Pritunl Changelog
 Improve profile management
 Support Google Authenticator on Okta
 Add support for new AWS regions
+Fix connection issues with client
 
 Version 1.29.2051.18 2019-04-25
 -------------------------------
