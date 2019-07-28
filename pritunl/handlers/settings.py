@@ -66,6 +66,7 @@ def _dict():
             'sso_radius_host': 'demo',
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
+            'restrict_import': settings.user.restrict_import,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
@@ -163,6 +164,7 @@ def _dict():
             'sso_radius_host': settings.app.sso_radius_host,
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
+            'restrict_import': settings.user.restrict_import,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
@@ -648,6 +650,14 @@ def settings_put():
         if sso_client_cache != settings.app.sso_client_cache:
             changes.add('sso')
         settings.app.sso_client_cache = sso_client_cache
+
+    if 'restrict_import' in flask.request.json:
+        settings_commit = True
+        restrict_import = True if \
+            flask.request.json['restrict_import'] else False
+        if restrict_import != settings.user.restrict_import:
+            changes.add('restrict_import')
+        settings.user.restrict_import = restrict_import
 
     if 'client_reconnect' in flask.request.json:
         settings_commit = True
