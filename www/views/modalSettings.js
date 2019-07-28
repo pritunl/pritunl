@@ -27,6 +27,7 @@ define([
         'change .route53-region select': 'updateZones',
         'click .sso-cache': 'onSsoCacheSelect',
         'click .sso-client-cache': 'onSsoClientCacheSelect',
+        'click .restrict-import': 'onRestrictImportSelect',
         'click .client-reconnect': 'onClientReconnect',
         'propertychange .pass input': 'onPassEvent',
         'change .cloud-provider select': 'onCloudProviderChange',
@@ -832,6 +833,22 @@ define([
     onSsoClientCacheSelect: function() {
       this.setSsoClientCacheSelect(!this.getSsoClientCacheSelect());
     },
+    getRestrictImportSelect: function() {
+      return this.$('.restrict-import .selector').hasClass('selected');
+    },
+    setRestrictImportSelect: function(state) {
+      if (state) {
+        this.$('.restrict-import .selector').addClass('selected');
+        this.$('.restrict-import .selector-inner').show();
+      }
+      else {
+        this.$('.restrict-import .selector').removeClass('selected');
+        this.$('.restrict-import .selector-inner').hide();
+      }
+    },
+    onRestrictImportSelect: function() {
+      this.setRestrictImportSelect(!this.getRestrictImportSelect());
+    },
     getClientReconnect: function() {
       return this.$('.client-reconnect .selector').hasClass('selected');
     },
@@ -933,6 +950,7 @@ define([
       var clientReconnect = this.getClientReconnect();
       var ssoCache = this.getSsoCacheSelect();
       var ssoClientCache = this.getSsoClientCacheSelect();
+      var restrictImport = this.getRestrictImportSelect();
       var oracleUserOcid = this.$(
         '.oracle-user-ocid input').val();
       var oraclePublicKey = this.$(
@@ -1207,6 +1225,7 @@ define([
         sso_radius_secret: ssoRadiusSecret,
         sso_cache: ssoCache,
         sso_client_cache: ssoClientCache,
+        restrict_import: restrictImport,
         client_reconnect: clientReconnect,
         public_address: publicAddress,
         public_address6: publicAddress6,
