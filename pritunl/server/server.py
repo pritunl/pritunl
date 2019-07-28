@@ -546,10 +546,6 @@ class Server(mongo.MongoObject):
                 'auth_box_public_key', 'auth_box_private_key',
             })
 
-    def get_auth_key(self):
-        self.generate_auth_key_commit()
-        return self.auth_public_key, self.auth_private_key
-
     def get_auth_private_key(self):
         self.generate_auth_key_commit()
 
