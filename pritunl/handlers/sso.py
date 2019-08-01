@@ -576,6 +576,14 @@ def sso_callback_get():
         org_names = sorted(org_names.split(','))
 
         if user_team != settings.app.sso_match[0]:
+            journal.entry(
+                journal.SSO_AUTH_FAILURE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_SLACK_FAILED,
+                reason_long='Slack team not valid',
+            )
+
             return flask.abort(401)
 
         not_found = False
