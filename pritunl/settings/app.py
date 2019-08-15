@@ -31,6 +31,7 @@ class SettingsApp(SettingsGroupMongo):
         'datadog_api_key': None,
         'settings_check_interval': 60,
         'key_link_timeout': 86400,
+        'key_link_timeout_short': 600,
         'password_len_limit': 128,
         'public_ip_server': 'https://app4.pritunl.com/ip',
         'public_ip6_server': 'https://app6.pritunl.com/ip',
