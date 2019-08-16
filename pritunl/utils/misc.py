@@ -285,7 +285,15 @@ def filter_unicode(in_str):
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
 
 def generate_secret():
-    return re.sub(r'[\W_]+', '', base64.b64encode(os.urandom(64)))[:32]
+    return generate_secret_len(32)
+
+def generate_secret_len(n):
+    l = int(n*1.3)
+    for i in xrange(10):
+        x = re.sub(r'[\W_]+', '', base64.b64encode(os.urandom(l)))[:n]
+        if len(x) == n:
+            return x
+    raise ValueError('Failed to generate secret')
 
 def generate_otp_secret():
     sha_hash = hashlib.sha512()
