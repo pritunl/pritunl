@@ -1,6 +1,7 @@
 from pritunl.helpers import *
 from pritunl.setup.clean import setup_clean
 from pritunl.setup.local import setup_local
+from pritunl.setup.vault import setup_vault
 from pritunl.setup.server import setup_server
 from pritunl.setup.mongo import setup_mongo, upsert_indexes
 from pritunl.setup.boto_conf import setup_boto_conf
@@ -36,6 +37,7 @@ def setup_all():
         setup_clean()
         setup_temp_path()
         setup_signal_handler()
+        setup_vault()
         setup_server()
         setup_mongo()
         setup_settings()
