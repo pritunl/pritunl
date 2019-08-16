@@ -37,19 +37,11 @@ def _dns_thread():
                     process = None
                     break
                 elif process.poll() is not None:
-                    output = None
-                    try:
-                        output = process.stdout.readall()
-                        output += process.stderr.readall()
-                    except:
-                        pass
-
                     if check_global_interrupt():
                         return
 
                     logger.error(
                         'DNS mapping service stopped unexpectedly', 'setup',
-                        output=output,
                     )
                     process = None
 
