@@ -136,6 +136,10 @@ def upsert_indexes():
     upsert_index('users_audit', [
         ('timestamp', pymongo.DESCENDING),
     ], background=True)
+    upsert_index('users_key_link', [
+        ('org_id', pymongo.ASCENDING),
+        ('user_id', pymongo.ASCENDING),
+    ], background=True)
     upsert_index('users_key_link', 'key_id',
         background=True)
     upsert_index('users_key_link', 'short_id',
