@@ -13,6 +13,7 @@ import hmac
 import hashlib
 import base64
 import json
+import pymongo
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -147,6 +148,19 @@ def init_server_key():
     }
 
 def init_master_key(cipher_data):
+    prefix = settings.conf.mongodb_collection_prefix or ''
+    client = pymongo.MongoClient(settings.conf.mongodb_uri,
+        connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+    database = client.get_default_database()
+    settings_db = getattr(database, prefix + 'settings')
+    doc = settings_db.find_one({
+        '_id': 'se',
+    })
+
+    crypto_keys = None
+    if doc and doc['keys']:
+        crypto_keys = doc['keys']
+
     ciphertext = base64.b64decode(cipher_data['c'])
 
     plaintext = settings.local.se_client_key.decrypt(
@@ -173,6 +187,10 @@ def init_master_key(cipher_data):
     auth_data = data['n'] + '&' + str(data['t']) + '&' + \
         data['h'] + '&' + data['s'] + '&' + data['c'] + '&' + \
         data['o'] + '&' + data['m']
+
+    if crypto_keys:
+        data['k'] = crypto_keys
+        auth_data += '&' + data['k']
 
     data['a'] = base64.b64encode(hmac.new(
         settings.local.se_authorize_key,
@@ -208,3 +226,32 @@ def init_master_key(cipher_data):
 
     if resp.status_code != 200:
         raise RequestError('Vault bad status %s' % resp.status_code)
+
+    crypto_payload = resp.json()
+
+    crypto_plaintext = gcm.decrypt(
+        base64.b64decode(crypto_payload['n']),
+        base64.b64decode(crypto_payload['d']),
+        None,
+    )
+
+    crypto_data = json.loads(crypto_plaintext)
+
+    crypto_data_auth = crypto_data['n'] + '&' + \
+        str(crypto_data['t']) + '&' + crypto_data['k']
+
+    crypto_data_authr = base64.b64encode(hmac.new(
+        settings.local.se_authorize_key,
+        crypto_data_auth,
+        hashlib.sha512,
+    ).digest())
+
+    if not utils.const_compare(crypto_data_authr, crypto_data['a']):
+        raise RequestError('Invalid crypto keys signature')
+
+    if crypto_data['k'] != crypto_keys:
+        settings_db.update({
+            '_id': 'se',
+        }, {'$set': {
+            'keys': crypto_data['k'],
+        }}, upsert=True)
