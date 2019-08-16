@@ -8,6 +8,11 @@ server_start.set()
 class SettingsLocal(SettingsGroupLocal):
     group = 'local'
     fields = {
+        'se_host_key': None,
+        'se_authorize_key': None,
+        'se_encryption_key': None,
+        'se_client_key': None,
+        'se_client_pub_key': None,
         'quiet': False,
         'public_ip': None,
         'public_ip6': None,
