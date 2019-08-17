@@ -20,6 +20,7 @@ import pymongo
 import hmac
 import hashlib
 import base64
+import datetime
 import urlparse
 import requests
 
@@ -60,6 +61,10 @@ def _find_doc(query, one_time=None, one_time_new=False):
     doc = collection.find_one(query)
 
     if one_time and doc and doc.get('one_time'):
+        if utils.now() - doc['timestamp'] > datetime.timedelta(
+                seconds=settings.app.key_link_timeout_short):
+            return None
+
         short_id = utils.rand_str(settings.app.long_url_length)
         collection = mongo.get_collection('users_key_link')
 
