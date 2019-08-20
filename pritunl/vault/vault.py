@@ -47,8 +47,11 @@ def init():
     settings.local.se_encryption_key = base64.b64decode(data[1])
 
 def init_host_key():
+    nonce = utils.generate_secret_len(16)
+    nonces_add(nonce)
+
     data = {
-        'n': utils.generate_secret_len(16),
+        'n': nonce,
         't': int(time.time()),
         'h': settings.local.se_host_key,
     }
@@ -71,8 +74,11 @@ def init_host_key():
         None,
     )
 
+    nonce64 = base64.b64encode(nonce)
+    nonces_add(nonce64)
+
     payload = {
-        'n': base64.b64encode(nonce),
+        'n': nonce64,
         'd': base64.b64encode(ciphertext),
     }
 
@@ -105,10 +111,6 @@ def init_server_key():
 
     cipher_data = resp.json()
 
-    if nonces_contains(cipher_data['n']):
-        raise RequestError('Vault encryption nonce replay')
-    nonces_add(cipher_data['n'])
-
     gcm = AESGCM(settings.local.se_encryption_key)
 
     data = gcm.decrypt(
@@ -117,11 +119,11 @@ def init_server_key():
         None,
     )
 
-    data = json.loads(data)
-
-    if nonces_contains(data['n']):
+    if nonces_contains(cipher_data['n']):
         raise RequestError('Vault authorization nonce replay')
-    nonces_add(data['n'])
+    nonces_add(cipher_data['n'])
+
+    data = json.loads(data)
 
     now = int(time.time())
     diff = now - data['t']
@@ -139,6 +141,10 @@ def init_server_key():
 
     if not utils.const_compare(auth_signature, data['a']):
         raise RequestError('Vault bad signature')
+
+    if nonces_contains(data['n']):
+        raise RequestError('Vault authorization nonce replay')
+    nonces_add(data['n'])
 
     return {
         'i': settings.local.host_id,
@@ -173,9 +179,11 @@ def init_master_key(cipher_data):
     )
 
     client_key = plaintext.strip()
+    nonce = utils.generate_secret_len(16)
+    nonces_add(nonce)
 
     data = {
-        'n': utils.generate_secret_len(16),
+        'n': nonce,
         't': int(time.time()),
         'h': cipher_data['h'],
         's': cipher_data['s'],
@@ -235,7 +243,16 @@ def init_master_key(cipher_data):
         None,
     )
 
+    if nonces_contains(crypto_payload['n']):
+        raise RequestError('Vault authorization nonce replay')
+    nonces_add(crypto_payload['n'])
+
     crypto_data = json.loads(crypto_plaintext)
+
+    now = int(time.time())
+    diff = now - crypto_data['t']
+    if diff > 10 or diff < -3:
+        raise RequestError('Vault bad timestamp %s' % crypto_data['t'])
 
     crypto_data_auth = crypto_data['n'] + '&' + \
         str(crypto_data['t']) + '&' + crypto_data['k']
@@ -248,6 +265,10 @@ def init_master_key(cipher_data):
 
     if not utils.const_compare(crypto_data_authr, crypto_data['a']):
         raise RequestError('Invalid crypto keys signature')
+
+    if nonces_contains(crypto_data['n']):
+        raise RequestError('Vault authorization nonce replay')
+    nonces_add(crypto_data['n'])
 
     if crypto_data['k'] != crypto_keys:
         settings_db.update({
