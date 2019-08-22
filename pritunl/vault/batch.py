@@ -20,6 +20,12 @@ class Batch(object):
         self._items[item._id] = item
         self._items_data.append(item._data)
 
+    def items(self):
+        items = []
+        for item in self._items.values():
+            items.append(item)
+        return items
+
     def process(self):
         nonce = utils.generate_secret_len(16)
         nonces_add(nonce)
