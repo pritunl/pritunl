@@ -8,11 +8,14 @@ import json
 
 class Item(object):
     def __init__(self, collection, id, key, value, signature=None):
+        if value[:8] != '$SEAV1$&':
+            value = json.dumps(value, default=utils.json_default)
+
         self._data = {
             'c': collection,
             'i': json.dumps(id, default=utils.json_default),
             'k': key,
-            'v': json.dumps(value, default=utils.json_default),
+            'v': value,
         }
 
         if signature:
