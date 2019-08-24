@@ -1,8 +1,6 @@
 from pritunl.vault.nonces import *
 
 from pritunl.exceptions import *
-from pritunl import settings
-from pritunl import utils
 
 import os
 import requests
