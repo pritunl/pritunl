@@ -37,6 +37,10 @@ class Item(object):
         return self._data['k']
 
     @property
+    def sig_key(self):
+        return self._data['k'] + '_sig'
+
+    @property
     def value(self):
         val = self._data['v']
 
