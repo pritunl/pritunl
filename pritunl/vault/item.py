@@ -42,6 +42,8 @@ class Item(object):
 
     @property
     def value(self):
+        from pritunl import utils
+
         val = self._data['v']
 
         if val[:8] == '$SEAV1$&':
