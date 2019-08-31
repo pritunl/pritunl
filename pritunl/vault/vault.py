@@ -16,6 +16,8 @@ from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
 def init():
+    from pritunl import settings
+
     resp = requests.get(
         'http://127.0.0.1:9758/init',
         verify=False,
