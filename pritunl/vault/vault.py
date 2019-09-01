@@ -46,6 +46,9 @@ def init():
     settings.local.se_encryption_key = base64.b64decode(data[1])
 
 def init_host_key():
+    from pritunl import settings
+    from pritunl import utils
+
     nonce = utils.generate_secret_len(16)
     nonces_add(nonce)
 
