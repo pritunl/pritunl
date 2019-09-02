@@ -99,6 +99,9 @@ def init_host_key():
         raise RequestError('Vault bad status %s' % resp.status_code)
 
 def init_server_key():
+    from pritunl import settings
+    from pritunl import utils
+
     resp = requests.get(
         'http://127.0.0.1:9758/key',
         verify=False,
