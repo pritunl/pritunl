@@ -159,6 +159,9 @@ def init_server_key():
     }
 
 def init_master_key(cipher_data):
+    from pritunl import settings
+    from pritunl import utils
+
     prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
         connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
