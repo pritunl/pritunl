@@ -333,10 +333,10 @@ def _auth_plugin(username, password, remote_addr):
 @app.app.route('/auth/session', methods=['POST'])
 @auth.open_auth
 def auth_session_post():
-    username = utils.json_filter_str('username')
-    password = utils.json_str('password')
-    otp_code = utils.json_opt_filter_str('otp_code')
-    yubico_key = utils.json_opt_filter_str('yubico_key')
+    username = utils.json_filter_str('username')[:128].lower()
+    password = utils.json_str('password')[:128]
+    otp_code = utils.json_opt_filter_str('otp_code')[:128]
+    yubico_key = utils.json_opt_filter_str('yubico_key')[:128]
     remote_addr = utils.get_remote_addr()
 
     time.sleep(random.randint(50, 100) / 1000.)
@@ -402,8 +402,8 @@ def auth_session_post():
 @app.app.route('/auth/session', methods=['DELETE'])
 @auth.open_auth
 def auth_delete():
-    admin_id = utils.session_opt_str('admin_id')
-    session_id = utils.session_opt_str('session_id')
+    admin_id = utils.session_opt_str('admin_id')[:512]
+    session_id = utils.session_opt_str('session_id')[:512]
     remote_addr = utils.get_remote_addr()
 
     journal.entry(
