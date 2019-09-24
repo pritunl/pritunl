@@ -73,7 +73,10 @@ def find_user(org, name=None, type=None, resource_id=None):
         'org_id': org.id,
     }
     if name is not None:
-        spec['name'] = name
+        spec['name'] = {
+            '$regex': '^%s$' % name,
+            '$options': 'i',
+        }
     if type is not None:
         spec['type'] = type
     if resource_id is not None:
@@ -84,7 +87,10 @@ def find_user_auth(name, auth_type):
     from pritunl import organization
 
     spec = {
-        'name': name,
+        'name': {
+            '$regex': '^%s$' % name,
+            '$options': 'i',
+        },
         'auth_type': auth_type,
     }
 
