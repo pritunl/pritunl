@@ -1073,8 +1073,9 @@ class Iptables(object):
         try:
             for i in xrange(3):
                 try:
-                    utils.check_output_logged(
-                        ['ip6tables' if ipv6 else 'iptables', '-I'] + rule)
+                    utils.Process(
+                        ['ip6tables' if ipv6 else 'iptables', '-I'] + rule,
+                    ).run(5)
                     break
                 except:
                     if i == 2:
@@ -1140,8 +1141,9 @@ class Iptables(object):
         try:
             for i in xrange(3):
                 try:
-                    utils.check_output_logged(
-                        ['ip6tables' if ipv6 else 'iptables', '-A'] + rule)
+                    utils.Process(
+                        ['ip6tables' if ipv6 else 'iptables', '-A'] + rule,
+                    ).run(5)
                     break
                 except:
                     if i == 2:
