@@ -165,7 +165,7 @@ def sso_authenticate_post():
         return flask.abort(405)
 
     remote_addr = utils.get_remote_addr()
-    username = utils.json_filter_str('username').lower()
+    username = utils.json_filter_str('username')
     usernames = [username]
     email = None
     if '@' in username:
@@ -493,7 +493,7 @@ def sso_callback_get():
     params = urlparse.parse_qs(query)
 
     if doc.get('type') == SAML_AUTH:
-        username = params.get('username')[0].lower()
+        username = params.get('username')[0]
         email = params.get('email', [None])[0]
 
         org_names = []
@@ -569,7 +569,7 @@ def sso_callback_get():
 
         groups = groups | set(groups2 or [])
     elif doc.get('type') == SLACK_AUTH:
-        username = params.get('username')[0].lower()
+        username = params.get('username')[0]
         email = None
         user_team = params.get('team')[0]
         org_names = params.get('orgs', [''])[0]
@@ -634,7 +634,7 @@ def sso_callback_get():
             return flask.abort(401)
         groups = set(groups or [])
     elif doc.get('type') == GOOGLE_AUTH:
-        username = params.get('username')[0].lower()
+        username = params.get('username')[0]
         email = username
 
         valid, google_groups = sso.verify_google(username)
@@ -701,7 +701,7 @@ def sso_callback_get():
                     org_names=google_groups,
                 )
     elif doc.get('type') == AZURE_AUTH:
-        username = params.get('username')[0].lower()
+        username = params.get('username')[0]
         email = None
 
         tenant, username = username.split('/', 2)
@@ -785,7 +785,7 @@ def sso_callback_get():
                     org_names=azure_groups,
                 )
     elif doc.get('type') == AUTHZERO_AUTH:
-        username = params.get('username')[0].lower()
+        username = params.get('username')[0]
         email = None
 
         valid, authzero_groups = sso.verify_authzero(username)
@@ -955,7 +955,7 @@ def sso_duo_post():
             'error_msg': TOKEN_INVALID_MSG,
         }, 401)
 
-    username = doc['username'].lower()
+    username = doc['username']
     email = doc['email']
     org_id = doc['org_id']
     groups = set(doc['groups'] or [])
