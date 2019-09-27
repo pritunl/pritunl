@@ -204,6 +204,7 @@ def user_linked_key_conf_get(org_id, user_id, server_id):
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
 @auth.open_auth
 def user_linked_key_tar_archive_get(key_id):
+    key_id = key_id[:128]
     remote_addr = utils.get_remote_addr()
     doc = _find_doc({
         'key_id': key_id,
@@ -246,6 +247,7 @@ def user_linked_key_tar_archive_get(key_id):
 @app.app.route('/key/<key_id>.zip', methods=['GET'])
 @auth.open_auth
 def user_linked_key_zip_archive_get(key_id):
+    key_id = key_id[:128]
     remote_addr = utils.get_remote_addr()
     doc = _find_doc({
         'key_id': key_id,
@@ -288,6 +290,7 @@ def user_linked_key_zip_archive_get(key_id):
 @app.app.route('/key_onc/<key_id>.onc', methods=['GET'])
 @auth.open_auth
 def user_linked_key_onc_archive_get(key_id):
+    key_id = key_id[:128]
     remote_addr = utils.get_remote_addr()
     doc = _find_doc({
         'key_id': key_id,
@@ -333,6 +336,7 @@ def user_key_pin_put(key_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
+    key_id = key_id[:128]
     remote_addr = utils.get_remote_addr()
 
     doc = _find_doc({
@@ -415,6 +419,7 @@ def user_key_pin_put(key_id):
 @app.app.route('/k/<short_code>', methods=['GET'])
 @auth.open_auth
 def user_linked_key_page_get(short_code):
+    short_code = short_code[:128]
     remote_addr = utils.get_remote_addr()
 
     doc = _find_doc({
@@ -526,6 +531,7 @@ def user_linked_key_page_get(short_code):
 @auth.open_auth
 def user_linked_key_page_delete(short_code):
     utils.rand_sleep()
+    short_code = short_code[:128]
     remote_addr = utils.get_remote_addr()
 
     journal.entry(
@@ -544,6 +550,7 @@ def user_linked_key_page_delete(short_code):
 @app.app.route('/ku/<short_code>', methods=['GET'])
 @auth.open_auth
 def user_uri_key_page_get(short_code):
+    short_code = short_code[:128]
     remote_addr = utils.get_remote_addr()
 
     doc = _find_doc({
@@ -579,6 +586,8 @@ def user_uri_key_page_get(short_code):
 @app.app.route('/key/<key_id>/<server_id>.key', methods=['GET'])
 @auth.open_auth
 def user_linked_key_conf_get(key_id, server_id):
+    key_id = key_id[:128]
+    server_id = server_id[:128]
     remote_addr = utils.get_remote_addr()
 
     doc = _find_doc({
@@ -647,6 +656,10 @@ def user_linked_key_conf_get(key_id, server_id):
     methods=['GET'])
 @auth.open_auth
 def key_sync_get(org_id, user_id, server_id, key_hash):
+    org_id = org_id[:128]
+    user_id = user_id[:128]
+    server_id = server_id[:128]
+    key_hash = key_hash[:256]
     remote_addr = utils.get_remote_addr()
 
     if not settings.user.conf_sync:
@@ -669,7 +682,10 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
             event_long='Missing auth header',
         )
         return flask.abort(406)
+    auth_token = auth_token[:256]
+    auth_timestamp = auth_timestamp[:256]
     auth_nonce = auth_nonce[:32]
+    auth_signature = auth_signature[:512]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
