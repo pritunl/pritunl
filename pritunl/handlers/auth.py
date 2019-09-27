@@ -333,7 +333,7 @@ def _auth_plugin(username, password, remote_addr):
 @app.app.route('/auth/session', methods=['POST'])
 @auth.open_auth
 def auth_session_post():
-    username = utils.json_filter_str('username')[:128].lower()
+    username = utils.json_filter_str('username')[:128]
     password = utils.json_str('password')
     if password:
         password = password[:128]
