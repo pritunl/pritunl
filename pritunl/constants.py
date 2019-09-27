@@ -4,6 +4,7 @@ APP_NAME = 'pritunl'
 APP_NAME_FORMATED = 'Pritunl'
 CONF_FILENAME = '%s.conf' % APP_NAME
 MIN_DATABASE_VER = '1.25.0.0'
+SE_MODE = False
 
 SAVED = 'saved'
 UNSAVED = 'unsaved'
