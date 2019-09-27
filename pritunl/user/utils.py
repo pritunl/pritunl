@@ -3,6 +3,7 @@ from pritunl.user.user import User
 from pritunl.constants import *
 
 import threading
+import re
 
 def new_pooled_user(org, type):
     type = {
@@ -74,7 +75,7 @@ def find_user(org, name=None, type=None, resource_id=None):
     }
     if name is not None:
         spec['name'] = {
-            '$regex': '^%s$' % name,
+            '$regex': '^%s$' % re.escape(name),
             '$options': 'i',
         }
     if type is not None:
@@ -88,7 +89,7 @@ def find_user_auth(name, auth_type):
 
     spec = {
         'name': {
-            '$regex': '^%s$' % name,
+            '$regex': '^%s$' % re.escape(name),
             '$options': 'i',
         },
         'auth_type': auth_type,
