@@ -13,6 +13,7 @@ import math
 import pymongo
 import threading
 import hashlib
+import re
 
 class Organization(mongo.MongoObject):
     fields = {
@@ -215,7 +216,7 @@ class Organization(mongo.MongoObject):
                 email = email[0] if email else ''
                 if email:
                     spec['email'] = {
-                        '$regex': '.*%s.*' % email,
+                        '$regex': '.*%s.*' % re.escape(email),
                         '$options': 'i',
                     }
                 search = search[:n] + search[n + 6 + len(email):].strip()
@@ -240,7 +241,7 @@ class Organization(mongo.MongoObject):
                     spec['_id'] = {'$nin': user_ids}
 
             spec['name'] = {
-                '$regex': '.*%s.*' % search.strip(),
+                '$regex': '.*%s.*' % re.escape(search).strip(),
                 '$options': 'i',
             }
 
