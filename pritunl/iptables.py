@@ -1075,7 +1075,7 @@ class Iptables(object):
                 try:
                     utils.Process(
                         ['ip6tables' if ipv6 else 'iptables', '-I'] + rule,
-                    ).run(5)
+                    ).run(10)
                     break
                 except:
                     if i == 2:
@@ -1143,7 +1143,7 @@ class Iptables(object):
                 try:
                     utils.Process(
                         ['ip6tables' if ipv6 else 'iptables', '-A'] + rule,
-                    ).run(5)
+                    ).run(10)
                     break
                 except:
                     if i == 2:
