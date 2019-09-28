@@ -587,7 +587,7 @@ def user_uri_key_page_get(short_code):
 @auth.open_auth
 def user_linked_key_conf_get(key_id, server_id):
     key_id = key_id[:128]
-    server_id = server_id[:128]
+    server_id = server_id
     remote_addr = utils.get_remote_addr()
 
     doc = _find_doc({
@@ -656,9 +656,9 @@ def user_linked_key_conf_get(key_id, server_id):
     methods=['GET'])
 @auth.open_auth
 def key_sync_get(org_id, user_id, server_id, key_hash):
-    org_id = org_id[:128]
-    user_id = user_id[:128]
-    server_id = server_id[:128]
+    org_id = org_id
+    user_id = user_id
+    server_id = server_id
     key_hash = key_hash[:256]
     remote_addr = utils.get_remote_addr()
 
