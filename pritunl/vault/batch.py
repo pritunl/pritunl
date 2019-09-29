@@ -26,6 +26,12 @@ class Batch(object):
         return items
 
     def process(self):
+        from pritunl import settings
+        from pritunl import utils
+
+        if not len(self._items):
+            return
+
         nonce = utils.generate_secret_len(16)
         nonces_add(nonce)
 
