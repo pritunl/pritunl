@@ -429,9 +429,10 @@ if cmd == 'set-version':
 
     css_hash = subprocess.check_output(
         'md5sum www/vendor/dist/css/main.css | head -c 32',
-        shell=True).strip()
+        shell=True).decode().strip()
     app_hash = subprocess.check_output(
-        'md5sum www/vendor/dist/js/main.js | head -c 32', shell=True).strip()
+        'md5sum www/vendor/dist/js/main.js | head -c 32', shell=True,
+    ).decode().strip()
     subprocess.check_call([
         'mv',
         'www/vendor/dist/css/main.css',
@@ -460,7 +461,7 @@ if cmd == 'set-version':
     subprocess.check_call(['git', 'add', 'www/styles/vendor/main.css'])
     subprocess.check_call(['git', 'add', '--all', 'www/vendor/dist'])
     changes = subprocess.check_output(
-        ['git', 'status', '-s']).rstrip().split('\n')
+        ['git', 'status', '-s']).decode().rstrip().split('\n')
     changed = any([True if x[0] == 'M' else False for x in changes])
     if changed:
         subprocess.check_call(['git', 'commit', '-S', '-m', 'Rebuild dist'])
