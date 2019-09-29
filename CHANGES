@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Server reliablity improvements
+
 Version 1.29.2145.25 2019-07-28
 -------------------------------
 
