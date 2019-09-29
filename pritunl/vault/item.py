@@ -27,6 +27,7 @@ class Item(object):
 
     @property
     def id(self):
+        from pritunl import utils
         return json.loads(
             self._data['s'],
             object_hook=utils.json_object_hook_handler,
