@@ -17,6 +17,7 @@ class Batch(object):
     def add(self, item):
         self._items[item._id] = item
         self._items_data.append(item._data)
+        return item
 
     def items(self):
         items = []
