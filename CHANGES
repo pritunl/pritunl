@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Reliablity improvements
+
 Version 1.29.2208.39 2019-09-29
 -------------------------------
 
