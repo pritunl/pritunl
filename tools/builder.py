@@ -155,7 +155,7 @@ def sync_db():
             if file_type == 'release':
                 with open(file_path, 'r') as release_file:
                     doc = json.loads(release_file.read().strip())
-                    releases_db.update({
+                    releases_db.update_one({
                         '_id': ver,
                     }, {
                         '$set': doc,
@@ -163,7 +163,7 @@ def sync_db():
             else:
                 last_modified, etag = generate_last_modifited_etag(file_path)
                 with open(file_path, 'r') as css_file:
-                    releases_db.update({
+                    releases_db.update_one({
                         '_id': ver,
                     }, {'$set': {
                         file_type: {
