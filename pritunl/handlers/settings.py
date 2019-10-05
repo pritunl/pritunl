@@ -98,6 +98,8 @@ def _dict():
             'eu_west_1_secret_key': 'demo',
             'eu_west_2_access_key': 'demo',
             'eu_west_2_secret_key': 'demo',
+            'eu_west_3_access_key': 'demo',
+            'eu_west_3_secret_key': 'demo',
             'eu_central_1_access_key': 'demo',
             'eu_central_1_secret_key': 'demo',
             'ca_central_1_access_key': 'demo',
