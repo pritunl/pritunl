@@ -1219,20 +1219,6 @@ class User(mongo.MongoObject):
             **kwargs
         )
 
-        logger.info(
-            'Audit event',
-            'audit',
-            user_id=self.id,
-            user_name=self.name,
-            org_id=self.org_id,
-            org_name=org_name,
-            timestamp=timestamp,
-            type=event_type,
-            remote_addr=remote_addr,
-            message=event_msg,
-            **kwargs
-        )
-
     def get_audit_events(self):
         if settings.app.demo_mode:
             return DEMO_AUDIT_EVENTS
