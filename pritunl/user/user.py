@@ -122,6 +122,18 @@ class User(mongo.MongoObject):
         return mongo.get_collection('otp_cache')
 
     @property
+    def sso_passcode_cache_collection(cls):
+        return mongo.get_collection('sso_passcode_cache')
+
+    @property
+    def sso_push_cache_collection(cls):
+        return mongo.get_collection('sso_push_cache')
+
+    @property
+    def sso_client_cache_collection(cls):
+        return mongo.get_collection('sso_client_cache')
+
+    @property
     def has_duo_passcode(self):
         return settings.app.sso and self.auth_type and \
            DUO_AUTH in self.auth_type and \
@@ -324,6 +336,18 @@ class User(mongo.MongoObject):
         })
         self.unassign_ip_addr()
         mongo.MongoObject.remove(self)
+
+    def clear_auth_cache(self):
+        self.sso_passcode_cache_collection.delete_many({
+            'user_id': self.id,
+        })
+        self.sso_push_cache_collection.delete_many({
+            'user_id': self.id,
+        })
+        self.sso_client_cache_collection.delete_many({
+            'user_id': self.id,
+        })
+        messenger.publish('instance', ['user_disconnect', self.id])
 
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
