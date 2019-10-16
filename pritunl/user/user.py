@@ -156,9 +156,10 @@ class User(mongo.MongoObject):
 
     @property
     def has_yubikey(self):
-        return settings.app.sso and self.auth_type and \
+        return self.auth_type == YUBICO_AUTH or (
+            settings.app.sso and self.auth_type and \
             YUBICO_AUTH in self.auth_type and \
-            YUBICO_AUTH in settings.app.sso
+            YUBICO_AUTH in settings.app.sso)
 
     @property
     def journal_data(self):
@@ -188,6 +189,7 @@ class User(mongo.MongoObject):
             'pin': bool(self.pin),
             'type': self.type,
             'auth_type': self.auth_type,
+            'yubico_id': self.yubico_id,
             'otp_secret': self.otp_secret,
             'disabled': self.disabled,
             'bypass_secondary': self.bypass_secondary,
