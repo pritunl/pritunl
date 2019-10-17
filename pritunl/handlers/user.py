@@ -88,6 +88,7 @@ def user_get(org_id, user_id=None, page=None):
         'type',
         'auth_type',
         'otp_secret',
+        'yubico_id',
         'disabled',
         'bypass_secondary',
         'client_to_client',
@@ -238,6 +239,12 @@ def _create_user(users, org, user_data, remote_addr, pool):
     if auth_type not in AUTH_TYPES:
         auth_type = LOCAL_AUTH
 
+    if auth_type == YUBICO_AUTH:
+        yubico_id = user_data.get('yubico_id')
+        yubico_id = yubico_id[:12] if yubico_id else None
+    else:
+        yubico_id = None
+
     groups = user_data.get('groups') or []
     for i, group in enumerate(groups):
         groups[i] = utils.filter_str(group)
@@ -267,8 +274,8 @@ def _create_user(users, org, user_data, remote_addr, pool):
             })
 
     user = org.new_user(type=CERT_CLIENT, pool=pool, name=name,
-        email=email, auth_type=auth_type, groups=groups, pin=pin,
-        disabled=disabled, bypass_secondary=bypass_secondary,
+        email=email, auth_type=auth_type, yubico_id=yubico_id, groups=groups,
+        pin=pin, disabled=disabled, bypass_secondary=bypass_secondary,
         client_to_client=client_to_client, dns_servers=dns_servers,
         dns_suffix=dns_suffix, port_forwarding=port_forwarding)
     user.audit_event('user_created',
@@ -431,6 +438,14 @@ def user_put(org_id, user_id):
 
         if auth_type in AUTH_TYPES:
             user.auth_type = auth_type
+
+    if 'yubico_id' in flask.request.json and user.auth_type == YUBICO_AUTH:
+        yubico_id = utils.filter_str(flask.request.json['yubico_id']) or None
+        yubico_id = yubico_id[:12] if yubico_id else None
+        if yubico_id != user.yubico_id:
+            reset_user = True
+            reset_user_cache = True
+        user.yubico_id = yubico_id
 
     if 'groups' in flask.request.json:
         groups = flask.request.json['groups'] or []
