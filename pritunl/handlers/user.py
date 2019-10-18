@@ -619,6 +619,18 @@ def user_put(org_id, user_id):
     user.client_to_client = True if flask.request.json.get(
         'client_to_client') else False
 
+    if user.bypass_secondary:
+        if user.pin:
+            return utils.jsonify({
+                'error': PIN_BYPASS_SECONDARY,
+                'error_msg': PIN_BYPASS_SECONDARY_MSG,
+            }, 400)
+        if user.yubico_id:
+            return utils.jsonify({
+                'error': YUBIKEY_BYPASS_SECONDARY,
+                'error_msg': YUBIKEY_BYPASS_SECONDARY_MSG,
+            }, 400)
+
     if 'dns_servers' in flask.request.json:
         dns_servers = flask.request.json['dns_servers'] or None
         if user.dns_servers != dns_servers:
