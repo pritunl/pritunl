@@ -265,6 +265,18 @@ def _create_user(users, org, user_data, remote_addr, pool):
 
         pin = auth.generate_hash_pin_v2(pin)
 
+    if bypass_secondary:
+        if pin:
+            return utils.jsonify({
+                'error': PIN_BYPASS_SECONDARY,
+                'error_msg': PIN_BYPASS_SECONDARY_MSG,
+            }, 400)
+        if yubico_id:
+            return utils.jsonify({
+                'error': YUBIKEY_BYPASS_SECONDARY,
+                'error_msg': YUBIKEY_BYPASS_SECONDARY_MSG,
+            }, 400)
+
     if port_forwarding_in:
         for data in port_forwarding_in:
             port_forwarding.append({
