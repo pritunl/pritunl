@@ -54,4 +54,29 @@ class TaskCleanIpPool(task.Task):
                     'user_id': '',
                 }})
 
-task.add_task(TaskCleanIpPool, hours=5, minutes=23, run_on_start=True)
+        response = self.pool_collection.aggregate([
+            {'$match': {
+                'user_id': {'$exists': True},
+            }},
+            {'$lookup': {
+                'from': mongo.prefix + 'users',
+                'localField': 'user_id',
+                'foreignField': '_id',
+                'as': 'user_docs',
+            }},
+            {'$match': {
+                'user_docs': {'$size': 0},
+            }},
+        ])
+
+        for doc in response:
+            self.pool_collection.update({
+                '_id': doc['_id'],
+                'org_id': doc['org_id'],
+                'user_id': doc['user_id'],
+            }, {'$unset': {
+                'org_id': '',
+                'user_id': '',
+            }})
+
+task.add_task(TaskCleanIpPool, hours=5, minutes=23)
