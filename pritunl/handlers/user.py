@@ -406,6 +406,7 @@ def user_put(org_id, user_id):
     org = organization.get_by_id(org_id)
     user = org.get_user(user_id)
     reset_user = False
+    reset_user_cache = False
     port_forwarding_event = False
     remote_addr = utils.get_remote_addr()
 
@@ -449,6 +450,9 @@ def user_put(org_id, user_id):
         auth_type = utils.filter_str(flask.request.json['auth_type']) or None
 
         if auth_type in AUTH_TYPES:
+            if auth_type != user.auth_type:
+                reset_user = True
+                reset_user_cache = True
             user.auth_type = auth_type
 
     if 'yubico_id' in flask.request.json and user.auth_type == YUBICO_AUTH:
@@ -510,6 +514,9 @@ def user_put(org_id, user_id):
                     }, 400)
 
             if user.set_pin(pin):
+                reset_user = True
+                reset_user_cache = True
+
                 user.audit_event('user_updated',
                     'User pin changed',
                     remote_addr=remote_addr,
@@ -603,6 +610,7 @@ def user_put(org_id, user_id):
 
         if disabled:
             reset_user = True
+            reset_user_cache = True
     user.disabled = disabled
 
     user.bypass_secondary = True if flask.request.json.get(
@@ -656,6 +664,8 @@ def user_put(org_id, user_id):
             'user_id': user.id,
         })
 
+    if reset_user_cache:
+        user.clear_auth_cache()
     if reset_user:
         user.disconnect()
 
@@ -716,6 +726,7 @@ def user_delete(org_id, user_id):
     event.Event(type=ORGS_UPDATED)
     event.Event(type=USERS_UPDATED, resource_id=org.id)
 
+    user.clear_auth_cache()
     user.disconnect()
 
     logger.LogEntry(message='Deleted user "%s".' % name)
