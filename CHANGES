@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Remove audit events from logs
+
 Version 1.29.2209.0 2019-09-30
 ------------------------------
 
