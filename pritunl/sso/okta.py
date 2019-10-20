@@ -79,6 +79,14 @@ def auth_okta(username):
         )
         return None
 
+    if response.status_code == 404:
+        logger.warning('Okta user is not assigned to application', 'sso',
+            username=username,
+            okta_app_id=okta_app_id,
+            user_id=user_id,
+        )
+        return False
+
     if response.status_code != 200:
         logger.error('Okta api error', 'sso',
             username=username,
