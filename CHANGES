@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.2232.32 2019-10-23
+-------------------------------
 
 Add YubiKey support without single sign-on
 Remove audit events from logs
