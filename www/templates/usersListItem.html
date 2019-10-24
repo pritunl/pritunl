@@ -47,7 +47,7 @@ if (name.length > 40) {
     <div class="radius-logo" data-toggle="tooltip" title="User is authenticating with Radius" <%= bypass_secondary !== true && sso === 'radius' && auth_type === 'radius' ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
     <div class="plugin-logo" data-toggle="tooltip" title="User is authenticating with plugin" <%= bypass_secondary !== true && auth_type === 'plugin' ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
     <div class="duo-logo" data-toggle="tooltip" title="User is authenticating with Duo Security" <%= bypass_secondary !== true && sso && sso.indexOf('duo') !== -1 && auth_type.indexOf('duo') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="yubico-logo" data-toggle="tooltip" title="User is authenticating with Yubikey" <%= bypass_secondary !== true && sso && sso.indexOf('yubico') !== -1 && auth_type.indexOf('yubico') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="yubico-logo" data-toggle="tooltip" title="User is authenticating with Yubikey" <%= bypass_secondary !== true && ((sso && sso.indexOf('yubico') !== -1 && auth_type.indexOf('yubico') !== -1) || auth_type === 'yubico') ? '' : 'style="display: none"' %>></div>
   </div>
   <div class="right-container <%- otp_auth ? '' : 'no-otp-auth' %>">
     <div class="status-container">
