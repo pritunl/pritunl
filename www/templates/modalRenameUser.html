@@ -18,6 +18,10 @@
     data-toggle="tooltip" title="User pin, required when user connects to vpn. When using with two-factor authentication the pin and two-factor authentication code should both be placed in the password field."
     value="<%- pin ? '******' : '' %>">
 </div>
+<div class="form-group yubikey-id" <%= bypass_secondary !== true && auth_type === 'yubico' ? '' : 'style="display: none"' %>>
+  <label>YubiKey ID</label>
+  <input type="text" class="form-control" maxlength="12" placeholder="Insert YubiKey" data-toggle="tooltip" title="Insert and touch YubiKey to get ID. Requires Yubico API credentials in settings." value="<%- yubico_id %>">
+</div>
 <div class="form-group port-forwarding">
   <label>Port Forwarding</label>
   <input type="text" class="form-control"
