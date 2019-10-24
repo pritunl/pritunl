@@ -16,6 +16,7 @@ define([
       'audit': null,
       'type': null,
       'auth_type': null,
+      'yubico_id': null,
       'status': null,
       'sso': null,
       'otp_auth': null,
