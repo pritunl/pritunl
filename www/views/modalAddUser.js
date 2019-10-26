@@ -13,6 +13,7 @@ define([
     template: _.template(modalAddUserTemplate),
     title: 'Add User',
     okText: 'Add',
+    enterOk: false,
     hasAdvanced: true,
     events: function() {
       return _.extend({
