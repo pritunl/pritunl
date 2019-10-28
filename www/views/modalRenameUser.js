@@ -11,9 +11,12 @@ define([
     template: _.template(modalRenameUserTemplate),
     title: 'Modify User',
     okText: 'Save',
+    enterOk: false,
     hasAdvanced: true,
     events: function() {
       return _.extend({
+        'click .auth-type select': 'onAuthType',
+        'change .auth-type select': 'onAuthType',
         'click .bypass-secondary-toggle': 'onBypassSecondarySelect',
         'click .client-to-client-toggle': 'onClientToClientSelect'
       }, ModalRenameUserView.__super__.events);
@@ -103,6 +106,15 @@ define([
     onClientToClientSelect: function() {
       this.setClientToClientSelect(!this.getClientToClientSelect());
     },
+    onAuthType: function() {
+      var authType = this.$('.auth-type select').val();
+
+      if (authType === 'yubico') {
+        this.$('.yubikey-id').slideDown(window.slideTime);
+      } else {
+        this.$('.yubikey-id').slideUp(window.slideTime);
+      }
+    },
     getGroups: function() {
       var groups = [];
       var groupsData = this.$('.groups input').select2('data');
@@ -132,6 +144,7 @@ define([
       var portForwarding = this.getPortForwarding();
       var groups = this.getGroups();
       var authType = this.$('.auth-type select').val();
+      var yubicoId = this.$('.yubikey-id input').val();
 
       if (pin === '******') {
         pin = true;
@@ -181,7 +194,8 @@ define([
         dns_servers: dnsServers,
         dns_suffix: dnsSuffix,
         port_forwarding: portForwarding,
-        auth_type: authType
+        auth_type: authType,
+        yubico_id: yubicoId
       }, {
         success: function() {
           this.close(true);
