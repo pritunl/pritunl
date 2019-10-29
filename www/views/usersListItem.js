@@ -237,8 +237,8 @@ define([
           this.$('.duo-logo').hide();
         }
 
-        if (sso.indexOf('yubico') !== -1 &&
-          auth_type.indexOf('yubico') !== -1) {
+        if ((sso.indexOf('yubico') !== -1 &&
+          auth_type.indexOf('yubico') !== -1) || auth_type === 'yubico') {
           this.$('.yubico-logo').show();
         } else {
           this.$('.yubico-logo').hide();
