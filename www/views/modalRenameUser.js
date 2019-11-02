@@ -171,7 +171,8 @@ define([
       }
 
       if (!name) {
-        this.setAlert('danger', 'Name can not be empty.', '.form-group.name');
+        this.setAlert('danger', 'Name can not be empty.',
+          '.form-group.name');
         return;
       }
       if (!email) {
