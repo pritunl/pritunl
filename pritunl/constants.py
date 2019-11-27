@@ -1150,7 +1150,6 @@ server-poll-timeout 4
 reneg-sec 2592000
 sndbuf 393216
 rcvbuf 393216
-max-routes 1000
 remote-cert-tls server
 """
 
@@ -1250,7 +1249,6 @@ server-poll-timeout 4
 reneg-sec 2592000
 sndbuf 393216
 rcvbuf 393216
-max-routes 1000
 remote-cert-tls server
 """
 
