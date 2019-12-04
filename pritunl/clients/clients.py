@@ -69,6 +69,7 @@ class Clients(object):
                 continue
             self.ip_pool.append(str(ip_addr))
         self.ip_pool.pop()
+        self.ip_pool.pop()
 
         self.server.generate_auth_key_commit()
         self.server_private_key = self.server.get_auth_private_key()
