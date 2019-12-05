@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with dynamic addresses
+
 Version 1.29.2232.32 2019-10-23
 -------------------------------
 
