@@ -405,7 +405,7 @@ if cmd == 'set-version':
     # Build webapp
     subprocess.check_call([
         'sudo',
-        'docker',
+        'podman',
         'run',
         '--rm',
         '-ti',
@@ -417,7 +417,7 @@ if cmd == 'set-version':
     ])
     subprocess.check_call([
         'sudo',
-        'docker',
+        'podman',
         'run',
         '--rm',
         '-ti',
