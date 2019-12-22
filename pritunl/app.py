@@ -123,7 +123,7 @@ def after_request(response):
 @app.route('/.well-known/acme-challenge/<token>', methods=['GET'])
 @auth.open_auth
 def acme_token_get(token):
-    token = token[:128]
+    token = utils.filter_str(token[:96])
     authorization = acme.get_authorization(token)
     if authorization:
         return flask.Response(authorization, mimetype='text/plain')
