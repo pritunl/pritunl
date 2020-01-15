@@ -26,7 +26,7 @@ define([
     cancelText: 'Cancel',
     errorMsg: 'Unknown server error occurred.',
     enterOk: true,
-    safeClose: false,
+    safeClose: true,
     hasAdvanced: false,
     body: function() {
       return '';
