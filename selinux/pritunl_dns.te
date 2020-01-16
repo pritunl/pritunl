@@ -49,3 +49,7 @@ allow pritunl_dns_t self:unix_dgram_socket { create ioctl };
 allow pritunl_dns_t sysctl_net_t:dir search;
 allow pritunl_dns_t sysctl_net_t:file { open read };
 allow pritunl_dns_t unreserved_port_t:tcp_socket name_connect;
+
+allow pritunl_dns_t cert_t:dir { open read search };
+allow pritunl_dns_t cert_t:file { getattr open read };
+allow pritunl_dns_t cert_t:lnk_file { getattr read };
