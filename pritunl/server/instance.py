@@ -860,7 +860,8 @@ class ServerInstance(object):
                         doc_hosts = ((doc or {}).get('hosts') or [])
                         if settings.local.host_id in doc_hosts:
                             logger.error(
-                                'Instance doc lost, stopping server',
+                                'Instance doc lost, stopping server. ' +
+                                'Check datetime settings',
                                 'server',
                                 server_id=self.server.id,
                                 instance_id=self.id,
