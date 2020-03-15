@@ -649,9 +649,10 @@ class Server(mongo.MongoObject):
             })
 
         if include_server_links:
-            for link_svr in self.iter_links(fields=('_id', 'network',
-                    'network_start', 'network_end', 'routes',
-                    'organizations', 'links', 'ipv6')):
+            for link_svr in self.iter_links(fields=('_id', 'wg',
+                   'network', 'network_wg', 'network_start',
+                   'network_end', 'routes', 'organizations', 'links',
+                   'ipv6')):
                 for route in link_svr.get_routes():
                     if route['network'] == '0.0.0.0/0':
                         continue
@@ -732,6 +733,9 @@ class Server(mongo.MongoObject):
             elif route_network == self.network or \
                     route_network == self.network6:
                 continue
+            elif route_network == self.network_wg or \
+                    route_network == self.network6_wg:
+                continue
             else:
                 if route_network in routes_dict:
                     if not route.get('server_link'):
@@ -794,6 +798,27 @@ class Server(mongo.MongoObject):
             'link_virtual_network': False,
         })
 
+        if self.wg:
+            routes.append({
+                'id': self.network_wg.encode('hex'),
+                'server': self.id,
+                'network': self.network_wg,
+                'comment': virtual_comment,
+                'metric': virtual_metric,
+                'nat': False,
+                'nat_interface': None,
+                'nat_netmap': None,
+                'advertise': virtual_advertise,
+                'vpc_region': virtual_vpc_region,
+                'vpc_id': virtual_vpc_id,
+                'net_gateway': False,
+                'virtual_network': True,
+                'wg_network': True,
+                'network_link': False,
+                'server_link': False,
+                'link_virtual_network': False,
+            })
+
         if self.ipv6:
             routes.append({
                 'id': self.network6.encode('hex'),
@@ -813,6 +838,27 @@ class Server(mongo.MongoObject):
                 'server_link': False,
                 'link_virtual_network': False,
             })
+
+            if self.wg:
+                routes.append({
+                    'id': self.network6_wg.encode('hex'),
+                    'server': self.id,
+                    'network': self.network6_wg,
+                    'comment': virtual_comment,
+                    'metric': virtual_metric,
+                    'nat': False,
+                    'nat_interface': None,
+                    'nat_netmap': None,
+                    'advertise': virtual_advertise,
+                    'vpc_region': virtual_vpc_region,
+                    'vpc_id': virtual_vpc_id,
+                    'net_gateway': False,
+                    'virtual_network': True,
+                    'wg_network': True,
+                    'network_link': False,
+                    'server_link': False,
+                    'link_virtual_network': False,
+                })
 
         for route_network in sorted(routes_dict.keys()):
             if not routes_dict[route_network]['server_link']:
