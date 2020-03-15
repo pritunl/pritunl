@@ -591,13 +591,13 @@ class User(mongo.MongoObject):
 
     def assign_ip_addr(self):
         for svr in self.org.iter_servers(fields=(
-                'id', 'network', 'network_start',
+                'id', 'wg', 'network', 'network_wg', 'network_start',
                 'network_end', 'network_lock')):
             svr.assign_ip_addr(self.org.id, self.id)
 
     def unassign_ip_addr(self):
         for svr in self.org.iter_servers(fields=(
-                'id', 'network', 'network_start',
+                'id', 'wg', 'network', 'network_wg', 'network_start',
                 'network_end', 'network_lock')):
             svr.unassign_ip_addr(self.org.id, self.id)
 
