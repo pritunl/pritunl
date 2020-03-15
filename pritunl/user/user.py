@@ -25,6 +25,11 @@ import uuid
 import pymongo
 import urllib
 import requests
+from cryptography.hazmat.backends import default_backend
+from cryptography.hazmat.primitives import hashes
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import padding
+from cryptography.hazmat.primitives.asymmetric.utils import Prehashed
 
 class User(mongo.MongoObject):
     fields = {
@@ -1145,6 +1150,23 @@ class User(mongo.MongoObject):
         changed = not self.check_pin(pin)
         self.pin = auth.generate_hash_pin_v2(pin)
         return changed
+
+    def verify_sig(self, digest, signature):
+        public_key = serialization.load_pem_private_key(
+            self.private_key.encode(),
+            password=None,
+            backend=default_backend(),
+        ).public_key()
+
+        public_key.verify(
+            signature,
+            digest,
+            padding.PSS(
+                mgf=padding.MGF1(hashes.SHA512()),
+                salt_length=padding.PSS.MAX_LENGTH,
+            ),
+            Prehashed(hashes.SHA512()),
+        )
 
     def send_key_email(self, key_link_domain):
         user_key_link = self.org.create_user_key_link(self.id)
