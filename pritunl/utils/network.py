@@ -144,6 +144,11 @@ def parse_network(network):
 def get_network_gateway(network):
     return str(ipaddress.IPNetwork(network).iterhosts().next())
 
+def get_network_gateway_cidr(network):
+    network = ipaddress.IPNetwork(network)
+    cidr = network.prefixlen
+    return str(network.iterhosts().next()) + '/' + str(cidr)
+
 def get_default_interface():
     gateways = netifaces.gateways()
     default_iface = gateways['default'].get(socket.AF_INET)
