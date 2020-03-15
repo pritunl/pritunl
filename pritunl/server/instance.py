@@ -1430,3 +1430,9 @@ class ServerInstance(object):
             return
 
         threading.Thread(target=self._run_thread, args=(send_events,)).start()
+
+def get_instance(server_id):
+    try:
+        return _instances[server_id]
+    except KeyError:
+        return
