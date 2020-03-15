@@ -429,11 +429,33 @@ class Server(mongo.MongoObject):
             return utils.net4to6x96(routed_subnet6, self.network)
         return utils.net4to6x64(settings.vpn.ipv6_prefix, self.network)
 
+    @property
+    def network6_wg(self):
+        routed_subnet6_wg = settings.local.host.routed_subnet6_wg
+        if routed_subnet6_wg:
+            return utils.net4to6x96(routed_subnet6_wg, self.network)
+        return utils.net4to6x64(settings.vpn.ipv6_prefix_wg, self.network)
+
+    def ip4to4wg(self, addr):
+        addr = ipaddress.IPNetwork(addr)
+        wg_net = ipaddress.IPNetwork(self.network_wg)
+        addr_bin = bin(wg_net)[2:].zfill(32)[:addr.prefixlen] + \
+            bin(addr)[2:].zfill(32)[addr.prefixlen:]
+        return utils.long_to_ip(int(addr_bin, 2)) + '/%d' % addr.prefixlen
+
     def ip4to6(self, addr):
         routed_subnet6 = settings.local.host.routed_subnet6
         if routed_subnet6:
             return utils.ip4to6x96(routed_subnet6, self.network, addr)
-        return utils.ip4to6x64(settings.vpn.ipv6_prefix, self.network, addr)
+        return utils.ip4to6x64(settings.vpn.ipv6_prefix,
+            self.network, addr)
+
+    def ip4to6wg(self, addr):
+        routed_subnet6 = settings.local.host.routed_subnet6_wg
+        if routed_subnet6:
+            return utils.ip4to6x96(routed_subnet6, self.network, addr)
+        return utils.ip4to6x64(
+            settings.vpn.ipv6_prefix_wg, self.network, addr)
 
     @cached_property
     def users_online(self):
