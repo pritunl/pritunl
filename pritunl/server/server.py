@@ -1683,7 +1683,14 @@ class Server(mongo.MongoObject):
         if utils.check_network_overlap(self.network, network_used):
             return NETWORK_IN_USE, NETWORK_IN_USE_MSG
 
+        if self.wg and utils.check_network_overlap(
+                self.network_wg, network_used):
+            return NETWORK_IN_USE, NETWORK_IN_USE_MSG
+
         if '%s%s' % (self.port, self.protocol) in port_used:
+            return PORT_PROTOCOL_IN_USE, PORT_PROTOCOL_IN_USE_MSG
+
+        if self.wg and '%sudp' % self.port_wg in port_used:
             return PORT_PROTOCOL_IN_USE, PORT_PROTOCOL_IN_USE_MSG
 
         if self.network_mode == BRIDGE:
