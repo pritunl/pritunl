@@ -13,8 +13,10 @@ import datetime
 @queue.add_queue
 class QueueAssignIpPool(queue.Queue):
     fields = {
+        'wg',
         'server_id',
         'network',
+        'network_wg',
         'network_start',
         'network_end',
         'network_hash',
