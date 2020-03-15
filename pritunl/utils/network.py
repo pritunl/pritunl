@@ -17,6 +17,7 @@ import socket
 _used_interfaces = set()
 _tun_interfaces = collections.deque(['tun%s' % _x for _x in xrange(100)])
 _tap_interfaces = collections.deque(['tap%s' % _x for _x in xrange(100)])
+_wg_interfaces = collections.deque(['wg%s' % _x for _x in xrange(100)])
 _sock = None
 _sockfd = None
 _ip_route = pyroute2.iproute.IPRoute()
@@ -27,6 +28,8 @@ def interface_acquire(interface_type):
         intf = _tun_interfaces.popleft()
     elif interface_type == 'tap':
         intf = _tap_interfaces.popleft()
+    elif interface_type == 'wg':
+        intf = _wg_interfaces.popleft()
     else:
         raise ValueError('Unknown interface type %s' % interface_type)
 
@@ -42,6 +45,8 @@ def interface_release(interface_type, interface):
         _tun_interfaces.append(interface)
     elif interface_type == 'tap':
         _tap_interfaces.append(interface)
+    elif interface_type == 'wg':
+        _wg_interfaces.append(interface)
     else:
         raise ValueError('Unknown interface type %s' % interface_type)
 
