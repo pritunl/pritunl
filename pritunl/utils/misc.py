@@ -198,10 +198,20 @@ def check_output_logged(*args, **kwargs):
     except KeyError:
         ignore_states = None
 
-    process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+    try:
+        com_input = kwargs.pop('input')
+        stdin = subprocess.PIPE
+    except KeyError:
+        com_input = None
+        stdin = None
+
+    process = subprocess.Popen(
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        stdin=stdin,
         *args, **kwargs)
 
-    stdoutdata, stderrdata = process.communicate()
+    stdoutdata, stderrdata = process.communicate(input=com_input)
     return_code = process.poll()
 
     if return_code:
