@@ -1351,11 +1351,14 @@ def key_wg_put(org_id, user_id, server_id):
 
     instance = server.get_instance(server_id)
     if not instance or instance.state != 'running':
-        return flask.abort(560)
+        return flask.abort(429)
+
+    if not instance.server.wg:
+        return flask.abort(429)
 
     clients = instance.instance_com.clients
 
-    clients.ping_wg(
+    status = clients.ping_wg(
         user=usr,
         org=org,
         wg_public_key=client_wg_public_key,
@@ -1363,7 +1366,7 @@ def key_wg_put(org_id, user_id, server_id):
     )
 
     send_data = {
-        'status': True,
+        'status': status,
         'timestamp': int(utils.time_now()),
     }
 
