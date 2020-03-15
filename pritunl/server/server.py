@@ -41,9 +41,11 @@ dict_fields = [
     'instances',
     'organizations',
     'groups',
+    'wg',
     'ipv6',
     'ipv6_firewall',
     'network',
+    'network_wg',
     'network_mode',
     'network_start',
     'network_end',
@@ -51,6 +53,7 @@ dict_fields = [
     'bind_address',
     'port',
     'protocol',
+    'port_wg',
     'dh_param_bits',
     'dh_params',
     'multi_device',
@@ -65,6 +68,7 @@ dict_fields = [
     'inter_client',
     'ping_interval',
     'ping_timeout',
+    'ping_timeout_wg',
     'link_ping_interval',
     'link_ping_timeout',
     'inactive_timeout',
@@ -96,10 +100,13 @@ class Server(mongo.MongoObject):
         'network',
         'network_lock',
         'network_lock_ttl',
+        'network_wg',
         'bind_address',
         'port',
         'protocol',
+        'port_wg',
         'dh_param_bits',
+        'wg',
         'ipv6',
         'ipv6_firewall',
         'network_mode',
@@ -117,6 +124,7 @@ class Server(mongo.MongoObject):
         'inter_client',
         'ping_interval',
         'ping_timeout',
+        'ping_timeout_wg',
         'link_ping_interval',
         'link_ping_timeout',
         'inactive_timeout',
@@ -152,6 +160,7 @@ class Server(mongo.MongoObject):
         'auth_box_private_key',
     }
     fields_default = {
+        'wg': False,
         'ipv6': False,
         'ipv6_firewall': True,
         'network_mode': TUNNEL,
@@ -170,6 +179,7 @@ class Server(mongo.MongoObject):
         'inter_client': True,
         'ping_interval': 10,
         'ping_timeout': 60,
+        'ping_timeout_wg': 660,
         'link_ping_interval': 1,
         'link_ping_timeout': 5,
         'debug': False,
@@ -189,17 +199,19 @@ class Server(mongo.MongoObject):
     }
     cache_prefix = 'server'
 
-    def __init__(self, name=None, groups=None, network=None,
-            network_mode=None, network_start=None, network_end=None,
-            restrict_routes=None, ipv6=None, ipv6_firewall=None,
-            bind_address=None, port=None, protocol=None, dh_param_bits=None,
+    def __init__(self, name=None, groups=None, network_wg=None,
+            network=None, network_mode=None, network_start=None,
+            network_end=None, restrict_routes=None, wg=None, ipv6=None,
+            ipv6_firewall=None, bind_address=None, port=None,
+            protocol=None, port_wg=None, dh_param_bits=None,
             multi_device=None, dns_servers=None, search_domain=None,
             otp_auth=None, cipher=None, hash=None, block_outside_dns=None,
             jumbo_frames=None, lzo_compression=None, inter_client=None,
-            ping_interval=None, ping_timeout=None, link_ping_interval=None,
-            link_ping_timeout=None, inactive_timeout=None,
-            allowed_devices=None, max_clients=None, max_devices=None,
-            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
+            ping_interval=None, ping_timeout=None, ping_timeout_wg=None,
+            link_ping_interval=None, link_ping_timeout=None,
+            inactive_timeout=None,  allowed_devices=None,
+            max_clients=None, max_devices=None, replica_count=None,
+            vxlan=None, dns_mapping=None, debug=None,
             pre_connect_msg=None, mss_fix=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
@@ -217,6 +229,8 @@ class Server(mongo.MongoObject):
             self.groups = groups
         if network is not None:
             self.network = network
+        if network_wg is not None:
+            self.network_wg = network_wg
         if network_mode is not None:
             self.network_mode = network_mode
         if network_start is not None:
@@ -225,6 +239,8 @@ class Server(mongo.MongoObject):
             self.network_end = network_end
         if restrict_routes is not None:
             self.restrict_routes = restrict_routes
+        if wg is not None:
+            self.wg = wg
         if ipv6 is not None:
             self.ipv6 = ipv6
         if ipv6_firewall is not None:
@@ -235,6 +251,8 @@ class Server(mongo.MongoObject):
             self.port = port
         if protocol is not None:
             self.protocol = protocol
+        if port_wg is not None:
+            self.port_wg = port_wg
         if dh_param_bits is not None:
             self.dh_param_bits = dh_param_bits
         if multi_device is not None:
@@ -261,6 +279,8 @@ class Server(mongo.MongoObject):
             self.ping_interval = ping_interval
         if ping_timeout is not None:
             self.ping_timeout = ping_timeout
+        if ping_timeout_wg is not None:
+            self.ping_timeout_wg = ping_timeout_wg
         if link_ping_interval is not None:
             self.link_ping_interval = link_ping_interval
         if link_ping_timeout is not None:
@@ -337,11 +357,13 @@ class Server(mongo.MongoObject):
             'devices_online': self.devices_online,
             'user_count': self.user_count,
             'network': self.network,
+            'network_wg': self.network_wg,
             'bind_address': self.bind_address,
             'port': self.port,
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
             'groups': self.groups or [],
+            'wg': True if self.wg else False,
             'ipv6': True if self.ipv6 else False,
             'ipv6_firewall': True if self.ipv6_firewall else False,
             'network_mode': self.network_mode,
@@ -360,6 +382,7 @@ class Server(mongo.MongoObject):
             'inter_client': True if self.inter_client else False,
             'ping_interval': self.ping_interval,
             'ping_timeout': self.ping_timeout,
+            'ping_timeout_wg': self.ping_timeout_wg,
             'link_ping_interval': self.link_ping_interval,
             'link_ping_timeout': self.link_ping_timeout,
             'inactive_timeout': self.inactive_timeout,
