@@ -715,9 +715,13 @@ class User(mongo.MongoObject):
             'user': self.name,
             'organization': self.org.name,
             'server': svr.name,
+            'wg': svr.wg,
+            'wg_port': svr.port_wg,
             'user_id': str(self.id),
             'organization_id': str(self.org.id),
             'server_id': str(svr.id),
+            'server_public_key': svr.auth_public_key.splitlines(),
+            'server_box_public_key': svr.auth_box_public_key,
             'sync_hosts': svr.get_sync_remotes(),
             'sync_hash': conf_hash,
             'password_mode': self._get_password_mode(svr),
@@ -729,8 +733,6 @@ class User(mongo.MongoObject):
 
         if settings.user.password_encryption:
             data['token'] = self._get_token_mode()
-            data['server_public_key'] = svr.auth_public_key.splitlines()
-            data['server_box_public_key'] = svr.auth_box_public_key
         else:
             data['token'] = False
 
