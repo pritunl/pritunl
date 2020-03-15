@@ -4,6 +4,7 @@ from pritunl import utils
 from pritunl import static
 from pritunl import organization
 from pritunl import user
+from pritunl import server
 from pritunl import settings
 from pritunl import app
 from pritunl import auth
@@ -21,8 +22,12 @@ import hmac
 import hashlib
 import base64
 import datetime
+import threading
 import urlparse
 import requests
+import json
+import nacl.public
+from cryptography.exceptions import InvalidSignature
 
 def _get_key_tar_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
@@ -813,3 +818,577 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         })
 
     return utils.jsonify({})
+
+@app.app.route('/key/wg/<org_id>/<user_id>/<server_id>',
+    methods=['POST'])
+@auth.open_auth
+def key_wg_post(org_id, user_id, server_id):
+    org_id = org_id
+    user_id = user_id
+    server_id = server_id
+    remote_addr = utils.get_remote_addr()
+
+    if not settings.user.conf_sync:
+        return utils.jsonify({})
+
+    if not settings.local.sub_active:
+        return utils.jsonify({}, status_code=480)
+
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
+    auth_nonce = flask.request.headers.get('Auth-Nonce', None)
+    auth_signature = flask.request.headers.get('Auth-Signature', None)
+    if not auth_token or not auth_timestamp or not auth_nonce or \
+        not auth_signature:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            remote_address=remote_addr,
+            event_long='Missing auth header',
+        )
+        return flask.abort(406)
+    auth_token = auth_token[:256]
+    auth_timestamp = auth_timestamp[:256]
+    auth_nonce = auth_nonce[:32]
+    auth_signature = auth_signature[:512]
+
+    try:
+        if abs(int(auth_timestamp) - int(utils.time_now())) > \
+            settings.app.auth_time_window:
+            journal.entry(
+                journal.USER_WG_FAILURE,
+                remote_address=remote_addr,
+                event_long='Expired auth timestamp',
+            )
+            return flask.abort(408)
+    except ValueError:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            remote_address=remote_addr,
+            event_long='Invalid auth timestamp',
+        )
+        return flask.abort(405)
+
+    org = organization.get_by_id(org_id)
+    if not org:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            remote_address=remote_addr,
+            event_long='Organization not found',
+        )
+        return flask.abort(404)
+
+    usr = org.get_user(id=user_id)
+    if not usr:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            remote_address=remote_addr,
+            event_long='User not found',
+        )
+        return flask.abort(404)
+    elif not usr.sync_secret:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User missing sync secret',
+        )
+        return flask.abort(410)
+
+    if auth_token != usr.sync_token:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Sync token mismatch',
+        )
+        return flask.abort(411)
+
+    if usr.disabled:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
+        return flask.abort(403)
+
+    cipher_data64 = flask.request.json.get('data')
+    box_nonce64 = flask.request.json.get('nonce')
+    public_key64 = flask.request.json.get('public_key')
+    signature64 = flask.request.json.get('signature')
+
+    auth_string = '&'.join([
+        usr.sync_token, auth_timestamp, auth_nonce, flask.request.method,
+        flask.request.path, cipher_data64, box_nonce64, public_key64,
+        signature64])
+
+    if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Auth string len limit exceeded',
+        )
+        return flask.abort(414)
+
+    auth_test_signature = base64.b64encode(hmac.new(
+        usr.sync_secret.encode(), auth_string,
+        hashlib.sha512).digest())
+    if not utils.const_compare(auth_signature, auth_test_signature):
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Auth signature mismatch',
+        )
+        return flask.abort(401)
+
+    nonces_collection = mongo.get_collection('auth_nonces')
+    try:
+        nonces_collection.insert({
+            'token': auth_token,
+            'nonce': auth_nonce,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Duplicate nonce',
+        )
+        return flask.abort(409)
+
+    data_hash = hashlib.sha512(
+        '&'.join([cipher_data64, box_nonce64, public_key64])).digest()
+    try:
+        usr.verify_sig(
+            data_hash,
+            base64.b64decode(signature64),
+        )
+    except InvalidSignature:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Invalid rsa signature',
+        )
+        return flask.abort(412)
+
+    svr = usr.get_server(server_id)
+
+    sender_pub_key = nacl.public.PublicKey(
+        base64.b64decode(public_key64))
+    box_nonce = base64.b64decode(box_nonce64)
+
+    priv_key = nacl.public.PrivateKey(
+        base64.b64decode(svr.auth_box_private_key))
+
+    cipher_data = base64.b64decode(cipher_data64)
+    nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+    plaintext = nacl_box.decrypt(cipher_data, box_nonce).decode('utf-8')
+
+    try:
+        nonces_collection.insert({
+            'token': auth_token,
+            'nonce': box_nonce64,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Duplicate secondary nonce',
+        )
+        return flask.abort(415)
+
+    key_data = json.loads(plaintext)
+
+    client_platform = key_data['platform']
+    client_device_id = key_data['device_id']
+    client_device_name = key_data['device_name']
+    client_mac_addr = key_data['mac_addr']
+    client_auth_token = key_data['token']
+    client_auth_nonce = key_data['nonce']
+    client_auth_password = key_data['password']
+    client_auth_timestamp = key_data['timestamp']
+    client_wg_public_key = key_data['wg_public_key']
+
+    if len(client_wg_public_key) < 32:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Public key too short',
+        )
+        return flask.abort(416)
+
+    try:
+        client_wg_public_key = base64.b64decode(client_wg_public_key)
+        if len(client_wg_public_key) != 32:
+            raise ValueError('Invalid length')
+        client_wg_public_key = base64.b64encode(client_wg_public_key)
+    except:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Public key invalid',
+        )
+        return flask.abort(417)
+
+    wg_keys_collection = mongo.get_collection('wg_keys')
+    try:
+        wg_keys_collection.insert({
+            '_id': client_wg_public_key,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Duplicate wg public key',
+        )
+        return flask.abort(413)
+
+    instance = server.get_instance(server_id)
+    if not instance or instance.state != 'running':
+        return flask.abort(429)
+
+    if not instance.server.wg:
+        return flask.abort(429)
+
+    clients = instance.instance_com.clients
+
+    event = threading.Event()
+    send_data = {
+        'allow': None,
+        'configuration': None,
+        'reason': None,
+    }
+    def callback(allow, data):
+        send_data['allow'] = allow
+        if allow:
+            send_data['configuration'] = data
+        else:
+            send_data['reason'] = data
+        event.set()
+
+    clients.connect_wg(
+        user=usr,
+        org=org,
+        wg_public_key=client_wg_public_key,
+        auth_password=client_auth_password,
+        auth_token=client_auth_token,
+        auth_nonce=client_auth_nonce,
+        auth_timestamp=client_auth_timestamp,
+        platform=client_platform,
+        device_id=client_device_id,
+        device_name=client_device_name,
+        mac_addr=client_mac_addr,
+        remote_ip=remote_addr,
+        connect_callback=callback,
+    )
+
+    event.wait()
+
+    send_nonce = nacl.utils.random(nacl.public.Box.NONCE_SIZE)
+    nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+    send_cipher_data = nacl_box.encrypt(json.dumps(send_data), send_nonce)
+    send_cipher_data = send_cipher_data[nacl.public.Box.NONCE_SIZE:]
+
+    send_nonce64 = base64.b64encode(send_nonce)
+    send_cipher_data64 = base64.b64encode(send_cipher_data)
+
+    usr.audit_event('user_profile',
+        'User retrieved wg public key from pritunl client',
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.USER_WG_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User retrieved wg public key from pritunl client',
+    )
+
+    sync_signature = base64.b64encode(hmac.new(
+        usr.sync_secret.encode(),
+        send_cipher_data64 + '&' + send_nonce64,
+        hashlib.sha512).digest())
+
+    return utils.jsonify({
+        'data': send_cipher_data64,
+        'nonce': send_nonce64,
+        'signature': sync_signature,
+    })
+
+@app.app.route('/key/wg/<org_id>/<user_id>/<server_id>',
+    methods=['PUT'])
+@auth.open_auth
+def key_wg_put(org_id, user_id, server_id):
+    org_id = org_id
+    user_id = user_id
+    server_id = server_id
+    remote_addr = utils.get_remote_addr()
+
+    if not settings.user.conf_sync:
+        return utils.jsonify({})
+
+    if not settings.local.sub_active:
+        return utils.jsonify({}, status_code=480)
+
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
+    auth_nonce = flask.request.headers.get('Auth-Nonce', None)
+    auth_signature = flask.request.headers.get('Auth-Signature', None)
+    if not auth_token or not auth_timestamp or not auth_nonce or \
+        not auth_signature:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            remote_address=remote_addr,
+            event_long='Missing auth header',
+        )
+        return flask.abort(406)
+    auth_token = auth_token[:256]
+    auth_timestamp = auth_timestamp[:256]
+    auth_nonce = auth_nonce[:32]
+    auth_signature = auth_signature[:512]
+
+    try:
+        if abs(int(auth_timestamp) - int(utils.time_now())) > \
+            settings.app.auth_time_window:
+            journal.entry(
+                journal.USER_WG_FAILURE,
+                remote_address=remote_addr,
+                event_long='Expired auth timestamp',
+            )
+            return flask.abort(408)
+    except ValueError:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            remote_address=remote_addr,
+            event_long='Invalid auth timestamp',
+        )
+        return flask.abort(405)
+
+    org = organization.get_by_id(org_id)
+    if not org:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            remote_address=remote_addr,
+            event_long='Organization not found',
+        )
+        return flask.abort(404)
+
+    usr = org.get_user(id=user_id)
+    if not usr:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            remote_address=remote_addr,
+            event_long='User not found',
+        )
+        return flask.abort(404)
+    elif not usr.sync_secret:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User missing sync secret',
+        )
+        return flask.abort(410)
+
+    if auth_token != usr.sync_token:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Sync token mismatch',
+        )
+        return flask.abort(411)
+
+    if usr.disabled:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
+        return flask.abort(403)
+
+    cipher_data64 = flask.request.json.get('data')
+    box_nonce64 = flask.request.json.get('nonce')
+    public_key64 = flask.request.json.get('public_key')
+    signature64 = flask.request.json.get('signature')
+
+    auth_string = '&'.join([
+        usr.sync_token, auth_timestamp, auth_nonce, flask.request.method,
+        flask.request.path, cipher_data64, box_nonce64, public_key64,
+        signature64])
+
+    if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Auth string len limit exceeded',
+        )
+        return flask.abort(414)
+
+    auth_test_signature = base64.b64encode(hmac.new(
+        usr.sync_secret.encode(), auth_string,
+        hashlib.sha512).digest())
+    if not utils.const_compare(auth_signature, auth_test_signature):
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Auth signature mismatch',
+        )
+        return flask.abort(401)
+
+    nonces_collection = mongo.get_collection('auth_nonces')
+    try:
+        nonces_collection.insert({
+            'token': auth_token,
+            'nonce': auth_nonce,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Duplicate nonce',
+        )
+        return flask.abort(409)
+
+    data_hash = hashlib.sha512(
+        '&'.join([cipher_data64, box_nonce64, public_key64])).digest()
+    try:
+        usr.verify_sig(
+            data_hash,
+            base64.b64decode(signature64),
+        )
+    except InvalidSignature:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Invalid rsa signature',
+        )
+        return flask.abort(412)
+
+    svr = usr.get_server(server_id)
+
+    sender_pub_key = nacl.public.PublicKey(
+        base64.b64decode(public_key64))
+    box_nonce = base64.b64decode(box_nonce64)
+
+    priv_key = nacl.public.PrivateKey(
+        base64.b64decode(svr.auth_box_private_key))
+
+    cipher_data = base64.b64decode(cipher_data64)
+    nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+    plaintext = nacl_box.decrypt(cipher_data, box_nonce).decode('utf-8')
+
+    try:
+        nonces_collection.insert({
+            'token': auth_token,
+            'nonce': box_nonce64,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Duplicate secondary nonce',
+        )
+        return flask.abort(412)
+
+    key_data = json.loads(plaintext)
+
+    client_wg_public_key = key_data['wg_public_key']
+
+    if len(client_wg_public_key) < 32:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Public key too short',
+        )
+        return flask.abort(415)
+
+    try:
+        client_wg_public_key = base64.b64decode(client_wg_public_key)
+        if len(client_wg_public_key) != 32:
+            raise ValueError('Invalid length')
+        client_wg_public_key = base64.b64encode(client_wg_public_key)
+    except:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Public key invalid',
+        )
+        return flask.abort(416)
+
+    wg_keys_collection = mongo.get_collection('wg_keys')
+    wg_key_doc = wg_keys_collection.find_one({
+        '_id': client_wg_public_key,
+    })
+    if not wg_key_doc:
+        journal.entry(
+            journal.USER_WG_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Public key not found',
+        )
+        return flask.abort(417)
+
+    instance = server.get_instance(server_id)
+    if not instance or instance.state != 'running':
+        return flask.abort(560)
+
+    clients = instance.instance_com.clients
+
+    clients.ping_wg(
+        user=usr,
+        org=org,
+        wg_public_key=client_wg_public_key,
+        remote_ip=remote_addr,
+    )
+
+    send_data = {
+        'status': True,
+        'timestamp': int(utils.time_now()),
+    }
+
+    send_nonce = nacl.utils.random(nacl.public.Box.NONCE_SIZE)
+    nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+    send_cipher_data = nacl_box.encrypt(json.dumps(send_data), send_nonce)
+    send_cipher_data = send_cipher_data[nacl.public.Box.NONCE_SIZE:]
+
+    send_nonce64 = base64.b64encode(send_nonce)
+    send_cipher_data64 = base64.b64encode(send_cipher_data)
+
+    journal.entry(
+        journal.USER_WG_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User wg ping from pritunl client',
+    )
+
+    sync_signature = base64.b64encode(hmac.new(
+        usr.sync_secret.encode(),
+        send_cipher_data64 + '&' + send_nonce64,
+        hashlib.sha512).digest())
+
+    return utils.jsonify({
+        'data': send_cipher_data64,
+        'nonce': send_nonce64,
+        'signature': sync_signature,
+    })
