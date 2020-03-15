@@ -37,17 +37,24 @@ def get_used_resources(ignore_server_id):
     ] if ignore_server_id else []) + [
         {'$project': {
             'network': True,
+            'network_wg': True,
             'interface': True,
             'port_protocol': {'$concat': [
                 {'$substr': ['$port', 0, 5]},
                 '$protocol',
             ]},
+            'port_protocol_wg': {'$concat': [
+                {'$substr': ['$port_wg', 0, 5]},
+                'udp',
+            ]},
         }},
         {'$group': {
             '_id': None,
             'networks': {'$addToSet': '$network'},
+            'networks_wg': {'$addToSet': '$network_wg'},
             'interfaces': {'$addToSet': '$interface'},
             'ports': {'$addToSet': '$port_protocol'},
+            'ports_wg': {'$addToSet': '$port_protocol_wg'},
         }},
     ])
 
@@ -62,13 +69,29 @@ def get_used_resources(ignore_server_id):
             'networks': set(),
             'interfaces': set(),
             'ports': set(),
+            'ports_wg': set(),
         }
 
+    ports = set(used_resources['ports'])
+    ports_wg = set(used_resources['ports_wg'])
+    try:
+        ports_wg.remove('udp')
+    except KeyError:
+        pass
+    ports = ports.union(ports_wg)
+
+    networks = set(used_resources['networks'])
+    networks_wg = set(used_resources['networks_wg'])
+    try:
+        networks_wg.remove('')
+    except KeyError:
+        pass
+    networks = networks.union(networks_wg)
+
     return {
-        'networks': {ipaddress.IPNetwork(
-            x) for x in used_resources['networks']},
+        'networks': {ipaddress.IPNetwork(x) for x in networks},
         'interfaces': set(used_resources['interfaces']),
-        'ports': set(used_resources['ports']),
+        'ports': ports,
     }
 
 def iter_servers(spec=None, fields=None, page=None):
