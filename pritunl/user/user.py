@@ -1089,13 +1089,18 @@ class User(mongo.MongoObject):
 
         return onc_conf
 
-    def build_key_conf(self, server_id, include_user_cert=True):
+    def get_server(self, server_id):
         svr = self.org.get_by_id(server_id)
         if not svr:
             raise NotFound('Server does not exists')
 
         if not svr.check_groups(self.groups):
             raise UserNotInServerGroups('User not in server groups')
+
+        return svr
+
+    def build_key_conf(self, server_id, include_user_cert=True):
+        svr = self.get_server(server_id)
 
         conf_name, client_conf, conf_hash = self._generate_conf(svr,
             include_user_cert)
