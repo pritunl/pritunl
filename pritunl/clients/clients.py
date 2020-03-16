@@ -265,6 +265,195 @@ class Clients(object):
 
         return client_conf
 
+    def generate_client_conf_wg(self, platform, client_id, virt_address,
+            virt_address6, user):
+        network_gateway = utils.get_network_gateway(self.server.network_wg)
+        network_gateway6 = utils.get_network_gateway(self.server.network6_wg)
+
+        client_conf = {
+            'hostname': settings.local.host.public_addr,
+            'hostname6': settings.local.host.public_addr6,
+            'port': self.server.port_wg,
+            'public_key': self.instance.wg_public_key,
+            'routes': [],
+            'routes6': [],
+            'dns_servers': [],
+            'search_domains': [],
+            'network_links': [],
+        }
+
+        if not user.link_server_id and self.server.is_route_all():
+            client_conf['routes'].append({
+                'next_hop': network_gateway,
+                'network': '0.0.0.0/0',
+            })
+            if self.server.ipv6:
+                client_conf['routes6'].append({
+                    'next_hop': network_gateway6,
+                    'network': '::/0',
+                })
+
+        for route in self.server.get_routes(include_default=False):
+            network = route['network']
+            route_conf = {
+                'network': network,
+            }
+
+            if not route['virtual_network']:
+                netmap = route.get('nat_netmap')
+                if netmap:
+                    route_conf['network'] = netmap
+
+                metric = route.get('metric')
+                if metric:
+                    route_conf['metric'] = metric
+
+                if route['net_gateway']:
+                    route_conf['net_gateway'] = True
+
+            if ':' in network:
+                route_conf['next_hop'] = network_gateway6
+                client_conf['routes6'].append(route_conf)
+            else:
+                route_conf['next_hop'] = network_gateway
+                client_conf['routes'].append(route_conf)
+
+        if user.link_server_id:
+            pass
+            # TODO wg
+            # link_usr_svr = self.server.get_link_server(user.link_server_id,
+            #     fields=('_id', 'network', 'network_start', 'network_end',
+            #         'local_networks', 'organizations', 'routes', 'links',
+            #         'ipv6'))
+            #
+            # for route in link_usr_svr.get_routes(include_default=False):
+            #     network = route['network']
+            #     metric = route.get('metric')
+            #     if metric:
+            #         metric_def = ' default %s' % metric
+            #     else:
+            #         metric_def = ''
+            #
+            #     if route['net_gateway']:
+            #         continue
+            #
+            #     netmap = route.get('nat_netmap')
+            #     if netmap:
+            #         network = netmap
+            #
+            #     if ':' in network:
+            #         client_conf += 'iroute-ipv6 %s%s\n' % (
+            #             network, metric_def)
+            #     else:
+            #         client_conf += 'iroute %s %s%s\n' % (
+            #             utils.parse_network(network) + (metric_def,))
+        else:
+            if self.server.is_route_all():
+                client_conf['routes'].append({
+                    'next_hop': network_gateway,
+                    'network': '0.0.0.0/0',
+                })
+                if self.server.ipv6:
+                    client_conf['routes6'].append({
+                        'next_hop': network_gateway6,
+                        'network': '::/0',
+                    })
+
+            if self.server.dns_mapping:
+                client_conf['dns_servers'].append(network_gateway)
+
+            if not self.server.dns_mapping or \
+                    settings.vpn.dns_mapping_push_all:
+                for dns_server in self.server.dns_servers:
+                    client_conf['dns_servers'].append(dns_server)
+
+            if self.server.search_domain:
+                for domain in self.server.search_domain.split(','):
+                    client_conf['search_domains'].append(domain.strip())
+
+            network_links = user.get_network_links()
+            for network_link in network_links:
+                if self.reserve_iroute(client_id, network_link, True):
+                    client_conf['network_links'].append(network_link)
+                    if ':' in network_link:
+                        utils.check_call_silent([
+                            'ip', 'route',
+                            'del', network_link,
+                        ])
+                        utils.check_output_logged([
+                            'ip', 'route',
+                            'add', network_link,
+                            'via', virt_address6.split('/')[0],
+                            'dev', self.instance.interface_wg,
+                        ])
+                    else:
+                        utils.check_call_silent([
+                            'ip', 'route',
+                            'del', network_link,
+                        ])
+                        utils.check_output_logged([
+                            'ip', 'route',
+                            'add', network_link,
+                            'via', virt_address.split('/')[0],
+                            'dev', self.instance.interface_wg,
+                        ])
+
+            if network_links:
+                thread = threading.Thread(target=self.iroute_ping_thread,
+                    args=(client_id, virt_address.split('/')[0]))
+                thread.daemon = True
+                thread.start()
+
+            for network_link in self.server.network_links:
+                if ':' in network_link:
+                    client_conf['routes6'].append({
+                        'next_hop': network_gateway6,
+                        'network': network_link,
+                    })
+                else:
+                    client_conf['routes'].append({
+                        'next_hop': network_gateway,
+                        'network': network_link,
+                    })
+
+            for link_svr in self.server.iter_links():
+                for route in link_svr.get_routes(include_default=False):
+                    network = route['network']
+                    metric = route.get('metric')
+
+                    netmap = route.get('nat_netmap')
+                    if netmap:
+                        network = netmap
+
+                    route_conf = {
+                        'network': network,
+                    }
+                    if metric:
+                        route_conf['metric'] = metric
+
+                    if route['net_gateway']:
+                        route_conf['net_gateway'] = True
+
+                    if ':' in network:
+                        route_conf['next_hop'] = network_gateway6
+                        client_conf['routes6'].append(route_conf)
+                    else:
+                        route_conf['next_hop'] = network_gateway
+                        client_conf['routes'].append(route_conf)
+
+                if link_svr.replicating and link_svr.vxlan:
+                    client_conf['routes'].append({
+                        'next_hop': network_gateway,
+                        'network': vxlan.get_vxlan_net(link_svr.id),
+                    })
+                    if link_svr.ipv6:
+                        client_conf['routes6'].append({
+                            'next_hop': network_gateway6,
+                            'network': vxlan.get_vxlan_net6(link_svr.id),
+                        })
+
+        return client_conf
+
     def reserve_iroute(self, client_id, network, primary):
         reserved = False
 
