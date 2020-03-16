@@ -1298,6 +1298,131 @@ class Clients(object):
     def connect(self, client_data, reauth=False):
         self.call_queue.put(self._connect, client_data, reauth)
 
+    def connect_wg(self, user, org, wg_public_key, auth_password,
+            auth_token, auth_nonce, auth_timestamp, platform, device_id,
+            device_name, mac_addr, remote_ip, connect_callback):
+        response = {
+            'sent': False,
+            'lock': threading.Lock(),
+        }
+
+        if not self.instance.server.wg:
+            raise TypeError('Server not wg')
+
+        def connect_callback_once(allow, data):
+            respond = False
+            response['lock'].acquire()
+            if not response['sent']:
+                respond = True
+            response['sent'] = True
+            response['lock'].release()
+            thread.cancel()
+
+            if respond:
+                connect_callback(allow, data)
+                return True
+            return False
+
+        def timeout_callback():
+            if connect_callback_once(False, 'Authorization timed out'):
+                self.instance.disconnect_wg(wg_public_key)
+
+        thread = threading.Timer(30, timeout_callback)
+        thread.daemon = True
+        thread.start()
+
+        try:
+            def callback(allow, reason=None):
+                try:
+                    if allow:
+                        allow, data = self.allow_client_wg(
+                            user=user,
+                            org=org,
+                            wg_public_key=wg_public_key,
+                            platform=platform,
+                            device_id=device_id,
+                            device_name=device_name,
+                            mac_addr=mac_addr,
+                            remote_ip=remote_ip,
+                        )
+                        if allow:
+                            connect_callback_once(True, data)
+
+                    if not allow:
+                        connect_callback_once(False, reason)
+
+                    plugins.event(
+                        'user_connection',
+                        host_id=settings.local.host_id,
+                        server_id=self.server.id,
+                        org_id=org.id,
+                        user_id=user.id,
+                        host_name=settings.local.host.name,
+                        server_name=self.server.name,
+                        org_name=org.name,
+                        user_name=user.name,
+                        platform=platform,
+                        device_id=device_id,
+                        device_name=device_name,
+                        remote_ip=remote_ip,
+                        mac_addr=mac_addr,
+                        password=None,
+                        auth_password=auth_password,
+                        auth_token=auth_token,
+                        auth_nonce=auth_nonce,
+                        auth_timestamp=auth_timestamp,
+                        allow=allow,
+                        reason=reason,
+                        wg_public_key=wg_public_key,
+                    )
+                except:
+                    self.instance.disconnect_wg(wg_public_key)
+
+                    try:
+                        connect_callback_once(False, 'Server exception')
+                    except:
+                        pass
+
+                    logger.exception(
+                        'Error in authorizer callback', 'server',
+                        server_id=self.server.id,
+                        instance_id=self.instance.id,
+                    )
+
+            auth = authorizer.Authorizer(
+                svr=self.server,
+                usr=user,
+                remote_ip=remote_ip,
+                platform=platform,
+                device_id=device_id,
+                device_name=device_name,
+                mac_addr=mac_addr,
+                password=None,
+                auth_password=auth_password,
+                auth_token=auth_token,
+                auth_nonce=auth_nonce,
+                auth_timestamp=auth_timestamp,
+                reauth=False,
+                callback=callback,
+            )
+
+            auth.authenticate()
+        except:
+            logger.exception('Error parsing client connect', 'server',
+                server_id=self.server.id,
+            )
+            self.instance.disconnect_wg(wg_public_key)
+            connect_callback_once(False, 'Error parsing client connect')
+
+    def ping_wg(self, user, org, wg_public_key, remote_ip):
+        updated = self.clients.update_id(wg_public_key, {
+            'timestamp_wg': time.time(),
+            'real_address': remote_ip,
+        })
+        if not updated:
+            return False
+        return True
+
     def on_port_forwarding(self, org_id, user_id):
         client = self.clients.find({'user_id': user_id})
         if not client:
