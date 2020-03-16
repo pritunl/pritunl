@@ -107,14 +107,17 @@ class Clients(object):
         return org
 
     def generate_client_conf(self, platform, client_id, virt_address,
-            user, reauth):
+            virt_address6, user, reauth):
         client_conf = ''
+
+        network_gateway = utils.get_network_gateway(self.server.network)
+        network_gateway6 = utils.get_network_gateway(self.server.network6)
 
         if user.link_server_id:
             link_usr_svr = self.server.get_link_server(user.link_server_id,
-                fields=('_id', 'network', 'network_start', 'network_end',
-                    'local_networks', 'organizations', 'routes', 'links',
-                    'ipv6'))
+                fields=('_id', 'wg', 'network', 'network_wg',
+                    'network_start', 'network_end', 'local_networks',
+                    'organizations', 'routes', 'links', 'ipv6'))
 
             for route in link_usr_svr.get_routes(include_default=False):
                 network = route['network']
@@ -174,8 +177,28 @@ class Clients(object):
             for network_link in network_links:
                 if self.reserve_iroute(client_id, network_link, True):
                     if ':' in network_link:
+                        utils.check_call_silent([
+                            'ip', 'route',
+                            'del', network_link,
+                        ])
+                        utils.check_output_logged([
+                            'ip', 'route',
+                            'add', network_link,
+                            'via', network_gateway6.split('/')[0],
+                            'dev', self.instance.interface,
+                        ])
                         client_conf += 'iroute-ipv6 %s\n' % network_link
                     else:
+                        utils.check_call_silent([
+                            'ip', 'route',
+                            'del', network_link,
+                        ])
+                        utils.check_output_logged([
+                            'ip', 'route',
+                            'add', network_link,
+                            'via', network_gateway.split('/')[0],
+                            'dev', self.instance.interface,
+                        ])
                         client_conf += 'iroute %s %s\n' % \
                             utils.parse_network(network_link)
 
