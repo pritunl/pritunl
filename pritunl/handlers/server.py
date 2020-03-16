@@ -668,8 +668,8 @@ def server_org_put(server_id, org_id):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id,
-        fields=('_id', 'status', 'network', 'network_start', 'network_end',
-        'organizations', 'routes', 'ipv6'))
+        fields=('_id', 'wg', 'status', 'network', 'network_wg',
+        'network_start', 'network_end', 'organizations', 'routes', 'ipv6'))
     org = organization.get_by_id(org_id, fields=('_id', 'name'))
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -696,8 +696,8 @@ def server_org_delete(server_id, org_id):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id,
-        fields=('_id', 'status', 'network', 'network_start',
-            'network_end', 'primary_organization',
+        fields=('_id', 'wg', 'status', 'network', 'network_wg',
+            'network_start', 'network_end', 'primary_organization',
             'primary_user', 'organizations', 'routes', 'ipv6'))
     org = organization.get_by_id(org_id, fields=('_id'))
 
@@ -725,8 +725,9 @@ def server_route_get(server_id):
         if resp:
             return utils.jsonify(resp)
 
-    svr = server.get_by_id(server_id, fields=('_id', 'network', 'links',
-        'network_start', 'network_end', 'routes', 'organizations', 'ipv6'))
+    svr = server.get_by_id(server_id, fields=('_id', 'wg', 'network',
+        'network_wg', 'links', 'network_start', 'network_end', 'routes',
+        'organizations', 'ipv6'))
 
     resp = svr.get_routes(include_server_links=True, include_hidden=True)
     if settings.app.demo_mode:
