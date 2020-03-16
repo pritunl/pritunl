@@ -1626,6 +1626,125 @@ class Clients(object):
 
         return rules, rules6
 
+    def generate_iptables_rules_wg(self, usr, virt_address, virt_address6):
+        rules = []
+        rules6 = []
+
+        client_addr = virt_address.split('/')[0]
+        client_addr6 = virt_address6.split('/')[0]
+
+        if not usr.port_forwarding:
+            return rules, rules6
+
+        forward_base_args = [
+            'FORWARD',
+            '-d', client_addr,
+            '-o', self.instance.interface_wg,
+            '-j', 'ACCEPT',
+        ]
+
+        prerouting_base_args = [
+            'PREROUTING',
+            '-t', 'nat',
+            '!', '-i', self.instance.interface_wg,
+            '-j', 'DNAT',
+        ]
+
+        output_base_args = [
+            'OUTPUT',
+            '-t', 'nat',
+            '-o', 'lo',
+            '-j', 'DNAT',
+        ]
+
+        extra_args = [
+            '-m', 'comment',
+            '--comment', 'pritunl-%s' % self.server.id,
+        ]
+
+        forward2_base_rule = [
+            'FORWARD',
+            '-s', client_addr,
+            '-i', self.instance.interface_wg,
+            '-m', 'conntrack',
+            '--ctstate','RELATED,ESTABLISHED',
+            '-j', 'ACCEPT',
+        ] + extra_args
+        rules.append(forward2_base_rule)
+        if self.server.ipv6:
+            rules6.append(forward2_base_rule)
+
+        for data in usr.port_forwarding:
+            proto = data.get('protocol')
+            port = data['port']
+            dport = data.get('dport')
+
+            if not port:
+                continue
+
+            client_addr_port = client_addr
+            client_addr_port6 = client_addr6
+            if not dport:
+                dport = port
+                port = ''
+            else:
+                client_addr_port += ':' + port
+                client_addr_port6 += ':' + port
+            dport = dport.replace('-', ':')
+
+            if proto:
+                protos = [proto]
+            else:
+                protos = ['tcp', 'udp']
+
+            for proto in protos:
+                rule = prerouting_base_args + [
+                    '-p', proto,
+                    '-m', proto,
+                    '--dport', dport,
+                    '--to-destination', client_addr_port,
+                ] + extra_args
+                rules.append(rule)
+
+                if self.server.ipv6:
+                    rule = prerouting_base_args + [
+                        '-p', proto,
+                        '-m', proto,
+                        '--dport', dport,
+                        '--to-destination', client_addr_port6,
+                    ] + extra_args
+                    rules6.append(rule)
+
+
+                rule = output_base_args + [
+                    '-p', proto,
+                    '-m', proto,
+                    '--dport', dport,
+                    '--to-destination', client_addr_port,
+                ] + extra_args
+                rules.append(rule)
+
+                if self.server.ipv6:
+                    rule = output_base_args + [
+                        '-p', proto,
+                        '-m', proto,
+                        '--dport', dport,
+                        '--to-destination', client_addr_port6,
+                    ] + extra_args
+                    rules6.append(rule)
+
+
+                rule = forward_base_args + [
+                    '-p', proto,
+                    '-m', proto,
+                    '--dport', port or dport,
+                ] + extra_args
+                rules.append(rule)
+                if self.server.ipv6:
+                    rules6.append(rule)
+
+        return rules, rules6
+
     def set_iptables_rules(self, rules, rules6):
         if rules or rules6:
             self.instance.enable_iptables_tun_nat()
