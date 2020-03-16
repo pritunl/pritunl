@@ -490,7 +490,10 @@ class Clients(object):
         if reconnect:
             self.instance_com.push_output('Primary link available ' +
                 'over secondary, relinking %s' % network)
-            self.instance_com.client_kill(reconnect)
+            if len(reconnect) > 32:
+                self.instance.disconnect_wg(reconnect)
+            else:
+                self.instance_com.client_kill(reconnect)
 
         return reserved
 
@@ -521,13 +524,19 @@ class Clients(object):
             self.iroutes_lock.release()
 
         for client_id in primary_reconnect:
-            self.instance_com.client_kill(client_id)
+            if len(client_id) > 32:
+                self.instance.disconnect_wg(client_id)
+            else:
+                self.instance_com.client_kill(client_id)
 
         if primary_reconnect:
             time.sleep(5)
 
         for client_id in secondary_reconnect:
-            self.instance_com.client_kill(client_id)
+            if len(client_id) > 32:
+                self.instance.disconnect_wg(client_id)
+            else:
+                self.instance_com.client_kill(client_id)
 
         if primary_reconnect or secondary_reconnect:
             self.instance_com.push_output('Gateway link ' +
@@ -669,7 +678,10 @@ class Clients(object):
                         'user_id': user_id,
                         'mac_addr': mac_addr,
                     }):
-                        self.instance_com.client_kill(clnt['id'])
+                        if len(clnt['id']) > 32:
+                            self.instance.disconnect_wg(clnt['id'])
+                        else:
+                            self.instance_com.client_kill(clnt['id'])
 
                 if self.clients.find({'virt_address': virt_address}):
                     virt_address = None
@@ -807,7 +819,10 @@ class Clients(object):
                     'user_id': user_id,
                 }):
                     if conn_count > self.server.max_devices:
-                        self.instance_com.client_kill(clnt['id'])
+                        if len(clnt['id']) > 32:
+                            self.instance.disconnect_wg(clnt['id'])
+                        else:
+                            self.instance_com.client_kill(clnt['id'])
                     conn_count += 1
 
                 if conn_count >= self.server.max_devices:
@@ -850,12 +865,13 @@ class Clients(object):
                 'server': self.server.name,
             }, {
                 'user': user.name,
+                'type': 'ovpn',
                 'platform': platform,
                 'remote_ip': remote_ip,
             })
 
-            virt_address, address_dynamic, device_limit = self.get_virt_addr(
-                org_id, user_id, mac_addr, doc_id)
+            virt_address, address_dynamic, device_limit = \
+                self.get_virt_addr(org_id, user_id, mac_addr, doc_id)
 
             if device_limit:
                 self.instance_com.send_client_deny(client_id, key_id,
@@ -889,7 +905,10 @@ class Clients(object):
 
                 for clnt in self.clients.find({'user_id': user_id}):
                     time.sleep(2)
-                    self.instance_com.client_kill(clnt['id'])
+                    if len(clnt['id']) > 32:
+                        self.instance.disconnect_wg(clnt['id'])
+                    else:
+                        self.instance_com.client_kill(clnt['id'])
 
             if not virt_address:
                 self.instance_com.send_client_deny(client_id, key_id,
@@ -910,12 +929,14 @@ class Clients(object):
 
             self.clients.insert({
                 'id': client_id,
+                'type': 'ovpn',
                 'doc_id': doc_id,
                 'org_id': org_id,
                 'org_name': org.name,
                 'user_id': user_id,
                 'user_name': user.name,
                 'user_type': user.type,
+                'timestamp': time.time(),
                 'dns_servers': dns_servers,
                 'dns_suffix': user.dns_suffix,
                 'device_id': device_id,
@@ -955,7 +976,7 @@ class Clients(object):
                 })
 
         client_conf = self.generate_client_conf(platform, client_id,
-            virt_address, user, reauth)
+            virt_address, virt_address6, user, reauth)
 
         client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
             virt_address)
@@ -1765,7 +1786,10 @@ class Clients(object):
         if not client:
             self.instance_com.push_output(
                 'ERROR Unknown client connected client_id=%s' % client_id)
-            self.instance_com.client_kill(client_id)
+            if len(client_id) > 32:
+                self.instance.disconnect_wg(client_id)
+            else:
+                self.instance_com.client_kill(client_id)
             return
 
         journal.entry(
@@ -1803,6 +1827,7 @@ class Clients(object):
             'device_name': client['device_name'],
             'mac_addr': client['mac_addr'],
             'network': self.server.network,
+            'network_wg': self.server.network_wg,
             'real_address': client['real_address'],
             'virt_address': client['virt_address'],
             'virt_address6': client['virt_address6'],
@@ -1812,6 +1837,9 @@ class Clients(object):
             'dns_suffix': client['dns_suffix'],
             'connected_since': int(timestamp.strftime('%s')),
         }
+
+        if client['type'] == 'wg':
+            doc['wg_public_key'] = client.get('wg_public_key')
 
         if settings.local.sub_active and \
                 settings.local.sub_plan and \
@@ -1842,7 +1870,10 @@ class Clients(object):
             logger.exception('Error adding client', 'server',
                 server_id=self.server.id,
             )
-            self.instance_com.client_kill(client_id)
+            if client['type'] == 'wg':
+                self.instance.disconnect_wg(client_id)
+            else:
+                self.instance_com.client_kill(client_id)
             return
 
         self.clients.update_id(client_id, {
@@ -1851,8 +1882,12 @@ class Clients(object):
 
         self.clients_queue.append(client_id)
 
-        self.instance_com.push_output(
-            'User connected user_id=%s' % client['user_id'])
+        if client['type'] == 'wg':
+            self.instance_com.push_output(
+                'User connected wg user_id=%s' % client['user_id'])
+        else:
+            self.instance_com.push_output(
+                'User connected user_id=%s' % client['user_id'])
         self.send_event()
 
     def connected(self, client_id):
@@ -2009,15 +2044,21 @@ class Clients(object):
 
     def disconnect_user(self, user_id):
         for client in self.clients.find({'user_id': user_id}):
-            self.instance_com.client_kill(client['id'])
+            if len(client['id']) > 32:
+                self.instance.disconnect_wg(client['id'])
+            else:
+                self.instance_com.client_kill(client['id'])
 
     def disconnect_user_id(self, user_id, client_id, server_id):
         if server_id and self.server.id != server_id:
             return
 
         for clnt in self.clients.find({'user_id': user_id}):
-            if clnt.get('doc_id') == client_id:
-                self.instance_com.client_kill(clnt['id'])
+            if clnt.get('client_id') == client_id:
+                if len(clnt['id']) > 32:
+                    self.instance.disconnect_wg(clnt['id'])
+                else:
+                    self.instance_com.client_kill(clnt['id'])
 
     def disconnect_user_mac(self, user_id, host_id, mac_addr, server_id):
         if host_id == settings.local.host_id:
@@ -2030,7 +2071,10 @@ class Clients(object):
                     'user_id': user_id,
                     'mac_addr': mac_addr,
                 }):
-            self.instance_com.client_kill(clnt['id'])
+            if len(clnt['id']) > 32:
+                self.instance.disconnect_wg(clnt['id'])
+            else:
+                self.instance_com.client_kill(clnt['id'])
 
     def reconnect_user(self, user_id, host_id, server_id):
         if host_id == settings.local.host_id:
@@ -2043,7 +2087,10 @@ class Clients(object):
             self.clients.update_id(client['id'], {
                 'ignore_routes': True,
             })
-            self.instance_com.client_kill(client['id'])
+            if len(client['id']) > 32:
+                self.instance.disconnect_wg(client['id'])
+            else:
+                self.instance_com.client_kill(client['id'])
 
     def send_event(self):
         for org_id in self.server.organizations:
@@ -2096,7 +2143,10 @@ class Clients(object):
             if latency is None and self.has_failover_iroute(client_id):
                 self.instance_com.push_output(
                     'Gateway link timeout on %s' % virt_address)
-                self.instance_com.client_kill(client_id)
+                if len(client_id) > 32:
+                    self.instance.disconnect_wg(client_id)
+                else:
+                    self.instance_com.client_kill(client_id)
                 break
 
     @interrupter
@@ -2141,17 +2191,27 @@ class Clients(object):
                         if not updated:
                             continue
 
+                        if client['type'] == 'wg' and \
+                                time.time() - client['timestamp_wg'] > \
+                                self.server.ping_timeout_wg:
+                            self.instance.disconnect_wg(client_id)
+                            continue
+
                         response = self.collection.update({
                             '_id': client['doc_id'],
                         }, {'$set': {
                             'timestamp': utils.now(),
+                            'real_address': client['real_address'],
                         }})
                         if not response['updatedExisting']:
                             logger.error('Client lost unexpectedly', 'server',
                                 server_id=self.server.id,
                                 instance_id=self.instance.id,
                             )
-                            self.instance_com.client_kill(client_id)
+                            if len(client_id) > 32:
+                                self.instance.disconnect_wg(client_id)
+                            else:
+                                self.instance_com.client_kill(client_id)
                             continue
 
                         if self.server.multi_device and \
