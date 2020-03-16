@@ -971,6 +971,145 @@ class Clients(object):
 
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
+    def allow_client_wg(self, user, org, wg_public_key, platform, device_id,
+            device_name, mac_addr, remote_ip):
+        try:
+            user_id = user.id
+            org_id = org.id
+            client_id = wg_public_key
+            doc_id = utils.ObjectId()
+
+            user.audit_event(
+                'user_connection_wg',
+                'User connected wg to "%s"' % self.server.name,
+                remote_addr=remote_ip,
+                server_name=self.server.name,
+            )
+            monitoring.insert_point('user_connections', {
+                'host': settings.local.host.name,
+                'server': self.server.name,
+            }, {
+                'user': user.name,
+                'type': 'wg',
+                'platform': platform,
+                'remote_ip': remote_ip,
+            })
+
+            virt_address, address_dynamic, device_limit = \
+                self.get_virt_addr(org_id, user_id, mac_addr, doc_id)
+
+            if device_limit:
+                self.instance.disconnect_wg(wg_public_key)
+                return False, 'Too many devices'
+
+            if not self.server.multi_device:
+                if self.server.replicating:
+                    messenger.publish('instance', [
+                        'user_reconnect',
+                        user_id,
+                        settings.local.host_id,
+                        self.server.id,
+                    ])
+
+                for clnt in self.clients.find({'user_id': user_id}):
+                    time.sleep(2)
+                    if len(clnt['id']) > 32:
+                        self.instance.disconnect_wg(clnt['id'])
+                    else:
+                        self.instance_com.client_kill(clnt['id'])
+
+            if not virt_address:
+                self.instance.disconnect_wg(wg_public_key)
+                return False, 'Unable to assign ip address'
+
+            virt_address = self.server.ip4to4wg(virt_address)
+            virt_address6 = self.server.ip4to6wg(virt_address)
+
+            dns_servers = []
+            if user.dns_servers:
+                for dns_server in user.dns_servers:
+                    if dns_server == '127.0.0.1':
+                        dns_server = virt_address
+                    dns_servers.append(dns_server)
+
+            rules, rules6 = self.generate_iptables_rules(
+                user, virt_address, virt_address6)
+
+            self.clients.insert({
+                'id': client_id,
+                'type': 'wg',
+                'doc_id': doc_id,
+                'org_id': org.id,
+                'org_name': org.name,
+                'user_id': user.id,
+                'user_name': user.name,
+                'user_type': user.type,
+                'timestamp': time.time(),
+                'timestamp_wg': time.time(),
+                'dns_servers': dns_servers,
+                'dns_suffix': user.dns_suffix,
+                'device_id': device_id,
+                'device_name': device_name,
+                'platform': platform,
+                'mac_addr': mac_addr,
+                'virt_address': virt_address,
+                'virt_address6': virt_address6,
+                'real_address': remote_ip,
+                'address_dynamic': address_dynamic,
+                'iptables_rules': rules,
+                'ip6tables_rules': rules6,
+                'wg_public_key': wg_public_key,
+            })
+
+            if user.type == CERT_CLIENT:
+                plugins.event(
+                    'user_connected',
+                    host_id=settings.local.host_id,
+                    server_id=self.server.id,
+                    org_id=org.id,
+                    user_id=user.id,
+                    host_name=settings.local.host.name,
+                    server_name=self.server.name,
+                    org_name=org.name,
+                    user_name=user.name,
+                    platform=platform,
+                    device_id=device_id,
+                    device_name=device_name,
+                    virtual_ip=virt_address,
+                    virtual_ip6=virt_address6,
+                    remote_ip=remote_ip,
+                    mac_addr=mac_addr,
+                    wg_public_key=wg_public_key,
+                )
+                host.global_clients.insert({
+                    'instance_id': self.instance.id,
+                    'client_id': client_id,
+                })
+
+            client_conf = self.generate_client_conf_wg(platform, client_id,
+                virt_address, virt_address6, user)
+
+            client_conf['address'] = virt_address
+            if self.server.ipv6:
+                client_conf['address6'] = virt_address6
+
+            if self.server.debug:
+                self.instance_com.push_output(
+                    'Client wg conf %s:' % user_id)
+                self.instance_com.push_output('  %s' % client_conf)
+
+            self.instance.connect_wg(wg_public_key, virt_address,
+                virt_address6, client_conf['network_links'])
+
+            self.connected(client_id)
+        except:
+            logger.exception('Error allowing client wg connect', 'server',
+                server_id=self.server.id,
+            )
+            self.instance.disconnect_wg(wg_public_key)
+            return False, 'Error allowing client wg connect'
+        return True, client_conf
+
     def decrypt_rsa(self, cipher_data):
         if len(cipher_data) > 1024:
             raise ValueError('Sender cipher data too long')
