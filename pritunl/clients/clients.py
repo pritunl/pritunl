@@ -2054,7 +2054,7 @@ class Clients(object):
             return
 
         for clnt in self.clients.find({'user_id': user_id}):
-            if clnt.get('client_id') == client_id:
+            if clnt.get('doc_id') == client_id:
                 if len(clnt['id']) > 32:
                     self.instance.disconnect_wg(clnt['id'])
                 else:
