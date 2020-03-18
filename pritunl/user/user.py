@@ -721,7 +721,6 @@ class User(mongo.MongoObject):
             'organization': self.org.name,
             'server': svr.name,
             'wg': svr.wg,
-            'wg_port': svr.port_wg,
             'user_id': str(self.id),
             'organization_id': str(self.org.id),
             'server_id': str(svr.id),
