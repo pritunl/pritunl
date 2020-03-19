@@ -277,6 +277,8 @@ def upsert_indexes():
         background=True, expireAfterSeconds=604800)
     upsert_index('auth_limiter', 'timestamp',
         background=True, expireAfterSeconds=settings.app.auth_limiter_ttl)
+    upsert_index('wg_keys', 'timestamp',
+        background=True, expireAfterSeconds=settings.app.wg_public_key_ttl)
     upsert_index('otp', 'timestamp', background=True,
         expireAfterSeconds=120)
     upsert_index('otp_cache', 'timestamp',
@@ -418,6 +420,7 @@ def setup_mongo():
         'auth_csrf_tokens': 2,
         'auth_nonces': 2,
         'auth_limiter': 2,
+        'wg_keys': 2,
         'otp': 2,
         'otp_cache': 2,
         'yubikey': 2,
