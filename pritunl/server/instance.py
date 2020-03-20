@@ -39,17 +39,24 @@ class ServerInstance(object):
         self.startup_interrupt = False
         self.clean_exit = False
         self.interface = None
+        self.interface_wg = None
+        self.wg_started = False
+        self.wg_private_key = None
+        self.wg_public_key = None
         self.bridge_interface = None
         self.primary_user = None
         self.process = None
         self.vxlan = None
         self.iptables = iptables.Iptables()
         self.iptables_lock = threading.Lock()
+        self.iptables_wg = iptables.Iptables()
         self.tun_nat = False
         self.server_links = []
         self.route_advertisements = set()
         self._temp_path = utils.get_temp_path()
         self.ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
+        self.wg_private_key_path = os.path.join(
+            self._temp_path, WG_PRIVATE_KEY_NAME)
         self.management_socket_path = os.path.join(
             settings.conf.var_run_path,
             MANAGEMENT_SOCKET_NAME % self.id,
@@ -119,12 +126,18 @@ class ServerInstance(object):
             _instances_lock.release()
 
         self.interface = utils.interface_acquire(self.server.adapter_type)
+        if self.server.wg:
+            self.interface_wg = utils.interface_acquire('wg')
 
     def resources_release(self):
         interface = self.interface
         if interface:
             utils.interface_release(self.server.adapter_type, interface)
             self.interface = None
+        interface_wg = self.interface_wg
+        if interface_wg:
+            utils.interface_release('wg', interface_wg)
+            self.interface_wg = None
 
         _instances_lock.acquire()
         try:
@@ -164,7 +177,7 @@ class ServerInstance(object):
         routes = []
         for route in self.server.get_routes(include_default=False):
             routes.append(route['network'])
-            if route['virtual_network']:
+            if route['virtual_network'] and not route.get('wg_network'):
                 continue
 
             metric = route.get('metric')
@@ -203,9 +216,9 @@ class ServerInstance(object):
                         utils.parse_network(network) + (gateway, metric))
 
         for link_svr in self.server.iter_links(fields=(
-                '_id', 'network', 'local_networks', 'network_start',
-                'network_end', 'organizations', 'routes', 'links',
-                'ipv6', 'replica_count', 'network_mode')):
+                '_id', 'wg', 'network', 'network_wg', 'local_networks',
+                'network_start', 'network_end', 'organizations', 'routes',
+                'links', 'ipv6', 'replica_count', 'network_mode')):
             if self.server.id < link_svr.id:
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
@@ -463,6 +476,10 @@ class ServerInstance(object):
         self.iptables.inter_client = self.server.inter_client
         self.iptables.restrict_routes = self.server.restrict_routes
 
+        if self.server.wg:
+            self.iptables_wg.add_route(self.server.network_wg)
+            self.iptables_wg.add_route(self.server.network6_wg)
+
         try:
             routes_output = utils.check_output_logged(['route', '-n'])
         except subprocess.CalledProcessError:
@@ -617,6 +634,177 @@ class ServerInstance(object):
 
         self.iptables.generate()
 
+    def generate_iptables_rules_wg(self):
+        server_addr = utils.get_network_gateway(self.server.network_wg)
+        server_addr6 = utils.get_network_gateway(self.server.network6_wg)
+        ipv6_firewall = self.server.ipv6_firewall and \
+            settings.local.host.routed_subnet6
+
+        self.iptables_wg.id = self.server.id
+        self.iptables_wg.ipv6 = self.server.ipv6
+        self.iptables_wg.server_addr = server_addr
+        self.iptables_wg.server_addr6 = server_addr6
+        self.iptables_wg.virt_interface = self.interface_wg
+        self.iptables_wg.virt_network = self.server.network_wg
+        self.iptables_wg.virt_network6 = self.server.network6_wg
+        self.iptables_wg.ipv6_firewall = ipv6_firewall
+        self.iptables_wg.inter_client = self.server.inter_client
+        self.iptables_wg.restrict_routes = self.server.restrict_routes
+
+        self.iptables_wg.add_route(self.server.network)
+        self.iptables_wg.add_route(self.server.network6)
+
+        try:
+            routes_output = utils.check_output_logged(['route', '-n'])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to get IP routes', 'server',
+                server_id=self.server.id,
+            )
+            raise
+
+        routes = []
+        default_interface = None
+        for line in routes_output.splitlines():
+            line_split = line.split()
+            if len(line_split) < 8 or not re.match(IP_REGEX, line_split[0]):
+                continue
+            if line_split[0] not in routes:
+                if line_split[0] == '0.0.0.0':
+                    if default_interface:
+                        continue
+                    default_interface = line_split[7]
+
+                routes.append((
+                    ipaddress.IPNetwork('%s/%s' % (line_split[0],
+                        utils.subnet_to_cidr(line_split[2]))),
+                    line_split[7]
+                ))
+        routes.reverse()
+
+        if not default_interface:
+            raise IptablesError('Failed to find default network interface')
+
+        routes6 = []
+        default_interface6 = None
+        default_interface6_alt = None
+        if self.server.ipv6:
+            try:
+                routes_output = utils.check_output_logged(
+                    ['route', '-n', '-A', 'inet6'])
+            except subprocess.CalledProcessError:
+                logger.exception('Failed to get IPv6 routes', 'server',
+                    server_id=self.server.id,
+                )
+                raise
+
+            for line in routes_output.splitlines():
+                line_split = line.split()
+
+                if len(line_split) < 7:
+                    continue
+
+                try:
+                    route_network = ipaddress.IPv6Network(line_split[0])
+                except (ipaddress.AddressValueError, ValueError):
+                    continue
+
+                if line_split[0] == '::/0':
+                    if default_interface6 or line_split[6] == 'lo':
+                        continue
+                    default_interface6 = line_split[6]
+
+                if line_split[0] == 'ff00::/8':
+                    if default_interface6_alt or line_split[6] == 'lo':
+                        continue
+                    default_interface6_alt = line_split[6]
+
+                routes6.append((
+                    route_network,
+                    line_split[6],
+                ))
+
+            default_interface6 = default_interface6 or default_interface6_alt
+            if not default_interface6:
+                raise IptablesError(
+                    'Failed to find default IPv6 network interface')
+        routes6.reverse()
+
+        interfaces = set()
+        interfaces6 = set()
+
+        for route in self.server.get_routes(
+            include_hidden=True,
+            include_server_links=True,
+            include_default=True,
+        ):
+            if route['virtual_network'] or route['net_gateway']:
+                continue
+
+            network = route['network']
+            is6 = ':' in network
+            network_obj = ipaddress.IPNetwork(network)
+
+            interface = route['nat_interface']
+            if is6:
+                if not interface:
+                    for route_net, route_intf in routes6:
+                        if network_obj in route_net:
+                            interface = route_intf
+                            break
+
+                    if not interface:
+                        logger.info(
+                            'Failed to find interface for local ' + \
+                            'IPv6 network route, using default route',
+                            'server',
+                            server_id=self.server.id,
+                            network=network,
+                            )
+                        interface = default_interface6
+                interfaces6.add(interface)
+            else:
+                if not interface:
+                    for route_net, route_intf in routes:
+                        if network_obj in route_net:
+                            interface = route_intf
+                            break
+
+                    if not interface:
+                        logger.info(
+                            'Failed to find interface for local ' + \
+                            'network route, using default route',
+                            'server',
+                            server_id=self.server.id,
+                            network=network,
+                            )
+                        interface = default_interface
+                interfaces.add(interface)
+
+            nat = route['nat']
+            if network == '::/0' and self.server.ipv6 and \
+                settings.local.host.routed_subnet6:
+                nat = False
+
+            if nat and route['nat_netmap']:
+                self.iptables_wg.add_netmap(network, route['nat_netmap'])
+                self.iptables_wg.add_route(
+                    route['nat_netmap'],
+                    nat=False,
+                )
+
+            self.iptables_wg.add_route(
+                network,
+                nat=nat,
+                nat_interface=interface,
+            )
+
+        if self.vxlan:
+            self.iptables_wg.add_route(self.vxlan.vxlan_net)
+            if self.server.ipv6:
+                self.iptables_wg.add_route(self.vxlan.vxlan_net6)
+
+        self.iptables_wg.generate()
+
     def enable_iptables_tun_nat(self):
         self.iptables_lock.acquire()
         try:
@@ -634,6 +822,17 @@ class ServerInstance(object):
             ]
             self.iptables.add_rule(rule)
             self.iptables.add_rule6(rule)
+
+            rule = [
+                'POSTROUTING',
+                '-t', 'nat',
+                '-o', self.interface_wg,
+                '-j', 'MASQUERADE',
+                '-m', 'comment',
+                '--comment', 'pritunl-%s' % self.server.id,
+            ]
+            self.iptables_wg.add_rule(rule)
+            self.iptables_wg.add_rule6(rule)
         finally:
             self.iptables_lock.release()
 
@@ -952,6 +1151,8 @@ class ServerInstance(object):
         while not self.interrupt:
             try:
                 self.iptables.upsert_rules(log=True)
+                if self.server.wg:
+                    self.iptables_wg.upsert_rules(log=True)
                 if self.interrupter_sleep(
                         settings.vpn.iptables_update_rate):
                     return
@@ -1046,6 +1247,191 @@ class ServerInstance(object):
                 vpc_id=vpc_id,
                 network=network,
             )
+
+    def start_wg(self):
+        self.wg_started = True
+
+        try:
+            utils.check_call_silent([
+                'ip', 'link',
+                'add', 'dev', 'wgh0',
+                'type', 'wireguard',
+            ])
+        except subprocess.CalledProcessError:
+            pass
+
+        try:
+            private_key = utils.check_output_logged([
+                'wg', 'genkey',
+            ])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to generate wg private key', 'server',
+                server_id=self.server.id,
+            )
+            raise
+
+        try:
+            public_key = utils.check_output_logged([
+                'wg', 'pubkey',
+            ], input=private_key)
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to get wg public key', 'server',
+                server_id=self.server.id,
+            )
+            raise
+
+        with open(self.wg_private_key_path, 'w') as privatekey_file:
+            os.chmod(self.ovpn_conf_path, 0600)
+            privatekey_file.write(private_key)
+
+        self.wg_private_key = private_key.strip()
+        self.wg_public_key = public_key.strip()
+
+        try:
+            utils.check_call_silent([
+                'ip', 'link',
+                'del', 'dev', self.interface_wg,
+            ])
+        except subprocess.CalledProcessError:
+            pass
+
+        try:
+            utils.check_output_logged([
+                'ip', 'link',
+                'add', 'dev', self.interface_wg,
+                'type', 'wireguard',
+            ])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to add wg interface', 'server',
+                server_id=self.server.id,
+            )
+            raise
+
+        server_addr = utils.get_network_gateway_cidr(
+            self.server.network_wg)
+        try:
+            utils.check_output_logged([
+                'ip', 'address',
+                'add', 'dev', self.interface_wg,
+                server_addr,
+            ])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to add wg ip', 'server',
+                server_id=self.server.id,
+            )
+            raise
+
+        if self.server.ipv6:
+            server_addr6 = utils.get_network_gateway_cidr(
+                self.server.network6_wg)
+
+            try:
+                utils.check_output_logged([
+                    'ip', '-6', 'address',
+                    'add', 'dev', self.interface_wg,
+                    server_addr6,
+                ])
+            except subprocess.CalledProcessError:
+                logger.exception('Failed to add wg ipv6', 'server',
+                    server_id=self.server.id,
+                )
+                raise
+
+        try:
+            utils.check_output_logged([
+                'wg', 'set', self.interface_wg,
+                'listen-port', '%s' % self.server.port_wg,
+                'private-key', self.wg_private_key_path,
+            ])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to configure wg', 'server',
+                server_id=self.server.id,
+            )
+            raise
+
+        try:
+            utils.check_output_logged([
+                'ip', 'link',
+                'set', self.interface_wg, 'up',
+            ])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to start wg interface', 'server',
+                server_id=self.server.id,
+            )
+            raise
+
+    def stop_wg(self):
+        if not self.wg_started:
+            return
+
+        try:
+            utils.check_output_logged([
+                'ip', 'link',
+                'set', self.interface_wg, 'down',
+            ])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to stop wg interface', 'server',
+                server_id=self.server.id,
+            )
+
+        try:
+            utils.check_output_logged([
+                'ip', 'link',
+                'del', 'dev', self.interface_wg,
+            ])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to del wg interface', 'server',
+                server_id=self.server.id,
+            )
+
+    def connect_wg(self, wg_public_key, virt_address, virt_address6,
+            network_links):
+        allowed_ips = virt_address.split('/')[0] + '/32'
+        if self.server.ipv6 and virt_address6:
+            allowed_ips += ',' + virt_address6.split('/')[0] + '/128'
+
+        for network_link in network_links:
+            allowed_ips += ',' + network_link
+
+        try:
+            utils.check_output_logged([
+                'wg', 'set', self.interface_wg,
+                'peer', wg_public_key,
+                'persistent-keepalive', '10',
+                'allowed-ips', allowed_ips,
+            ])
+        except subprocess.CalledProcessError:
+            logger.exception('Failed to add wg peer', 'server',
+                server_id=self.server.id,
+            )
+            raise
+
+    def disconnect_wg(self, wg_public_key):
+        for i in xrange(10):
+            try:
+                utils.check_output_logged([
+                    'wg', 'set', self.interface_wg,
+                    'peer', wg_public_key,
+                    'remove',
+                ])
+                break
+            except subprocess.CalledProcessError:
+                if i < 9:
+                    logger.exception(
+                        'Failed to remove wg peer, retrying...',
+                        'server',
+                        server_id=self.server.id,
+                    )
+                else:
+                    logger.exception(
+                        'Failed to remove wg peer, stopping server',
+                        'server',
+                        server_id=self.server.id,
+                    )
+                    self.stop_process()
+            time.sleep(0.5)
+
+        self.instance_com.clients.disconnected(wg_public_key)
 
     def start_threads(self, cursor_id):
         thread = threading.Thread(target=self._sub_thread, args=(cursor_id,))
@@ -1156,6 +1542,10 @@ class ServerInstance(object):
             self.state = 'generate_iptables_rules'
             self.generate_iptables_rules()
 
+            if self.server.wg:
+                self.state = 'generate_iptables_rules_wg'
+                self.generate_iptables_rules_wg()
+
             if self.is_interrupted():
                 return
 
@@ -1173,6 +1563,10 @@ class ServerInstance(object):
 
             self.state = 'upsert_iptables_rules'
             self.iptables.upsert_rules()
+
+            if self.server.wg:
+                self.state = 'upsert_iptables_rules_wg'
+                self.iptables_wg.upsert_rules()
 
             if self.is_interrupted():
                 return
@@ -1220,6 +1614,10 @@ class ServerInstance(object):
 
                     if self.is_interrupted():
                         return
+
+            if self.server.wg:
+                self.state = 'start_wg'
+                self.start_wg()
 
             self.state = 'running'
             self.openvpn_output()
@@ -1359,6 +1757,15 @@ class ServerInstance(object):
                     instance_id=self.id,
                 )
 
+            try:
+                if self.server.wg:
+                    self.iptables_wg.clear_rules()
+            except:
+                logger.exception('Server iptables clean up error', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.id,
+                )
+
             if self.vxlan:
                 try:
                     self.vxlan.stop()
@@ -1367,6 +1774,15 @@ class ServerInstance(object):
                         server_id=self.server.id,
                         instance_id=self.id,
                     )
+
+            try:
+                if self.server.wg:
+                    self.stop_wg()
+            except:
+                logger.exception('Server wg clean up error', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.id,
+                )
 
             try:
                 self.collection.update({
