@@ -755,6 +755,11 @@ NETWORK_INVALID_MSG = 'Network address is not valid, format must be ' + \
     '"[10,172,192].[0-255,16-31,168].[0-255].0/[8-24]" ' + \
     'such as "10.12.32.0/24".'
 
+NETWORK_WG_INVALID = 'network_wg_invalid'
+NETWORK_WG_INVALID_MSG = 'Network WG address is not valid, format must ' + \
+    'be "[10,172,192].[0-255,16-31,168].[0-255].0/[8-24]" ' + \
+    'such as "10.12.32.0/24".'
+
 LINK_NETWORK_INVALID = 'link_network_invalid'
 LINK_NETWORK_INVALID_MSG = 'Network address is invalid, format must be ' + \
     '"10.0.0.0/24".'
@@ -775,6 +780,9 @@ DNS_SERVER_INVALID_MSG = 'DNS server is not valid, ' + \
 
 PORT_INVALID = 'port_invalid'
 PORT_INVALID_MSG = 'Port number is not valid, must be between 1 and 65535.'
+
+PORT_WG_INVALID = 'port_invalid'
+PORT_WG_INVALID_MSG = 'Port number is not valid, must be between 1 and 65535.'
 
 PORT_RESERVED = 'port_reserved'
 PORT_RESERVED_MSG = 'Port number is reserved and cannot be used.'
@@ -848,8 +856,14 @@ YUBIKEY_BYPASS_SECONDARY_MSG = 'Cannot set YubiKey with secondary ' + \
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 
+NETWORK_WG_IN_USE = 'network_WG_in_use'
+NETWORK_WG_IN_USE_MSG = 'Network WG address is already in use.'
+
 PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
+
+PORT_WG_IN_USE = 'port_wg_protocol_in_use'
+PORT_WG_IN_USE_MSG = 'WG Port is already in use.'
 
 BRIDGED_IPV6_INVALID = 'bridged_ipv6_invalid'
 BRIDGED_IPV6_INVALID_MSG = 'IPv6 cannot be used with bridged servers.'
