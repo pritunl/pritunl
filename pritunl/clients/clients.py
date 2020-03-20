@@ -273,6 +273,8 @@ class Clients(object):
         client_conf = {
             'hostname': settings.local.host.public_addr,
             'hostname6': settings.local.host.public_addr6,
+            'gateway': network_gateway,
+            'gateway6': network_gateway6,
             'port': self.server.port_wg,
             'public_key': self.instance.wg_public_key,
             'routes': [],
