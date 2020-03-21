@@ -20,10 +20,22 @@ def _network_invalid():
         'error_msg': NETWORK_INVALID_MSG,
     }, 400)
 
+def _network_wg_invalid():
+    return utils.jsonify({
+        'error': NETWORK_WG_INVALID,
+        'error_msg': NETWORK_WG_INVALID_MSG,
+    }, 400)
+
 def _port_invalid():
     return utils.jsonify({
         'error': PORT_INVALID,
         'error_msg': PORT_INVALID_MSG,
+    }, 400)
+
+def _port_wg_invalid():
+    return utils.jsonify({
+        'error': PORT_WG_INVALID,
+        'error_msg': PORT_WG_INVALID_MSG,
     }, 400)
 
 def _dh_param_bits_invalid():
@@ -162,6 +174,27 @@ def server_put_post(server_id=None):
         except (ipaddress.AddressValueError, ValueError):
             return _network_invalid()
 
+    wg = None
+    wg_def = False
+    if 'wg' in flask.request.json:
+        wg_def = True
+        wg = True if flask.request.json['wg'] else False
+
+    network_wg = None
+    network_wg_def = False
+    if wg and 'network_wg' in flask.request.json and \
+            flask.request.json['network_wg'] != '':
+        network_wg_def = True
+        network_wg = flask.request.json['network_wg']
+
+        try:
+            if not _check_network_private(network_wg):
+                return _network_wg_invalid()
+        except (ipaddress.AddressValueError, ValueError):
+            return _network_wg_invalid()
+    elif not wg:
+        network_wg_def = True
+
     network_mode = None
     network_mode_def = False
     if 'network_mode' in flask.request.json:
@@ -230,6 +263,23 @@ def server_put_post(server_id=None):
 
         if port < 1 or port > 65535:
             return _port_invalid()
+
+    port_wg = None
+    port_wg_def = False
+    if wg and 'port_wg' in flask.request.json and \
+            flask.request.json['port_wg'] != 0:
+        port_wg_def = True
+        port_wg = flask.request.json['port_wg']
+
+        try:
+            port_wg = int(port_wg)
+        except ValueError:
+            return _port_wg_invalid()
+
+        if port_wg < 1 or port_wg > 65535:
+            return _port_wg_invalid()
+    elif not wg:
+        port_wg_def = True
 
     dh_param_bits = None
     dh_param_bits_def = False
@@ -466,6 +516,27 @@ def server_put_post(server_id=None):
                     'error_msg': NETWORK_IN_USE_MSG,
                 }, 400)
 
+        if wg and not network_wg_def:
+            network_used.add(ipaddress.IPNetwork(network))
+
+            network_wg_def = True
+            rand_range = range(215, 250)
+            rand_range_low = range(15, 215)
+            random.shuffle(rand_range)
+            random.shuffle(rand_range_low)
+            rand_range += rand_range_low
+            for i in rand_range:
+                rand_network_wg = '192.168.%s.0/24' % i
+                if not _check_network_overlap(
+                        rand_network_wg, network_used):
+                    network_wg = rand_network_wg
+                    break
+            if not network_wg:
+                return utils.jsonify({
+                    'error': NETWORK_WG_IN_USE,
+                    'error_msg': NETWORK_WG_IN_USE_MSG,
+                }, 400)
+
         if not port_def:
             port_def = True
             rand_ports = range(10000, 19999)
@@ -480,6 +551,22 @@ def server_put_post(server_id=None):
                     'error_msg': PORT_PROTOCOL_IN_USE_MSG,
                 }, 400)
 
+        if wg and not port_wg_def:
+            port_used.add(port)
+
+            port_wg_def = True
+            rand_port_wgs = range(10000, 19999)
+            random.shuffle(rand_port_wgs)
+            for rand_port_wg in rand_port_wgs:
+                if '%s%s' % (rand_port_wg, protocol) not in port_used:
+                    port_wg = rand_port_wg
+                    break
+            if not port_wg:
+                return utils.jsonify({
+                    'error': PORT_WG_IN_USE,
+                    'error_msg': PORT_WG_IN_USE_MSG,
+                }, 400)
+
         if not dh_param_bits_def:
             dh_param_bits_def = True
             dh_param_bits = settings.vpn.default_dh_param_bits
@@ -490,11 +577,13 @@ def server_put_post(server_id=None):
         svr = server.new_server(
             name=name,
             network=network,
+            network_wg=network_wg,
             groups=groups,
             network_mode=network_mode,
             network_start=network_start,
             network_end=network_end,
             restrict_routes=restrict_routes,
+            wg=wg,
             ipv6=ipv6,
             ipv6_firewall=ipv6_firewall,
             bind_address=bind_address,
@@ -534,6 +623,8 @@ def server_put_post(server_id=None):
             svr.name = name
         if network_def:
             svr.network = network
+        if network_wg_def:
+            svr.network_wg = network_wg
         if groups_def:
             svr.groups = groups
         if network_start_def:
@@ -542,6 +633,8 @@ def server_put_post(server_id=None):
             svr.network_end = network_end
         if restrict_routes_def:
             svr.restrict_routes = restrict_routes
+        if wg_def:
+            svr.wg = wg
         if ipv6_def:
             svr.ipv6 = ipv6
         if ipv6_firewall_def:
@@ -552,6 +645,8 @@ def server_put_post(server_id=None):
             svr.bind_address = bind_address
         if port_def:
             svr.port = port
+        if port_wg_def:
+            svr.port_wg = port_wg
         if protocol_def:
             svr.protocol = protocol
         if dh_param_bits_def and svr.dh_param_bits != dh_param_bits:
