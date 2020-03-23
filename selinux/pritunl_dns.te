@@ -13,6 +13,7 @@ require {
   type proc_net_t;
   type sysctl_net_t;
   type unreserved_port_t;
+  type cert_t;
 }
 
 type pritunl_dns_t;
