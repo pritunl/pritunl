@@ -588,6 +588,7 @@ def server_put_post(server_id=None):
             ipv6_firewall=ipv6_firewall,
             bind_address=bind_address,
             port=port,
+            port_wg=port_wg,
             protocol=protocol,
             dh_param_bits=dh_param_bits,
             multi_device=multi_device,
