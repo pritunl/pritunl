@@ -760,6 +760,10 @@ NETWORK_WG_INVALID_MSG = 'Network WG address is not valid, format must ' + \
     'be "[10,172,192].[0-255,16-31,168].[0-255].0/[8-24]" ' + \
     'such as "10.12.32.0/24".'
 
+NETWORK_WG_CIDR_INVALID = 'network_wg_cidr_invalid'
+NETWORK_WG_CIDR_INVALID_MSG = 'Network WG address must use the same CIDR ' \
+    'as virtual network.'
+
 LINK_NETWORK_INVALID = 'link_network_invalid'
 LINK_NETWORK_INVALID_MSG = 'Network address is invalid, format must be ' + \
     '"10.0.0.0/24".'
