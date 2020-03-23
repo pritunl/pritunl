@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.2384.48 2020-03-23
+-------------------------------
 
 Add support for wg
 
