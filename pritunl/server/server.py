@@ -360,6 +360,7 @@ class Server(mongo.MongoObject):
             'network_wg': self.network_wg,
             'bind_address': self.bind_address,
             'port': self.port,
+            'port_wg': self.port_wg,
             'protocol': self.protocol,
             'dh_param_bits': self.dh_param_bits,
             'groups': self.groups or [],
@@ -1683,12 +1684,20 @@ class Server(mongo.MongoObject):
         if utils.check_network_overlap(self.network, network_used):
             return NETWORK_IN_USE, NETWORK_IN_USE_MSG
 
+        network_used.add(ipaddress.IPNetwork(self.network))
+
         if self.wg and utils.check_network_overlap(
                 self.network_wg, network_used):
-            return NETWORK_IN_USE, NETWORK_IN_USE_MSG
+            return NETWORK_WG_IN_USE, NETWORK_WG_IN_USE_MSG
 
         if '%s%s' % (self.port, self.protocol) in port_used:
             return PORT_PROTOCOL_IN_USE, PORT_PROTOCOL_IN_USE_MSG
+
+        port_used.add('%s%s' % (self.port, self.protocol))
+
+        if self. wg and self.network.split(
+                '/')[1] != self.network_wg.split('/')[1]:
+            return NETWORK_WG_CIDR_INVALID, NETWORK_WG_CIDR_INVALID_MSG
 
         if self.wg and '%sudp' % self.port_wg in port_used:
             return PORT_PROTOCOL_IN_USE, PORT_PROTOCOL_IN_USE_MSG
