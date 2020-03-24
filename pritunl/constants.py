@@ -954,12 +954,23 @@ IPV6_SUBNET_ONLINE = 'ipv6_subnet_online'
 IPV6_SUBNET_ONLINE_MSG = 'IPv6 routed subnet cannot be changed with ' + \
     'IPv6 servers online.'
 
+IPV6_SUBNET_WG_ONLINE = 'ipv6_subnet_wg_online'
+IPV6_SUBNET_WG_ONLINE_MSG = 'IPv6 WG routed subnet cannot be changed ' \
+    'with IPv6 servers online.'
+
 IPV6_SUBNET_INVALID = 'ipv6_subnet_invalid'
 IPV6_SUBNET_INVALID_MSG = 'IPv6 routed subnet is invalid.'
 
+IPV6_SUBNET_WG_INVALID = 'ipv6_subnet_wg_invalid'
+IPV6_SUBNET_WG_INVALID_MSG = 'IPv6 WG routed subnet is invalid.'
+
 IPV6_SUBNET_SIZE_INVALID = 'ipv6_subnet_size_invalid'
-IPV6_SUBNET_SIZE_INVALID_MSG = 'IPv6 routed subnet size is invalid, must ' + \
-    'be at least /64.'
+IPV6_SUBNET_SIZE_INVALID_MSG = 'IPv6 routed subnet size is invalid,' \
+    'must be at least /64.'
+
+IPV6_SUBNET_WG_SIZE_INVALID = 'ipv6_subnet_wg_size_invalid'
+IPV6_SUBNET_WG_SIZE_INVALID_MSG = 'IPv6 WG routed subnet size is invalid,' \
+    'must be at least /64.'
 
 RADIUS_DUO_PASSCODE = 'radius_duo_passcode'
 RADIUS_DUO_PASSCODE_MSG = 'Duo passcode cannot be used with Radius.'
