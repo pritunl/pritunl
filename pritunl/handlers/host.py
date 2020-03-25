@@ -101,6 +101,36 @@ def host_put(hst=None):
                 }, 400)
             hst.routed_subnet6 = routed_subnet6
 
+    if 'routed_subnet6_wg' in flask.request.json:
+        routed_subnet6_wg = flask.request.json['routed_subnet6_wg']
+        if routed_subnet6_wg:
+            try:
+                routed_subnet6_wg = ipaddress.IPv6Network(
+                    flask.request.json['routed_subnet6_wg'])
+            except (ipaddress.AddressValueError, ValueError):
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_WG_INVALID,
+                    'error_msg': IPV6_SUBNET_WG_INVALID_MSG,
+                }, 400)
+
+            if routed_subnet6_wg.prefixlen > 64:
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_WG_SIZE_INVALID,
+                    'error_msg': IPV6_SUBNET_WG_SIZE_INVALID_MSG,
+                }, 400)
+
+            routed_subnet6_wg = str(routed_subnet6_wg)
+        else:
+            routed_subnet6_wg = None
+
+        if hst.routed_subnet6_wg != routed_subnet6_wg:
+            if server.get_online_ipv6_count():
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_WG_ONLINE,
+                    'error_msg': IPV6_SUBNET_WG_ONLINE_MSG,
+                }, 400)
+            hst.routed_subnet6_wg = routed_subnet6_wg
+
     if 'proxy_ndp' in flask.request.json:
         proxy_ndp = True if flask.request.json['proxy_ndp'] else False
         hst.proxy_ndp = proxy_ndp
