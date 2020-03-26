@@ -71,6 +71,7 @@ def _dict():
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
+            'routed_subnet6_wg': settings.local.host.routed_subnet6_wg,
             'reverse_proxy': settings.app.reverse_proxy,
             'server_port': settings.app.server_port,
             'server_cert': 'demo',
@@ -171,6 +172,7 @@ def _dict():
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
             'routed_subnet6': settings.local.host.routed_subnet6,
+            'routed_subnet6_wg': settings.local.host.routed_subnet6_wg,
             'reverse_proxy': settings.app.reverse_proxy,
             'server_port': settings.app.server_port,
             'server_cert': settings.app.server_cert,
@@ -739,6 +741,37 @@ def settings_put():
                 }, 400)
             settings.local.host.routed_subnet6 = routed_subnet6
             settings.local.host.commit('routed_subnet6')
+
+    if 'routed_subnet6_wg' in flask.request.json:
+        routed_subnet6_wg = flask.request.json['routed_subnet6_wg']
+        if routed_subnet6_wg:
+            try:
+                routed_subnet6_wg = ipaddress.IPv6Network(
+                    flask.request.json['routed_subnet6_wg'])
+            except (ipaddress.AddressValueError, ValueError):
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_WG_INVALID,
+                    'error_msg': IPV6_SUBNET_WG_INVALID_MSG,
+                }, 400)
+
+            if routed_subnet6_wg.prefixlen > 64:
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_WG_SIZE_INVALID,
+                    'error_msg': IPV6_SUBNET_WG_SIZE_INVALID_MSG,
+                }, 400)
+
+            routed_subnet6_wg = str(routed_subnet6_wg)
+        else:
+            routed_subnet6_wg = None
+
+        if settings.local.host.routed_subnet6_wg != routed_subnet6_wg:
+            if server.get_online_ipv6_count():
+                return utils.jsonify({
+                    'error': IPV6_SUBNET_WG_ONLINE,
+                    'error_msg': IPV6_SUBNET_WG_ONLINE_MSG,
+                }, 400)
+            settings.local.host.routed_subnet6_wg = routed_subnet6_wg
+            settings.local.host.commit('routed_subnet6_wg')
 
     if 'reverse_proxy' in flask.request.json:
         settings_commit = True
