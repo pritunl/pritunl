@@ -917,7 +917,7 @@ class Clients(object):
                     'Unable to assign ip address')
                 return
 
-            virt_address6 = self.server.ip4to6(virt_address)
+            virt_address6 = self.server.ip4to6(virt_address) + '/64'
 
             dns_servers = []
             if user.dns_servers:
@@ -1046,7 +1046,7 @@ class Clients(object):
                 return False, 'Unable to assign ip address'
 
             virt_address = self.server.ip4to4wg(virt_address)
-            virt_address6 = self.server.ip4to6wg(virt_address)
+            virt_address6 = self.server.ip4to6wg(virt_address) + '/64'
 
             dns_servers = []
             if user.dns_servers:
