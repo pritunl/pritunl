@@ -828,12 +828,6 @@ def key_wg_post(org_id, user_id, server_id):
     server_id = server_id
     remote_addr = utils.get_remote_addr()
 
-    if not settings.user.conf_sync:
-        return utils.jsonify({})
-
-    if not settings.local.sub_active:
-        return utils.jsonify({}, status_code=480)
-
     auth_token = flask.request.headers.get('Auth-Token', None)
     auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
     auth_nonce = flask.request.headers.get('Auth-Nonce', None)
@@ -1133,12 +1127,6 @@ def key_wg_put(org_id, user_id, server_id):
     user_id = user_id
     server_id = server_id
     remote_addr = utils.get_remote_addr()
-
-    if not settings.user.conf_sync:
-        return utils.jsonify({})
-
-    if not settings.local.sub_active:
-        return utils.jsonify({}, status_code=480)
 
     auth_token = flask.request.headers.get('Auth-Token', None)
     auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)

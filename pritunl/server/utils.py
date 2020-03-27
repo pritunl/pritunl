@@ -67,6 +67,7 @@ def get_used_resources(ignore_server_id):
     else:
         used_resources = {
             'networks': set(),
+            'networks_wg': set(),
             'interfaces': set(),
             'ports': set(),
             'ports_wg': set(),
