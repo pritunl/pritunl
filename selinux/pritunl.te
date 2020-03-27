@@ -77,6 +77,18 @@ require {
   type unreserved_port_t;
   type usermodehelper_t;
   type var_run_t;
+  type autofs_t;
+  type device_t;
+  type hugetlbfs_t;
+  type ldconfig_cache_t;
+  type random_device_t;
+  type boot_t;
+  type configfs_t;
+  type debugfs_t;
+  type root_t;
+  type security_t;
+  type sysctl_fs_t;
+  type tmpfs_t;
 }
 
 type pritunl_t;
@@ -144,7 +156,7 @@ allow pritunl_var_log_t tmpfs_t:filesystem associate;
 type_transition pritunl_t var_run_t:sock_file pritunl_var_run_t;
 
 allow pritunl_t var_run_t:dir { add_entry_dir_perms remove_name };
-allow pritunl_t var_run_t:file { manage_file_perms };
+allow pritunl_t var_run_t:file { manage_file_perms execute };
 allow pritunl_t pritunl_var_run_t:sock_file { manage_file_perms };
 allow pritunl_t sshd_net_t:dir search;
 allow pritunl_t sshd_net_t:file { getattr open read };
@@ -207,7 +219,7 @@ allow pritunl_t initrc_t:dir { search };
 allow pritunl_t initrc_t:file { getattr open read };
 allow pritunl_t insmod_exec_t:file { execute execute_no_trans open read };
 allow pritunl_t iptables_exec_t:file { execute execute_no_trans open read };
-allow pritunl_t iptables_var_run_t:file { lock open read };
+allow pritunl_t iptables_var_run_t:file { lock open read execute write };
 allow pritunl_t irqbalance_t:dir search;
 allow pritunl_t irqbalance_t:file { getattr open read };
 allow pritunl_t kernel_t:dir search;
@@ -275,6 +287,21 @@ allow pritunl_t udev_t:file { getattr open read };
 allow pritunl_t usermodehelper_t:file { getattr open read };
 allow pritunl_t unreserved_port_t:tcp_socket { name_bind name_connect };
 allow pritunl_t unreserved_port_t:udp_socket name_bind;
+allow pritunl_t autofs_t:dir write;
+allow pritunl_t device_t:dir { add_name write };
+allow pritunl_t device_t:file { create getattr open read };
+allow pritunl_t hugetlbfs_t:dir { search read add_name write };
+allow pritunl_t ldconfig_cache_t:dir { search read };
+allow pritunl_t random_device_t:chr_file { read open };
+allow pritunl_t boot_t:dir { add_name write };
+allow pritunl_t configfs_t:dir { add_name write search };
+allow pritunl_t debugfs_t:dir write;
+allow pritunl_t root_t:dir { add_name write };
+allow pritunl_t security_t:dir { add_name write };
+allow pritunl_t self:netlink_generic_socket { bind create getattr read write };
+allow pritunl_t self:system module_load;
+allow pritunl_t sysctl_fs_t:dir search;
+allow pritunl_t tmpfs_t:dir { add_name write };
 
 #################################
 # ndppd
@@ -292,5 +319,5 @@ allow pritunl_t unconfined_t:file { getattr open read };
 allow pritunl_t unconfined_service_t:dir search;
 allow pritunl_t unconfined_service_t:file { getattr open read };
 
-allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read };
-allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read };
+allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read map };
+allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read map };
