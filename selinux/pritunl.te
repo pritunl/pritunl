@@ -319,5 +319,5 @@ allow pritunl_t unconfined_t:file { getattr open read };
 allow pritunl_t unconfined_service_t:dir search;
 allow pritunl_t unconfined_service_t:file { getattr open read };
 
-allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read map };
-allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read map };
+allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read };
+allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read };
