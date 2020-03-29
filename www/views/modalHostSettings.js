@@ -41,6 +41,7 @@ define([
       var publicAddress = this.$('.public-address input').val() || null;
       var publicAddress6 = this.$('.public-address6 input').val() || null;
       var routedSubnet6 = this.$('.routed-subnet6 input').val() || null;
+      var routedSubnet6Wg = this.$('.routed-subnet6-wg input').val() || null;
       var proxyNdp = this.getProxyNdp();
       var localAddress = this.$('.local-address input').val() || null;
       var localAddress6 = this.$('.local-address6 input').val() || null;
@@ -55,6 +56,7 @@ define([
         public_address: publicAddress,
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
+        routed_subnet6_wg: routedSubnet6Wg,
         proxy_ndp: proxyNdp,
         local_address: localAddress,
         local_address6: localAddress6,
