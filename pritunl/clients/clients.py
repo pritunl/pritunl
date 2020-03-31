@@ -177,28 +177,18 @@ class Clients(object):
             for network_link in network_links:
                 if self.reserve_iroute(client_id, network_link, True):
                     if ':' in network_link:
-                        utils.check_call_silent([
-                            'ip', 'route',
-                            'del', network_link,
-                        ])
-                        utils.check_output_logged([
-                            'ip', 'route',
-                            'add', network_link,
-                            'via', network_gateway6.split('/')[0],
-                            'dev', self.instance.interface,
-                        ])
+                        utils.add_route6(
+                            network_link,
+                            network_gateway6.split('/')[0],
+                            self.instance.interface,
+                        )
                         client_conf += 'iroute-ipv6 %s\n' % network_link
                     else:
-                        utils.check_call_silent([
-                            'ip', 'route',
-                            'del', network_link,
-                        ])
-                        utils.check_output_logged([
-                            'ip', 'route',
-                            'add', network_link,
-                            'via', network_gateway.split('/')[0],
-                            'dev', self.instance.interface,
-                        ])
+                        utils.add_route(
+                            network_link,
+                            network_gateway.split('/')[0],
+                            self.instance.interface,
+                        )
                         client_conf += 'iroute %s %s\n' % \
                             utils.parse_network(network_link)
 
