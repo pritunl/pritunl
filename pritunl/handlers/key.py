@@ -833,7 +833,7 @@ def key_wg_post(org_id, user_id, server_id):
     auth_nonce = flask.request.headers.get('Auth-Nonce', None)
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
-        not auth_signature:
+            not auth_signature:
         journal.entry(
             journal.USER_WG_FAILURE,
             remote_address=remote_addr,
@@ -847,7 +847,7 @@ def key_wg_post(org_id, user_id, server_id):
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
-            settings.app.auth_time_window:
+                settings.app.auth_time_window:
             journal.entry(
                 journal.USER_WG_FAILURE,
                 remote_address=remote_addr,
@@ -1032,6 +1032,13 @@ def key_wg_post(org_id, user_id, server_id):
         )
         return flask.abort(417)
 
+    instance = server.get_instance(server_id)
+    if not instance or instance.state != 'running':
+        return flask.abort(429)
+
+    if not instance.server.wg:
+        return flask.abort(429)
+
     wg_keys_collection = mongo.get_collection('wg_keys')
     try:
         wg_keys_collection.insert({
@@ -1043,16 +1050,10 @@ def key_wg_post(org_id, user_id, server_id):
             journal.USER_WG_FAILURE,
             usr.journal_data,
             remote_address=remote_addr,
+            wg_public_key=client_wg_public_key,
             event_long='Duplicate wg public key',
         )
         return flask.abort(413)
-
-    instance = server.get_instance(server_id)
-    if not instance or instance.state != 'running':
-        return flask.abort(429)
-
-    if not instance.server.wg:
-        return flask.abort(429)
 
     clients = instance.instance_com.clients
 
@@ -1133,7 +1134,7 @@ def key_wg_put(org_id, user_id, server_id):
     auth_nonce = flask.request.headers.get('Auth-Nonce', None)
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
-        not auth_signature:
+            not auth_signature:
         journal.entry(
             journal.USER_WG_FAILURE,
             remote_address=remote_addr,
@@ -1147,7 +1148,7 @@ def key_wg_put(org_id, user_id, server_id):
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
-            settings.app.auth_time_window:
+                settings.app.auth_time_window:
             journal.entry(
                 journal.USER_WG_FAILURE,
                 remote_address=remote_addr,
