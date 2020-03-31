@@ -272,43 +272,8 @@ class Clients(object):
             'dns_servers': [],
             'search_domains': [],
             'network_links': [],
+            'network_links6': [],
         }
-
-        if not user.link_server_id and self.server.is_route_all():
-            client_conf['routes'].append({
-                'next_hop': network_gateway,
-                'network': '0.0.0.0/0',
-            })
-            if self.server.ipv6:
-                client_conf['routes6'].append({
-                    'next_hop': network_gateway6,
-                    'network': '::/0',
-                })
-
-        for route in self.server.get_routes(include_default=False):
-            network = route['network']
-            route_conf = {
-                'network': network,
-            }
-
-            if not route['virtual_network']:
-                netmap = route.get('nat_netmap')
-                if netmap:
-                    route_conf['network'] = netmap
-
-                metric = route.get('metric')
-                if metric:
-                    route_conf['metric'] = metric
-
-                if route['net_gateway']:
-                    route_conf['net_gateway'] = True
-
-            if ':' in network:
-                route_conf['next_hop'] = network_gateway6
-                client_conf['routes6'].append(route_conf)
-            else:
-                route_conf['next_hop'] = network_gateway
-                client_conf['routes'].append(route_conf)
 
         if user.link_server_id:
             pass
@@ -366,29 +331,20 @@ class Clients(object):
             network_links = user.get_network_links()
             for network_link in network_links:
                 if self.reserve_iroute(client_id, network_link, True):
-                    client_conf['network_links'].append(network_link)
                     if ':' in network_link:
-                        utils.check_call_silent([
-                            'ip', 'route',
-                            'del', network_link,
-                        ])
-                        utils.check_output_logged([
-                            'ip', 'route',
-                            'add', network_link,
-                            'via', virt_address6.split('/')[0],
-                            'dev', self.instance.interface_wg,
-                        ])
+                        client_conf['network_links6'].append(network_link)
+                        utils.add_route6(
+                            network_link,
+                            virt_address6.split('/')[0],
+                            self.instance.interface_wg,
+                        )
                     else:
-                        utils.check_call_silent([
-                            'ip', 'route',
-                            'del', network_link,
-                        ])
-                        utils.check_output_logged([
-                            'ip', 'route',
-                            'add', network_link,
-                            'via', virt_address.split('/')[0],
-                            'dev', self.instance.interface_wg,
-                        ])
+                        client_conf['network_links'].append(network_link)
+                        utils.add_route(
+                            network_link,
+                            virt_address.split('/')[0],
+                            self.instance.interface_wg,
+                        )
 
             if network_links:
                 thread = threading.Thread(target=self.iroute_ping_thread,
@@ -396,22 +352,17 @@ class Clients(object):
                 thread.daemon = True
                 thread.start()
 
-            for network_link in self.server.network_links:
-                if ':' in network_link:
-                    client_conf['routes6'].append({
-                        'next_hop': network_gateway6,
-                        'network': network_link,
-                    })
-                else:
-                    client_conf['routes'].append({
-                        'next_hop': network_gateway,
-                        'network': network_link,
-                    })
-
             for link_svr in self.server.iter_links():
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
                     metric = route.get('metric')
+
+                    if ':' in network:
+                        if network in client_conf['network_links6']:
+                            continue
+                    else:
+                        if network in client_conf['network_links']:
+                            continue
 
                     netmap = route.get('nat_netmap')
                     if netmap:
@@ -443,6 +394,38 @@ class Clients(object):
                             'next_hop': network_gateway6,
                             'network': vxlan.get_vxlan_net6(link_svr.id),
                         })
+
+            for route in self.server.get_routes(include_default=False):
+                network = route['network']
+                route_conf = {
+                    'network': network,
+                }
+
+                if ':' in network:
+                    if network in client_conf['network_links6']:
+                        continue
+                else:
+                    if network in client_conf['network_links']:
+                        continue
+
+                if not route['virtual_network']:
+                    netmap = route.get('nat_netmap')
+                    if netmap:
+                        route_conf['network'] = netmap
+
+                    metric = route.get('metric')
+                    if metric:
+                        route_conf['metric'] = metric
+
+                    if route['net_gateway']:
+                        route_conf['net_gateway'] = True
+
+                if ':' in network:
+                    route_conf['next_hop'] = network_gateway6
+                    client_conf['routes6'].append(route_conf)
+                else:
+                    route_conf['next_hop'] = network_gateway
+                    client_conf['routes'].append(route_conf)
 
         return client_conf
 
