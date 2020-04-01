@@ -74,7 +74,7 @@ def setup_demo():
                         continue
 
                     virt_address = svr.get_ip_addr(org.id, usr.id)
-                    virt_address6 = svr.ip4to6(virt_address)
+                    virt_address6 = svr.ip4to6(virt_address) + '/64'
 
                     doc = {
                         '_id': utils.ObjectId(),
