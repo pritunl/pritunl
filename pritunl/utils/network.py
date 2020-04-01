@@ -1,4 +1,4 @@
-from pritunl.utils.misc import check_output_logged
+from pritunl.utils.misc import check_call_silent, check_output_logged
 
 from pritunl.constants import *
 from pritunl import ipaddress
@@ -358,9 +358,12 @@ def ip4to6x96(prefix, net, addr):
 
     return str(ipaddress.IPv6Address(addr6))
 
-def add_route(dst_addr, via_addr):
+def add_route(dst_addr, via_addr, dev=None):
     if '/' not in dst_addr:
         dst_addr += '/32'
+
+    if dev:
+        dev = _ip_route.link_lookup(ifname=dev)[0]
 
     _ip_route_lock.acquire()
     try:
@@ -368,6 +371,7 @@ def add_route(dst_addr, via_addr):
             'add',
             dst=dst_addr,
             gateway=via_addr,
+            oif=dev,
         )
     except pyroute2.netlink.exceptions.NetlinkError as err:
         if err.code == 17:
@@ -383,6 +387,7 @@ def add_route(dst_addr, via_addr):
                 'add',
                 dst=dst_addr,
                 gateway=via_addr,
+                oif=dev,
             )
         else:
             raise
@@ -405,9 +410,12 @@ def del_route(dst_addr):
     finally:
         _ip_route_lock.release()
 
-def add_route6(dst_addr, via_addr):
+def add_route6(dst_addr, via_addr, dev=None):
     if '/' not in dst_addr:
         dst_addr += '/128'
+
+    if dev:
+        dev = _ip_route.link_lookup(ifname=dev)[0]
 
     _ip_route_lock.acquire()
     try:
@@ -416,6 +424,7 @@ def add_route6(dst_addr, via_addr):
             family=socket.AF_INET6,
             dst=dst_addr,
             gateway=via_addr,
+            oif=dev,
         )
     except pyroute2.netlink.exceptions.NetlinkError as err:
         if err.code == 17:
@@ -433,6 +442,7 @@ def add_route6(dst_addr, via_addr):
                 family=socket.AF_INET6,
                 dst=dst_addr,
                 gateway=via_addr,
+                oif=dev,
             )
         else:
             raise

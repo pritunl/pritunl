@@ -73,16 +73,16 @@ def get_used_resources(ignore_server_id):
             'ports_wg': set(),
         }
 
-    ports = set(used_resources['ports'])
-    ports_wg = set(used_resources['ports_wg'])
+    ports = set(used_resources['ports'] or [])
+    ports_wg = set(used_resources['ports_wg'] or [])
     try:
         ports_wg.remove('udp')
     except KeyError:
         pass
     ports = ports.union(ports_wg)
-
-    networks = set(used_resources['networks'])
-    networks_wg = set(filter(None, used_resources['networks_wg']))
+    
+    networks = set(used_resources['networks'] or [])
+    networks_wg = set(filter(None, used_resources['networks_wg']) or [])
     try:
         networks_wg.remove('')
     except KeyError:
@@ -91,7 +91,7 @@ def get_used_resources(ignore_server_id):
 
     return {
         'networks': {ipaddress.IPNetwork(x) for x in networks},
-        'interfaces': set(used_resources['interfaces']),
+        'interfaces': set(used_resources['interfaces'] or []),
         'ports': ports,
     }
 

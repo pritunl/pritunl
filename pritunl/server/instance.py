@@ -105,7 +105,8 @@ class ServerInstance(object):
             instance = _instances.get(self.server.id)
             if instance:
                 logger.warning(
-                    'Stopping duplicate instance', 'server',
+                    'Stopping duplicate instance, check date time sync',
+                    'server',
                     server_id=self.server.id,
                     instance_id=instance.id,
                 )
