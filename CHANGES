@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.29.2394.19 2020-04-02
+-------------------------------
 
 Fix server management
 
