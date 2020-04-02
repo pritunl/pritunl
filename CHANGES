@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix server management
+
 Version 1.29.2392.39 2020-03-31
 -------------------------------
 
