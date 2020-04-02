@@ -80,9 +80,9 @@ def get_used_resources(ignore_server_id):
     except KeyError:
         pass
     ports = ports.union(ports_wg)
-
+    
     networks = set(used_resources['networks'] or [])
-    networks_wg = set(used_resources['networks_wg'] or [])
+    networks_wg = set(filter(None, used_resources['networks_wg']) or [])
     try:
         networks_wg.remove('')
     except KeyError:
