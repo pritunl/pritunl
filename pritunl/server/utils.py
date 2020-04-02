@@ -74,7 +74,7 @@ def get_used_resources(ignore_server_id):
         }
 
     ports = set(used_resources['ports'] or [])
-    ports_wg = set(used_resources['ports_wg'] or [])
+    ports_wg = set(filter(None, used_resources['ports_wg']))
     try:
         ports_wg.remove('udp')
     except KeyError:
@@ -82,11 +82,7 @@ def get_used_resources(ignore_server_id):
     ports = ports.union(ports_wg)
     
     networks = set(used_resources['networks'] or [])
-    networks_wg = set(filter(None, used_resources['networks_wg']) or [])
-    try:
-        networks_wg.remove('')
-    except KeyError:
-        pass
+    networks_wg = set(filter(None, used_resources['networks_wg']))
     networks = networks.union(networks_wg)
 
     return {
