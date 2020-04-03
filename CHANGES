@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with wg network links
+
 Version 1.29.2394.19 2020-04-02
 -------------------------------
 
