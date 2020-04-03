@@ -179,7 +179,7 @@ class Server(mongo.MongoObject):
         'inter_client': True,
         'ping_interval': 10,
         'ping_timeout': 60,
-        'ping_timeout_wg': 660,
+        'ping_timeout_wg': 360,
         'link_ping_interval': 1,
         'link_ping_timeout': 5,
         'debug': False,
