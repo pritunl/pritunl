@@ -1095,7 +1095,8 @@ class Clients(object):
                 self.instance_com.push_output('  %s' % client_conf)
 
             self.instance.connect_wg(wg_public_key, virt_address,
-                virt_address6, client_conf['network_links'])
+                virt_address6, client_conf['network_links'],
+                client_conf['network_links6'])
 
             self.connected(client_id)
         except:

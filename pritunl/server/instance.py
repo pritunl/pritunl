@@ -1386,12 +1386,15 @@ class ServerInstance(object):
             )
 
     def connect_wg(self, wg_public_key, virt_address, virt_address6,
-            network_links):
+            network_links, network_links6):
         allowed_ips = virt_address.split('/')[0] + '/32'
         if self.server.ipv6 and virt_address6:
             allowed_ips += ',' + virt_address6.split('/')[0] + '/128'
 
         for network_link in network_links:
+            allowed_ips += ',' + network_link
+
+        for network_link in network_links6:
             allowed_ips += ',' + network_link
 
         try:
