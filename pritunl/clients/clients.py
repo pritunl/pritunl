@@ -358,10 +358,10 @@ class Clients(object):
                     metric = route.get('metric')
 
                     if ':' in network:
-                        if network in client_conf['network_links6']:
+                        if network in network_links:
                             continue
                     else:
-                        if network in client_conf['network_links']:
+                        if network in network_links:
                             continue
 
                     netmap = route.get('nat_netmap')
@@ -402,10 +402,10 @@ class Clients(object):
                 }
 
                 if ':' in network:
-                    if network in client_conf['network_links6']:
+                    if network in network_links:
                         continue
                 else:
-                    if network in client_conf['network_links']:
+                    if network in network_links:
                         continue
 
                 if not route['virtual_network']:
