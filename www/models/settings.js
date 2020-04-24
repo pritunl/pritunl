@@ -45,6 +45,7 @@ define([
       'sso_onelogin_mode': null,
       'sso_radius_host': null,
       'sso_radius_secret': null,
+      'sso_radius_timeout': null,
       'sso_cache': null,
       'sso_client_cache': null,
       'sso_yubico_client': null,

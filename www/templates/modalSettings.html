@@ -235,6 +235,10 @@
       <label>Radius Secret</label>
       <input type="password" class="form-control" placeholder="Enter Radius secret" value="<%- sso_radius_secret || '' %>" data-toggle="tooltip" title="Radius shared secret">
     </div>
+    <div class="sso-radius-timeout form-group" <%= !sso || sso.indexOf('radius') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Radius Timeout</label>
+      <input type="text" class="form-control" placeholder="Enter radius timeout" value="<%- sso_radius_timeout || '' %>" data-toggle="tooltip" title="The number of seconds to wait for a Radius connection to complete. If no timeout is specified a default value of 5 will be used.">
+    </div>
     <div class="sso-host form-group" <%= !sso || sso.indexOf('duo') === -1 ? 'style="display: none;"' : '' %>>
       <label>Duo API Hostname</label>
       <input type="text" class="form-control" placeholder="Enter api hostname" value="<%- sso_duo_host || '' %>">

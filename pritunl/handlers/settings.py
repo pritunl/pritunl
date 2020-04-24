@@ -64,6 +64,7 @@ def _dict():
             'sso_onelogin_mode': utils.get_onelogin_mode(),
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
+            'sso_radius_timeout': '5',
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'restrict_import': settings.user.restrict_import,
@@ -165,6 +166,7 @@ def _dict():
             'sso_onelogin_mode': utils.get_onelogin_mode(),
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
+            'sso_radius_timeout': settings.app.sso_radius_timeout,
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'restrict_import': settings.user.restrict_import,
@@ -546,6 +548,13 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_radius_host = sso_radius_host
 
+    if 'sso_radius_timeout' in flask.request.json:
+        settings_commit = True
+        sso_radius_timeout = flask.request.json['sso_radius_timeout'] or None
+        if sso_radius_timeout != settings.app.sso_radius_timeout:
+            changes.add('sso')
+        settings.app.sso_radius_timeout = sso_radius_timeout
+
     if 'sso_org' in flask.request.json:
         settings_commit = True
         sso_org = flask.request.json['sso_org'] or None
@@ -890,6 +899,7 @@ def settings_put():
         settings.app.sso_onelogin_secret = None
         settings.app.sso_radius_secret = None
         settings.app.sso_radius_host = None
+        settings.app.sso_radius_timeout = None
     else:
         if RADIUS_AUTH in settings.app.sso and \
                 settings.app.sso_duo_mode == 'passcode':

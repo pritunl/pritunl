@@ -115,6 +115,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_radius_prefix': None,
         'sso_radius_host': None,
         'sso_radius_secret': None,
+        'sso_radius_timeout': None,
         'sso_duo_host': None,
         'sso_duo_token': None,
         'sso_duo_secret': None,

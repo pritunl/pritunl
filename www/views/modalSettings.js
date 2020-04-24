@@ -1086,6 +1086,7 @@ define([
       var ssoOneLoginMode = null;
       var ssoRadiusHost = null;
       var ssoRadiusSecret = null;
+      var ssoRadiusTimeOut = null;
       var ssoDuoToken = null;
       var ssoDuoSecret = null;
       var ssoDuoHost = null;
@@ -1179,6 +1180,7 @@ define([
         if (sso.indexOf('radius') !== -1) {
           ssoRadiusHost = this.$('.sso-radius-host input').val();
           ssoRadiusSecret = this.$('.sso-radius-secret input').val();
+          ssoRadiusTimeOut = this.$('.sso-radius-timeout input').val();
         }
 
         ssoOrg = this.$('.sso-org select').val();
@@ -1223,6 +1225,7 @@ define([
         sso_onelogin_mode: ssoOneLoginMode,
         sso_radius_host: ssoRadiusHost,
         sso_radius_secret: ssoRadiusSecret,
+        sso_radius_timeout: ssoRadiusTimeOut,
         sso_cache: ssoCache,
         sso_client_cache: ssoClientCache,
         restrict_import: restrictImport,

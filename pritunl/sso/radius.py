@@ -26,6 +26,8 @@ def verify_radius(username, password):
                 StringIO.StringIO(RADIUS_DICTONARY)),
         )
 
+        conn.timeout = (settings.app.sso_radius_timeout or 5)
+
         req = conn.CreateAuthPacket(
             code=packet.AccessRequest,
             User_Name=(
