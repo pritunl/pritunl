@@ -14,6 +14,10 @@
         <option value="tcp" <%= protocol === 'tcp' ? 'selected' : '' %>>tcp</option>
       </select>
     </div>
+    <div class="port-wg form-group" <%= wg ? '' : 'style="display: none;"' %>>
+      <label>WG Port</label>
+      <input type="text" class="form-control" placeholder="Enter wg port number" data-toggle="tooltip" title="Port number for WG connections" value="<%- port_wg %>" autocapitalize="off">
+    </div>
     <div class="form-group groups">
       <label>Groups</label>
       <div class="groups-label" data-toggle="tooltip" title="Enter list of groups to allow connections from. Names are case sensitive. If empty all groups will able to connect">
@@ -36,6 +40,17 @@
       <label>Virtual Network</label>
       <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
       <input type="text" class="form-control" placeholder="Enter network address" data-toggle="tooltip" title="Network address for the private network that will be created for clients. This network cannot conflict with any existing local networks" value="<%- network %>" autocapitalize="off">
+    </div>
+    <div class="network-wg form-group" <%= wg ? '' : 'style="display: none;"' %>>
+      <label>Virtual WG Network</label>
+      <span class="label label-default no-select" toggle="tooltip" title="Maximum number of users for this subnet"></span>
+      <input type="text" class="form-control" placeholder="Enter WG network address" data-toggle="tooltip" title="WG Network address for the private network that will be created for clients. Must have the same CIDR as virtual network. This network cannot conflict with any existing local networks" value="<%- network_wg %>" autocapitalize="off">
+    </div>
+    <div class="wg-toggle toggle-form form-group">
+      <label>Enable WireGuard</label>
+      <div class="selector <%= wg ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable WG connections on server. WireGuard packages must be installed separately">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
     </div>
     <div class="otp-auth-toggle toggle-form form-group">
       <label>Enable Google Authenticator</label>
