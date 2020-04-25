@@ -29,6 +29,7 @@ define([
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
         'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect',
+        'click .wg-toggle': 'onWgSelect',
         'click .restrict-routes-toggle': 'onRestrictRoutesSelect',
         'change select.protocol, .cipher select, .network-mode select':
           'onInputChange',
@@ -45,7 +46,9 @@ define([
         width: '200px'
       });
       this.$('.network .label').tooltip();
-      this.updateMaxHosts();
+      this.$('.network-wg .label').tooltip();
+      this.updateMaxHosts(false);
+      this.updateMaxHosts(true);
     },
     onDhParamBits: function(evt) {
       var val = $(evt.target).val();
@@ -169,6 +172,26 @@ define([
     onRestrictRoutesSelect: function() {
       this.setRestrictRoutesSelect(!this.getRestrictRoutesSelect());
     },
+    getWgSelect: function() {
+      return this.$('.wg-toggle .selector').hasClass('selected');
+    },
+    setWgSelect: function(state) {
+      if (state) {
+        this.$('.wg-toggle .selector').addClass('selected');
+        this.$('.wg-toggle .selector-inner').show();
+        this.$('.port-wg').slideDown(window.slideTime);
+        this.$('.network-wg').slideDown(window.slideTime);
+      }
+      else {
+        this.$('.wg-toggle .selector').removeClass('selected');
+        this.$('.wg-toggle .selector-inner').hide();
+        this.$('.port-wg').slideUp(window.slideTime);
+        this.$('.network-wg').slideUp(window.slideTime);
+      }
+    },
+    onWgSelect: function() {
+      this.setWgSelect(!this.getWgSelect());
+    },
     getIpv6Select: function() {
       return this.$('.ipv6-toggle .selector').hasClass('selected');
     },
@@ -261,7 +284,10 @@ define([
     },
     onInputChange: function(evt) {
       if ($(evt.target).parent().hasClass('network')) {
-        this.updateMaxHosts();
+        this.updateMaxHosts(false);
+      }
+      if ($(evt.target).parent().hasClass('network-wg')) {
+        this.updateMaxHosts(true);
       }
 
       if (this.newServer) {
@@ -303,8 +329,18 @@ define([
       }
       return dnsServers;
     },
-    updateMaxHosts: function() {
-      var value = this.$('.network input').val().split('/');
+    updateMaxHosts: function(wg) {
+      var tar;
+      var tarLabel;
+      if (wg) {
+        tar = this.$('.network-wg input');
+        tarLabel = this.$('.network-wg .label');
+      } else {
+        tar = this.$('.network input');
+        tarLabel = this.$('.network .label');
+      }
+
+      var value = tar.val().split('/');
       var maxHosts = {
         8: '16m',
         9: '8m',
@@ -333,12 +369,12 @@ define([
       if (value.length === 2) {
         var max = maxHosts[value[1]];
         if (max) {
-          this.$('.network .label').text(max + ' Users');
-          this.$('.network .label').show();
+          tarLabel.text(max + ' Users');
+          tarLabel.show();
           return;
         }
       }
-      this.$('.network .label').hide();
+      tarLabel.hide();
     },
     getGroups: function() {
       var groups = [];
@@ -360,7 +396,9 @@ define([
     onOk: function() {
       var name = this.$('.name input').val();
       var network = this.$('.network input').val();
+      var networkWg = this.$('.network-wg input').val();
       var port = parseInt(this.$('input.port').val(), 10);
+      var portWg = parseInt(this.$('.port-wg input').val(), 10);
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var ipv6 = this.getIpv6Select();
@@ -385,6 +423,7 @@ define([
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
       var restrictRoutes = this.getRestrictRoutesSelect();
+      var wg = this.getWgSelect();
       var vxlan = this.getVxlanSelect();
       var cipher = this.$('.cipher select').val();
       var hash = this.$('.hash select').val();
@@ -409,8 +448,16 @@ define([
         this.setAlert('danger', 'Network can not be empty.', '.network');
         return;
       }
+      if (wg && !networkWg) {
+        this.setAlert('danger', 'WG Network can not be empty.', '.network-wg');
+        return;
+      }
       if (!port) {
         this.setAlert('danger', 'Port can not be empty.', 'input.port');
+        return;
+      }
+      if (wg && !portWg) {
+        this.setAlert('danger', 'WG Port can not be empty.', '.port-wg');
         return;
       }
       if (!searchDomain) {
@@ -433,15 +480,18 @@ define([
         'name': name,
         'type': this.model.get('type'),
         'network': network,
+        'network_wg': networkWg,
         'groups': groups,
         'bind_address': bindAddress,
         'port': port,
+        'port_wg': portWg,
         'protocol': protocol,
         'dh_param_bits': dhParamBits,
         'network_mode': networkMode,
         'network_start': networkStart,
         'network_end': networkEnd,
         'restrict_routes': restrictRoutes,
+        'wg': wg,
         'ipv6': ipv6,
         'ipv6_firewall': ipv6Firewall,
         'multi_device': multiDevice,
