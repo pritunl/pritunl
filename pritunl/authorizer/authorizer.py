@@ -447,6 +447,25 @@ class Authorizer(object):
                 raise AuthError(
                     'User platform %s not allowed' % self.platform)
 
+        if self.user.mac_addresses:
+            if self.mac_addr not in self.user.mac_addresses:
+                self.user.audit_event(
+                    'user_connection',
+                    ('User connection to "%s" denied. User mac address' +
+                     'not allowed') % (self.server.name),
+                    mac_address=self.mac_addr,
+                    remote_addr=self.remote_ip,
+                )
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='User mac address not allowed',
+                )
+                raise AuthError(
+                    'User mac address %s not allowed' % self.mac_addr)
+
     def _check_password(self):
         if settings.vpn.stress_test or self.user.link_server_id:
             return
