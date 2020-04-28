@@ -144,6 +144,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.client-reconnect').slideUp(window.slideTime);
         return;
       } else {
@@ -175,6 +176,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
@@ -198,6 +200,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
         this.$('.sso-host').slideDown(window.slideTime);
@@ -229,6 +232,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
@@ -253,6 +257,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
@@ -276,6 +281,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-okta-mode').slideUp(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
@@ -307,6 +313,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
@@ -333,6 +340,7 @@ define([
         this.$('.sso-okta-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
@@ -356,6 +364,7 @@ define([
         this.$('.sso-okta-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
@@ -387,6 +396,7 @@ define([
         this.$('.sso-okta-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
@@ -417,6 +427,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
@@ -441,6 +452,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
@@ -468,6 +480,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
@@ -498,6 +511,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideDown(window.slideTime);
         this.$('.sso-google-key').slideDown(window.slideTime);
@@ -521,6 +535,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
@@ -545,6 +560,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
@@ -572,6 +588,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
@@ -602,6 +619,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideDown(window.slideTime);
         this.$('.sso-google-key').slideDown(window.slideTime);
@@ -633,6 +651,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
@@ -657,6 +676,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
@@ -684,6 +704,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
@@ -714,6 +735,7 @@ define([
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideDown(window.slideTime);
         this.$('.sso-google-key').slideDown(window.slideTime);
@@ -741,6 +763,7 @@ define([
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
+        this.$('.sso-radius-timeout').slideUp(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
         this.$('.sso-host').slideDown(window.slideTime);
@@ -772,6 +795,7 @@ define([
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideDown(window.slideTime);
         this.$('.sso-radius-secret').slideDown(window.slideTime);
+        this.$('.sso-radius-timeout').slideDown(window.slideTime);
       } else if (mode === 'radius_duo') {
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
@@ -795,6 +819,7 @@ define([
         this.$('.sso-google-email').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideDown(window.slideTime);
         this.$('.sso-radius-secret').slideDown(window.slideTime);
+        this.$('.sso-radius-timeout').slideDown(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
         this.$('.sso-host').slideDown(window.slideTime);
@@ -1297,6 +1322,7 @@ define([
       }
 
       this.setLoading('Saving settings...');
+
       this.model.clear();
       this.model.save(modelAttr, {
         success: function() {
