@@ -1322,7 +1322,6 @@ define([
       }
 
       this.setLoading('Saving settings...');
-
       this.model.clear();
       this.model.save(modelAttr, {
         success: function() {
