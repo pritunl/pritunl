@@ -1348,6 +1348,8 @@ class Clients(object):
                             connect_callback_once(True, data)
 
                     if not allow:
+                        self.instance_com.push_output(
+                            'ERROR User auth wg failed "%s"' % reason)
                         connect_callback_once(False, reason)
 
                     plugins.event(
