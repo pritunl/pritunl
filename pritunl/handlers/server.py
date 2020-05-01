@@ -371,6 +371,13 @@ def server_put_post(server_id=None):
         inactive_timeout = int(
             flask.request.json['inactive_timeout'] or 0) or None
 
+    session_timeout = None
+    session_timeout_def = False
+    if 'session_timeout' in flask.request.json:
+        session_timeout_def = True
+        session_timeout = int(
+            flask.request.json['session_timeout'] or 0) or None
+
     allowed_devices = None
     allowed_devices_def = False
     if 'allowed_devices' in flask.request.json:
@@ -606,6 +613,7 @@ def server_put_post(server_id=None):
             link_ping_interval=link_ping_interval,
             link_ping_timeout=link_ping_timeout,
             inactive_timeout=inactive_timeout,
+            session_timeout=session_timeout,
             allowed_devices=allowed_devices,
             max_clients=max_clients,
             max_devices=max_devices,
@@ -683,6 +691,8 @@ def server_put_post(server_id=None):
             svr.link_ping_timeout = link_ping_timeout
         if inactive_timeout_def:
             svr.inactive_timeout = inactive_timeout
+        if session_timeout_def:
+            svr.session_timeout = session_timeout
         if allowed_devices_def:
             svr.allowed_devices = allowed_devices
         if max_clients_def:
