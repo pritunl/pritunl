@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add server session timeout
+Support user MAC address validation
 
 Version 1.29.2395.63 2020-04-03
 -------------------------------
