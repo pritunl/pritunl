@@ -92,6 +92,7 @@ def user_get(org_id, user_id=None, page=None):
         'disabled',
         'bypass_secondary',
         'client_to_client',
+        'mac_addresses',
         'dns_servers',
         'dns_suffix',
         'port_forwarding',
@@ -231,6 +232,7 @@ def _create_user(users, org, user_data, remote_addr, pool):
         'bypass_secondary') else False
     client_to_client = True if user_data.get(
         'client_to_client') else False
+    mac_addresses = user_data.get('mac_addresses') or None
     dns_servers = user_data.get('dns_servers') or None
     dns_suffix = utils.filter_str(user_data.get('dns_suffix')) or None
     port_forwarding_in = user_data.get('port_forwarding')
@@ -288,8 +290,9 @@ def _create_user(users, org, user_data, remote_addr, pool):
     user = org.new_user(type=CERT_CLIENT, pool=pool, name=name,
         email=email, auth_type=auth_type, yubico_id=yubico_id, groups=groups,
         pin=pin, disabled=disabled, bypass_secondary=bypass_secondary,
-        client_to_client=client_to_client, dns_servers=dns_servers,
-        dns_suffix=dns_suffix, port_forwarding=port_forwarding)
+        client_to_client=client_to_client, mac_addresses=mac_addresses,
+        dns_servers=dns_servers,dns_suffix=dns_suffix,
+        port_forwarding=port_forwarding)
     user.audit_event('user_created',
         'User created from web console',
         remote_addr=remote_addr,
@@ -630,6 +633,24 @@ def user_put(org_id, user_id):
                 'error': YUBIKEY_BYPASS_SECONDARY,
                 'error_msg': YUBIKEY_BYPASS_SECONDARY_MSG,
             }, 400)
+
+    if 'mac_addresses' in flask.request.json:
+        mac_addresses = flask.request.json['mac_addresses'] or None
+        if user.mac_addresses != mac_addresses:
+            user.audit_event('user_updated',
+                'User mac addresses changed',
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.USER_UPDATE,
+                user.journal_data,
+                event_long='User mac addresses changed',
+                remote_address=remote_addr,
+            )
+
+            reset_user = True
+        user.mac_addresses = mac_addresses
 
     if 'dns_servers' in flask.request.json:
         dns_servers = flask.request.json['dns_servers'] or None
