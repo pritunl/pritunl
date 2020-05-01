@@ -20,8 +20,9 @@ def new_pooled_user(org, type):
 
 def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
         groups=None, auth_type=None, yubico_id=None, disabled=None,
-        resource_id=None, dns_servers=None, dns_suffix=None,
-        bypass_secondary=None, client_to_client=None, port_forwarding=None):
+        resource_id=None, mac_addresses=None, dns_servers=None,
+        dns_suffix=None, bypass_secondary=None, client_to_client=None,
+        port_forwarding=None):
     doc = {}
 
     if name is not None:
@@ -42,6 +43,8 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
         doc['disabled'] = disabled
     if resource_id is not None:
         doc['resource_id'] = resource_id
+    if mac_addresses is not None:
+        doc['mac_addresses'] = mac_addresses
     if dns_servers is not None:
         doc['dns_servers'] = dns_servers
     if dns_suffix is not None:
