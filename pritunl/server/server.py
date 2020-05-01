@@ -72,6 +72,7 @@ dict_fields = [
     'link_ping_interval',
     'link_ping_timeout',
     'inactive_timeout',
+    'session_timeout',
     'allowed_devices',
     'max_clients',
     'max_devices',
@@ -128,6 +129,7 @@ class Server(mongo.MongoObject):
         'link_ping_interval',
         'link_ping_timeout',
         'inactive_timeout',
+        'session_timeout',
         'dns_mapping',
         'debug',
         'pre_connect_msg',
@@ -209,9 +211,9 @@ class Server(mongo.MongoObject):
             jumbo_frames=None, lzo_compression=None, inter_client=None,
             ping_interval=None, ping_timeout=None, ping_timeout_wg=None,
             link_ping_interval=None, link_ping_timeout=None,
-            inactive_timeout=None,  allowed_devices=None,
-            max_clients=None, max_devices=None, replica_count=None,
-            vxlan=None, dns_mapping=None, debug=None,
+            inactive_timeout=None, session_timeout=None,
+            allowed_devices=None, max_clients=None, max_devices=None,
+            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
             pre_connect_msg=None, mss_fix=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
@@ -287,6 +289,8 @@ class Server(mongo.MongoObject):
             self.link_ping_timeout = link_ping_timeout
         if inactive_timeout is not None:
             self.inactive_timeout = inactive_timeout
+        if session_timeout is not None:
+            self.session_timeout = session_timeout
         if allowed_devices is not None:
             self.allowed_devices = allowed_devices
         if max_clients is not None:
@@ -387,6 +391,7 @@ class Server(mongo.MongoObject):
             'link_ping_interval': self.link_ping_interval,
             'link_ping_timeout': self.link_ping_timeout,
             'inactive_timeout': self.inactive_timeout,
+            'session_timeout': self.session_timeout,
             'allowed_devices': self.allowed_devices,
             'max_clients': self.max_clients,
             'max_devices': self.max_devices,
