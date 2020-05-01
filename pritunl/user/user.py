@@ -51,6 +51,7 @@ class User(mongo.MongoObject):
         'link_server_id',
         'bypass_secondary',
         'client_to_client',
+        'mac_addresses',
         'dns_servers',
         'dns_suffix',
         'port_forwarding',
@@ -67,8 +68,8 @@ class User(mongo.MongoObject):
     def __init__(self, org, name=None, email=None, pin=None, type=None,
             groups=None, auth_type=None, yubico_id=None, disabled=None,
             resource_id=None, bypass_secondary=None, client_to_client=None,
-            dns_servers=None, dns_suffix=None, port_forwarding=None,
-            **kwargs):
+            mac_addresses=None, dns_servers=None, dns_suffix=None,
+            port_forwarding=None, **kwargs):
         mongo.MongoObject.__init__(self, **kwargs)
 
         if org:
@@ -99,6 +100,8 @@ class User(mongo.MongoObject):
             self.bypass_secondary = bypass_secondary
         if client_to_client is not None:
             self.client_to_client = client_to_client
+        if mac_addresses is not None:
+            self.mac_addresses = mac_addresses
         if dns_servers is not None:
             self.dns_servers = dns_servers
         if dns_suffix is not None:
@@ -199,6 +202,7 @@ class User(mongo.MongoObject):
             'disabled': self.disabled,
             'bypass_secondary': self.bypass_secondary,
             'client_to_client': self.client_to_client,
+            'mac_addresses': self.mac_addresses,
             'dns_servers': self.dns_servers,
             'dns_suffix': self.dns_suffix,
             'port_forwarding': self.port_forwarding,
