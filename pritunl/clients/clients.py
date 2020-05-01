@@ -912,6 +912,7 @@ class Clients(object):
                 'user_name': user.name,
                 'user_type': user.type,
                 'timestamp': time.time(),
+                'timestamp_start': time.time(),
                 'dns_servers': dns_servers,
                 'dns_suffix': user.dns_suffix,
                 'device_id': device_id,
@@ -1041,6 +1042,7 @@ class Clients(object):
                 'user_name': user.name,
                 'user_type': user.type,
                 'timestamp': time.time(),
+                'timestamp_start': time.time(),
                 'timestamp_wg': time.time(),
                 'dns_servers': dns_servers,
                 'dns_suffix': user.dns_suffix,
@@ -2159,6 +2161,14 @@ class Clients(object):
 
                     if self.instance.sock_interrupt:
                         return
+
+                    if self.server.session_timeout and \
+                            time.time() - client['timestamp_start'] > \
+                            self.server.session_timeout:
+                        if len(client_id) > 32:
+                            self.instance.disconnect_wg(client_id)
+                        else:
+                            self.instance_com.client_kill(client_id)
 
                     try:
                         updated = self.clients.update_id(client_id, {
