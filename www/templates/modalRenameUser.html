@@ -72,6 +72,13 @@
       <option value="plugin" <%= auth_type === 'plugin' ? 'selected' : '' %>>Plugin</option>
     </select>
   </div>
+  <div class="form-group mac-addresses">
+    <label>Allowed MAC Addresses</label>
+    <input type="text" class="form-control"
+           placeholder="Enter MAC address" data-toggle="tooltip"
+           title="Comma separated list of MAC addresses client is allowed to connect from. The validity of the MAC address provided by the VPN client cannot be verified."
+           value="<%- mac_addresses ? mac_addresses.join(', ') : '' %>">
+  </div>
   <div class="form-group dns-servers">
     <label>DNS Forwarding Server</label>
     <input type="text" class="form-control"
