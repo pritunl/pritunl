@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Server improvements
+
 Version 1.29.2423.17 2020-05-01
 -------------------------------
 
