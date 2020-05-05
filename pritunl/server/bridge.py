@@ -62,22 +62,19 @@ class Bridge(object):
             host_interface,
         ])
         utils.check_output_logged([
-            'brctl',
-            'addbr',
-            self.bridge_interface,
+            'ip', 'link',
+            'add', self.bridge_interface,
+            'type', 'bridge',
         ])
         utils.check_output_logged([
-            'brctl',
-            'addif',
-            self.bridge_interface,
-            host_interface,
+            'ip', 'link',
+            'set', host_interface,
+            'master', self.bridge_interface,
         ])
         utils.check_output_logged([
-            'ifconfig',
-            host_interface,
-            '0.0.0.0',
-            'promisc',
-            'up',
+            'ip', 'link',
+            'set', 'dev', host_interface,
+            'promisc', 'on',
         ])
         utils.check_output_logged([
             'ifconfig',
@@ -111,8 +108,9 @@ class Bridge(object):
             pass
         try:
             utils.check_output_logged([
-                'brctl',
-                'delbr',
+                'ip',
+                'link',
+                'del',
                 self.bridge_interface,
             ])
         except subprocess.CalledProcessError:
@@ -200,17 +198,14 @@ class Bridge(object):
             interface,
         ])
         utils.check_output_logged([
-            'brctl',
-            'addif',
-            self.bridge_interface,
-            interface,
+            'ip', 'link',
+            'set', interface,
+            'master', self.bridge_interface,
         ])
         utils.check_output_logged([
-            'ifconfig',
-            interface,
-            '0.0.0.0',
-            'promisc',
-            'up',
+            'ip', 'link',
+            'set', 'dev', interface,
+            'promisc', 'on',
         ])
 
     def rem_interface(self, interface):
@@ -229,10 +224,9 @@ class Bridge(object):
             pass
         try:
             utils.check_output_logged([
-                'brctl',
-                'delif',
-                self.bridge_interface,
-                interface,
+                'ip', 'link',
+                'set', interface,
+                'nomaster',
             ])
         except subprocess.CalledProcessError:
             pass
