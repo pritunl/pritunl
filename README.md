@@ -61,34 +61,6 @@ sudo systemctl start mongodb pritunl
 sudo systemctl enable mongodb pritunl
 ```
 
-### amazonlinux 1
-
-```bash
-sudo tee /etc/yum.repos.d/mongodb-org-4.2.repo << EOF
-[mongodb-org-4.2]
-name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/amazon/2013.03/mongodb-org/4.2/x86_64/
-gpgcheck=1
-enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc
-EOF
-
-sudo tee /etc/yum.repos.d/pritunl.repo << EOF
-[pritunl]
-name=Pritunl Repository
-baseurl=https://repo.pritunl.com/stable/yum/centos/7/
-gpgcheck=1
-enabled=1
-EOF
-
-sudo yum -y install epel-release
-gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
-gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
-sudo yum -y install pritunl mongodb-org
-sudo service mongod start
-sudo start pritunl
-```
-
 ### amazonlinux 2
 
 ```bash
@@ -138,6 +110,34 @@ enabled=1
 EOF
 
 sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+sudo yum -y install pritunl mongodb-org
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
+```
+
+### centos 8
+
+```bash
+sudo tee /etc/yum.repos.d/mongodb-org-4.2.repo << EOF
+[mongodb-org-4.2]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/8/mongodb-org/4.2/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc
+EOF
+
+sudo tee /etc/yum.repos.d/pritunl.repo << EOF
+[pritunl]
+name=Pritunl Repository
+baseurl=https://repo.pritunl.com/stable/yum/centos/8/
+gpgcheck=1
+enabled=1
+EOF
+
+sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
 gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
 sudo yum -y install pritunl mongodb-org
@@ -232,6 +232,34 @@ sudo systemctl start mongod pritunl
 sudo systemctl enable mongod pritunl
 ```
 
+### oracle linux 8
+
+```bash
+sudo tee /etc/yum.repos.d/mongodb-org-4.2.repo << EOF
+[mongodb-org-4.2]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/8/mongodb-org/4.2/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.2.asc
+EOF
+
+sudo tee /etc/yum.repos.d/pritunl.repo << EOF
+[pritunl]
+name=Pritunl Repository
+baseurl=https://repo.pritunl.com/stable/yum/centos/8/
+gpgcheck=1
+enabled=1
+EOF
+
+sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+gpg --armor --export 7568D9BB55FF9E5287D586017AE645C0CF8E292A > key.tmp; sudo rpm --import key.tmp; rm -f key.tmp
+sudo yum -y install pritunl mongodb-org
+sudo systemctl start mongod pritunl
+sudo systemctl enable mongod pritunl
+```
+
 ### ubuntu xenial
 
 ```bash
@@ -261,6 +289,25 @@ EOF
 
 sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
 deb https://repo.pritunl.com/stable/apt bionic main
+EOF
+
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv E162F504A20CDF15827F718D4B7C549A058F8B6B
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv 7568D9BB55FF9E5287D586017AE645C0CF8E292A
+sudo apt-get update
+sudo apt-get --assume-yes install pritunl mongodb-server
+sudo systemctl start pritunl mongodb
+sudo systemctl enable pritunl mongodb
+```
+
+### ubuntu focal
+
+```bash
+sudo tee /etc/apt/sources.list.d/mongodb-org-4.2.list << EOF
+deb https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/4.2 multiverse
+EOF
+
+sudo tee /etc/apt/sources.list.d/pritunl.list << EOF
+deb https://repo.pritunl.com/stable/apt focal main
 EOF
 
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com --recv E162F504A20CDF15827F718D4B7C549A058F8B6B
