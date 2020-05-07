@@ -19,6 +19,7 @@ define([
       'public_address6': null,
       'public_addr6': null,
       'routed_subnet6': null,
+      'routed_subnet6_wg': null,
       'proxy_ndp': null,
       'local_address': null,
       'local_addr': null,
