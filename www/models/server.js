@@ -43,6 +43,7 @@ define([
       'link_ping_interval': null,
       'link_ping_timeout': null,
       'inactive_timeout': null,
+      'session_timeout': null,
       'allowed_devices': null,
       'max_clients': null,
       'max_devices': null,
