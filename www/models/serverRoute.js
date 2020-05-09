@@ -12,6 +12,7 @@ define([
       'comment': null,
       'metric': null,
       'virtual_network': null,
+      'wg_network': null,
       'network_link': null,
       'server_link': null,
       'nat': null,
