@@ -52,6 +52,7 @@ define([
       'public_address': null,
       'public_address6': null,
       'routed_subnet6': null,
+      'routed_subnet6_wg': null,
       'reverse_proxy': null,
       'theme': null,
       'server_port': null,
