@@ -14,6 +14,10 @@
   <label>Routed IPv6 Subnet</label>
   <input type="text" class="form-control" placeholder="Enter routed subnet" data-toggle="tooltip" title="IPv6 subnet that is routed to the host, must be at least /64" value="<%- routed_subnet6 %>">
 </div>
+<div class="form-group routed-subnet6-wg">
+  <label>Routed WG IPv6 Subnet</label>
+  <input type="text" class="form-control" placeholder="Enter routed subnet" data-toggle="tooltip" title="IPv6 WG subnet that is routed to the host, must be at least /64" value="<%- routed_subnet6_wg %>">
+</div>
 <div class="form-group toggle-form proxy-ndp-toggle">
   <label>Proxy NDP</label>
   <div class="selector <%= proxy_ndp ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Proxy IPv6 Neighbor Discovery Protocol when using a routed IPv6 subnet.">
