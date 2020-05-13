@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue removing linked servers
+
 Version 1.29.2427.61 2020-05-05
 -------------------------------
 
