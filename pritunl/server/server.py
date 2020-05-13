@@ -1181,12 +1181,39 @@ class Server(mongo.MongoObject):
             tran.commit()
 
     def remove(self):
+        link_ids = []
+        for link in self.links:
+            link_ids.append(link.get('server_id'))
+
+        spec = {
+            '_id': {'$in': link_ids},
+        }
+        project = {
+            '_id': True,
+            'status': True,
+        }
+
+        for doc in self.collection.find(spec, project):
+            if doc['status'] == ONLINE:
+                raise ServerLinkOnlineError(
+                    'Linked servers must be offline to unlink')
+
+        for link in self.links:
+            self.collection.update({
+                '_id': link.get('server_id'),
+            }, {'$pull': {
+                'links': {'server_id': self.id},
+            }})
+
         queue.stop(spec={
             'type': 'dh_params',
             'server_id': self.id,
         })
         self.remove_primary_user()
+
         mongo.MongoObject.remove(self)
+
+        return link_ids
 
     def iter_links(self, fields=None):
         from pritunl.server.utils import iter_servers
