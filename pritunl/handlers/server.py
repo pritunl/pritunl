@@ -740,8 +740,17 @@ def server_delete(server_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
-    svr = server.get_by_id(server_id, fields=('_id', 'name', 'organizations'))
-    svr.remove()
+    svr = server.get_by_id(server_id, fields=(
+        '_id', 'name', 'organizations', 'links'))
+
+    try:
+        link_ids = svr.remove()
+    except ServerLinkOnlineError:
+        return utils.jsonify({
+            'error': SERVER_NOT_OFFLINE,
+            'error_msg': SERVER_NOT_OFFLINE_UNLINK_SERVER_MSG,
+        }, 400)
+
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
     event.Event(type=SERVERS_UPDATED)
     for org in svr.iter_orgs():
