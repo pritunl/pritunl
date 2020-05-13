@@ -1608,10 +1608,14 @@ class ServerInstance(object):
 
             for link_doc in self.server.links:
                 if self.server.id > link_doc['server_id']:
+                    linked_server = get_by_id(link_doc['server_id'])
+                    if not linked_server:
+                        continue
+
                     self.state = 'instance_link'
                     instance_link = ServerInstanceLink(
                         server=self.server,
-                        linked_server=get_by_id(link_doc['server_id']),
+                        linked_server=linked_server,
                     )
                     self.server_links.append(instance_link)
                     instance_link.start()
