@@ -752,7 +752,12 @@ def server_delete(server_id):
         }, 400)
 
     logger.LogEntry(message='Deleted server "%s".' % svr.name)
+
     event.Event(type=SERVERS_UPDATED)
+    event.Event(type=SERVER_LINKS_UPDATED, resource_id=server_id)
+    for link_id in link_ids:
+        event.Event(type=SERVER_LINKS_UPDATED, resource_id=link_id)
+
     for org in svr.iter_orgs():
         event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
