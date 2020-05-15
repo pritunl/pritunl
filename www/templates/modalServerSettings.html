@@ -104,6 +104,10 @@
       <label>User Inactive Timeout</label>
       <input type="number" class="form-control" placeholder="Enter inactive timeout" data-toggle="tooltip" title="Optional, disconnect users after the specified number of seconds of inactivity." min="0" step="0.1" value="<%- inactive_timeout || '' %>" autocapitalize="off">
     </div>
+    <div class="session-timeout form-group">
+      <label>User Session Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter session timeout" data-toggle="tooltip" title="Optional, disconnect users after the specified number of seconds." min="0" step="0.1" value="<%- session_timeout || '' %>" autocapitalize="off">
+    </div>
     <div class="max-clients form-group">
       <label>Max Clients</label>
       <input type="number" class="form-control" placeholder="Enter max clients" data-toggle="tooltip" title="Maximum number of clients connected to a server or to each server replica." min="0" value="<%- max_clients === -1 ? '' : max_clients %>" autocapitalize="off">
