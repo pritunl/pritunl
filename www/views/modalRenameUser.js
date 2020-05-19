@@ -160,6 +160,16 @@ define([
         }
       }
 
+      var macAddr;
+      var macAddrs = [];
+      var macAddrsTemp = this.$('.mac-addresses input').val().split(',');
+      for (i = 0; i < macAddrsTemp.length; i++) {
+        macAddr = $.trim(macAddrsTemp[i]);
+        if (macAddr) {
+          macAddrs.push(macAddr);
+        }
+      }
+
       var dnsServer;
       var dnsServers = [];
       var dnsServersTemp = this.$('.dns-servers input').val().split(',');
@@ -192,6 +202,7 @@ define([
         network_links: networkLinks,
         bypass_secondary: bypassSecondary,
         client_to_client: clientToClient,
+        mac_addresses: macAddrs,
         dns_servers: dnsServers,
         dns_suffix: dnsSuffix,
         port_forwarding: portForwarding,
