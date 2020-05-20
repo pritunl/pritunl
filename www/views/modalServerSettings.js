@@ -415,6 +415,8 @@ define([
         this.$('.link-ping-timeout input').val(), 10);
       var inactiveTimeout = parseFloat(
         this.$('.inactive-timeout input').val(), 10);
+      var sessionTimeout = parseFloat(
+        this.$('.session-timeout input').val(), 10);
       var allowedDevices = this.$('.allowed-devices select').val();
       var maxClients = parseInt(this.$('.max-clients input').val(), 10);
       var maxDevices = parseInt(this.$('.max-devices input').val(), 10);
@@ -507,6 +509,7 @@ define([
         'link_ping_interval': linkPingInterval,
         'link_ping_timeout': linkPingTimeout,
         'inactive_timeout': inactiveTimeout,
+        'session_timeout': sessionTimeout,
         'allowed_devices': allowedDevices,
         'max_clients': maxClients,
         'max_devices': maxDevices,
