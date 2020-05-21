@@ -935,6 +935,7 @@ define([
       var publicAddress = this.$('.public-address input').val();
       var publicAddress6 = this.$('.public-address6 input').val();
       var routedSubnet6 = this.$('.routed-subnet6 input').val();
+      var routedSubnet6Wg = this.$('.routed-subnet6-wg input').val();
       var reverseProxy = this.$('.reverse-proxy select').val();
       var theme = this.$('.theme:visible select').val();
       var emailFrom = this.$('.email-from input').val();
@@ -1230,6 +1231,7 @@ define([
         public_address: publicAddress,
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
+        routed_subnet6_wg: routedSubnet6Wg,
         reverse_proxy: reverseProxy,
         theme: theme,
         server_port: serverPort,
