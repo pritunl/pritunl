@@ -15,6 +15,8 @@ def auth_yubico(yubikey):
     if len(yubikey) != 44:
         return False, None
 
+    yubikey = yubikey.lower()
+
     public_id = yubikey[:12]
 
     client = yubico_client.Yubico(
