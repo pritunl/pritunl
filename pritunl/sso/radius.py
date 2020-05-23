@@ -34,7 +34,7 @@ def verify_radius(username, password):
             User_Name=(
                 settings.app.sso_radius_prefix or '') + username.encode(),
         )
-        req['User-Password'] = req.PwCrypt(password.encode())
+        req['User-Password'] = req.PwCrypt(password)
 
         try:
             reply = conn.SendPacket(req)
