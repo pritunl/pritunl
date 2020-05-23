@@ -334,7 +334,7 @@ def _auth_plugin(username, password, remote_addr):
 @auth.open_auth
 def auth_session_post():
     username = utils.json_filter_str('username')[:128]
-    password = utils.json_str('password')
+    password = flask.request.json['password'].encode('utf-8')
     if password:
         password = password[:128]
     otp_code = utils.json_opt_filter_str('otp_code')
