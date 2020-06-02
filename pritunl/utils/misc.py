@@ -505,7 +505,7 @@ def redirect(location, code=302):
 
 def get_url_root():
     url_root = flask.request.headers.get('PR-Forwarded-Url')
-    if settings.conf.server_ssl:
+    if settings.conf.ssl:
         url_root = url_root.replace('http://', 'https://', 1)
 
     if url_root[-1] == '/':
