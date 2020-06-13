@@ -9,7 +9,7 @@
   </div>
   <div class="priority form-group">
     <label>Priority</label>
-    <input type="number" class="form-control" placeholder="Enter priority" data-toggle="tooltip" title="Priority of host, available host with highest priority will selected" min="1" step="1" value="<%- priority || 1 %>" autocapitalize="off">
+    <input type="number" class="form-control" placeholder="Enter priority" data-toggle="tooltip" title="Priority of host, available host with highest priority will selected. Failover on network partitions will not function if priority is used" min="1" step="1" value="<%- priority || 1 %>" autocapitalize="off">
   </div>
 </div>
 <div class="advanced form-group">
