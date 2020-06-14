@@ -2193,7 +2193,8 @@ class Clients(object):
                             'real_address': client['real_address'],
                         }})
                         if not response['updatedExisting']:
-                            logger.error('Client lost unexpectedly', 'server',
+                            logger.error('Client lost unexpectedly',
+                                'server',
                                 server_id=self.server.id,
                                 instance_id=self.instance.id,
                             )
@@ -2212,7 +2213,8 @@ class Clients(object):
                             }})
                     except:
                         self.clients_queue.append(client_id)
-                        logger.exception('Failed to update client', 'server',
+                        logger.exception('Failed to update client',
+                            'server',
                             server_id=self.server.id,
                             instance_id=self.instance.id,
                         )
