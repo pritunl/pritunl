@@ -88,7 +88,7 @@ require {
   type root_t;
   type security_t;
   type sysctl_fs_t;
-  type tmpfs_t;
+  type cloud_init_t;
 }
 
 type pritunl_t;
@@ -289,9 +289,10 @@ allow pritunl_t unreserved_port_t:tcp_socket { name_bind name_connect };
 allow pritunl_t unreserved_port_t:udp_socket name_bind;
 allow pritunl_t autofs_t:dir write;
 allow pritunl_t device_t:dir { add_name write };
-allow pritunl_t device_t:file { create getattr open read };
+allow pritunl_t device_t:file { create getattr open read write };
 allow pritunl_t hugetlbfs_t:dir { search read add_name write };
 allow pritunl_t ldconfig_cache_t:dir { search read };
+allow pritunl_t ldconfig_cache_t:file { read };
 allow pritunl_t random_device_t:chr_file { read open };
 allow pritunl_t boot_t:dir { add_name write };
 allow pritunl_t configfs_t:dir { add_name write search };
@@ -302,6 +303,8 @@ allow pritunl_t self:netlink_generic_socket { bind create getattr read write };
 allow pritunl_t self:system module_load;
 allow pritunl_t sysctl_fs_t:dir search;
 allow pritunl_t tmpfs_t:dir { add_name write };
+allow pritunl_t tmpfs_t:file { open read write };
+allow pritunl_t cloud_init_t:dir search;
 
 #################################
 # ndppd
@@ -313,11 +316,11 @@ allow pritunl_t self:rawip_socket ioctl;
 # todo
 #################################
 allow pritunl_t shell_exec_t:file { execute execute_no_trans };
-allow pritunl_t bin_t:file { execute execute_no_trans };
+allow pritunl_t bin_t:file { execute execute_no_trans map };
 allow pritunl_t unconfined_t:dir search;
 allow pritunl_t unconfined_t:file { getattr open read };
 allow pritunl_t unconfined_service_t:dir search;
 allow pritunl_t unconfined_service_t:file { getattr open read };
 
 allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read };
-allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read };
+allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read map };

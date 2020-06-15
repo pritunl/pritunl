@@ -11,6 +11,7 @@ require {
   type proc_net_t;
   type sysctl_net_t;
   type unreserved_port_t;
+  type sysfs_t;
 }
 
 type pritunl_web_t;
@@ -44,3 +45,4 @@ allow pritunl_web_t self:unix_dgram_socket { create ioctl };
 allow pritunl_web_t sysctl_net_t:dir search;
 allow pritunl_web_t sysctl_net_t:file { open read };
 allow pritunl_web_t unreserved_port_t:tcp_socket name_connect;
+allow pritunl_web_t sysfs_t:file read;
