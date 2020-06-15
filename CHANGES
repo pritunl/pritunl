@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add selinux policy for rhel8
+
 Version 1.29.2435.70 2020-05-13
 -------------------------------
 
