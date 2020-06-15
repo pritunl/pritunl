@@ -41,8 +41,8 @@ def user_disconnected(host_id, server_id, org_id, user_id, host_name,
 # [SYNCHRONOUS] Called on user connect must return True or False to allow
 # connection and None if allowed or a string with reason if not allowed.
 def user_connect(host_id, server_id, org_id, user_id, host_name,
-        server_name, org_name, user_name, remote_ip, platform, device_name,
-        password, **kwargs):
+        server_name, org_name, user_name, remote_ip, mac_addr, platform,
+        device_id, device_name, password, **kwargs):
     if not 'auth_ok':
         return True, None
     else:

@@ -52,20 +52,27 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
             usr.remove()
             old_org_id = usr.org_id
 
-            usr = org.new_user(
+            new_usr = org.new_user(
                 name=usr.name,
                 email=usr.email,
+                pin=usr.pin,
                 type=usr.type,
                 groups=usr.groups,
                 auth_type=usr.auth_type,
                 yubico_id=usr.yubico_id,
                 disabled=usr.disabled,
+                resource_id=usr.resource_id,
                 bypass_secondary=usr.bypass_secondary,
                 client_to_client=usr.client_to_client,
+                mac_addresses=usr.mac_addresses,
                 dns_servers=usr.dns_servers,
                 dns_suffix=usr.dns_suffix,
                 port_forwarding=usr.port_forwarding,
             )
+            new_usr.otp_secret = usr.otp_secret
+
+            usr = new_usr
+            usr.commit()
 
             event.Event(type=ORGS_UPDATED)
             event.Event(type=USERS_UPDATED, resource_id=old_org_id)

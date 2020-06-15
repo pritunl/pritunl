@@ -47,8 +47,9 @@ class QueueInitUserPooled(QueueInitUser):
 @queue.add_reserve('queued_user')
 def reserve_queued_user(org, name=None, email=None, pin=None, type=None,
         groups=None, auth_type=None, yubico_id=None, disabled=None,
-        bypass_secondary=None, client_to_client=None, dns_servers=None,
-        dns_suffix=None, port_forwarding=None, resource_id=None, block=False):
+        bypass_secondary=None, client_to_client=None, mac_addresses=None,
+        dns_servers=None, dns_suffix=None, port_forwarding=None,
+        resource_id=None, block=False):
     reserve_id = str(org.id) + '-' + type
     reserve_data = {}
 
@@ -72,6 +73,8 @@ def reserve_queued_user(org, name=None, email=None, pin=None, type=None,
         reserve_data['bypass_secondary'] = bypass_secondary
     if client_to_client is not None:
         reserve_data['client_to_client'] = client_to_client
+    if mac_addresses is not None:
+        reserve_data['mac_addresses'] = mac_addresses
     if dns_servers is not None:
         reserve_data['dns_servers'] = dns_servers
     if dns_suffix is not None:
