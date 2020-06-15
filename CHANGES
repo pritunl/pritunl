@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue creating users
+
 Version 1.29.2468.29 2020-06-15
 -------------------------------
 
