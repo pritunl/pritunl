@@ -323,6 +323,9 @@ def get_cert_block(cert_data):
     return cert_data[start_index:end_index]
 
 def get_temp_path():
+    if not os.path.isdir(settings.conf.temp_path):
+        os.makedirs(settings.conf.temp_path)
+
     return os.path.join(settings.conf.temp_path, uuid.uuid4().hex)
 
 def check_openssl():
