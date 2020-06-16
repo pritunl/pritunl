@@ -1125,6 +1125,7 @@ rcvbuf 393216
 reneg-sec 2592000
 hash-size 1024 1024
 max-routes-per-client 1000
+txqueuelen 1000
 verb %s
 mute %s
 """
@@ -1154,6 +1155,7 @@ rcvbuf 393216
 reneg-sec 2592000
 hash-size 1024 1024
 max-routes-per-client 1000
+txqueuelen 1000
 verb %s
 mute %s
 """
