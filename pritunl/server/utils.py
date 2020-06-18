@@ -80,7 +80,7 @@ def get_used_resources(ignore_server_id):
     except KeyError:
         pass
     ports = ports.union(ports_wg)
-    
+
     networks = set(used_resources['networks'] or [])
     networks_wg = set(filter(None, used_resources['networks_wg']))
     networks = networks.union(networks_wg)
