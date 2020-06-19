@@ -486,7 +486,7 @@ def sync_public_ip(attempts=1, timeout=5):
             pass
 
         if not settings.local.public_ip:
-            logger.warning('Failed to get public ip address', 'utils')
+            logger.warning('Failed to get public ip6 address', 'utils')
 
 def ping(address, timeout=1):
     start = time.time()
