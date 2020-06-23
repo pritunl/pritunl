@@ -149,6 +149,9 @@ def _auth_radius(username, password, remote_addr):
 
     org = organization.get_by_id(org_id)
     if not org:
+        logger.error('Organization for sso does not exist', 'auth',
+            org_id=org_id,
+        )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
@@ -274,6 +277,9 @@ def _auth_plugin(username, password, remote_addr):
 
     org = organization.get_by_id(org_id)
     if not org:
+        logger.error('Organization for sso does not exist', 'auth',
+            org_id=org_id,
+        )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
