@@ -291,7 +291,7 @@ def admin_post():
             username=username,
             password=password,
             yubikey_id=yubikey_id,
-            default=True,
+            default=False,
             otp_auth=otp_auth,
             auth_api=auth_api,
             disabled=disabled,
