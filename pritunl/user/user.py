@@ -590,7 +590,8 @@ class User(mongo.MongoObject):
 
     def get_cache_key(self, suffix=None):
         if not self.cache_prefix:
-            raise AttributeError('Cached config object requires cache_prefix')
+            raise AttributeError(
+                'Cached config object requires cache_prefix')
 
         key = self.cache_prefix + '-' + self.org.id + '_' + self.id
         if suffix:
