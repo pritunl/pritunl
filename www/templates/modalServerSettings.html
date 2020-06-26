@@ -204,7 +204,7 @@
     </div>
     <div class="dns-mapping-toggle toggle-form form-group">
       <label>Enable VPN Client DNS Mapping</label>
-      <div class="selector <%= dns_mapping ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Map the vpn clients ip address to the .vpn domain such as example_user.example_org.vpn">
+      <div class="selector <%= dns_mapping ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Map the vpn clients ip address to the .vpn domain such as example_user.example_org.vpn This will conflict with the DNS port if systemd-resolve is running">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
