@@ -41,16 +41,6 @@ def user_get(org_id, user_id=None, page=None):
     if not org:
         return flask.abort(404)
 
-    if user_id:
-        usr = org.get_user(user_id)
-        if not usr:
-            return flask.abort(404)
-
-        resp = usr.dict()
-        if settings.app.demo_mode:
-            utils.demo_set_cache(resp)
-        return utils.jsonify(resp)
-
     page = flask.request.args.get('page', page)
     page = int(page) if page else page
     search = flask.request.args.get('search', None)
@@ -98,8 +88,17 @@ def user_get(org_id, user_id=None, page=None):
         'port_forwarding',
     )
 
-    for usr in org.iter_users(page=page, search=search,
-            search_limit=limit, fields=fields):
+    if user_id:
+        usr = org.get_user(user_id)
+        if not usr:
+            return flask.abort(404)
+
+        query = [usr]
+    else:
+        query = org.iter_users(page=page, search=search,
+            search_limit=limit, fields=fields)
+
+    for usr in query:
         users_id.append(usr.id)
 
         user_dict = usr.dict()
@@ -189,15 +188,20 @@ def user_get(org_id, user_id=None, page=None):
         users_data[doc['user_id']]['network_links'].append(doc['network'])
 
     ip_addrs_iter = server.multi_get_ip_addr(org_id, users_id)
-    for user_id, server_id, addr, addr6 in ip_addrs_iter:
-        server_data = users_servers[user_id].get(server_id)
+    for usr_id, server_id, addr, addr6 in ip_addrs_iter:
+        server_data = users_servers[usr_id].get(server_id)
         if server_data:
             if not server_data['virt_address']:
                 server_data['virt_address'] = addr
             if not server_data['virt_address6']:
                 server_data['virt_address6'] = addr6
 
-    if page is not None:
+    if user_id:
+        resp = users[0]
+        if settings.app.demo_mode:
+            utils.demo_set_cache(resp)
+        return utils.jsonify(resp)
+    elif page is not None:
         resp = {
             'page': page,
             'page_total': org.page_total,
