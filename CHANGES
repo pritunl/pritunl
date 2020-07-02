@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve user API
+
 Version 1.29.2468.79 2020-06-15
 -------------------------------
 
