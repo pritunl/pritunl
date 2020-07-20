@@ -303,6 +303,7 @@ class Host(mongo.MongoObject):
                         right_subnets = ['%s/32' % active_host.local_address]
 
                     links.append({
+                        'id': other_location.id,
                         'static': active_host.static,
                         'pre_shared_key': self.link.key,
                         'right': active_host.address6 \
@@ -364,6 +365,7 @@ class Host(mongo.MongoObject):
                                     right_subnets.append(route['network'])
 
                     links.append({
+                        'id': location.id,
                         'static': active_host.static,
                         'pre_shared_key': self.link.key,
                         'right': active_host.address6 \
