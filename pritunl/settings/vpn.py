@@ -8,6 +8,7 @@ class SettingsVpn(SettingsGroupMongo):
         'lib_iptables': False,
         'call_queue_threads': 16,
         'client_ttl': 300,
+        'server_poll_timeout': 5,
         'peer_limit': 300,
         'peer_limit_timeout': 10,
         'default_dh_param_bits': 2048,
