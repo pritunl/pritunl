@@ -166,7 +166,7 @@ def server_put_post(server_id=None):
     if 'network' in flask.request.json and \
             flask.request.json['network'] != '':
         network_def = True
-        network = flask.request.json['network'].trim()
+        network = flask.request.json['network'].encode().strip()
 
         try:
             if not _check_network_private(network):
@@ -185,7 +185,7 @@ def server_put_post(server_id=None):
     if wg and 'network_wg' in flask.request.json and \
             flask.request.json['network_wg'] != '':
         network_wg_def = True
-        network_wg = flask.request.json['network_wg'].trim()
+        network_wg = flask.request.json['network_wg'].encode().strip()
 
         try:
             if not _check_network_private(network_wg):
