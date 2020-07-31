@@ -54,6 +54,7 @@ class ServerInstanceLink(object):
             8 if self.server.debug else 3,
             settings.app.host_ping,
             settings.app.host_ping_ttl,
+            settings.vpn.server_poll_timeout,
         )
 
         if self.linked_server.lzo_compression != ADAPTIVE:

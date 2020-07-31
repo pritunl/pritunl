@@ -851,6 +851,7 @@ class User(mongo.MongoObject):
             HASHES[svr.hash],
             svr.ping_interval,
             svr.ping_timeout,
+            settings.vpn.server_poll_timeout,
         )
 
         if svr.lzo_compression != ADAPTIVE:

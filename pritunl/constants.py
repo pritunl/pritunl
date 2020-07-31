@@ -1178,7 +1178,7 @@ push-peer-info
 ping %s
 ping-restart %s
 hand-window 70
-server-poll-timeout 5
+server-poll-timeout %s
 reneg-sec 2592000
 sndbuf 393216
 rcvbuf 393216
@@ -1278,7 +1278,7 @@ push-peer-info
 ping %s
 ping-restart %s
 hand-window 70
-server-poll-timeout 5
+server-poll-timeout %s
 reneg-sec 2592000
 sndbuf 393216
 rcvbuf 393216
