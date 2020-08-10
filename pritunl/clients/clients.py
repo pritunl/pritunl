@@ -2207,7 +2207,7 @@ class Clients(object):
                         if self.server.multi_device and \
                                 self.server.replicating:
                             self.pool_collection.update({
-                                '_id': client['doc_id'],
+                                'client_id': client['doc_id'],
                             }, {'$set': {
                                 'timestamp': utils.now(),
                             }})
