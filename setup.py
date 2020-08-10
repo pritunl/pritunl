@@ -98,7 +98,7 @@ if install_systemd:
 for file_name in patch_files:
     for line in fileinput.input(file_name, inplace=True):
         line = line.replace('%PREFIX%', prefix)
-        print line.rstrip('\n')
+        print((line.rstrip('\n')))
 
 packages = ['pritunl']
 

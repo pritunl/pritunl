@@ -38,7 +38,7 @@ class DocDb(object):
         self._lock.acquire()
         try:
             index_count = 0
-            for index_key in self._index.keys():
+            for index_key in list(self._index.keys()):
                 val = query.get(index_key, None)
 
                 if val is not None:
@@ -61,9 +61,9 @@ class DocDb(object):
                 if not slow:
                     raise IndexError('Non indexed query')
 
-                for doc_id, doc in self._docs.items():
+                for doc_id, doc in list(self._docs.items()):
                     match = True
-                    for key, val in query.items():
+                    for key, val in list(query.items()):
                         if doc[key] != val:
                             match = False
                             break
@@ -75,12 +75,12 @@ class DocDb(object):
                             doc['id'] = doc_id
                             found.append(doc)
             elif index_count != need:
-                for doc_id, matched in possible.items():
+                for doc_id, matched in list(possible.items()):
                     if matched != index_count:
                         continue
                     doc = self._docs[doc_id]
                     match = True
-                    for key, val in query.items():
+                    for key, val in list(query.items()):
                         if doc[key] != val:
                             match = False
                             break
@@ -99,7 +99,7 @@ class DocDb(object):
     def find_all(self):
         found = []
 
-        for doc_id, doc in self._docs.items():
+        for doc_id, doc in list(self._docs.items()):
             doc = copy.deepcopy(doc)
             doc['id'] = doc_id
             found.append(doc)
@@ -133,7 +133,7 @@ class DocDb(object):
             elif doc_id in self._docs:
                 raise KeyError('Doc id already exists')
 
-            for index_key, index in self._index.items():
+            for index_key, index in list(self._index.items()):
                 val = doc.get(index_key)
                 if val is not None:
                     index[val].add(doc_id)
@@ -148,7 +148,7 @@ class DocDb(object):
         for doc_id in doc_ids:
             doc = self._docs[doc_id]
 
-            for key, val in update.items():
+            for key, val in list(update.items()):
                 if key in self._indexes:
                     index = self._index[key]
 
@@ -210,7 +210,7 @@ class DocDb(object):
         for doc_id in doc_ids:
             doc = self._docs.pop(doc_id)
 
-            for index_key, index in self._index.items():
+            for index_key, index in list(self._index.items()):
                 val = doc.get(index_key)
                 if val is not None:
                     val_index = index[val]

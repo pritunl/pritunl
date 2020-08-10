@@ -52,8 +52,8 @@ cur_names = set()
 for user in response.json():
     name = user['name']
     if name in cur_names:
-        print >> sys.stderr, name
+        print(name, file=sys.stderr)
     cur_names.add(name)
 
 for name in sorted(list(names - cur_names)):
-    print name
+    print(name)

@@ -215,8 +215,8 @@ class Server(host.Host):
             self._fdmap[fd.fileno()] = fd
             self._poll.register(fd.fileno(),
                     select.POLLIN | select.POLLPRI | select.POLLERR)
-        self._realauthfds = list(map(lambda x: x.fileno(), self.authfds))
-        self._realacctfds = list(map(lambda x: x.fileno(), self.acctfds))
+        self._realauthfds = list([x.fileno() for x in self.authfds])
+        self._realacctfds = list([x.fileno() for x in self.acctfds])
 
     def CreateReplyPacket(self, pkt, **attributes):
         """Create a reply packet.

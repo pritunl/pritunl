@@ -170,7 +170,7 @@ class ServerInstanceCom(object):
             self.push_output('COM> %s' % line)
 
     def wait_for_socket(self):
-        for _ in xrange(10000):
+        for _ in range(10000):
             if os.path.exists(self.socket_path):
                 return
             time.sleep(0.001)
@@ -233,7 +233,7 @@ class ServerInstanceCom(object):
                 timestamp_ttl = self.cur_timestamp - datetime.timedelta(
                     seconds=180)
 
-                for client_id, (timestamp, _, _) in self.client_bytes.items():
+                for client_id, (timestamp, _, _) in list(self.client_bytes.items()):
                     if timestamp < timestamp_ttl:
                         self.client_bytes.pop(client_id, None)
 

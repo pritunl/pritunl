@@ -23,7 +23,7 @@ import hmac
 import json
 import uuid
 import pymongo
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import requests
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -258,9 +258,9 @@ class User(mongo.MongoObject):
 
             if self.type != CERT_CA:
                 self.org.write_file(
-                    'ca_certificate', ca_cert_path, chmod=0600)
+                    'ca_certificate', ca_cert_path, chmod=0o600)
                 self.org.write_file(
-                    'ca_private_key', ca_key_path, chmod=0600)
+                    'ca_private_key', ca_key_path, chmod=0o600)
                 self.generate_otp_secret()
 
             try:
@@ -376,7 +376,7 @@ class User(mongo.MongoObject):
             try:
                 resp = requests.get(auth_server +
                     '/update/google?user=%s&license=%s' % (
-                        urllib.quote(self.email),
+                        urllib.parse.quote(self.email),
                         settings.app.license,
                     ))
 
@@ -420,11 +420,11 @@ class User(mongo.MongoObject):
                 resp = requests.get(auth_server +
                     ('/update/azure?user=%s&license=%s&' +
                     'directory_id=%s&app_id=%s&app_secret=%s') % (
-                        urllib.quote(self.name),
+                        urllib.parse.quote(self.name),
                         settings.app.license,
-                        urllib.quote(settings.app.sso_azure_directory_id),
-                        urllib.quote(settings.app.sso_azure_app_id),
-                        urllib.quote(settings.app.sso_azure_app_secret),
+                        urllib.parse.quote(settings.app.sso_azure_directory_id),
+                        urllib.parse.quote(settings.app.sso_azure_app_id),
+                        urllib.parse.quote(settings.app.sso_azure_app_secret),
                 ))
 
                 if resp.status_code != 200:
@@ -467,11 +467,11 @@ class User(mongo.MongoObject):
                 resp = requests.get(auth_server +
                     ('/update/authzero?user=%s&license=%s&' +
                      'app_domain=%s&app_id=%s&app_secret=%s') % (
-                        urllib.quote(self.name),
+                        urllib.parse.quote(self.name),
                         settings.app.license,
-                        urllib.quote(settings.app.sso_authzero_domain),
-                        urllib.quote(settings.app.sso_authzero_app_id),
-                        urllib.quote(settings.app.sso_authzero_app_secret),
+                        urllib.parse.quote(settings.app.sso_authzero_domain),
+                        urllib.parse.quote(settings.app.sso_authzero_app_id),
+                        urllib.parse.quote(settings.app.sso_authzero_app_secret),
                 ))
 
                 if resp.status_code != 200:
@@ -516,8 +516,8 @@ class User(mongo.MongoObject):
             try:
                 resp = requests.get(auth_server +
                     '/update/slack?user=%s&team=%s&license=%s' % (
-                        urllib.quote(self.name),
-                        urllib.quote(settings.app.sso_match[0]),
+                        urllib.parse.quote(self.name),
+                        urllib.parse.quote(settings.app.sso_match[0]),
                         settings.app.license,
                     ))
 
@@ -988,7 +988,7 @@ class User(mongo.MongoObject):
                         svr)
 
                     with open(server_conf_path, 'w') as ovpn_conf:
-                        os.chmod(server_conf_path, 0600)
+                        os.chmod(server_conf_path, 0o600)
                         ovpn_conf.write(client_conf)
                     tar_file.add(server_conf_path, arcname=conf_name)
                     os.remove(server_conf_path)
@@ -1020,7 +1020,7 @@ class User(mongo.MongoObject):
                         svr)
 
                     with open(server_conf_path, 'w') as ovpn_conf:
-                        os.chmod(server_conf_path, 0600)
+                        os.chmod(server_conf_path, 0o600)
                         ovpn_conf.write(client_conf)
                     zip_file.write(server_conf_path, arcname=conf_name)
                     os.remove(server_conf_path)
@@ -1048,7 +1048,7 @@ class User(mongo.MongoObject):
                 user_cert.write(self.certificate)
 
             with open(user_key_path, 'w') as user_key:
-                os.chmod(user_key_path, 0600)
+                os.chmod(user_key_path, 0o600)
                 user_key.write(self.private_key)
 
             utils.check_output_logged([
@@ -1088,7 +1088,7 @@ class User(mongo.MongoObject):
                 return None
 
             onc_certs = ''
-            for cert_id, cert in onc_certs_store.items():
+            for cert_id, cert in list(onc_certs_store.items()):
                 onc_certs += OVPN_ONC_CA_CERT % (cert_id, cert) + ',\n'
             onc_certs += OVPN_ONC_CLIENT_CERT % (
                 user_cert_id, user_key_base64)

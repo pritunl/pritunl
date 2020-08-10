@@ -17,7 +17,7 @@ import flask
 import threading
 import subprocess
 import os
-import urlparse
+import urllib.parse
 import cheroot.wsgi
 
 server = None
@@ -52,7 +52,7 @@ def redirect(location, code=302):
     if url_root[-1] == '/':
         url_root = url_root[:-1]
 
-    return flask.redirect(urlparse.urljoin(url_root, location), code)
+    return flask.redirect(urllib.parse.urljoin(url_root, location), code)
 
 @app.before_request
 def before_request():

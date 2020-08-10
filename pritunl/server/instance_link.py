@@ -87,7 +87,7 @@ class ServerInstanceLink(object):
             self.user.private_key.strip())
 
         with open(ovpn_conf_path, 'w') as ovpn_conf:
-            os.chmod(ovpn_conf_path, 0600)
+            os.chmod(ovpn_conf_path, 0o600)
             ovpn_conf.write(client_conf)
 
         return ovpn_conf_path

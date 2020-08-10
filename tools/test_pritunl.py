@@ -78,7 +78,7 @@ def _log_request(method, endpoint, start_time):
             color = '\033[93m'
         else:
             color = '\033[92m'
-    print '%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)
+    print(('%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)))
 
 _request = requests.api.request
 def request(method, endpoint, **kwargs):
@@ -377,7 +377,7 @@ class Data(SessionTestCase):
             content_disposition = response.headers['content-disposition']
             exp = r'^attachment; filename="pritunl_[0-9]+_[0-9]+_[0-9]+_' + \
                 '[0-9]+_[0-9]+_[0-9]+\.tar"$'
-            self.assertRegexpMatches(content_disposition, exp)
+            self.assertRegex(content_disposition, exp)
 
 
 class Key(SessionTestCase):
@@ -392,7 +392,7 @@ class Key(SessionTestCase):
 
         content_disposition = response.headers['content-disposition']
         exp = r'^attachment; filename="%s.tar"$' % TEST_USER_NAME
-        self.assertRegexpMatches(content_disposition, exp)
+        self.assertRegex(content_disposition, exp)
 
     @unittest.skipUnless(ENABLE_STANDARD_TESTS, 'Skipping test')
     def test_user_key_link_get_delete(self):
@@ -412,13 +412,13 @@ class Key(SessionTestCase):
         self.assertIn('uri_url', data)
 
         exp = r'^/key/[a-z0-9]+.tar$'
-        self.assertRegexpMatches(data['key_url'], exp)
+        self.assertRegex(data['key_url'], exp)
 
         exp = r'^/k/[a-zA-Z0-9]+$'
-        self.assertRegexpMatches(data['view_url'], exp)
+        self.assertRegex(data['view_url'], exp)
 
         exp = r'^/ku/[a-zA-Z0-9]+$'
-        self.assertRegexpMatches(data['uri_url'], exp)
+        self.assertRegex(data['uri_url'], exp)
 
 
         response = self.session.get(data['key_url'])
@@ -429,7 +429,7 @@ class Key(SessionTestCase):
 
         content_disposition = response.headers['content-disposition']
         exp = r'^attachment; filename="%s.tar"$' % TEST_USER_NAME
-        self.assertRegexpMatches(content_disposition, exp)
+        self.assertRegex(content_disposition, exp)
 
 
         response = self.session.get(data['view_url'])
@@ -453,7 +453,7 @@ class Key(SessionTestCase):
         self.assertNotEqual(end_index, -1)
         otp_secret = response.text[start_index:end_index]
         exp = r'^[A-Z0-9]+$'
-        self.assertRegexpMatches(otp_secret, exp)
+        self.assertRegex(otp_secret, exp)
 
         start_index = response.text.find('<a title="Download Key" href="') + 30
         end_index = response.text.find('">', start_index)
@@ -470,7 +470,7 @@ class Key(SessionTestCase):
         conf_url = response.text[start_index:end_index]
 
         exp = r'^/key/[a-z0-9]+\.ovpn$'
-        self.assertRegexpMatches(conf_url, exp)
+        self.assertRegex(conf_url, exp)
 
         start_index = response.text.find("text: 'otpauth://totp/") + 7
         end_index = response.text.find("',", start_index)
@@ -480,7 +480,7 @@ class Key(SessionTestCase):
 
         exp = r'^otpauth://totp/%s@%s\?secret\=%s$' % (
             TEST_USER_NAME, TEST_ORG_NAME, otp_secret)
-        self.assertRegexpMatches(otp_key, exp)
+        self.assertRegex(otp_key, exp)
 
         start_index = response.text.find("xmlhttp.open('DELETE', '") + 24
         end_index = response.text.find("', false);", start_index)
@@ -520,7 +520,7 @@ class Log(SessionTestCase):
         self.assertNotEqual(len(data), 0)
         for entry in data:
             self.assertIn('id', entry)
-            self.assertRegexpMatches(entry['id'], UUID_RE)
+            self.assertRegex(entry['id'], UUID_RE)
             self.assertIn('time', entry)
             self.assertIn('message', entry)
 
@@ -545,7 +545,7 @@ class Org(SessionTestCase):
 
         data = response.json()
         self.assertIn('id', data)
-        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertRegex(data['id'], UUID_RE)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_ORG_NAME + '2')
         org_id = data['id']
@@ -570,7 +570,7 @@ class Org(SessionTestCase):
         test_org_found = False
         for org in data:
             self.assertIn('id', org)
-            self.assertRegexpMatches(org['id'], UUID_RE)
+            self.assertRegex(org['id'], UUID_RE)
             self.assertIn('name', org)
             if org['name'] == TEST_ORG_NAME + '3':
                 test_org_found = True
@@ -627,7 +627,7 @@ class Server(SessionTestCase):
 
         data = response.json()
         self.assertIn('id', data)
-        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertRegex(data['id'], UUID_RE)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_SERVER_NAME + '2')
         self.assertIn('network', data)
@@ -705,7 +705,7 @@ class Server(SessionTestCase):
         test_server_found = False
         for server in data:
             self.assertIn('id', server)
-            self.assertRegexpMatches(server['id'], UUID_RE)
+            self.assertRegex(server['id'], UUID_RE)
             self.assertIn('name', server)
             self.assertIn('network', server)
             self.assertIn('interface', server)
@@ -777,7 +777,7 @@ class Server(SessionTestCase):
         test_server_org_found = False
         for server_org in data:
             self.assertIn('id', server_org)
-            self.assertRegexpMatches(server_org['id'], UUID_RE)
+            self.assertRegex(server_org['id'], UUID_RE)
             self.assertIn('server', server_org)
             self.assertEqual(server_org['server'], self.server_id)
             self.assertIn('name', server_org)
@@ -1113,7 +1113,7 @@ class User(SessionTestCase):
 
         data = response.json()
         self.assertIn('id', data)
-        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertRegex(data['id'], UUID_RE)
         self.assertIn('organization', data)
         self.assertEqual(data['organization'], self.org_id)
         self.assertIn('organization_name', data)
@@ -1136,7 +1136,7 @@ class User(SessionTestCase):
 
         data = response.json()
         self.assertIn('id', data)
-        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertRegex(data['id'], UUID_RE)
         self.assertIn('organization', data)
         self.assertEqual(data['organization'], self.org_id)
         self.assertIn('organization_name', data)
@@ -1158,7 +1158,7 @@ class User(SessionTestCase):
 
         data = response.json()
         self.assertIn('id', data)
-        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertRegex(data['id'], UUID_RE)
         self.assertIn('organization', data)
         self.assertEqual(data['organization'], self.org_id)
         self.assertIn('organization_name', data)
@@ -1179,7 +1179,7 @@ class User(SessionTestCase):
         test_user_found = False
         for user in data:
             self.assertIn('id', user)
-            self.assertRegexpMatches(user['id'], UUID_RE)
+            self.assertRegex(user['id'], UUID_RE)
             self.assertIn('organization', user)
             self.assertIn('organization_name', user)
             self.assertIn('name', user)
@@ -1234,7 +1234,7 @@ class User(SessionTestCase):
         self.assertIn('type', data)
         self.assertIn('otp_secret', data)
         self.assertNotEqual(data['otp_secret'], orig_otp_secret)
-        self.assertRegexpMatches(user['otp_secret'], r'^[A-Z0-9]+$')
+        self.assertRegex(user['otp_secret'], r'^[A-Z0-9]+$')
 
 
 class Stress(SessionTestCase):
@@ -1247,7 +1247,7 @@ class Stress(SessionTestCase):
 
         data = response.json()
         self.assertIn('id', data)
-        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertRegex(data['id'], UUID_RE)
         self.assertIn('organization', data)
         self.assertEqual(data['organization'], org_id)
         self.assertIn('organization_name', data)
@@ -1267,17 +1267,17 @@ class Stress(SessionTestCase):
 
         data = response.json()
         self.assertIn('id', data)
-        self.assertRegexpMatches(data['id'], UUID_RE)
+        self.assertRegex(data['id'], UUID_RE)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_ORG_NAME + '_stress')
         org_id = data['id']
 
         if THREADED_STRESS_TEST:
             num = 0
-            for i in xrange(8):
+            for i in range(8):
                 threads = []
 
-                for x in xrange(512):
+                for x in range(512):
                     name = '%s_%s' % (TEST_USER_NAME, str(num).zfill(4))
                     thread = threading.Thread(target=self._create_user,
                         args=(org_id, name))
@@ -1289,7 +1289,7 @@ class Stress(SessionTestCase):
                     thread.join()
 
         else:
-            for i in xrange(4096):
+            for i in range(4096):
                 name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
                 self._create_user(org_id, name)
 

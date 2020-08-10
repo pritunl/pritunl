@@ -507,8 +507,8 @@ def server_put_post(server_id=None):
 
         if not network_def:
             network_def = True
-            rand_range = range(215, 250)
-            rand_range_low = range(15, 215)
+            rand_range = list(range(215, 250))
+            rand_range_low = list(range(15, 215))
             random.shuffle(rand_range)
             random.shuffle(rand_range_low)
             rand_range += rand_range_low
@@ -527,8 +527,8 @@ def server_put_post(server_id=None):
             network_used.add(ipaddress.IPNetwork(network))
 
             network_wg_def = True
-            rand_range = range(215, 250)
-            rand_range_low = range(15, 215)
+            rand_range = list(range(215, 250))
+            rand_range_low = list(range(15, 215))
             random.shuffle(rand_range)
             random.shuffle(rand_range_low)
             rand_range += rand_range_low
@@ -546,7 +546,7 @@ def server_put_post(server_id=None):
 
         if not port_def:
             port_def = True
-            rand_ports = range(10000, 19999)
+            rand_ports = list(range(10000, 19999))
             random.shuffle(rand_ports)
             for rand_port in rand_ports:
                 if '%s%s' % (rand_port, protocol) not in port_used:
@@ -562,7 +562,7 @@ def server_put_post(server_id=None):
             port_used.add(port)
 
             port_wg_def = True
-            rand_port_wgs = range(10000, 19999)
+            rand_port_wgs = list(range(10000, 19999))
             random.shuffle(rand_port_wgs)
             for rand_port_wg in rand_port_wgs:
                 if '%s%s' % (rand_port_wg, protocol) not in port_used:

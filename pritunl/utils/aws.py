@@ -42,7 +42,7 @@ def get_metadata():
             region = aws_region
             break
 
-    for iface in metadata['network']['interfaces']['macs'].values():
+    for iface in list(metadata['network']['interfaces']['macs'].values()):
         vpc_id = iface['vpc-id']
         break
 

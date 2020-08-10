@@ -95,7 +95,7 @@ class Transaction(mongo.MongoObject):
             if kwargs:
                 tran_str += ', '
                 tran_str += ', '.join(['%s=%s' % (x, y)
-                    for x, y in kwargs.items()])
+                    for x, y in list(kwargs.items())])
 
             tran_str += ')\n'
         return tran_str

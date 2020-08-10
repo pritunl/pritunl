@@ -23,7 +23,7 @@ import hashlib
 import base64
 import datetime
 import threading
-import urlparse
+import urllib.parse
 import requests
 import json
 import nacl.public

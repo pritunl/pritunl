@@ -133,7 +133,7 @@ class Authorizer(object):
     def _check_call(self, func):
         try:
             func()
-        except AuthError, err:
+        except AuthError as err:
             self._callback(False, str(err))
             raise
         except AuthForked:

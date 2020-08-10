@@ -31,7 +31,7 @@ def setup_local():
         settings.local.setup_key = uuid.uuid4().hex
 
         with open(settings.conf.setup_key_path, 'w') as setup_key_file:
-            os.chmod(settings.conf.setup_key_path, 0600)
+            os.chmod(settings.conf.setup_key_path, 0o600)
             setup_key_file.write(settings.local.setup_key)
 
     settings.local.version = __version__

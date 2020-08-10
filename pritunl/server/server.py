@@ -520,7 +520,7 @@ class Server(mongo.MongoObject):
             users_links[doc['user_id']].add(doc['network'])
 
         user_ids = self.user_collection.find({
-            '_id': {'$in': users_links.keys()},
+            '_id': {'$in': list(users_links.keys())},
         }, {
             '_id': True,
         }).distinct('_id')
@@ -1229,7 +1229,7 @@ class Server(mongo.MongoObject):
 
     def create_primary_user(self):
         try:
-            org = self.iter_orgs().next()
+            org = next(self.iter_orgs())
         except StopIteration:
             self.stop()
             raise ServerMissingOrg('Primary user cannot be created ' + \
@@ -1261,7 +1261,7 @@ class Server(mongo.MongoObject):
         self.primary_user = None
 
     def add_org(self, org_id):
-        if not isinstance(org_id, basestring):
+        if not isinstance(org_id, str):
             org_id = org_id.id
 
         if org_id in self.organizations:
@@ -1273,7 +1273,7 @@ class Server(mongo.MongoObject):
         self._orgs_added.append(org_id)
 
     def remove_org(self, org_id):
-        if not isinstance(org_id, basestring):
+        if not isinstance(org_id, str):
             org_id = org_id.id
 
         if org_id not in self.organizations:

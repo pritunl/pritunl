@@ -1,4 +1,4 @@
-import Queue
+from . import queue
 import time
 import collections
 import threading
@@ -32,7 +32,7 @@ CHANNEL_BUFFER = 128
 class TunlDB(object):
     def __init__(self):
         self._path = None
-        self._set_queue = Queue.Queue()
+        self._set_queue = queue.Queue()
         self._data = collections.defaultdict(
             lambda: {'ttl': None, 'val': None})
         self._timers = {}
@@ -49,18 +49,18 @@ class TunlDB(object):
         while True:
             try:
                 self._set_queue.get(timeout=5)
-            except Queue.Empty:
+            except queue.Empty:
                 continue
             # Attempt to get more db sets form queue to reduce export calls
-            for _ in xrange(50):
+            for _ in range(50):
                 try:
                     self._set_queue.get(timeout=0.01)
-                except Queue.Empty:
+                except queue.Empty:
                     pass
             self.export_data()
 
     def _validate(self, value):
-        if value is not None and not isinstance(value, basestring):
+        if value is not None and not isinstance(value, str):
             raise TypeError('Value must be string')
 
     def persist(self, path, auto_export=True):
@@ -298,7 +298,7 @@ class TunlDB(object):
         if data:
             if count:
                 try:
-                    [data['val'].remove(value) for _ in xrange(count)]
+                    [data['val'].remove(value) for _ in range(count)]
                 except (AttributeError, ValueError):
                     pass
             else:
@@ -458,11 +458,11 @@ class TunlDB(object):
         temp_path = self._path + '_%s.tmp' % uuid.uuid4().hex
         try:
             data = self._data.copy()
-            timers = self._timers.keys()
+            timers = list(self._timers.keys())
             commit_log = copy.copy(self._commit_log)
 
             with open(temp_path, 'w') as db_file:
-                os.chmod(temp_path, 0600)
+                os.chmod(temp_path, 0o600)
                 export_data = []
 
                 for key in data:

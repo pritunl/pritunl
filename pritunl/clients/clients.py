@@ -696,7 +696,7 @@ class Clients(object):
                         for ip_addr in ip_pool:
                             try:
                                 self.pool_collection.insert({
-                                    '_id': long(ip_addr._ip),
+                                    '_id': int(ip_addr._ip),
                                     'server_id': self.server.id,
                                     'user_id': user_id,
                                     'mac_addr': mac_addr,
@@ -2421,14 +2421,14 @@ class Clients(object):
             self.clear_routes()
 
 def on_port_forwarding(msg):
-    for listener in _port_listeners.values():
+    for listener in list(_port_listeners.values()):
         listener(
             msg['message']['org_id'],
             msg['message']['user_id'],
         )
 
 def on_client(msg):
-    for listener in _client_listeners.values():
+    for listener in list(_client_listeners.values()):
         listener(
             msg['message']['state'],
             msg['message'].get('server_id'),

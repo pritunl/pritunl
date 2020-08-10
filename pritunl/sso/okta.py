@@ -1,26 +1,26 @@
 from pritunl import settings
 from pritunl import logger
 
-import urllib
-import httplib
+import urllib.request, urllib.parse, urllib.error
+import http.client
 import time
-import urlparse
+import urllib.parse
 import requests
 
 def _getokta_url():
-    parsed = urlparse.urlparse(settings.app.sso_saml_url)
+    parsed = urllib.parse.urlparse(settings.app.sso_saml_url)
     return '%s://%s' % (parsed.scheme, parsed.netloc)
 
 def get_user_id(username):
     try:
         response = requests.get(
-            _getokta_url() + '/api/v1/users/%s' % urllib.quote(username),
+            _getokta_url() + '/api/v1/users/%s' % urllib.parse.quote(username),
             headers={
                 'Accept': 'application/json',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
-    except httplib.HTTPException:
+    except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
             username=username,
         )
@@ -71,7 +71,7 @@ def auth_okta(username):
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
-    except httplib.HTTPException:
+    except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
             username=username,
             okta_app_id=okta_app_id,
@@ -128,7 +128,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
-    except httplib.HTTPException:
+    except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
             username=username,
             okta_user_id=user_id,
@@ -210,7 +210,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             },
             json=verify_data,
         )
-    except httplib.HTTPException:
+    except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
             username=username,
             user_id=user_id,
@@ -289,7 +289,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                     'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
                 },
             )
-        except httplib.HTTPException:
+        except http.client.HTTPException:
             logger.exception('Okta poll api error', 'sso',
                 username=username,
                 user_id=user_id,

@@ -36,7 +36,7 @@ def json_default(obj):
     raise TypeError(repr(obj) + ' is not JSON serializable')
 
 def jsonify(data=None, status_code=None):
-    if not isinstance(data, basestring):
+    if not isinstance(data, str):
         data = json.dumps(data, default=lambda x: str(x))
     response = flask.Response(response=data, mimetype='application/json')
     response.headers.add('Cache-Control',

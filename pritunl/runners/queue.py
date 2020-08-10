@@ -11,7 +11,7 @@ import threading
 import time
 
 running_queues = {}
-runner_queues = [utils.PyPriorityQueue() for _ in xrange(3)]
+runner_queues = [utils.PyPriorityQueue() for _ in range(3)]
 thread_limits = [threading.Semaphore(x) for x in (
     settings.app.queue_low_thread_limit,
     settings.app.queue_med_thread_limit,
@@ -29,7 +29,7 @@ def add_queue_item(queue_item):
     ))
 
     if queue_item.priority >= NORMAL:
-        for running_queue in running_queues.values():
+        for running_queue in list(running_queues.values()):
             if running_queue.priority >= queue_item.priority:
                 continue
 

@@ -289,7 +289,7 @@ class Organization(mongo.MongoObject):
 
     def create_user_key_link(self, user_id, one_time=False):
         success = False
-        for _ in xrange(256):
+        for _ in range(256):
             key_id = utils.rand_str(32)
 
             if one_time:

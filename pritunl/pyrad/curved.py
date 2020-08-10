@@ -63,7 +63,8 @@ class RADIUS(host.Host, protocol.DatagramProtocol):
     def createPacket(self, **kwargs):
         raise NotImplementedError('Attempted to use a pure base class')
 
-    def datagramReceived(self, datagram, (host, port)):
+    def datagramReceived(self, datagram, xxx_todo_changeme):
+        (host, port) = xxx_todo_changeme
         try:
             pkt = self.CreatePacket(packet=datagram)
         except packet.PacketError as err:

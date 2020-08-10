@@ -18,12 +18,12 @@ import pymongo
 import hashlib
 import base64
 import re
-import Queue
-import urllib2
+import queue
+import urllib.request, urllib.error, urllib.parse
 import json
 import math
 import psutil
-import urlparse
+import urllib.parse
 
 _null = open(os.devnull, 'w')
 
@@ -35,8 +35,8 @@ else:
     _srcfile = __file__
 _srcfile = os.path.normcase(_srcfile)
 
-PyQueue = Queue.Queue
-PyPriorityQueue = Queue.PriorityQueue
+PyQueue = queue.Queue
+PyPriorityQueue = queue.PriorityQueue
 
 def ObjectId(oid=None):
     if oid is not None:
@@ -270,7 +270,7 @@ def find_caller():
     return rv
 
 def rmtree(path):
-    for i in xrange(8):
+    for i in range(8):
         try:
             check_output_logged(['rm', '-rf', path])
             return
@@ -299,7 +299,7 @@ def generate_secret():
 
 def generate_secret_len(n):
     l = int(n*1.3)
-    for i in xrange(10):
+    for i in range(10):
         x = re.sub(r'[\W_]+', '', base64.b64encode(os.urandom(l)))[:n]
         if len(x) == n:
             return x
@@ -310,7 +310,7 @@ def generate_otp_secret():
     sha_hash.update(os.urandom(8192))
     byte_hash = sha_hash.digest()
 
-    for _ in xrange(6):
+    for _ in range(6):
         sha_hash = hashlib.sha512()
         sha_hash.update(byte_hash)
         byte_hash = sha_hash.digest()
@@ -343,7 +343,7 @@ def check_iptables_wait():
 def roundrobin(*iterables):
     # Recipe credited to George Sakkis
     pending = len(iterables)
-    nexts = itertools.cycle(iter(it).next for it in iterables)
+    nexts = itertools.cycle(iter(it).__next__ for it in iterables)
     while pending:
         try:
             for next in nexts:
@@ -362,13 +362,13 @@ def random_name():
 def stop_process(process):
     terminated = False
 
-    for _ in xrange(100):
+    for _ in range(100):
         try:
             process.send_signal(signal.SIGINT)
         except OSError as error:
             if error.errno != 3:
                 raise
-        for _ in xrange(4):
+        for _ in range(4):
             if process.poll() is not None:
                 terminated = True
                 break
@@ -377,7 +377,7 @@ def stop_process(process):
             break
 
     if not terminated:
-        for _ in xrange(10):
+        for _ in range(10):
             if process.poll() is not None:
                 terminated = True
                 break
@@ -458,7 +458,7 @@ def fnv64a(s):
 def sync_public_ip(attempts=1, timeout=5):
     from pritunl import logger
 
-    for i in xrange(attempts):
+    for i in range(attempts):
         url = settings.app.public_ip_server
         if settings.app.dedicated:
             url = settings.app.dedicated + '/ip'
@@ -467,9 +467,9 @@ def sync_public_ip(attempts=1, timeout=5):
             time.sleep(3)
             logger.info('Retrying get public ip address', 'utils')
         try:
-            request = urllib2.Request(url)
+            request = urllib.request.Request(url)
             request.add_header('User-Agent', 'pritunl')
-            response = urllib2.urlopen(request, timeout=timeout)
+            response = urllib.request.urlopen(request, timeout=timeout)
             settings.local.public_ip = str(json.load(response)['ip'])
             break
         except:
@@ -477,10 +477,10 @@ def sync_public_ip(attempts=1, timeout=5):
 
     if not settings.app.dedicated:
         try:
-            request = urllib2.Request(
+            request = urllib.request.Request(
                 settings.app.public_ip6_server)
             request.add_header('User-Agent', 'pritunl')
-            response = urllib2.urlopen(request, timeout=timeout)
+            response = urllib.request.urlopen(request, timeout=timeout)
             settings.local.public_ip6 = str(json.load(response)['ip'])
         except:
             pass
@@ -503,7 +503,7 @@ def get_process_cpu_mem():
     return proc.cpu_percent(interval=0.5), proc.memory_percent()
 
 def redirect(location, code=302):
-    location = urlparse.urljoin(get_url_root(), location)
+    location = urllib.parse.urljoin(get_url_root(), location)
     return flask.redirect(location, code)
 
 def get_url_root():

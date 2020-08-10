@@ -12,7 +12,7 @@ def _limiter_runner_thread():
         try:
             for limtr in limiter.limiters:
                 cur_time = time.time()
-                for peer, (expire, count) in limtr.peers_expire_count.items():
+                for peer, (expire, count) in list(limtr.peers_expire_count.items()):
                     if cur_time > expire:
                         limtr.peers_expire_count.pop(peer, None)
 

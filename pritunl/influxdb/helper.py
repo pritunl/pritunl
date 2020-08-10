@@ -133,14 +133,14 @@ class SeriesHelper(object):
             raise NameError(
                 'Expected {0}, got {1}.'.format(
                     sorted(cls._fields + cls._tags),
-                    kw.keys()))
+                    list(kw.keys())))
 
         cls._datapoints[cls._series_name.format(**kw)].append(
             cls._type(time=timestamp, **kw)
         )
 
         if cls._autocommit and \
-                sum(len(series) for series in cls._datapoints.values()) \
+                sum(len(series) for series in list(cls._datapoints.values())) \
                 >= cls._bulk_size:
             cls.commit()
 

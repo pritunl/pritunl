@@ -4,8 +4,8 @@ from pritunl import logger
 from pritunl import utils
 
 import time
-import urllib
-import httplib
+import urllib.request, urllib.parse, urllib.error
+import http.client
 import requests
 import xml.etree.ElementTree
 
@@ -42,10 +42,10 @@ def auth_onelogin(username):
         try:
             response = requests.get(
                 ONELOGIN_URL + '/api/v3/users/username/%s' % (
-                    urllib.quote(username)),
+                    urllib.parse.quote(username)),
                 auth=(settings.app.sso_onelogin_key, 'x'),
                 )
-        except httplib.HTTPException:
+        except http.client.HTTPException:
             logger.exception('OneLogin api error', 'sso',
                 username=username,
             )

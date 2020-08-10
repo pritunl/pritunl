@@ -405,7 +405,7 @@ class ServerInstance(object):
         server_conf += '<dh>\n%s\n</dh>\n' % self.server.dh_params
 
         with open(self.ovpn_conf_path, 'w') as ovpn_conf:
-            os.chmod(self.ovpn_conf_path, 0600)
+            os.chmod(self.ovpn_conf_path, 0o600)
             ovpn_conf.write(server_conf)
 
     def enable_ip_forwarding(self):
@@ -955,7 +955,7 @@ class ServerInstance(object):
                             instance_link.stop()
 
                         self.clean_exit = True
-                        for _ in xrange(10):
+                        for _ in range(10):
                             self.process.send_signal(signal.SIGKILL)
                             time.sleep(0.01)
                 except OSError:
@@ -1282,7 +1282,7 @@ class ServerInstance(object):
             raise
 
         with open(self.wg_private_key_path, 'w') as privatekey_file:
-            os.chmod(self.ovpn_conf_path, 0600)
+            os.chmod(self.ovpn_conf_path, 0o600)
             privatekey_file.write(private_key)
 
         self.wg_private_key = private_key.strip()
@@ -1411,7 +1411,7 @@ class ServerInstance(object):
             raise
 
     def disconnect_wg(self, wg_public_key):
-        for i in xrange(10):
+        for i in range(10):
             try:
                 utils.check_output_logged([
                     'wg', 'set', self.interface_wg,

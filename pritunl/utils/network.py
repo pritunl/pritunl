@@ -15,9 +15,9 @@ import pyroute2.netlink
 import socket
 
 _used_interfaces = set()
-_tun_interfaces = collections.deque(['tun%s' % _x for _x in xrange(100)])
-_tap_interfaces = collections.deque(['tap%s' % _x for _x in xrange(100)])
-_wg_interfaces = collections.deque(['wg%s' % _x for _x in xrange(100)])
+_tun_interfaces = collections.deque(['tun%s' % _x for _x in range(100)])
+_tap_interfaces = collections.deque(['tap%s' % _x for _x in range(100)])
+_wg_interfaces = collections.deque(['wg%s' % _x for _x in range(100)])
 _sock = None
 _sockfd = None
 _ip_route = pyroute2.iproute.IPRoute()
@@ -90,19 +90,19 @@ def get_interface_address6(iface):
 
 def get_ip_pool_reverse(network, network_start):
     ip_pool = network.iterhostsreversed()
-    ip_pool.next()
-    ip_pool.next()
+    next(ip_pool)
+    next(ip_pool)
 
     if network_start:
         network_break = network_start
 
         while True:
             try:
-                ip_addr = ip_pool.next()
+                ip_addr = next(ip_pool)
             except StopIteration:
                 ip_pool = network.iterhostsreversed()
-                ip_pool.next()
-                ip_pool.next()
+                next(ip_pool)
+                next(ip_pool)
                 return
 
             if ip_addr == network_break:
@@ -115,7 +115,7 @@ def ip_to_long(ip_str):
     ip.reverse()
     while len(ip) < 4:
         ip.insert(1, '0')
-    return sum(long(byte) << 8 * i for i, byte in enumerate(ip))
+    return sum(int(byte) << 8 * i for i, byte in enumerate(ip))
 
 def long_to_ip(ip_num):
     return '.'.join(map(str, [
@@ -142,12 +142,12 @@ def parse_network(network):
     return str(address.ip), str(address.netmask)
 
 def get_network_gateway(network):
-    return str(ipaddress.IPNetwork(network).iterhosts().next())
+    return str(next(ipaddress.IPNetwork(network).iterhosts()))
 
 def get_network_gateway_cidr(network):
     network = ipaddress.IPNetwork(network)
     cidr = network.prefixlen
-    return str(network.iterhosts().next()) + '/' + str(cidr)
+    return str(next(network.iterhosts())) + '/' + str(cidr)
 
 def get_default_interface():
     gateways = netifaces.gateways()
@@ -269,7 +269,7 @@ def get_interface_mac_address(iface):
 def find_interface(network):
     network = ipaddress.IPNetwork(network)
 
-    for interface, data in get_interfaces().items():
+    for interface, data in list(get_interfaces().items()):
         try:
             address = ipaddress.IPAddress(data['address'])
         except ValueError:
@@ -281,7 +281,7 @@ def find_interface(network):
 def find_interface_addr(addr):
     match_addr = ipaddress.IPAddress(addr)
 
-    for interface, data in get_interfaces().items():
+    for interface, data in list(get_interfaces().items()):
         try:
             address = ipaddress.IPAddress(data['address'])
         except ValueError:

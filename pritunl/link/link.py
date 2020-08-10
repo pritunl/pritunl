@@ -336,7 +336,7 @@ class Host(mongo.MongoObject):
                         excludes.add(exclude_id)
 
                     left_subnets = []
-                    for route in self.location.routes.values():
+                    for route in list(self.location.routes.values()):
                         if route['network'] not in left_subnets:
                             left_subnets.append(route['network'])
 
@@ -346,12 +346,12 @@ class Host(mongo.MongoObject):
                                 transit_id in locations_id and \
                                 transit_id not in loc_transit_excludes:
                             transit_loc = locations_id[transit_id]
-                            for route in transit_loc.routes.values():
+                            for route in list(transit_loc.routes.values()):
                                 if route['network'] not in left_subnets:
                                     left_subnets.append(route['network'])
 
                     right_subnets = []
-                    for route in location.routes.values():
+                    for route in list(location.routes.values()):
                         right_subnets.append(route['network'])
 
                     for transit_id in location.transits:
@@ -360,7 +360,7 @@ class Host(mongo.MongoObject):
                                 transit_id in locations_id and \
                                 transit_id not in transit_excludes:
                             transit_loc = locations_id[transit_id]
-                            for route in transit_loc.routes.values():
+                            for route in list(transit_loc.routes.values()):
                                 if route['network'] not in left_subnets:
                                     right_subnets.append(route['network'])
 
@@ -455,7 +455,7 @@ class Host(mongo.MongoObject):
                         excludes.add(exclude_id)
 
                     left_subnets = []
-                    for route in self.location.routes.values():
+                    for route in list(self.location.routes.values()):
                         if route['network'] not in left_subnets:
                             left_subnets.append(route['network'])
 
@@ -465,12 +465,12 @@ class Host(mongo.MongoObject):
                                 transit_id in locations_id and \
                                 transit_id not in loc_transit_excludes:
                             transit_loc = locations_id[transit_id]
-                            for route in transit_loc.routes.values():
+                            for route in list(transit_loc.routes.values()):
                                 if route['network'] not in left_subnets:
                                     left_subnets.append(route['network'])
 
                     right_subnets = []
-                    for route in location.routes.values():
+                    for route in list(location.routes.values()):
                         right_subnets.append(route['network'])
 
                     for transit_id in location.transits:
@@ -479,7 +479,7 @@ class Host(mongo.MongoObject):
                                 transit_id in locations_id and \
                                 transit_id not in transit_excludes:
                             transit_loc = locations_id[transit_id]
-                            for route in transit_loc.routes.values():
+                            for route in list(transit_loc.routes.values()):
                                 if route['network'] not in left_subnets:
                                     right_subnets.append(route['network'])
 
@@ -609,7 +609,7 @@ class Location(mongo.MongoObject):
                 static_location = True
 
         routes = []
-        for route_id, route in self.routes.items():
+        for route_id, route in list(self.routes.items()):
             route['id'] = route_id
             route['link_id'] = self.link_id
             route['location_id'] = self.id

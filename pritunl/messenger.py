@@ -17,7 +17,7 @@ def publish(channels, message, extra=None, transaction=None):
     }
 
     if extra:
-        for key, val in extra.items():
+        for key, val in list(extra.items()):
             doc[key] = val
 
     # ObjectId must be set by server and ObjectId order must match $natural
@@ -74,7 +74,7 @@ def get_cursor_id(channels):
     else:
         spec['channel'] = {'$in': channels}
 
-    for i in xrange(2):
+    for i in range(2):
         try:
             return collection.find(spec).sort(
                 '$natural', pymongo.DESCENDING)[0]['_id']

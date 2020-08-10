@@ -263,7 +263,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in itertools.chain(self._routes, self._nat_routes.keys()):
+        for route in itertools.chain(self._routes, list(self._nat_routes.keys())):
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
@@ -278,7 +278,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in itertools.chain(self._routes6, self._nat_routes6.keys()):
+        for route in itertools.chain(self._routes6, list(self._nat_routes6.keys())):
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.in_interface = self.virt_interface
@@ -402,7 +402,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in itertools.chain(self._routes, self._nat_routes.keys()):
+        for route in itertools.chain(self._routes, list(self._nat_routes.keys())):
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.out_interface = self.virt_interface
@@ -417,7 +417,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in itertools.chain(self._routes6, self._nat_routes6.keys()):
+        for route in itertools.chain(self._routes6, list(self._nat_routes6.keys())):
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.out_interface = self.virt_interface
@@ -689,7 +689,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in self._nat_routes.keys():
+        for route in list(self._nat_routes.keys()):
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.in_interface = self.virt_interface
@@ -723,7 +723,7 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in self._nat_routes6.keys():
+        for route in list(self._nat_routes6.keys()):
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 rule.in_interface = self.virt_interface
@@ -806,7 +806,7 @@ class Iptables(object):
             ])
 
     def _generate_pre_routing(self):
-        for mapping, network in self._netmaps.items():
+        for mapping, network in list(self._netmaps.items()):
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 rule.dst = mapping
@@ -845,7 +845,7 @@ class Iptables(object):
             cidrs6.add(cidr)
             sorted_routes6[cidr].append(route)
 
-        for route, interface in self._nat_routes.items():
+        for route, interface in list(self._nat_routes.items()):
             if route == '0.0.0.0/0':
                 all_interface = interface
                 continue
@@ -854,7 +854,7 @@ class Iptables(object):
             cidrs.add(cidr)
             sorted_nat_routes[cidr].append((route, interface))
 
-        for route, interface in self._nat_routes6.items():
+        for route, interface in list(self._nat_routes6.items()):
             if route == '::/0':
                 all_interface6 = interface
                 continue
@@ -1071,7 +1071,7 @@ class Iptables(object):
 
         _global_lock.acquire()
         try:
-            for i in xrange(3):
+            for i in range(3):
                 try:
                     utils.Process(
                         ['ip6tables' if ipv6 else 'iptables', '-I'] + rule,
@@ -1095,7 +1095,7 @@ class Iptables(object):
 
         _global_lock.acquire()
         try:
-            for i in xrange(3):
+            for i in range(3):
                 if ipv6:
                     if rule[0] == 'POSTROUTING' or rule[0] == 'PREROUTING':
                         if tables:
@@ -1139,7 +1139,7 @@ class Iptables(object):
 
         _global_lock.acquire()
         try:
-            for i in xrange(3):
+            for i in range(3):
                 try:
                     utils.Process(
                         ['ip6tables' if ipv6 else 'iptables', '-A'] + rule,
@@ -1163,7 +1163,7 @@ class Iptables(object):
 
         _global_lock.acquire()
         try:
-            for i in xrange(3):
+            for i in range(3):
                 if ipv6:
                     if rule[0] == 'POSTROUTING':
                         if tables:

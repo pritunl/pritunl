@@ -17,7 +17,7 @@ def listener_thread():
 
     while True:
         try:
-            for msg in messenger.subscribe(listener.channels.keys()):
+            for msg in messenger.subscribe(list(listener.channels.keys())):
                 for lstnr in listener.channels[msg['channel']]:
                     try:
                         queue.put(lstnr, msg)

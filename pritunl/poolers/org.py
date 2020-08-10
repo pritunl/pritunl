@@ -21,5 +21,5 @@ def fill_org():
         '_id': True,
     }).count()
 
-    for _ in xrange(settings.app.org_pool_size - org_pool_count):
+    for _ in range(settings.app.org_pool_size - org_pool_count):
         org = organization.new_org(type=ORG_POOL, block=False)

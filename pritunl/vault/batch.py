@@ -21,7 +21,7 @@ class Batch(object):
 
     def items(self):
         items = []
-        for item in self._items.values():
+        for item in list(self._items.values()):
             items.append(item)
         return items
 

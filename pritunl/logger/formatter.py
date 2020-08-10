@@ -43,7 +43,7 @@ class LogFormatter(logging.Formatter):
 
             if record.data:
                 width = len(max(record.data, key=len))
-                for key, val in record.data.items():
+                for key, val in list(record.data.items()):
                     formatted_record += '\n  %s = %s' % (
                         key.ljust(width),
                         json.dumps(val, default=lambda x: str(x)),

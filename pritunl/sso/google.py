@@ -1,7 +1,7 @@
 from pritunl import settings
 
 import json
-import StringIO
+import io
 import apiclient.discovery
 import oauth2client.service_account
 
@@ -25,7 +25,7 @@ def verify_google(user_email):
     credentials = oauth2client.service_account. \
         ServiceAccountCredentials.from_p12_keyfile_buffer(
         data['client_email'],
-        StringIO.StringIO(data['private_key']),
+        io.StringIO(data['private_key']),
         'notasecret',
         scopes=[
             'https://www.googleapis.com/auth/admin.directory.group.readonly',

@@ -305,7 +305,7 @@ build_num = 0
 
 # Run cmd
 if cmd == 'version':
-    print('%s v%s' % (app_name, cur_version))
+    print(('%s v%s' % (app_name, cur_version)))
     sys.exit(0)
 
 
@@ -329,11 +329,11 @@ if cmd == 'sync-releases':
 
         if response.status_code != 200:
             print('Failed to get repo releases on github')
-            print(response.json())
+            print((response.json()))
             sys.exit(1)
 
         for release in response.json():
-            print(release['tag_name'])
+            print((release['tag_name']))
 
             # Create gitlab release
             resp = requests.post(
@@ -352,7 +352,7 @@ if cmd == 'sync-releases':
 
             if resp.status_code not in (201, 409):
                 print('Failed to create releases on gitlab')
-                print(resp.json())
+                print((resp.json()))
                 sys.exit(1)
 
         if 'Link' not in response.headers or \
@@ -393,7 +393,7 @@ if cmd == 'set-version':
 
     if response.status_code != 200:
         print('Failed to get repo releases on github')
-        print(response.json())
+        print((response.json()))
         sys.exit(1)
 
     for release in response.json():
@@ -561,7 +561,7 @@ if cmd == 'set-version':
 
     if response.status_code != 201:
         print('Failed to create release on github')
-        print(response.json())
+        print((response.json()))
         sys.exit(1)
 
     subprocess.check_call(['git', 'pull'])
@@ -586,7 +586,7 @@ if cmd == 'set-version':
 
     if response.status_code != 201:
         print('Failed to create release on gitlab')
-        print(response.json())
+        print((response.json()))
         sys.exit(1)
 
 

@@ -54,7 +54,7 @@ def drop_index(coll, index, **kwargs):
         pass
 
 def clean_indexes():
-    for coll_name in mongo.collection_types.keys():
+    for coll_name in list(mongo.collection_types.keys()):
         coll = mongo.get_collection(coll_name)
         indexes = coll_indexes[coll_name]
 

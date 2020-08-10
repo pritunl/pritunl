@@ -6,7 +6,7 @@ from pritunl.exceptions import *
 from pritunl import settings
 
 import gzip
-import StringIO
+import io
 import shutil
 import os
 import datetime
@@ -75,7 +75,7 @@ class StaticFile(object):
         file_size = int(os.path.getsize(self.path))
 
         if self.gzip:
-            gzip_data = StringIO.StringIO()
+            gzip_data = io.StringIO()
             with open(self.path, 'rb') as static_file, \
                     gzip.GzipFile(fileobj=gzip_data, mode='wb') as gzip_file:
                 shutil.copyfileobj(static_file, gzip_file)

@@ -17,7 +17,7 @@ import flask
 import hmac
 import hashlib
 import base64
-import urlparse
+import urllib.parse
 import requests
 
 def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
@@ -500,7 +500,7 @@ def sso_callback_get():
         )
         return flask.abort(401)
 
-    params = urlparse.parse_qs(query)
+    params = urllib.parse.parse_qs(query)
 
     if doc.get('type') == SAML_AUTH:
         username = params.get('username')[0]

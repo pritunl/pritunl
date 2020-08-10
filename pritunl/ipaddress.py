@@ -513,7 +513,7 @@ class _BaseIP(_IPAddrBase):
         return  '%s' % self._string_from_ip_int(self._ip)
 
     def __hash__(self):
-        return hash(hex(long(self._ip)))
+        return hash(hex(int(self._ip)))
 
     def _get_address_key(self):
         return (self._version, self)
@@ -1091,7 +1091,7 @@ class _BaseV4(object):
 
         """
         octets = []
-        for _ in xrange(4):
+        for _ in range(4):
             octets.insert(0, str(ip_int & 0xFF))
             ip_int >>= 8
         return '.'.join(octets)
@@ -1199,7 +1199,7 @@ class IPv4Address(_BaseV4, _BaseIP):
         _BaseV4.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, int):
             self._ip = address
             if address < 0 or address > self._ALL_ONES:
                 raise AddressValueError(address)
@@ -1281,7 +1281,7 @@ class IPv4Network(_BaseV4, _BaseNet):
         _BaseV4.__init__(self, address)
 
         # Constructing from an integer or packed bytes.
-        if isinstance(address, (int, long, Bytes)):
+        if isinstance(address, (int, Bytes)):
             self.ip = IPv4Address(address)
             self._ip = self.ip._ip
             self._prefixlen = self._max_prefixlen
@@ -1435,7 +1435,7 @@ class _BaseV6(object):
         # This indicates that a run of zeroes has been skipped.
         try:
             skip_index, = (
-                [i for i in xrange(1, len(parts) - 1) if not parts[i]] or
+                [i for i in range(1, len(parts) - 1) if not parts[i]] or
                 [None])
         except ValueError:
             # Can't have more than one '::'
@@ -1469,12 +1469,12 @@ class _BaseV6(object):
 
         try:
             # Now, parse the hextets into a 128-bit integer.
-            ip_int = 0L
-            for i in xrange(parts_hi):
+            ip_int = 0
+            for i in range(parts_hi):
                 ip_int <<= 16
                 ip_int |= self._parse_hextet(parts[i])
             ip_int <<= 16 * parts_skipped
-            for i in xrange(-parts_lo, 0):
+            for i in range(-parts_lo, 0):
                 ip_int <<= 16
                 ip_int |= self._parse_hextet(parts[i])
             return ip_int
@@ -1593,7 +1593,7 @@ class _BaseV6(object):
 
         ip_int = self._ip_int_from_string(ip_str)
         parts = []
-        for i in xrange(self._HEXTET_COUNT):
+        for i in range(self._HEXTET_COUNT):
             parts.append('%04x' % (ip_int & 0xFFFF))
             ip_int >>= 16
         parts.reverse()
@@ -1773,7 +1773,7 @@ class IPv6Address(_BaseV6, _BaseIP):
         _BaseV6.__init__(self, address)
 
         # Efficient constructor from integer.
-        if isinstance(address, (int, long)):
+        if isinstance(address, int):
             self._ip = address
             if address < 0 or address > self._ALL_ONES:
                 raise AddressValueError(address)
@@ -1848,7 +1848,7 @@ class IPv6Network(_BaseV6, _BaseNet):
         _BaseV6.__init__(self, address)
 
         # Constructing from an integer or packed bytes.
-        if isinstance(address, (int, long, Bytes)):
+        if isinstance(address, (int, Bytes)):
             self.ip = IPv6Address(address)
             self._ip = self.ip._ip
             self._prefixlen = self._max_prefixlen

@@ -47,7 +47,7 @@ except NameError:
 if version_info[0] == 3:
     from urllib.parse import urlparse
 else:
-    from urlparse import urlparse
+    from urllib.parse import urlparse
 
 
 class InfluxDBClient(object):
@@ -419,7 +419,7 @@ localhost:8086/databasename', timeout=5, udp_port=159)
                                       tags=tags)
 
     def _batches(self, iterable, size):
-        for i in xrange(0, len(iterable), size):
+        for i in range(0, len(iterable), size):
             yield iterable[i:i + size]
 
     def _write_points(self,
@@ -628,7 +628,7 @@ localhost:8086/databasename', timeout=5, udp_port=159)
         """
         rsp = self.query("SHOW SERIES", database=database)
         series = []
-        for serie in rsp.items():
+        for serie in list(rsp.items()):
             series.append(
                 {
                     "name": serie[0][0],
@@ -730,7 +730,7 @@ localhost:8086/databasename', timeout=5, udp_port=159)
 
         if tags:
             query_str += ' WHERE ' + ' and '.join(["{0}='{1}'".format(k, v)
-                                                   for k, v in tags.items()])
+                                                   for k, v in list(tags.items())])
         self.query(query_str, database=database)
 
     def revoke_admin_privileges(self, username):

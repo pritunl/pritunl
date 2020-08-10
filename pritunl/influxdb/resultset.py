@@ -127,7 +127,7 @@ class ResultSet(object):
     def __repr__(self):
         items = []
 
-        for item in self.items():
+        for item in list(self.items()):
             items.append("'%s': %s" % (item[0], list(item[1])))
 
         return "ResultSet({%s})" % ", ".join(items)
@@ -135,12 +135,12 @@ class ResultSet(object):
     def __iter__(self):
         """ Iterating a ResultSet will yield one dict instance per serie result.
         """
-        for key in self.keys():
+        for key in list(self.keys()):
             yield list(self.__getitem__(key))
 
     def _tag_matches(self, tags, filter):
         """Checks if all key/values in filter match in tags"""
-        for tag_name, tag_value in filter.items():
+        for tag_name, tag_value in list(filter.items()):
             # using _sentinel as I'm not sure that "None"
             # could be used, because it could be a valid
             # serie_tags value : when a serie has no such tag
@@ -155,7 +155,7 @@ class ResultSet(object):
         return self.raw.get('series', [])
 
     def __len__(self):
-        return len(self.keys())
+        return len(list(self.keys()))
 
     def keys(self):
         """
