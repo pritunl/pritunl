@@ -2206,11 +2206,23 @@ class Clients(object):
 
                         if self.server.multi_device and \
                                 self.server.replicating:
-                            self.pool_collection.update({
+                            response = self.pool_collection.update({
                                 'client_id': client['doc_id'],
                             }, {'$set': {
                                 'timestamp': utils.now(),
                             }})
+
+                            if not response['updatedExisting']:
+                                logger.error('Client pool lost unexpectedly',
+                                    'server',
+                                    server_id=self.server.id,
+                                    instance_id=self.instance.id,
+                                )
+                                if len(client_id) > 32:
+                                    self.instance.disconnect_wg(client_id)
+                                else:
+                                    self.instance_com.client_kill(client_id)
+                                continue
                     except:
                         self.clients_queue.append(client_id)
                         logger.exception('Failed to update client',
