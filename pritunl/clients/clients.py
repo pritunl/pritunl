@@ -2197,6 +2197,7 @@ class Clients(object):
                                 'server',
                                 server_id=self.server.id,
                                 instance_id=self.instance.id,
+                                client_id=client['doc_id'],
                             )
                             if len(client_id) > 32:
                                 self.instance.disconnect_wg(client_id)
@@ -2217,6 +2218,7 @@ class Clients(object):
                                     'server',
                                     server_id=self.server.id,
                                     instance_id=self.instance.id,
+                                    client_id=client['doc_id'],
                                 )
                                 if len(client_id) > 32:
                                     self.instance.disconnect_wg(client_id)
