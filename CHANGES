@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix wg issue on rhel7
+
 Version 1.29.2524.85 2020-08-10
 -------------------------------
 
