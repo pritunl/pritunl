@@ -1,4 +1,4 @@
-from pritunl.utils.misc import check_call_silent, check_output_logged
+from pritunl.utils.misc import check_output_logged
 
 from pritunl.constants import *
 from pritunl import ipaddress
