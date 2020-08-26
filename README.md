@@ -132,7 +132,7 @@ EOF
 sudo tee /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
-baseurl=https://repo.pritunl.com/stable/yum/centos/8/
+baseurl=https://repo.pritunl.com/stable/yum/oraclelinux/8/
 gpgcheck=1
 enabled=1
 EOF
