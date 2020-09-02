@@ -2,16 +2,12 @@ policy_module(pritunl, 1.0.0)
 
 require {
   type user_t;
-  type unconfined_t;
-  type unconfined_service_t;
   type var_lib_t;
   type var_log_t;
   type var_run_t;
   type tmp_t;
   type lib_t;
   type fs_t;
-  type bin_t;
-  type shell_exec_t;
   type sshd_net_t;
 
   type pritunl_web_t;
@@ -24,6 +20,7 @@ require {
   type apmd_t;
   type auditd_t;
   type autofs_t;
+  type bin_t;
   type boot_t;
   type cert_t;
   type chkpwd_t;
@@ -72,6 +69,7 @@ require {
   type rpcbind_t;
   type rpm_t;
   type security_t;
+  type shell_exec_t;
   type sshd_t;
   type sysctl_fs_t;
   type sysctl_net_t;
@@ -85,6 +83,8 @@ require {
   type tun_tap_device_t;
   type tuned_t;
   type udev_t;
+  type unconfined_service_t;
+  type unconfined_t;
   type unreserved_port_t;
   type user_tmp_t;
   type usermodehelper_t;
@@ -190,6 +190,7 @@ allow pritunl_t apmd_t:file { getattr open read };
 allow pritunl_t auditd_t:dir search;
 allow pritunl_t auditd_t:file { getattr open read };
 allow pritunl_t autofs_t:dir write;
+allow pritunl_t bin_t:file { execute execute_no_trans map };
 allow pritunl_t boot_t:dir { add_name write };
 allow pritunl_t cert_t:dir search;
 allow pritunl_t cert_t:file { getattr open read };
@@ -275,13 +276,15 @@ allow pritunl_t self:capability { dac_override net_admin net_bind_service net_ra
 allow pritunl_t self:netlink_generic_socket { bind create getattr read write };
 allow pritunl_t self:netlink_route_socket { bind create getattr nlmsg_read nlmsg_write read setopt write };
 allow pritunl_t self:netlink_socket { bind create getattr read write };
+allow pritunl_t self:packet_socket { bind create ioctl setopt };
 allow pritunl_t self:process execmem;
-allow pritunl_t self:rawip_socket { create getopt setopt };
+allow pritunl_t self:rawip_socket { create getopt ioctl setopt };
 allow pritunl_t self:system module_load;
 allow pritunl_t self:tcp_socket { accept bind connect create getattr getopt ioctl listen read setopt shutdown write };
 allow pritunl_t self:tun_socket { accept bind connect create getattr getopt ioctl listen read setopt shutdown write };
 allow pritunl_t self:udp_socket { accept bind connect create getattr getopt ioctl listen read setopt shutdown write };
 allow pritunl_t self:unix_dgram_socket { create ioctl };
+allow pritunl_t shell_exec_t:file { execute execute_no_trans };
 allow pritunl_t sshd_t:dir search;
 allow pritunl_t sshd_t:file { getattr open read };
 allow pritunl_t sysctl_fs_t:dir search;
@@ -305,26 +308,13 @@ allow pritunl_t tuned_t:dir search;
 allow pritunl_t tuned_t:file { getattr open read };
 allow pritunl_t udev_t:dir search;
 allow pritunl_t udev_t:file { getattr open read };
+allow pritunl_t unconfined_service_t:dir search;
+allow pritunl_t unconfined_service_t:file { getattr open read };
+allow pritunl_t unconfined_t:dir search;
+allow pritunl_t unconfined_t:file { getattr open read };
 allow pritunl_t unreserved_port_t:tcp_socket { name_bind name_connect };
 allow pritunl_t unreserved_port_t:udp_socket name_bind;
 allow pritunl_t user_tmp_t:dir getattr;
 allow pritunl_t usermodehelper_t:file { getattr open read };
-
-#################################
-# ndppd
-#################################
-allow pritunl_t self:packet_socket { bind create ioctl setopt };
-allow pritunl_t self:rawip_socket ioctl;
-
-#################################
-# todo
-#################################
-allow pritunl_t shell_exec_t:file { execute execute_no_trans };
-allow pritunl_t bin_t:file { execute execute_no_trans map };
-allow pritunl_t unconfined_t:dir search;
-allow pritunl_t unconfined_t:file { getattr open read };
-allow pritunl_t unconfined_service_t:dir search;
-allow pritunl_t unconfined_service_t:file { getattr open read };
-
 allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read };
-allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read map };
+allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr map open read };
