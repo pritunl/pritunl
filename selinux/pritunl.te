@@ -9,6 +9,7 @@ require {
   type lib_t;
   type fs_t;
   type sshd_net_t;
+  type systemd_tmpfiles_t;
 
   type pritunl_web_t;
   type pritunl_web_exec_t;
