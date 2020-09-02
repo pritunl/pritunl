@@ -78,6 +78,7 @@ require {
   type rhsmcertd_t;
   type rngd_t;
   type root_t;
+  type rpcbind_t;
   type rpm_t;
   type security_t;
   type setroubleshootd_t;
@@ -316,6 +317,7 @@ allow pritunl_t rngd_t:dir { search search };
 allow pritunl_t rngd_t:file { getattr getattr open open read read };
 allow pritunl_t rngd_t:lnk_file { read read };
 allow pritunl_t root_t:dir { add_name write };
+allow pritunl_t rpcbind_t:file read;
 allow pritunl_t rpm_t:dir search;
 allow pritunl_t rpm_t:file { getattr open read };
 allow pritunl_t security_t:dir { add_name write };
