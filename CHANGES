@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve selinux policies
+
 Version 1.29.2530.72 2020-08-16
 -------------------------------
 
