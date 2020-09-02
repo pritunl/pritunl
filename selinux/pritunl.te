@@ -3,11 +3,16 @@ policy_module(pritunl, 1.0.0)
 require {
   type user_t;
   type unconfined_t;
+  type unconfined_service_t;
   type var_lib_t;
   type var_log_t;
+  type var_run_t;
   type tmp_t;
   type lib_t;
   type fs_t;
+  type bin_t;
+  type shell_exec_t;
+  type sshd_net_t;
 
   type pritunl_web_t;
   type pritunl_web_exec_t;
