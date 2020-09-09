@@ -44,7 +44,7 @@ class Administrator(mongo.MongoObject):
     def __init__(self, username=None, password=None, default=None,
             yubikey_id=None, otp_auth=None, auth_api=None, disabled=None,
             super_user=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
         if username is not None:
             self.username = username
         if password is not None:

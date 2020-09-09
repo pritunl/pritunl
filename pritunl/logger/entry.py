@@ -12,7 +12,7 @@ class LogEntry(mongo.MongoObject):
     }
 
     def __init__(self, message=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
 
         if message is not None:
             self.message = message

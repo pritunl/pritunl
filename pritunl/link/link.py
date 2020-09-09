@@ -40,7 +40,7 @@ class Host(mongo.MongoObject):
             timeout=None, priority=None, ping_timestamp_ttl=None,
             static=None, public_address=None, local_address=None,
             address6=None, version=None, tunnels=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
 
         self.link = link
         self.location = location
@@ -567,7 +567,7 @@ class Location(mongo.MongoObject):
 
     def __init__(self, link=None, name=None, type=None, link_id=None,
             routes=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
 
         self.link = link
 
@@ -885,7 +885,7 @@ class Link(mongo.MongoObject):
 
     def __init__(self, name=None, type=None, status=None, timeout=None,
             key=None, ipv6=None, action=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
 
         if name is not None:
             self.name = name

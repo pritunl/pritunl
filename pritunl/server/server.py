@@ -215,7 +215,7 @@ class Server(mongo.MongoObject):
             allowed_devices=None, max_clients=None, max_devices=None,
             replica_count=None, vxlan=None, dns_mapping=None, debug=None,
             pre_connect_msg=None, mss_fix=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
 
         if 'network' in self.loaded_fields:
             self._orig_network = self.network

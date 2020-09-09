@@ -36,7 +36,7 @@ class Organization(mongo.MongoObject):
     }
 
     def __init__(self, name=None, auth_api=None, type=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
         self.last_search_count = None
         self.processes = []
         self.queue_com = queue.QueueCom()

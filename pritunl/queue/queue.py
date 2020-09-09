@@ -39,7 +39,7 @@ class Queue(mongo.MongoObject):
     reserve_id = None
 
     def __init__(self, priority=None, retry=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
         self.ttl = settings.mongo.queue_ttl
         self.type = self.type
         self.reserve_id = self.reserve_id

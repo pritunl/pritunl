@@ -70,7 +70,7 @@ class User(mongo.MongoObject):
             resource_id=None, bypass_secondary=None, client_to_client=None,
             mac_addresses=None, dns_servers=None, dns_suffix=None,
             port_forwarding=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
 
         if org:
             self.org = org
