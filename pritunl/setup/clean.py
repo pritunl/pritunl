@@ -83,7 +83,7 @@ def setup_clean():
             '-o',
             'link',
             'show',
-        ])
+        ]).decode()
 
         for line in output.splitlines():
             iface_name = line.split(':')
@@ -119,7 +119,7 @@ def setup_clean():
 
         output = subprocess.check_output([
             'iptables-save',
-        ])
+        ]).decode()
 
         table = None
         for line in output.splitlines():

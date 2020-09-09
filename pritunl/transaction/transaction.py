@@ -252,7 +252,7 @@ class Transaction(mongo.MongoObject):
     def commit(self):
         actions_json = json.dumps(self.action_sets,
             default=utils.json_default)
-        actions_json_zlib = zlib.compress(actions_json)
+        actions_json_zlib = zlib.compress(actions_json.encode())
 
         self.transaction_collection.insert({
             '_id': self.id,

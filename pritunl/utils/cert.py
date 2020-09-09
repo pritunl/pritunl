@@ -108,4 +108,4 @@ def generate_rsa_key():
         format=serialization.PublicFormat.SubjectPublicKeyInfo,
     )
 
-    return private_pem.strip(), public_pem.strip()
+    return private_pem.decode().strip(), public_pem.decode().strip()

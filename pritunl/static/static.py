@@ -75,7 +75,7 @@ class StaticFile(object):
         file_size = int(os.path.getsize(self.path))
 
         if self.gzip:
-            gzip_data = io.StringIO()
+            gzip_data = io.BytesIO()
             with open(self.path, 'rb') as static_file, \
                     gzip.GzipFile(fileobj=gzip_data, mode='wb') as gzip_file:
                 shutil.copyfileobj(static_file, gzip_file)

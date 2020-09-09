@@ -300,7 +300,7 @@ def generate_secret():
 def generate_secret_len(n):
     l = int(n*1.3)
     for i in range(10):
-        x = re.sub(r'[\W_]+', '', base64.b64encode(os.urandom(l)))[:n]
+        x = re.sub(r'[\W_]+', '', base64.b64encode(os.urandom(l)).decode())[:n]
         if len(x) == n:
             return x
     raise ValueError('Failed to generate secret')
@@ -424,14 +424,14 @@ def styles_response(etag, last_modified, data):
 
 def rand_str(length):
     s = re.sub(r'[\W_]+', '', base64.b64encode(
-        os.urandom(int(length * 1.5))))[:length]
+        os.urandom(int(length * 1.5))).decode())[:length]
     if len(s) != length:
         return rand_str(length)
     return s
 
 def rand_str_ne(length):
     s = re.sub(r'[\W_lIO0]+', '', base64.b64encode(
-        os.urandom(int(length * 1.5))))[:length]
+        os.urandom(int(length * 1.5))).decode())[:length]
     if len(s) != length:
         return rand_str(length)
     return s
