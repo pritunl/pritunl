@@ -53,6 +53,9 @@ class Queue(mongo.MongoObject):
         if retry is not None:
             self.retry = retry
 
+    def __lt__(self, other):
+        return self.runner_id < other.runner_id
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('queue')
