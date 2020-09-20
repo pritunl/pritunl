@@ -224,7 +224,7 @@ define([
       if (!this.orgs.length) {
         var alertView = new AlertView({
           type: 'danger',
-          message: 'No organizations exists, an organization must be ' +
+          message: 'No organizations exist, an organization must be ' +
             'created before attaching.',
           dismissable: true
         });
@@ -266,7 +266,7 @@ define([
       if (!this.hosts.length) {
         var alertView = new AlertView({
           type: 'danger',
-          message: 'No hosts exists, a host must be created before attaching.',
+          message: 'No hosts exist, a host must be created before attaching.',
           dismissable: true
         });
         $('.alerts-container').append(alertView.render().el);
