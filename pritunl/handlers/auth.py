@@ -46,7 +46,7 @@ def _auth_radius(username, password, remote_addr):
                 not_found = True
 
         if not_found:
-            logger.warning('Supplied org names do not exists',
+            logger.warning('Supplied org names do not exist',
                 'sso',
                 sso_type='radius',
                 user_name=username,
