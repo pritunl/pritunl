@@ -10,7 +10,7 @@ class MongoObject(object):
     fields_required = {}
 
     def __new__(cls, id=None, doc=None, spec=None, fields=None,
-            upsert=False,**kwargs):
+            upsert=False, **kwargs):
         from pritunl import utils
         fields = fields or cls.fields
 
