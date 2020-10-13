@@ -1003,6 +1003,7 @@ def key_wg_post(org_id, user_id, server_id):
     client_device_id = key_data['device_id']
     client_device_name = key_data['device_name']
     client_mac_addr = key_data['mac_addr']
+    client_mac_addrs = key_data['mac_addrs']
     client_auth_token = key_data['token']
     client_auth_nonce = key_data['nonce']
     client_auth_password = key_data['password']
@@ -1083,6 +1084,7 @@ def key_wg_post(org_id, user_id, server_id):
         device_id=client_device_id,
         device_name=client_device_name,
         mac_addr=client_mac_addr,
+        mac_addrs=client_mac_addrs,
         remote_ip=remote_addr,
         connect_callback=callback,
     )
