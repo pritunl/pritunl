@@ -45,6 +45,12 @@ class Authorizer(object):
         self.has_token = False
         self.whitelisted = False
 
+        if self.mac_addr:
+            self.mac_addr = self.mac_addr.lower()
+
+        if self.mac_addrs:
+            self.mac_addrs = [x.lower() for x in self.mac_addrs]
+
         if self.password and self.password.startswith('CRV1:'):
             challenge = self.password.split(':')
             if len(challenge) == 5:
