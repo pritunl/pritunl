@@ -1278,6 +1278,7 @@ class Clients(object):
                 device_id=device_id,
                 device_name=device_name,
                 mac_addr=mac_addr,
+                mac_addrs=None,
                 password=password,
                 auth_password=auth_password,
                 auth_token=auth_token,
@@ -1300,7 +1301,7 @@ class Clients(object):
 
     def connect_wg(self, user, org, wg_public_key, auth_password,
             auth_token, auth_nonce, auth_timestamp, platform, device_id,
-            device_name, mac_addr, remote_ip, connect_callback):
+            device_name, mac_addr, mac_addrs, remote_ip, connect_callback):
         response = {
             'sent': False,
             'lock': threading.Lock(),
@@ -1399,6 +1400,7 @@ class Clients(object):
                 device_id=device_id,
                 device_name=device_name,
                 mac_addr=mac_addr,
+                mac_addrs=mac_addrs,
                 password=None,
                 auth_password=auth_password,
                 auth_token=auth_token,
