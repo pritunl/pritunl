@@ -21,8 +21,8 @@ _states = tunldb.TunlDB()
 
 class Authorizer(object):
     def __init__(self, svr, usr, remote_ip, platform, device_id, device_name,
-            mac_addr, password, auth_password, auth_token, auth_nonce,
-            auth_timestamp, reauth, callback):
+            mac_addr, mac_addrs, password, auth_password, auth_token,
+            auth_nonce, auth_timestamp, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
@@ -30,6 +30,7 @@ class Authorizer(object):
         self.device_id = device_id
         self.device_name = device_name
         self.mac_addr = mac_addr
+        self.mac_addrs = mac_addrs
         self.password = password
         self.auth_password = auth_password
         self.auth_token = auth_token
@@ -448,7 +449,14 @@ class Authorizer(object):
                     'User platform %s not allowed' % self.platform)
 
         if self.user.mac_addresses:
-            if self.mac_addr not in self.user.mac_addresses:
+            allowed_mac_addrs = [x.lower() for x in self.user.mac_addresses]
+
+            if self.mac_addrs:
+                for mac_addr in self.mac_addrs:
+                    if mac_addr in allowed_mac_addrs:
+                        self.mac_addr = mac_addr
+
+            if not self.mac_addr or self.mac_addr not in allowed_mac_addrs:
                 self.user.audit_event(
                     'user_connection',
                     ('User connection to "%s" denied. User mac address' +
