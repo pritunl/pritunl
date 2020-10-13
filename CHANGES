@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve MAC address detection on wg connections
+
 Version 1.29.2547.95 2020-09-02
 -------------------------------
 
