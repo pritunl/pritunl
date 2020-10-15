@@ -289,6 +289,14 @@ def filter_str(in_str):
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
 
+def filter_str_uni(in_str):
+    if in_str is not None:
+        in_str = in_str.decode('utf-8')
+    if not in_str:
+        return in_str
+
+    return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
+
 def filter_unicode(in_str):
     if not in_str:
         return in_str
