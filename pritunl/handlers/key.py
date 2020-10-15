@@ -999,16 +999,20 @@ def key_wg_post(org_id, user_id, server_id):
 
     key_data = json.loads(plaintext)
 
-    client_platform = key_data['platform']
-    client_device_id = key_data['device_id']
-    client_device_name = key_data['device_name']
-    client_mac_addr = key_data['mac_addr']
+    client_platform = utils.filter_str_uni(key_data['platform'])
+    client_device_id = utils.filter_str_uni(key_data['device_id'])
+    client_device_name = utils.filter_str_uni(key_data['device_name'])
+    client_mac_addr = utils.filter_str_uni(key_data['mac_addr'])
     client_mac_addrs = key_data['mac_addrs']
-    client_auth_token = key_data['token']
-    client_auth_nonce = key_data['nonce']
-    client_auth_password = key_data['password']
-    client_auth_timestamp = key_data['timestamp']
-    client_wg_public_key = key_data['wg_public_key']
+    if client_mac_addrs:
+        client_mac_addrs = [utils.filter_str_uni(x) for x in client_mac_addrs]
+    else:
+        client_mac_addrs = None
+    client_auth_token = key_data['token'].decode('utf-8')
+    client_auth_nonce = utils.filter_str_uni(key_data['nonce'])
+    client_auth_password = key_data['password'].decode('utf-8')
+    client_auth_timestamp = int(key_data['timestamp'])
+    client_wg_public_key = key_data['wg_public_key'].decode('utf-8')
 
     if len(client_wg_public_key) < 32:
         journal.entry(
@@ -1302,7 +1306,7 @@ def key_wg_put(org_id, user_id, server_id):
 
     key_data = json.loads(plaintext)
 
-    client_wg_public_key = key_data['wg_public_key']
+    client_wg_public_key = utils.filter_str_uni(key_data['wg_public_key'])
 
     if len(client_wg_public_key) < 32:
         journal.entry(
