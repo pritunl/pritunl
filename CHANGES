@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve Lets Encrypt support
+
 Version 1.29.2591.94 2020-10-16
 -------------------------------
 
