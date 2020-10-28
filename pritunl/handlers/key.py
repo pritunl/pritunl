@@ -1005,7 +1005,8 @@ def key_wg_post(org_id, user_id, server_id):
     client_mac_addr = utils.filter_str_uni(key_data['mac_addr'])
     client_mac_addrs = key_data['mac_addrs']
     if client_mac_addrs:
-        client_mac_addrs = [utils.filter_str_uni(x) for x in client_mac_addrs]
+        client_mac_addrs = [utils.filter_str_uni(x)
+            for x in client_mac_addrs]
     else:
         client_mac_addrs = None
     client_auth_token = key_data['token'].decode('utf-8')
