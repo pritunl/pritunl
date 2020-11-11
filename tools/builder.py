@@ -111,7 +111,9 @@ def iter_packages():
     for target in BUILD_TARGETS:
         target_path = os.path.join(pacur_path, target)
         for name in os.listdir(target_path):
-            if name.endswith(".pkg.tar.xz"):
+            if cur_version not in name:
+                continue
+            elif name.endswith(".pkg.tar.xz"):
                 pass
             elif name.endswith(".rpm"):
                 pass
