@@ -419,12 +419,10 @@ class User(mongo.MongoObject):
             try:
                 resp = requests.get(auth_server +
                     ('/update/azure?user=%s&license=%s&' +
-                    'directory_id=%s&app_id=%s&app_secret=%s') % (
+                    'directory_id=%s') % (
                         urllib.quote(self.name),
                         settings.app.license,
                         urllib.quote(settings.app.sso_azure_directory_id),
-                        urllib.quote(settings.app.sso_azure_app_id),
-                        urllib.quote(settings.app.sso_azure_app_secret),
                 ))
 
                 if resp.status_code != 200:
