@@ -779,10 +779,14 @@ class User(mongo.MongoObject):
         for key_remote in sorted(key_remotes):
             conf_hash.update(key_remote)
         conf_hash.update(CIPHERS[svr.cipher])
+        conf_hash.update(HASHES[svr.hash])
         conf_hash.update(str(svr.lzo_compression))
         conf_hash.update(str(svr.block_outside_dns))
         conf_hash.update(str(svr.otp_auth))
         conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames])
+        conf_hash.update(svr.adapter_type)
+        conf_hash.update(str(svr.ping_interval))
+        conf_hash.update(str(settings.vpn.server_poll_timeout))
         conf_hash.update(ca_certificate)
         conf_hash.update(self._get_key_info_str(svr, None, False))
 
