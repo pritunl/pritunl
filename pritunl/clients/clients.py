@@ -1804,6 +1804,7 @@ class Clients(object):
             'user_id': client['user_id'],
             'server_id': self.server.id,
             'host_id': settings.local.host_id,
+            'ipv6': self.server.ipv6,
             'timestamp': timestamp,
             'platform': client['platform'],
             'type': client['user_type'],
