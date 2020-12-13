@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Improve Lets Encrypt support
+Add IPv6 support to client DNS mapping
 
 Version 1.29.2591.94 2020-10-16
 -------------------------------
