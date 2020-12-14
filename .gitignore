@@ -22,3 +22,4 @@ Thumbs.db
 /www/styles/*
 !/www/styles/vendor
 /tools/build_keys.json
+/tools/development_pritunl.conf
