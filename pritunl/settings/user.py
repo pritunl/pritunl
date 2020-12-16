@@ -5,7 +5,7 @@ class SettingsUser(SettingsGroupMongo):
     group = 'user'
     fields = {
         'audit_limit': 2500,
-        'gravatar': False,
+        'gravatar': True,
         'otp_secret_len': 16,
         'pin_mode': PIN_OPTIONAL,
         'pin_min_length': 6,
