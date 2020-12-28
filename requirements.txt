@@ -12,7 +12,7 @@ redis==3.4.1
 python-dateutil==2.8.1
 psutil==5.7.0
 python-iptables==0.14.0
-pyroute2==0.5.10
+pyroute2==0.5.14
 google-api-python-client==1.8.0
 google-auth==1.21.0
 oauth2client==4.1.3
