@@ -395,7 +395,7 @@ def check_session(csrf_check):
                 not auth_signature:
             return False
         auth_token = auth_token[:256]
-        auth_timestamp = auth_timestamp[:256]
+        auth_timestamp = auth_timestamp[:64]
         auth_nonce = auth_nonce[:32]
         auth_signature = auth_signature[:512]
 

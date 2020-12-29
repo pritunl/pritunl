@@ -688,7 +688,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         )
         return flask.abort(406)
     auth_token = auth_token[:256]
-    auth_timestamp = auth_timestamp[:256]
+    auth_timestamp = auth_timestamp[:64]
     auth_nonce = auth_nonce[:32]
     auth_signature = auth_signature[:512]
 
@@ -841,7 +841,7 @@ def key_wg_post(org_id, user_id, server_id):
         )
         return flask.abort(406)
     auth_token = auth_token[:256]
-    auth_timestamp = auth_timestamp[:256]
+    auth_timestamp = auth_timestamp[:64]
     auth_nonce = auth_nonce[:32]
     auth_signature = auth_signature[:512]
 
@@ -1149,7 +1149,7 @@ def key_wg_put(org_id, user_id, server_id):
         )
         return flask.abort(406)
     auth_token = auth_token[:256]
-    auth_timestamp = auth_timestamp[:256]
+    auth_timestamp = auth_timestamp[:64]
     auth_nonce = auth_nonce[:32]
     auth_signature = auth_signature[:512]
 
