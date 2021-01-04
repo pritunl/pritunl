@@ -284,6 +284,15 @@ class ServerInstance(object):
         else:
             raise ValueError('Unknown protocol')
 
+        if os.path.isfile('/etc/openvpn/up.sh'):
+            server_line += '\nup /etc/openvpn/up.sh'
+
+        if os.path.isfile('/etc/openvpn/down.sh'):
+            server_line += '\ndown /etc/openvpn/down.sh'
+
+        if os.path.isfile('/etc/openvpn/learn.sh'):
+            server_line += '\nlearn-address /etc/openvpn/learn.sh'
+
         if utils.check_openvpn_ver():
             server_ciphers = SERVER_CIPHERS
             server_conf_template = OVPN_INLINE_SERVER_CONF
