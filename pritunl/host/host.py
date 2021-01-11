@@ -46,7 +46,7 @@ class Host(mongo.MongoObject):
         mongo.MongoObject.__init__(self, **kwargs)
         self.user_count = None
         self.users_online = None
-        self.usage = HostUsage(self.id)
+        self._usage = None
 
         if name is not None:
             self.name = name
@@ -61,6 +61,14 @@ class Host(mongo.MongoObject):
     @cached_static_property
     def user_collection(cls):
         return mongo.get_collection('users')
+
+    @property
+    def usage(self):
+        if not self._usage:
+            self._usage = HostUsage(self.id)
+        elif self._usage.host_id != self.id:
+            self._usage = HostUsage(self.id)
+        return self._usage
 
     @property
     def uptime(self):
