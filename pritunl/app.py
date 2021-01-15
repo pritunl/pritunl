@@ -10,8 +10,6 @@ from pritunl import acme
 
 import threading
 import flask
-import logging
-import logging.handlers
 import time
 import subprocess
 import os
