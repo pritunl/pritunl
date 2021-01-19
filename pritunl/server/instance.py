@@ -824,16 +824,17 @@ class ServerInstance(object):
             self.iptables.add_rule(rule)
             self.iptables.add_rule6(rule)
 
-            rule = [
-                'POSTROUTING',
-                '-t', 'nat',
-                '-o', self.interface_wg,
-                '-j', 'MASQUERADE',
-                '-m', 'comment',
-                '--comment', 'pritunl-%s' % self.server.id,
-            ]
-            self.iptables_wg.add_rule(rule)
-            self.iptables_wg.add_rule6(rule)
+            if self.server.wg:
+                rule = [
+                    'POSTROUTING',
+                    '-t', 'nat',
+                    '-o', self.interface_wg,
+                    '-j', 'MASQUERADE',
+                    '-m', 'comment',
+                    '--comment', 'pritunl-%s' % self.server.id,
+                ]
+                self.iptables_wg.add_rule(rule)
+                self.iptables_wg.add_rule6(rule)
         finally:
             self.iptables_lock.release()
 
