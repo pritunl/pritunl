@@ -666,9 +666,22 @@ def sso_callback_get():
             user_name=username,
             user_email=email,
             remote_ip=remote_addr,
+            sso_group_names=google_groups
         )
+        not_found = True
+
         if valid:
-            org_id = org_id_new or org_id
+            if org_id_new:
+                org_id = org_id_new
+                not_found = False
+            else:
+                logger.warning('Plugin returned invalid org name',
+                   'sso',
+                    sso_type=doc.get('type'),
+                    user_name=username,
+                    user_email=email,
+                    org_names=google_groups,
+                )
         else:
             logger.error('Google plugin authentication not valid', 'sso',
                 username=username,
@@ -687,8 +700,7 @@ def sso_callback_get():
 
         if settings.app.sso_google_mode == 'groups':
             groups = groups | set(google_groups)
-        else:
-            not_found = False
+        elif not_found:
             google_groups = sorted(google_groups)
             for org_name in google_groups:
                 org = organization.get_by_name(
