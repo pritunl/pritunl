@@ -1140,7 +1140,6 @@ sndbuf 393216
 rcvbuf 393216
 reneg-sec 2592000
 hash-size 1024 1024
-max-routes-per-client 1000
 txqueuelen 1000
 verb %s
 mute %s
@@ -1170,7 +1169,6 @@ sndbuf 393216
 rcvbuf 393216
 reneg-sec 2592000
 hash-size 1024 1024
-max-routes-per-client 1000
 txqueuelen 1000
 verb %s
 mute %s
@@ -1198,7 +1196,6 @@ server-poll-timeout %s
 reneg-sec 2592000
 sndbuf 393216
 rcvbuf 393216
-max-routes 1000
 remote-cert-tls server
 """
 
@@ -1298,7 +1295,6 @@ server-poll-timeout %s
 reneg-sec 2592000
 sndbuf 393216
 rcvbuf 393216
-max-routes 1000
 remote-cert-tls server
 """
 
