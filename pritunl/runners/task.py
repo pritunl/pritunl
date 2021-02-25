@@ -20,13 +20,13 @@ def run_task(tsk):
 
 def print_tasks():
     for hour in task.tasks:
-        print 'hour:', hour
+        print('hour:', hour)
         for minute in task.tasks[hour]:
-            print '    minute:', minute
+            print('    minute:', minute)
             for second in task.tasks[hour][minute]:
-                print '        second:', second
+                print('        second:', second)
                 for tsk in task.tasks[hour][minute][second]:
-                    print '            task:', tsk
+                    print('            task:', tsk)
 
 @interrupter
 def run_thread():

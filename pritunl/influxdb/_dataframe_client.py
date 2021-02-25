@@ -115,7 +115,7 @@ class DataFrameClient(InfluxDBClient):
             .query("SHOW SERIES", database=database)
         if len(results):
             return dict(
-                (key[0], pd.DataFrame(data)) for key, data in results.items()
+                (key[0], pd.DataFrame(data)) for key, data in list(results.items())
             )
         else:
             return {}
@@ -123,8 +123,8 @@ class DataFrameClient(InfluxDBClient):
     def _to_dataframe(self, rs):
         result = {}
         if isinstance(rs, list):
-            return map(self._to_dataframe, rs)
-        for key, data in rs.items():
+            return list(map(self._to_dataframe, rs))
+        for key, data in list(rs.items()):
             name, tags = key
             if tags is None:
                 key = name

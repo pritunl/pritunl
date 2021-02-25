@@ -21,7 +21,7 @@ class Batch(object):
 
     def items(self):
         items = []
-        for item in self._items.values():
+        for item in list(self._items.values()):
             items.append(item)
         return items
 
@@ -47,7 +47,7 @@ class Batch(object):
 
         ciphertext = gcm.encrypt(
             nonce,
-            json.dumps(data),
+            json.dumps(data).encode(),
             None,
         )
 
@@ -56,7 +56,7 @@ class Batch(object):
 
         payload = {
             'n': nonce64,
-            'd': base64.b64encode(ciphertext),
+            'd': base64.b64encode(ciphertext).decode(),
         }
 
         resp = requests.put(

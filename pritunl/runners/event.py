@@ -22,7 +22,7 @@ def _event_runner_thread():
             while True:
                 cur_time = time.time()
 
-                for (evt_type, resource_id), evt_time in events.iteritems():
+                for (evt_type, resource_id), evt_time in events.items():
                     if cur_time >= evt_time:
                         event.Event(evt_type, resource_id)
                         del_evts.add((evt_type, resource_id))

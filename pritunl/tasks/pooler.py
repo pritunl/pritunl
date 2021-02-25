@@ -9,4 +9,4 @@ class TaskPooler(task.Task):
         pooler.fill('user')
         pooler.fill('dh_params')
 
-task.add_task(TaskPooler, minutes=xrange(0, 60, 5))
+task.add_task(TaskPooler, minutes=range(0, 60, 5))

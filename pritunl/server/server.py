@@ -215,7 +215,7 @@ class Server(mongo.MongoObject):
             allowed_devices=None, max_clients=None, max_devices=None,
             replica_count=None, vxlan=None, dns_mapping=None, debug=None,
             pre_connect_msg=None, mss_fix=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
 
         if 'network' in self.loaded_fields:
             self._orig_network = self.network
@@ -443,10 +443,11 @@ class Server(mongo.MongoObject):
         return utils.net4to6x64(settings.vpn.ipv6_prefix_wg, self.network)
 
     def ip4to4wg(self, addr):
-        addr = ipaddress.IPNetwork(addr)
-        wg_net = ipaddress.IPNetwork(self.network_wg)
-        addr_bin = bin(wg_net)[2:].zfill(32)[:addr.prefixlen] + \
-            bin(addr)[2:].zfill(32)[addr.prefixlen:]
+        addr = ipaddress.ip_network(addr, strict=False)
+        wg_net = ipaddress.ip_network(self.network_wg, strict=False)
+        addr_bin = bin(int(
+            wg_net.network_address))[2:].zfill(32)[:addr.prefixlen] + \
+            bin(int(addr.network_address))[2:].zfill(32)[addr.prefixlen:]
         return utils.long_to_ip(int(addr_bin, 2)) + '/%d' % addr.prefixlen
 
     def ip4to6(self, addr):
@@ -520,7 +521,7 @@ class Server(mongo.MongoObject):
             users_links[doc['user_id']].add(doc['network'])
 
         user_ids = self.user_collection.find({
-            '_id': {'$in': users_links.keys()},
+            '_id': {'$in': list(users_links.keys())},
         }, {
             '_id': True,
         }).distinct('_id')
@@ -577,16 +578,16 @@ class Server(mongo.MongoObject):
                 format=serialization.PublicFormat.PKCS1,
             )
 
-            self.auth_public_key = public_pem
-            self.auth_private_key = private_pem
+            self.auth_public_key = public_pem.decode()
+            self.auth_private_key = private_pem.decode()
 
         if not self.auth_box_public_key or not self.auth_box_private_key:
             priv_key = nacl.public.PrivateKey.generate()
 
             self.auth_box_public_key = base64.b64encode(
-                bytes(priv_key.public_key))
+                bytes(priv_key.public_key)).decode()
             self.auth_box_private_key = base64.b64encode(
-                bytes(priv_key))
+                bytes(priv_key)).decode()
 
         return True
 
@@ -634,7 +635,7 @@ class Server(mongo.MongoObject):
         virtual_vpc_id = None
 
         for network_link in self.network_links:
-            route_id = network_link.encode('hex')
+            route_id = network_link.encode().hex()
             routes_dict[network_link] = ({
                 'id': route_id,
                 'server': self.id,
@@ -686,7 +687,7 @@ class Server(mongo.MongoObject):
 
         for route in self.routes:
             route_network = route['network']
-            route_id = route_network.encode('hex')
+            route_id = route_network.encode().hex()
 
             if route_network == '0.0.0.0/0':
                 if not include_default:
@@ -713,7 +714,7 @@ class Server(mongo.MongoObject):
 
                 if include_hidden and self.ipv6:
                     routes.append({
-                        'id': '::/0'.encode('hex'),
+                        'id': '::/0'.encode().hex(),
                         'server': self.id,
                         'network': '::/0',
                         'comment': route.get('comment'),
@@ -786,7 +787,7 @@ class Server(mongo.MongoObject):
                     }
 
         routes.append({
-            'id': self.network.encode('hex'),
+            'id': self.network.encode().hex(),
             'server': self.id,
             'network': self.network,
             'comment': virtual_comment,
@@ -806,7 +807,7 @@ class Server(mongo.MongoObject):
 
         if self.wg:
             routes.append({
-                'id': self.network_wg.encode('hex'),
+                'id': self.network_wg.encode().hex(),
                 'server': self.id,
                 'network': self.network_wg,
                 'comment': virtual_comment,
@@ -827,7 +828,7 @@ class Server(mongo.MongoObject):
 
         if self.ipv6:
             routes.append({
-                'id': self.network6.encode('hex'),
+                'id': self.network6.encode().hex(),
                 'server': self.id,
                 'network': self.network6,
                 'comment': virtual_comment,
@@ -847,7 +848,7 @@ class Server(mongo.MongoObject):
 
             if self.wg:
                 routes.append({
-                    'id': self.network6_wg.encode('hex'),
+                    'id': self.network6_wg.encode().hex(),
                     'server': self.id,
                     'network': self.network6_wg,
                     'comment': virtual_comment,
@@ -883,7 +884,7 @@ class Server(mongo.MongoObject):
                 'Cannot add route while server is online')
 
         try:
-            network = str(ipaddress.IPNetwork(network))
+            network = str(ipaddress.ip_network(network))
         except ValueError:
             raise NetworkInvalid('Network address is invalid')
 
@@ -946,7 +947,7 @@ class Server(mongo.MongoObject):
             })
 
         return {
-            'id': orig_network.encode('hex'),
+            'id': orig_network.encode().hex(),
             'server': self.id,
             'network': orig_network,
             'comment': comment,
@@ -1229,7 +1230,7 @@ class Server(mongo.MongoObject):
 
     def create_primary_user(self):
         try:
-            org = self.iter_orgs().next()
+            org = next(self.iter_orgs())
         except StopIteration:
             self.stop()
             raise ServerMissingOrg('Primary user cannot be created ' + \
@@ -1261,7 +1262,7 @@ class Server(mongo.MongoObject):
         self.primary_user = None
 
     def add_org(self, org_id):
-        if not isinstance(org_id, basestring):
+        if not isinstance(org_id, str):
             org_id = org_id.id
 
         if org_id in self.organizations:
@@ -1273,7 +1274,7 @@ class Server(mongo.MongoObject):
         self._orgs_added.append(org_id)
 
     def remove_org(self, org_id):
-        if not isinstance(org_id, basestring):
+        if not isinstance(org_id, str):
             org_id = org_id.id
 
         if org_id not in self.organizations:
@@ -1716,7 +1717,7 @@ class Server(mongo.MongoObject):
         if utils.check_network_overlap(self.network, network_used):
             return NETWORK_IN_USE, NETWORK_IN_USE_MSG
 
-        network_used.add(ipaddress.IPNetwork(self.network))
+        network_used.add(ipaddress.ip_network(self.network))
 
         if self.wg and utils.check_network_overlap(
                 self.network_wg, network_used):

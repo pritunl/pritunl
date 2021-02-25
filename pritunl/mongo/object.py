@@ -94,7 +94,7 @@ class MongoObject(object):
         doc = {}
 
         if fields is not None:
-            if isinstance(fields, basestring):
+            if isinstance(fields, str):
                 fields = (fields,)
         elif self.exists:
             fields = self.fields

@@ -5,7 +5,7 @@ from pritunl.pyrad import client
 from pritunl.pyrad import packet
 from pritunl.pyrad import dictionary
 
-import StringIO
+import io
 
 def verify_radius(username, password):
     hosts = settings.app.sso_radius_host.split(',')
@@ -23,7 +23,7 @@ def verify_radius(username, password):
             authport=port,
             secret=settings.app.sso_radius_secret.encode(),
             dict=dictionary.Dictionary(
-                StringIO.StringIO(RADIUS_DICTONARY)),
+                io.StringIO(RADIUS_DICTONARY)),
         )
 
         if settings.app.sso_radius_timeout:

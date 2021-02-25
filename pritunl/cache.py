@@ -84,7 +84,7 @@ def publish(channels, message, extra=None, cap=50, ttl=300):
             'timestamp': utils.now(),
         }
         if extra:
-            for key, val in extra.items():
+            for key, val in list(extra.items()):
                 doc[key] = val
 
         doc = json.dumps(doc, default=utils.json_default)

@@ -7,7 +7,7 @@ import base64
 import email
 import hmac
 import hashlib
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import requests
 
 def _sign(method, path, params):
@@ -16,14 +16,20 @@ def _sign(method, path, params):
     args = []
     for key in sorted(params.keys()):
         val = params[key]
-        if isinstance(val, unicode):
+        if isinstance(val, str):
             val = val.encode("utf-8")
-        args.append(
-            '%s=%s' % (urllib.quote(key, '~'), urllib.quote(val, '~')))
+        args.append('%s=%s' % (
+            urllib.parse.quote(key, '~'),
+            urllib.parse.quote(val, '~'),
+        ))
     canon.append('&'.join(args))
     canon = '\n'.join(canon)
 
-    sig = hmac.new(settings.app.sso_duo_secret.encode(), canon, hashlib.sha1)
+    sig = hmac.new(
+        settings.app.sso_duo_secret.encode(),
+        canon.encode(),
+        hashlib.sha1,
+    )
     auth = '%s:%s' % (settings.app.sso_duo_token.encode(), sig.hexdigest())
 
     return {
@@ -71,7 +77,7 @@ class Duo(object):
                 params['type'] = self.auth_type
 
             if self.info:
-                params['pushinfo'] = urllib.urlencode(self.info)
+                params['pushinfo'] = urllib.parse.urlencode(self.info)
 
         if factor == 'passcode':
             params['passcode'] = self.passcode

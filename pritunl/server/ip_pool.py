@@ -21,7 +21,7 @@ class ServerIpPool:
         return mongo.get_collection('users')
 
     def get_ip_pool(self, network, network_start):
-        ip_pool = network.iterhosts()
+        ip_pool = network.hosts()
 
         if network_start:
             network_start = ipaddress.IPv4Address(network_start)
@@ -29,7 +29,7 @@ class ServerIpPool:
 
             while True:
                 try:
-                    ip_addr = ip_pool.next()
+                    ip_addr = next(ip_pool)
                 except StopIteration:
                     logger.error('Failed to find network start', 'server',
                         server_id=self.server.id,
@@ -39,7 +39,7 @@ class ServerIpPool:
                 if ip_addr == network_break:
                     break
         else:
-            ip_pool.next()
+            next(ip_pool)
 
         return ip_pool
 
@@ -168,7 +168,7 @@ class ServerIpPool:
                 ip_pool_avial = False
 
             try:
-                remote_ip_addr = ip_pool.next()
+                remote_ip_addr = next(ip_pool)
                 if network_end and remote_ip_addr > network_end:
                     raise StopIteration()
             except StopIteration:
@@ -233,7 +233,7 @@ class ServerIpPool:
 
             for user in org.iter_users(include_pool=True):
                 try:
-                    remote_ip_addr = ip_pool.next()
+                    remote_ip_addr = next(ip_pool)
                     if network_end and remote_ip_addr > network_end:
                         raise StopIteration()
                 except StopIteration:
@@ -372,8 +372,8 @@ def multi_get_ip_addr(org_id, user_ids):
     }
 
     for doc in ServerIpPool.collection.find(spec, project):
-        network = ipaddress.IPNetwork(doc['address'])
-        network = str(network.network) + '/' + str(network.prefixlen)
+        network = ipaddress.ip_network(doc['address'], strict=False)
+        network = str(network.network_address) + '/' + str(network.prefixlen)
         addr6 = utils.ip4to6x64(settings.vpn.ipv6_prefix,
             network, doc['address'])
 

@@ -31,7 +31,7 @@ class QueueInitOrgPooled(queue.Queue):
         self.load()
 
         if self.reserve_data:
-            for field, value in self.reserve_data.items():
+            for field, value in list(self.reserve_data.items()):
                 setattr(self.org, field, value)
         self.org.commit()
 

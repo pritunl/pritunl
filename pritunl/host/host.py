@@ -43,7 +43,7 @@ class Host(mongo.MongoObject):
     }
 
     def __init__(self, name=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
         self.user_count = None
         self.users_online = None
         self._usage = None

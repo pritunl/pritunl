@@ -9,8 +9,8 @@ import flask
 
 def get_sig(sig_str, secret):
     return base64.b64encode(
-        hmac.new(secret, sig_str, hashlib.sha512).digest(),
-    )
+        hmac.new(secret.encode(), sig_str.encode(), hashlib.sha512).digest(),
+    ).decode()
 
 def get_flask_sig():
     sig_str = '&'.join((

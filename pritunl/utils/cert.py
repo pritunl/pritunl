@@ -34,7 +34,7 @@ def write_server_cert(server_cert, server_key, acme_domain):
     with open(server_cert_path, 'w') as server_cert_file:
         server_cert_file.write(server_cert_full)
     with open(server_key_path, 'w') as server_key_file:
-        os.chmod(server_key_path, 0600)
+        os.chmod(server_key_path, 0o600)
         server_key_file.write(server_key)
 
     return server_cert_path, server_key_path
@@ -52,7 +52,7 @@ def generate_server_cert():
         '-key', server_key_path,
         '-out', server_cert_path,
     ])
-    os.chmod(server_key_path, 0600)
+    os.chmod(server_key_path, 0o600)
 
     return server_cert_path, server_key_path
 
@@ -70,7 +70,7 @@ def generate_csr(private_key, domain):
     private_key_path = get_temp_path() + '.key'
 
     with open(private_key_path, 'w') as private_key_file:
-        os.chmod(private_key_path, 0600)
+        os.chmod(private_key_path, 0o600)
         private_key_file.write(private_key)
 
     csr = check_output_logged([
@@ -108,4 +108,4 @@ def generate_rsa_key():
         format=serialization.PublicFormat.SubjectPublicKeyInfo,
     )
 
-    return private_pem.strip(), public_pem.strip()
+    return private_pem.decode().strip(), public_pem.decode().strip()

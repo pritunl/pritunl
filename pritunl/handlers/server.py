@@ -57,13 +57,13 @@ def _dns_server_invalid():
     }, 400)
 
 def _check_network_overlap(test_network, networks):
-    test_net = ipaddress.IPNetwork(test_network)
-    test_start = test_net.network
-    test_end = test_net.broadcast
+    test_net = ipaddress.ip_network(test_network)
+    test_start = test_net.network_address
+    test_end = test_net.broadcast_address
 
     for network in networks:
-        net_start = network.network
-        net_end = network.broadcast
+        net_start = network.network_address
+        net_end = network.broadcast_address
 
         if test_start >= net_start and test_start <= net_end:
             return True
@@ -77,14 +77,14 @@ def _check_network_overlap(test_network, networks):
     return False
 
 def _check_network_private(test_network):
-    test_net = ipaddress.IPNetwork(test_network)
-    test_start = test_net.network
-    test_end = test_net.broadcast
+    test_net = ipaddress.ip_network(test_network)
+    test_start = test_net.network_address
+    test_end = test_net.broadcast_address
 
     for network in settings.vpn.safe_priv_subnets:
-        network = ipaddress.IPNetwork(network)
-        net_start = network.network
-        net_end = network.broadcast
+        network = ipaddress.ip_network(network)
+        net_start = network.network_address
+        net_end = network.broadcast_address
 
         if test_start >= net_start and test_end <= net_end:
             return True
@@ -92,13 +92,13 @@ def _check_network_private(test_network):
     return False
 
 def _check_network_range(test_network, start_addr, end_addr):
-    test_net = ipaddress.IPNetwork(test_network)
-    start_addr = ipaddress.IPAddress(start_addr)
-    end_addr = ipaddress.IPAddress(end_addr)
+    test_net = ipaddress.ip_network(test_network)
+    start_addr = ipaddress.ip_address(start_addr)
+    end_addr = ipaddress.ip_address(end_addr)
 
     return all((
-        start_addr != test_net.network,
-        end_addr != test_net.broadcast,
+        start_addr != test_net.network_address,
+        end_addr != test_net.broadcast_address,
         start_addr < end_addr,
         start_addr in test_net,
         end_addr in test_net,
@@ -166,7 +166,7 @@ def server_put_post(server_id=None):
     if 'network' in flask.request.json and \
             flask.request.json['network'] != '':
         network_def = True
-        network = flask.request.json['network'].encode().strip()
+        network = flask.request.json['network'].strip()
 
         try:
             if not _check_network_private(network):
@@ -185,7 +185,7 @@ def server_put_post(server_id=None):
     if wg and 'network_wg' in flask.request.json and \
             flask.request.json['network_wg'] != '':
         network_wg_def = True
-        network_wg = flask.request.json['network_wg'].encode().strip()
+        network_wg = flask.request.json['network_wg'].strip()
 
         try:
             if not _check_network_private(network_wg):
@@ -318,7 +318,7 @@ def server_put_post(server_id=None):
 
         for dns_server in dns_servers:
             try:
-                ipaddress.IPAddress(dns_server)
+                ipaddress.ip_address(dns_server)
             except (ipaddress.AddressValueError, ValueError):
                 return _dns_server_invalid()
 
@@ -507,8 +507,8 @@ def server_put_post(server_id=None):
 
         if not network_def:
             network_def = True
-            rand_range = range(215, 250)
-            rand_range_low = range(15, 215)
+            rand_range = list(range(215, 250))
+            rand_range_low = list(range(15, 215))
             random.shuffle(rand_range)
             random.shuffle(rand_range_low)
             rand_range += rand_range_low
@@ -524,11 +524,11 @@ def server_put_post(server_id=None):
                 }, 400)
 
         if wg and not network_wg_def:
-            network_used.add(ipaddress.IPNetwork(network))
+            network_used.add(ipaddress.ip_network(network))
 
             network_wg_def = True
-            rand_range = range(215, 250)
-            rand_range_low = range(15, 215)
+            rand_range = list(range(215, 250))
+            rand_range_low = list(range(15, 215))
             random.shuffle(rand_range)
             random.shuffle(rand_range_low)
             rand_range += rand_range_low
@@ -546,7 +546,7 @@ def server_put_post(server_id=None):
 
         if not port_def:
             port_def = True
-            rand_ports = range(10000, 19999)
+            rand_ports = list(range(10000, 19999))
             random.shuffle(rand_ports)
             for rand_port in rand_ports:
                 if '%s%s' % (rand_port, protocol) not in port_used:
@@ -562,7 +562,7 @@ def server_put_post(server_id=None):
             port_used.add(port)
 
             port_wg_def = True
-            rand_port_wgs = range(10000, 19999)
+            rand_port_wgs = list(range(10000, 19999))
             random.shuffle(rand_port_wgs)
             for rand_port_wg in rand_port_wgs:
                 if '%s%s' % (rand_port_wg, protocol) not in port_used:
@@ -1006,7 +1006,7 @@ def server_route_put(server_id, route_network):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id)
-    route_network = route_network.decode('hex')
+    route_network = bytes.fromhex(route_network).decode()
     comment = flask.request.json.get('comment') or None
     metric = flask.request.json.get('metric') or None
     nat_route = True if flask.request.json.get('nat') else False
@@ -1077,7 +1077,7 @@ def server_route_delete(server_id, route_network):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id)
-    route_network = route_network.decode('hex')
+    route_network = bytes.fromhex(route_network).decode()
 
     try:
         route = svr.remove_route(route_network)

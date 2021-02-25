@@ -15,9 +15,9 @@ import pyroute2.netlink
 import socket
 
 _used_interfaces = set()
-_tun_interfaces = collections.deque(['tun%s' % _x for _x in xrange(100)])
-_tap_interfaces = collections.deque(['tap%s' % _x for _x in xrange(100)])
-_wg_interfaces = collections.deque(['wg%s' % _x for _x in xrange(100)])
+_tun_interfaces = collections.deque(['tun%s' % _x for _x in range(100)])
+_tap_interfaces = collections.deque(['tap%s' % _x for _x in range(100)])
+_wg_interfaces = collections.deque(['wg%s' % _x for _x in range(100)])
 _sock = None
 _sockfd = None
 _ip_route = pyroute2.iproute.IPRoute()
@@ -89,20 +89,20 @@ def get_interface_address6(iface):
         return addr.split('%')[0]
 
 def get_ip_pool_reverse(network, network_start):
-    ip_pool = network.iterhostsreversed()
-    ip_pool.next()
-    ip_pool.next()
+    ip_pool = network_reverse_hosts(network)
+    next(ip_pool)
+    next(ip_pool)
 
     if network_start:
         network_break = network_start
 
         while True:
             try:
-                ip_addr = ip_pool.next()
+                ip_addr = next(ip_pool)
             except StopIteration:
-                ip_pool = network.iterhostsreversed()
-                ip_pool.next()
-                ip_pool.next()
+                ip_pool = network_reverse_hosts(network)
+                next(ip_pool)
+                next(ip_pool)
                 return
 
             if ip_addr == network_break:
@@ -110,12 +110,19 @@ def get_ip_pool_reverse(network, network_start):
 
     return ip_pool
 
+def network_reverse_hosts(net):
+    cur = int(net.broadcast_address) - 1
+    end = int(net.network_address) + 1
+    while cur >= end:
+        cur -= 1
+        yield ipaddress.ip_address(cur + 1)
+
 def ip_to_long(ip_str):
     ip = ip_str.split('.')
     ip.reverse()
     while len(ip) < 4:
         ip.insert(1, '0')
-    return sum(long(byte) << 8 * i for i, byte in enumerate(ip))
+    return sum(int(byte) << 8 * i for i, byte in enumerate(ip))
 
 def long_to_ip(ip_num):
     return '.'.join(map(str, [
@@ -133,21 +140,25 @@ def subnet_to_cidr(subnet):
         count += 1
     return 32 - count
 
+def network_contains(x, y):
+    return (x.network_address <= y.network_address and
+        x.broadcast_address >= y.broadcast_address)
+
 def network_addr(ip, subnet):
     return '%s/%s' % (long_to_ip(ip_to_long(ip) & ip_to_long(subnet)),
         subnet_to_cidr(subnet))
 
 def parse_network(network):
-    address = ipaddress.IPNetwork(network)
-    return str(address.ip), str(address.netmask)
+    address = ipaddress.ip_network(network, strict=False)
+    return str(address.network_address), str(address.netmask)
 
 def get_network_gateway(network):
-    return str(ipaddress.IPNetwork(network).iterhosts().next())
+    return str(next(ipaddress.ip_network(network).hosts()))
 
 def get_network_gateway_cidr(network):
-    network = ipaddress.IPNetwork(network)
+    network = ipaddress.ip_network(network, strict=False)
     cidr = network.prefixlen
-    return str(network.iterhosts().next()) + '/' + str(cidr)
+    return str(next(network.hosts())) + '/' + str(cidr)
 
 def get_default_interface():
     gateways = netifaces.gateways()
@@ -267,11 +278,11 @@ def get_interface_mac_address(iface):
     return mac_addrs[0].get('addr')
 
 def find_interface(network):
-    network = ipaddress.IPNetwork(network)
+    network = ipaddress.ip_network(network, strict=False)
 
-    for interface, data in get_interfaces().items():
+    for interface, data in list(get_interfaces().items()):
         try:
-            address = ipaddress.IPAddress(data['address'])
+            address = ipaddress.ip_address(data['address'])
         except ValueError:
             continue
 
@@ -279,11 +290,11 @@ def find_interface(network):
             return data
 
 def find_interface_addr(addr):
-    match_addr = ipaddress.IPAddress(addr)
+    match_addr = ipaddress.ip_address(addr)
 
-    for interface, data in get_interfaces().items():
+    for interface, data in list(get_interfaces().items()):
         try:
-            address = ipaddress.IPAddress(data['address'])
+            address = ipaddress.ip_address(data['address'])
         except ValueError:
             continue
 
@@ -467,13 +478,13 @@ def del_route6(dst_addr):
         _ip_route_lock.release()
 
 def check_network_overlap(test_network, networks):
-    test_net = ipaddress.IPNetwork(test_network)
-    test_start = test_net.network
-    test_end = test_net.broadcast
+    test_net = ipaddress.ip_network(test_network)
+    test_start = test_net.network_address
+    test_end = test_net.broadcast_address
 
     for network in networks:
-        net_start = network.network
-        net_end = network.broadcast
+        net_start = network.network_address
+        net_end = network.broadcast_address
 
         if test_start >= net_start and test_start <= net_end:
             return True
@@ -487,14 +498,14 @@ def check_network_overlap(test_network, networks):
     return False
 
 def check_network_private(test_network):
-    test_net = ipaddress.IPNetwork(test_network)
-    test_start = test_net.network
-    test_end = test_net.broadcast
+    test_net = ipaddress.ip_network(test_network)
+    test_start = test_net.network_address
+    test_end = test_net.broadcast_address
 
     for network in settings.vpn.safe_priv_subnets:
-        network = ipaddress.IPNetwork(network)
-        net_start = network.network
-        net_end = network.broadcast
+        network = ipaddress.ip_network(network)
+        net_start = network.network_address
+        net_end = network.broadcast_address
 
         if test_start >= net_start and test_end <= net_end:
             return True
@@ -502,18 +513,18 @@ def check_network_private(test_network):
     return False
 
 def check_network_range(test_network, start_addr, end_addr):
-    test_net = ipaddress.IPNetwork(test_network)
-    start_addr = ipaddress.IPAddress(start_addr)
-    end_addr = ipaddress.IPAddress(end_addr)
+    test_net = ipaddress.ip_network(test_network)
+    start_addr = ipaddress.ip_address(start_addr)
+    end_addr = ipaddress.ip_address(end_addr)
 
     return all((
-        start_addr != test_net.network,
-        end_addr != test_net.broadcast,
+        start_addr != test_net.network_address,
+        end_addr != test_net.broadcast_address,
         start_addr < end_addr,
         start_addr in test_net,
         end_addr in test_net,
     ))
 
 def random_ip_addr():
-    return str(ipaddress.IPAddress(100000000 + random.randint(
+    return str(ipaddress.ip_address(100000000 + random.randint(
         0, 1000000000)))

@@ -44,7 +44,7 @@ class Administrator(mongo.MongoObject):
     def __init__(self, username=None, password=None, default=None,
             yubikey_id=None, otp_auth=None, auth_api=None, disabled=None,
             super_user=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
         if username is not None:
             self.username = username
         if password is not None:
@@ -136,7 +136,7 @@ class Administrator(mongo.MongoObject):
         else:
             raise ValueError('Unknown hash version')
 
-        test_hash = base64.b64encode(hash_func(pass_salt, test_pass))
+        test_hash = base64.b64encode(hash_func(pass_salt, test_pass)).decode()
         return utils.const_compare(pass_hash, test_hash)
 
     def auth_check(self, password, otp_code=None, yubico_key=None,
@@ -236,7 +236,7 @@ class Administrator(mongo.MongoObject):
         for epoch_offset in range(-1, 2):
             value = struct.pack('>q', epoch + epoch_offset)
             hmac_hash = hmac.new(otp_secret, value, hashlib.sha1).digest()
-            offset = ord(hmac_hash[-1]) & 0x0F
+            offset = hmac_hash[-1] & 0x0F
             truncated_hash = hmac_hash[offset:offset + 4]
             truncated_hash = struct.unpack('>L', truncated_hash)[0]
             truncated_hash &= 0x7FFFFFFF
@@ -291,8 +291,8 @@ class Administrator(mongo.MongoObject):
 
             salt = base64.b64encode(os.urandom(8))
             pass_hash = base64.b64encode(
-                hash_password_v3(salt, self.password))
-            pass_hash = '3$%s$%s' % (salt, pass_hash)
+                hash_password_v3(salt, self.password)).decode()
+            pass_hash = '3$%s$%s' % (salt.decode(), pass_hash)
             self.password = pass_hash
 
             if self.default and self.exists:
@@ -424,7 +424,7 @@ def check_session(csrf_check):
             return False
 
         auth_test_signature = base64.b64encode(hmac.new(
-            administrator.secret.encode(), auth_string,
+            administrator.secret.encode(), auth_string.encode(),
             hashlib.sha256).digest())
         if not utils.const_compare(auth_signature, auth_test_signature):
             return False

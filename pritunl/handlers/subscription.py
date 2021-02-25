@@ -8,7 +8,7 @@ from pritunl import auth
 
 import flask
 import re
-import httplib
+import http.client
 import requests
 
 @app.app.route('/subscription', methods=['GET'])
@@ -66,7 +66,7 @@ def subscription_post():
                 'version': settings.local.version_int,
             },
         )
-    except httplib.HTTPException:
+    except http.client.HTTPException:
         return utils.jsonify({
             'error': SUBSCRIPTION_SERVER_ERROR,
             'error_msg': SUBSCRIPTION_SERVER_ERROR_MSG,
@@ -118,7 +118,7 @@ def subscription_put():
                     'email': email,
                 },
             )
-    except httplib.HTTPException:
+    except http.client.HTTPException:
         return utils.jsonify({
             'error': SUBSCRIPTION_SERVER_ERROR,
             'error_msg': SUBSCRIPTION_SERVER_ERROR_MSG,

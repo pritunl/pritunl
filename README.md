@@ -14,12 +14,15 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 ```bash
 export VERSION=X.XX.XX.XX # Set current pritunl version here
 
-sudo rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-sudo yum -y install git bzr python2 python-devel python-pip net-tools openvpn bridge-utils psmisc gcc-c++
+sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates
 
-wget https://golang.org/dl/go1.15.6.linux-amd64.tar.gz
-sudo tar -C /usr/local -xf go1.15.6.linux-amd64.tar.gz
-rm -f go1.15.6.linux-amd64.tar.gz
+wget https://golang.org/dl/go1.15.7.linux-amd64.tar.gz
+echo "0d142143794721bb63ce6c8a6180c4062bcf8ef4715e7d6d6609f3a8282629b3 go1.15.7.linux-amd64.tar.gz" | sha256sum -c -
+
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xf go1.15.7.linux-amd64.tar.gz
+rm -f go1.15.7.linux-amd64.tar.gz
 tee -a ~/.bashrc << EOF
 export GOPATH=\$HOME/go
 export PATH=/usr/local/go/bin:\$PATH
@@ -28,15 +31,16 @@ source ~/.bashrc
 
 go get -u github.com/pritunl/pritunl-dns
 go get -u github.com/pritunl/pritunl-web
-sudo ln -s ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
-sudo ln -s ~/go/bin/pritunl-web /usr/bin/pritunl-web
+sudo ln -sf ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
+sudo ln -sf ~/go/bin/pritunl-web /usr/bin/pritunl-web
 
 wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
 tar xf $VERSION.tar.gz
-cd pritunl-$VERSION
-python2 setup.py build
-pip install -r requirements.txt
-sudo python2 setup.py install
+cd pritunl-master
+python3 setup.py build
+sudo pip3 install -U -r requirements.txt
+sudo python3 setup.py install
+sudo ln -sf /usr/local/bin/pritunl /usr/bin/pritunl
 
 sudo systemctl daemon-reload
 sudo systemctl start mongod pritunl

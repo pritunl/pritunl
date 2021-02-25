@@ -36,11 +36,11 @@ class TaskLink(task.Task):
                 best_hosts[hst.location_id] = hst
                 continue
 
-        for hst in best_hosts.values():
+        for hst in list(best_hosts.values()):
             if not hst.active:
                 hst.set_active()
 
         for hst in hosts:
             hst.update_available(location_available_hosts[hst.location_id])
 
-task.add_task(TaskLink, seconds=xrange(0, 60, 3))
+task.add_task(TaskLink, seconds=range(0, 60, 3))

@@ -42,7 +42,7 @@ class Settings(object):
 
         for doc in docs:
             group = getattr(self, doc['_id'])
-            for field, val in doc.items():
+            for field, val in list(doc.items()):
                 if field == '_id':
                     continue
                 setattr(group, field, val)

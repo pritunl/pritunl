@@ -196,7 +196,7 @@ def _auth_radius(username, password, remote_addr):
     journal.entry(
         journal.SSO_AUTH_SUCCESS,
         usr.journal_data,
-        key_id_hash=hashlib.md5(key_link['id']).hexdigest(),
+        key_id_hash=hashlib.md5(key_link['id'].encode()).hexdigest(),
         remote_address=remote_addr,
     )
 
@@ -340,7 +340,7 @@ def _auth_plugin(username, password, remote_addr):
 @auth.open_auth
 def auth_session_post():
     username = utils.json_filter_str('username')[:128]
-    password = flask.request.json['password'].encode('utf-8')
+    password = flask.request.json['password']
     if password:
         password = password[:128]
     otp_code = utils.json_opt_filter_str('otp_code')

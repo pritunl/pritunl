@@ -61,14 +61,14 @@ def main(default_conf=None):
     pritunl.set_conf_path(conf_path)
 
     if cmd == 'version':
-        print '%s v%s' % (pritunl.__title__, pritunl.__version__)
+        print('%s v%s' % (pritunl.__title__, pritunl.__version__))
         sys.exit(0)
     elif cmd == 'setup-key':
         from pritunl import setup
         from pritunl import settings
 
         setup.setup_loc()
-        print settings.local.setup_key
+        print(settings.local.setup_key)
 
         sys.exit(0)
     elif cmd == 'reset-version':
@@ -80,7 +80,7 @@ def main(default_conf=None):
         utils.set_db_ver(pritunl.__version__, MIN_DATABASE_VER)
 
         time.sleep(.2)
-        print 'Database version reset to %s' % pritunl.__version__
+        print('Database version reset to %s' % pritunl.__version__)
 
         sys.exit(0)
     elif cmd == 'reset-password':
@@ -90,8 +90,8 @@ def main(default_conf=None):
         setup.setup_db()
         username, password = auth.reset_password()
 
-        print 'Administrator password successfully reset:\n' + \
-            '  username: "%s"\n  password: "%s"' % (username, password)
+        print('Administrator password successfully reset:\n' + \
+            '  username: "%s"\n  password: "%s"' % (username, password))
 
         sys.exit(0)
     elif cmd == 'default-password':
@@ -102,10 +102,10 @@ def main(default_conf=None):
         username, password = auth.get_default_password()
 
         if not password:
-            print 'No default password available, use reset-password'
+            print('No default password available, use reset-password')
         else:
-            print 'Administrator default password:\n' + \
-                '  username: "%s"\n  password: "%s"' % (username, password)
+            print('Administrator default password:\n' + \
+                '  username: "%s"\n  password: "%s"' % (username, password))
 
         sys.exit(0)
     elif cmd == 'reconfigure':
@@ -117,7 +117,7 @@ def main(default_conf=None):
         settings.conf.commit()
 
         time.sleep(.2)
-        print 'Database configuration successfully reset'
+        print('Database configuration successfully reset')
 
         sys.exit(0)
     elif cmd == 'get':
@@ -141,14 +141,14 @@ def main(default_conf=None):
 
         if key_str:
             val = getattr(group, key_str)
-            print '%s.%s = %s' % (group_str, key_str,
-                json.dumps(val, default=lambda x: str(x)))
+            print('%s.%s = %s' % (group_str, key_str,
+                json.dumps(val, default=lambda x: str(x))))
 
         else:
             for field in group.fields:
                 val = getattr(group, field)
-                print '%s.%s = %s' % (group_str, field,
-                    json.dumps(val, default=lambda x: str(x)))
+                print('%s.%s = %s' % (group_str, field,
+                    json.dumps(val, default=lambda x: str(x))))
 
         sys.exit(0)
     elif cmd == 'set':
@@ -187,11 +187,11 @@ def main(default_conf=None):
 
         time.sleep(.2)
 
-        print '%s.%s = %s' % (group_str, key_str,
-            json.dumps(getattr(group, key_str), default=lambda x: str(x)))
-        print 'Successfully updated configuration. This change is ' \
+        print('%s.%s = %s' % (group_str, key_str,
+            json.dumps(getattr(group, key_str), default=lambda x: str(x))))
+        print('Successfully updated configuration. This change is ' \
             'stored in the database and has been applied to all hosts ' \
-            'in the cluster.'
+            'in the cluster.')
 
         sys.exit(0)
     elif cmd == 'unset':
@@ -212,11 +212,11 @@ def main(default_conf=None):
 
         time.sleep(.2)
 
-        print '%s.%s = %s' % (group_str, key_str,
-            json.dumps(getattr(group, key_str), default=lambda x: str(x)))
-        print 'Successfully updated configuration. This change is ' \
+        print('%s.%s = %s' % (group_str, key_str,
+            json.dumps(getattr(group, key_str), default=lambda x: str(x))))
+        print('Successfully updated configuration. This change is ' \
             'stored in the database and has been applied to all hosts ' \
-            'in the cluster.'
+            'in the cluster.')
 
         sys.exit(0)
     elif cmd == 'set-mongodb':
@@ -233,7 +233,7 @@ def main(default_conf=None):
         settings.conf.commit()
 
         time.sleep(.2)
-        print 'Database configuration successfully set'
+        print('Database configuration successfully set')
 
         sys.exit(0)
     elif cmd == 'reset-ssl-cert':
@@ -249,7 +249,7 @@ def main(default_conf=None):
         settings.commit()
 
         time.sleep(.2)
-        print 'Server ssl certificate successfully reset'
+        print('Server ssl certificate successfully reset')
 
         sys.exit(0)
     elif cmd == 'destroy-secondary':
@@ -259,7 +259,7 @@ def main(default_conf=None):
 
         setup.setup_db()
 
-        print 'Destroying secondary database...'
+        print('Destroying secondary database...')
 
         mongo.get_collection('clients').drop()
         mongo.get_collection('clients_pool').drop()
@@ -294,7 +294,7 @@ def main(default_conf=None):
             },
         })
 
-        print 'Secondary database destroyed'
+        print('Secondary database destroyed')
 
         sys.exit(0)
     elif cmd == 'repair-database':
@@ -304,7 +304,7 @@ def main(default_conf=None):
 
         setup.setup_db()
 
-        print 'Repairing database...'
+        print('Repairing database...')
 
         mongo.get_collection('clients').drop()
         mongo.get_collection('clients_pool').drop()
@@ -365,7 +365,7 @@ def main(default_conf=None):
             },
         })
 
-        print 'Database repair complete'
+        print('Database repair complete')
 
         sys.exit(0)
     elif cmd == 'logs':
@@ -380,16 +380,16 @@ def main(default_conf=None):
                 archive_path = args[1]
             else:
                 archive_path = './'
-            print 'Log archived to: ' + log_view.archive_log(archive_path,
-                options.natural, options.limit)
+            print('Log archived to: ' + log_view.archive_log(archive_path,
+                options.natural, options.limit))
         elif options.tail:
             for msg in log_view.tail_log_lines():
-                print msg
+                print(msg)
         else:
-            print log_view.get_log_lines(
+            print(log_view.get_log_lines(
                 natural=options.natural,
                 limit=options.limit,
-            )
+            ))
 
         sys.exit(0)
     elif cmd == 'clear-logs':
@@ -430,21 +430,21 @@ def main(default_conf=None):
                     pid_file.write('%s' % pid)
             sys.exit(0)
     elif not options.quiet:
-        print '##############################################################'
-        print '#                                                            #'
-        print '#                      /$$   /$$                         /$$ #'
-        print '#                     |__/  | $$                        | $$ #'
-        print '#   /$$$$$$   /$$$$$$  /$$ /$$$$$$   /$$   /$$ /$$$$$$$ | $$ #'
-        print '#  /$$__  $$ /$$__  $$| $$|_  $$_/  | $$  | $$| $$__  $$| $$ #'
-        print '# | $$  \ $$| $$  \__/| $$  | $$    | $$  | $$| $$  \ $$| $$ #'
-        print '# | $$  | $$| $$      | $$  | $$ /$$| $$  | $$| $$  | $$| $$ #'
-        print '# | $$$$$$$/| $$      | $$  |  $$$$/|  $$$$$$/| $$  | $$| $$ #'
-        print '# | $$____/ |__/      |__/   \____/  \______/ |__/  |__/|__/ #'
-        print '# | $$                                                       #'
-        print '# | $$                                                       #'
-        print '# |__/                                                       #'
-        print '#                                                            #'
-        print '##############################################################'
+        print('##############################################################')
+        print('#                                                            #')
+        print('#                      /$$   /$$                         /$$ #')
+        print('#                     |__/  | $$                        | $$ #')
+        print('#   /$$$$$$   /$$$$$$  /$$ /$$$$$$   /$$   /$$ /$$$$$$$ | $$ #')
+        print('#  /$$__  $$ /$$__  $$| $$|_  $$_/  | $$  | $$| $$__  $$| $$ #')
+        print('# | $$  \ $$| $$  \__/| $$  | $$    | $$  | $$| $$  \ $$| $$ #')
+        print('# | $$  | $$| $$      | $$  | $$ /$$| $$  | $$| $$  | $$| $$ #')
+        print('# | $$$$$$$/| $$      | $$  |  $$$$/|  $$$$$$/| $$  | $$| $$ #')
+        print('# | $$____/ |__/      |__/   \____/  \______/ |__/  |__/|__/ #')
+        print('# | $$                                                       #')
+        print('# | $$                                                       #')
+        print('# |__/                                                       #')
+        print('#                                                            #')
+        print('##############################################################')
 
     pritunl.init_server()
 

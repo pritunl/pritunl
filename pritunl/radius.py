@@ -91,18 +91,18 @@ class RADIUS:
         if self._socket is not None:
             try:
                 self._socket.close()
-            except socket.error,x:
+            except socket.error as x:
                 raise SocketError(x)
             self._socket = None
 
     def generateAuthenticator(self):
         '''A 16 byte random string'''
-        v = range(0,17)
+        v = list(range(0,17))
         v[0] = '16B'
         for i in range(1,17):
             v[i] = randint(1,255)
 
-        return apply(pack,v)
+        return pack(*v)
 
     def radcrypt(self,authenticator,text):
         '''Encrypt a password with the secret'''
@@ -158,7 +158,7 @@ class RADIUS:
                 else:
                     continue
 
-                if ord(response[1]) <> id:
+                if ord(response[1]) != id:
                     continue
 
                 # Verify the packet is not a cheap forgery or corrupt
@@ -166,7 +166,7 @@ class RADIUS:
                 m = md5(response[0:4] + authenticator + response[20:]
                     + self._secret).digest()
 
-                if m <> checkauth:
+                if m != checkauth:
                     continue
 
                 if ord(response[0]) == ACCESS_ACCEPT:
@@ -174,7 +174,7 @@ class RADIUS:
                 else:
                     return 0
 
-        except socket.error,x: # SocketError
+        except socket.error as x: # SocketError
             try: self.closesocket()
             except: pass
             raise SocketError(x)
@@ -189,8 +189,8 @@ if __name__ == '__main__':
 
     from getpass import getpass
 
-    host = raw_input("Host? (default = 'radius')")
-    port = raw_input('Port? (default = 1645) ')
+    host = input("Host? (default = 'radius')")
+    port = input('Port? (default = 1645) ')
 
     if not host: host = 'radius'
 
@@ -204,10 +204,10 @@ if __name__ == '__main__':
 
     uname,passwd = None,None
 
-    while not uname:  uname = raw_input("Username? ")
+    while not uname:  uname = input("Username? ")
     while not passwd: passwd = getpass("Password? ")
 
     if r.authenticate(uname,passwd):
-        print "Authentication Succeeded"
+        print("Authentication Succeeded")
     else:
-        print "Authentication Failed"
+        print("Authentication Failed")

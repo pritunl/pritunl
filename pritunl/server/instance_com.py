@@ -42,7 +42,7 @@ class ServerInstanceCom(object):
     def sock_send(self, data):
         self.sock_lock.acquire()
         try:
-            self.sock.send(data)
+            self.sock.send(data.encode())
         finally:
             self.sock_lock.release()
 
@@ -170,7 +170,7 @@ class ServerInstanceCom(object):
             self.push_output('COM> %s' % line)
 
     def wait_for_socket(self):
-        for _ in xrange(10000):
+        for _ in range(10000):
             if os.path.exists(self.socket_path):
                 return
             time.sleep(0.001)
@@ -233,7 +233,8 @@ class ServerInstanceCom(object):
                 timestamp_ttl = self.cur_timestamp - datetime.timedelta(
                     seconds=180)
 
-                for client_id, (timestamp, _, _) in self.client_bytes.items():
+                for client_id, (timestamp, _, _) in list(
+                        self.client_bytes.items()):
                     if timestamp < timestamp_ttl:
                         self.client_bytes.pop(client_id, None)
 
@@ -289,7 +290,7 @@ class ServerInstanceCom(object):
 
             data = ''
             while True:
-                data += self.sock.recv(SOCKET_BUFFER)
+                data += self.sock.recv(SOCKET_BUFFER).decode()
                 if not data or self.instance.sock_interrupt:
                     if not self.instance.sock_interrupt and \
                             not check_global_interrupt():
@@ -345,7 +346,7 @@ class ServerInstanceCom(object):
                         'user_id': user.id,
                         'mac_addr': utils.rand_str(16),
                         'remote_ip': str(
-                            ipaddress.IPAddress(100000000 + random.randint(
+                            ipaddress.ip_address(100000000 + random.randint(
                                 0, 1000000000))),
                         'platform': 'linux',
                         'device_id': str(bson.ObjectId()),

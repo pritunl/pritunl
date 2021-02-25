@@ -1,7 +1,7 @@
-import urlparse
+import urllib.parse
 
 def get_servers(uri):
-    uri = urlparse.urlparse(uri)
+    uri = urllib.parse.urlparse(uri)
 
     netloc = uri.netloc.split('@', 1)
     if len(netloc) == 2:

@@ -2,7 +2,7 @@ from pritunl import settings
 from pritunl import logger
 
 import requests
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 def verify_azure(user_name):
     response = requests.post(
@@ -35,7 +35,7 @@ def verify_azure(user_name):
     response = requests.get(
         'https://graph.windows.net/%s/users/%s' % (
             settings.app.sso_azure_directory_id,
-            urllib.quote(user_name),
+            urllib.parse.quote(user_name),
         ),
         headers={
             'Authorization': 'Bearer %s' % access_token,
@@ -67,7 +67,7 @@ def verify_azure(user_name):
     response = requests.get(
         'https://graph.windows.net/%s/users/%s/memberOf' % (
             settings.app.sso_azure_directory_id,
-            urllib.quote(user_name),
+            urllib.parse.quote(user_name),
         ),
         headers={
             'Authorization': 'Bearer %s' % access_token,

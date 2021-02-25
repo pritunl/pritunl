@@ -34,8 +34,8 @@ def auth_yubico(yubikey):
         return False, None
 
     yubikey_hash = hashlib.sha512()
-    yubikey_hash.update(yubikey)
-    yubikey_hash = base64.b64encode(yubikey_hash.digest())
+    yubikey_hash.update(yubikey.encode())
+    yubikey_hash = base64.b64encode(yubikey_hash.digest()).decode()
 
     try:
         yubikey_collection.insert({

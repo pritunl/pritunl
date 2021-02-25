@@ -70,4 +70,4 @@ class TaskHost(task.Task):
         except:
             logger.exception('Error checking host status', 'runners')
 
-task.add_task(TaskHost, seconds=xrange(0, 60, settings.app.host_ping))
+task.add_task(TaskHost, seconds=range(0, 60, settings.app.host_ping))

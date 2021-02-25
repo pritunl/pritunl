@@ -23,7 +23,7 @@ import hmac
 import json
 import uuid
 import pymongo
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import requests
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
@@ -70,7 +70,7 @@ class User(mongo.MongoObject):
             resource_id=None, bypass_secondary=None, client_to_client=None,
             mac_addresses=None, dns_servers=None, dns_suffix=None,
             port_forwarding=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
 
         if org:
             self.org = org
@@ -258,9 +258,9 @@ class User(mongo.MongoObject):
 
             if self.type != CERT_CA:
                 self.org.write_file(
-                    'ca_certificate', ca_cert_path, chmod=0600)
+                    'ca_certificate', ca_cert_path, chmod=0o600)
                 self.org.write_file(
-                    'ca_private_key', ca_key_path, chmod=0600)
+                    'ca_private_key', ca_key_path, chmod=0o600)
                 self.generate_otp_secret()
 
             try:
@@ -376,7 +376,7 @@ class User(mongo.MongoObject):
             try:
                 resp = requests.get(auth_server +
                     '/update/google?user=%s&license=%s' % (
-                        urllib.quote(self.email),
+                        urllib.parse.quote(self.email),
                         settings.app.license,
                     ))
 
@@ -420,11 +420,11 @@ class User(mongo.MongoObject):
                 resp = requests.get(auth_server +
                     ('/update/azure?user=%s&license=%s&' +
                     'directory_id=%s&app_id=%s&app_secret=%s') % (
-                        urllib.quote(self.name),
+                        urllib.parse.quote(self.name),
                         settings.app.license,
-                        urllib.quote(settings.app.sso_azure_directory_id),
-                        urllib.quote(settings.app.sso_azure_app_id),
-                        urllib.quote(settings.app.sso_azure_app_secret),
+                        urllib.parse.quote(settings.app.sso_azure_directory_id),
+                        urllib.parse.quote(settings.app.sso_azure_app_id),
+                        urllib.parse.quote(settings.app.sso_azure_app_secret),
                 ))
 
                 if resp.status_code != 200:
@@ -467,11 +467,11 @@ class User(mongo.MongoObject):
                 resp = requests.get(auth_server +
                     ('/update/authzero?user=%s&license=%s&' +
                      'app_domain=%s&app_id=%s&app_secret=%s') % (
-                        urllib.quote(self.name),
+                        urllib.parse.quote(self.name),
                         settings.app.license,
-                        urllib.quote(settings.app.sso_authzero_domain),
-                        urllib.quote(settings.app.sso_authzero_app_id),
-                        urllib.quote(settings.app.sso_authzero_app_secret),
+                        urllib.parse.quote(settings.app.sso_authzero_domain),
+                        urllib.parse.quote(settings.app.sso_authzero_app_id),
+                        urllib.parse.quote(settings.app.sso_authzero_app_secret),
                 ))
 
                 if resp.status_code != 200:
@@ -516,8 +516,8 @@ class User(mongo.MongoObject):
             try:
                 resp = requests.get(auth_server +
                     '/update/slack?user=%s&team=%s&license=%s' % (
-                        urllib.quote(self.name),
-                        urllib.quote(settings.app.sso_match[0]),
+                        urllib.parse.quote(self.name),
+                        urllib.parse.quote(settings.app.sso_match[0]),
                         settings.app.license,
                     ))
 
@@ -625,7 +625,7 @@ class User(mongo.MongoObject):
         for epoch_offset in range(-1, 2):
             value = struct.pack('>q', epoch + epoch_offset)
             hmac_hash = hmac.new(otp_secret, value, hashlib.sha1).digest()
-            offset = ord(hmac_hash[-1]) & 0x0F
+            offset = hmac_hash[-1] & 0x0F
             truncated_hash = hmac_hash[offset:offset + 4]
             truncated_hash = struct.unpack('>L', truncated_hash)[0]
             truncated_hash &= 0x7FFFFFFF
@@ -772,23 +772,23 @@ class User(mongo.MongoObject):
         private_key = self.private_key.strip()
 
         conf_hash = hashlib.md5()
-        conf_hash.update(self.name.encode('utf-8'))
-        conf_hash.update(self.org.name.encode('utf-8'))
-        conf_hash.update(svr.name.encode('utf-8'))
-        conf_hash.update(svr.protocol)
+        conf_hash.update(self.name.encode())
+        conf_hash.update(self.org.name.encode())
+        conf_hash.update(svr.name.encode())
+        conf_hash.update(svr.protocol.encode())
         for key_remote in sorted(key_remotes):
-            conf_hash.update(key_remote)
-        conf_hash.update(CIPHERS[svr.cipher])
-        conf_hash.update(HASHES[svr.hash])
-        conf_hash.update(str(svr.lzo_compression))
-        conf_hash.update(str(svr.block_outside_dns))
-        conf_hash.update(str(svr.otp_auth))
-        conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames])
-        conf_hash.update(svr.adapter_type)
-        conf_hash.update(str(svr.ping_interval))
-        conf_hash.update(str(settings.vpn.server_poll_timeout))
-        conf_hash.update(ca_certificate)
-        conf_hash.update(self._get_key_info_str(svr, None, False))
+            conf_hash.update(key_remote.encode())
+        conf_hash.update(CIPHERS[svr.cipher].encode())
+        conf_hash.update(HASHES[svr.hash].encode())
+        conf_hash.update(str(svr.lzo_compression).encode())
+        conf_hash.update(str(svr.block_outside_dns).encode())
+        conf_hash.update(str(svr.otp_auth).encode())
+        conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames].encode())
+        conf_hash.update(svr.adapter_type.encode())
+        conf_hash.update(str(svr.ping_interval).encode())
+        conf_hash.update(str(settings.vpn.server_poll_timeout).encode())
+        conf_hash.update(ca_certificate.encode())
+        conf_hash.update(self._get_key_info_str(svr, None, False).encode())
 
         plugin_config = ''
         if settings.local.sub_plan and \
@@ -839,7 +839,7 @@ class User(mongo.MongoObject):
                         continue
 
                     val = return_val.strip()
-                    conf_hash.update(val)
+                    conf_hash.update(val.encode())
                     plugin_config += val + '\n'
 
         conf_hash = conf_hash.hexdigest()
@@ -890,9 +890,9 @@ class User(mongo.MongoObject):
             svr.create_primary_user()
 
         conf_hash = hashlib.md5()
-        conf_hash.update(str(svr.id))
-        conf_hash.update(str(self.org_id))
-        conf_hash.update(str(self.id))
+        conf_hash.update(str(svr.id).encode())
+        conf_hash.update(str(self.org_id).encode())
+        conf_hash.update(str(self.id).encode())
         conf_hash = '{%s}' % conf_hash.hexdigest()
 
         hosts = svr.get_hosts()
@@ -913,7 +913,7 @@ class User(mongo.MongoObject):
         onc_certs = {}
         cert_ids = []
         for cert in ca_certs:
-            cert_id = '{%s}' % hashlib.md5(cert).hexdigest()
+            cert_id = '{%s}' % hashlib.md5(cert.encode()).hexdigest()
             onc_certs[cert_id] = cert
             cert_ids.append(cert_id)
 
@@ -992,14 +992,14 @@ class User(mongo.MongoObject):
                         svr)
 
                     with open(server_conf_path, 'w') as ovpn_conf:
-                        os.chmod(server_conf_path, 0600)
+                        os.chmod(server_conf_path, 0o600)
                         ovpn_conf.write(client_conf)
                     tar_file.add(server_conf_path, arcname=conf_name)
                     os.remove(server_conf_path)
             finally:
                 tar_file.close()
 
-            with open(key_archive_path, 'r') as archive_file:
+            with open(key_archive_path, 'rb') as archive_file:
                 key_archive = archive_file.read()
         finally:
             utils.rmtree(temp_path)
@@ -1024,14 +1024,14 @@ class User(mongo.MongoObject):
                         svr)
 
                     with open(server_conf_path, 'w') as ovpn_conf:
-                        os.chmod(server_conf_path, 0600)
+                        os.chmod(server_conf_path, 0o600)
                         ovpn_conf.write(client_conf)
                     zip_file.write(server_conf_path, arcname=conf_name)
                     os.remove(server_conf_path)
             finally:
                 zip_file.close()
 
-            with open(key_archive_path, 'r') as archive_file:
+            with open(key_archive_path, 'rb') as archive_file:
                 key_archive = archive_file.read()
         finally:
             utils.rmtree(temp_path)
@@ -1052,7 +1052,7 @@ class User(mongo.MongoObject):
                 user_cert.write(self.certificate)
 
             with open(user_key_path, 'w') as user_key:
-                os.chmod(user_key_path, 0600)
+                os.chmod(user_key_path, 0o600)
                 user_key.write(self.private_key)
 
             utils.check_output_logged([
@@ -1092,7 +1092,7 @@ class User(mongo.MongoObject):
                 return None
 
             onc_certs = ''
-            for cert_id, cert in onc_certs_store.items():
+            for cert_id, cert in list(onc_certs_store.items()):
                 onc_certs += OVPN_ONC_CA_CERT % (cert_id, cert) + ',\n'
             onc_certs += OVPN_ONC_CLIENT_CERT % (
                 user_cert_id, user_key_base64)
@@ -1209,7 +1209,7 @@ class User(mongo.MongoObject):
                 if svr.status == ONLINE:
                     raise ServerOnlineError('Server online')
 
-        network = str(ipaddress.IPNetwork(network))
+        network = str(ipaddress.ip_network(network))
 
         self.net_link_collection.update({
             'user_id': self.id,

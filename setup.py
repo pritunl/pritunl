@@ -98,7 +98,7 @@ if install_systemd:
 for file_name in patch_files:
     for line in fileinput.input(file_name, inplace=True):
         line = line.replace('%PREFIX%', prefix)
-        print line.rstrip('\n')
+        print(line.rstrip('\n'))
 
 packages = ['pritunl']
 
@@ -137,7 +137,7 @@ setup(
         'License :: Other/Proprietary License',
         'Natural Language :: English',
         'Operating System :: POSIX :: Linux',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Topic :: System :: Networking',
     ],
 )

@@ -51,7 +51,7 @@ def EncodeOctets(str):
 def EncodeAddress(addr):
     if not isinstance(addr, six.string_types):
         raise TypeError('Address has to be a string')
-    (a, b, c, d) = map(int, addr.split('.'))
+    (a, b, c, d) = list(map(int, addr.split('.')))
     return struct.pack('BBBB', a, b, c, d)
 
 

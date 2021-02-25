@@ -25,7 +25,7 @@ class QueueInitUserPooled(QueueInitUser):
         self.load()
 
         if self.reserve_data:
-            for field, value in self.reserve_data.items():
+            for field, value in list(self.reserve_data.items()):
                 setattr(self.user, field, value)
         self.user.commit()
 

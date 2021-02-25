@@ -39,12 +39,10 @@ def _journal_runner_thread():
                 try:
                     event = journal_queue.popleft()
                     with open(settings.conf.journal_path, 'ab+') as jfile:
-                        json.dump(
+                        jfile.write(json.dumps(
                             event,
-                            jfile,
                             default=lambda x: str(x)
-                        )
-                        jfile.write(bytes('\n'))
+                        ).encode() + '\n'.encode())
                         size = jfile.tell()
                     if size > settings.app.journal_rotate_size:
                         rotate()

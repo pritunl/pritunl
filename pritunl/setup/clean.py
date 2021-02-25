@@ -78,7 +78,7 @@ def setup_clean():
 
 
 
-        output = subprocess.check_output([
+        output = utils.check_output([
             'ip',
             '-o',
             'link',
@@ -117,7 +117,7 @@ def setup_clean():
 
 
 
-        output = subprocess.check_output([
+        output = utils.check_output([
             'iptables-save',
         ])
 

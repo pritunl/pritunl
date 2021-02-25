@@ -54,7 +54,7 @@ def init():
             'Missing required plugins %s' % list(missing_plugins))
 
     for module in modules:
-        for call_type, handler in get_functions(module).iteritems():
+        for call_type, handler in get_functions(module).items():
             if call_type not in call_types:
                 continue
             if call_type not in _handlers:

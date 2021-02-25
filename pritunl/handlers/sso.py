@@ -17,7 +17,7 @@ import flask
 import hmac
 import hashlib
 import base64
-import urlparse
+import urllib.parse
 import requests
 
 def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
@@ -149,7 +149,7 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
     journal.entry(
         journal.SSO_AUTH_SUCCESS,
         usr.journal_data,
-        key_id_hash=hashlib.md5(key_link['id']).hexdigest(),
+        key_id_hash=hashlib.md5(key_link['id'].encode()).hexdigest(),
         remote_address=remote_addr,
     )
 
@@ -487,9 +487,9 @@ def sso_callback_get():
     if not doc:
         return flask.abort(404)
 
-    query = flask.request.query_string.split('&sig=')[0]
-    test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']),
-        query, hashlib.sha512).digest())
+    query = flask.request.query_string.split('&sig='.encode())[0]
+    test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']).encode(),
+        query, hashlib.sha512).digest()).decode()
     if not utils.const_compare(sig, test_sig):
         journal.entry(
             journal.SSO_AUTH_FAILURE,
@@ -500,7 +500,7 @@ def sso_callback_get():
         )
         return flask.abort(401)
 
-    params = urlparse.parse_qs(query)
+    params = urllib.parse.parse_qs(query.decode())
 
     if doc.get('type') == SAML_AUTH:
         username = params.get('username')[0]

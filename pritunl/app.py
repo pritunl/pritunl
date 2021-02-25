@@ -134,7 +134,7 @@ def _run_server(restart):
         context = subprocess.check_output(
             ['id', '-Z'],
             stderr=subprocess.PIPE,
-        ).strip()
+        ).encode().strip()
     except:
         context = 'none'
 

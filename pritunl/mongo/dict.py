@@ -65,22 +65,22 @@ class MongoDict(object):
         return c
 
     def keys(self):
-        return self.data.keys()
+        return list(self.data.keys())
 
     def items(self):
-        return self.data.items()
+        return list(self.data.items())
 
     def iteritems(self):
-        return self.data.iteritems()
+        return iter(self.data.items())
 
     def iterkeys(self):
-        return self.data.iterkeys()
+        return iter(self.data.keys())
 
     def itervalues(self):
-        return self.data.itervalues()
+        return iter(self.data.values())
 
     def values(self):
-        return self.data.values()
+        return list(self.data.values())
 
     def has_key(self, key):
         return key in self.data
@@ -94,7 +94,7 @@ class MongoDict(object):
         elif isinstance(dict, type({})) or not hasattr(dict, 'items'):
             self.data.update(dict)
         else:
-            for k, v in dict.items():
+            for k, v in list(dict.items()):
                 self[k] = v
         if len(kwargs):
             self.data.update(kwargs)

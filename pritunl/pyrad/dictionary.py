@@ -141,7 +141,7 @@ class Attribute:
         self.encrypt = encrypt
         self.has_tag = has_tag
         self.values = bidict.BiDict()
-        for (key, value) in values.items():
+        for (key, value) in list(values.items()):
             self.values.Add(key, value)
 
 

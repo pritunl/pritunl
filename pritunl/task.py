@@ -31,7 +31,7 @@ class Task(mongo.MongoObject):
     type = None
 
     def __init__(self, run_id=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
         self.type = self.type
         self.runner_id = utils.ObjectId()
 

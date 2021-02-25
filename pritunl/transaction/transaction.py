@@ -30,7 +30,7 @@ class Transaction(mongo.MongoObject):
     }
 
     def __init__(self, lock_id=None, priority=None, ttl=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
         self.ttl = settings.mongo.tran_ttl
 
         if lock_id is not None:
@@ -252,7 +252,7 @@ class Transaction(mongo.MongoObject):
     def commit(self):
         actions_json = json.dumps(self.action_sets,
             default=utils.json_default)
-        actions_json_zlib = zlib.compress(actions_json)
+        actions_json_zlib = zlib.compress(actions_json.encode())
 
         self.transaction_collection.insert({
             '_id': self.id,

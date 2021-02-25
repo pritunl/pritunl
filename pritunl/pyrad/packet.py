@@ -123,7 +123,7 @@ class Packet(dict):
         if 'packet' in attributes:
             self.DecodePacket(attributes['packet'])
 
-        for (key, value) in attributes.items():
+        for (key, value) in list(attributes.items()):
             if key in ['dict', 'fd', 'packet']:
                 continue
             key = key.replace('_', '-')
@@ -299,7 +299,7 @@ class Packet(dict):
 
     def _PktEncodeAttributes(self):
         result = six.b('')
-        for (code, datalst) in self.items():
+        for (code, datalst) in list(self.items()):
             for data in datalst:
                 result += self._PktEncodeAttribute(code, data)
 

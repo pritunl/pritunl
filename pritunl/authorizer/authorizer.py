@@ -140,7 +140,7 @@ class Authorizer(object):
     def _check_call(self, func):
         try:
             func()
-        except AuthError, err:
+        except AuthError as err:
             self._callback(False, str(err))
             raise
         except AuthForked:
@@ -180,11 +180,11 @@ class Authorizer(object):
 
     def _check_whitelist(self):
         if settings.app.sso_whitelist:
-            remote_ip = ipaddress.IPAddress(self.remote_ip)
+            remote_ip = ipaddress.ip_address(self.remote_ip)
 
             for network_str in settings.app.sso_whitelist:
                 try:
-                    network = ipaddress.IPNetwork(network_str)
+                    network = ipaddress.ip_network(network_str)
                 except (ipaddress.AddressValueError, ValueError):
                     logger.warning('Invalid whitelist network', 'authorize',
                         network=network_str,
@@ -275,8 +275,8 @@ class Authorizer(object):
 
         if self.auth_token:
             auth_token_hash = hashlib.sha512()
-            auth_token_hash.update(self.auth_token)
-            auth_token = base64.b64encode(auth_token_hash.digest())
+            auth_token_hash.update(self.auth_token.encode())
+            auth_token = base64.b64encode(auth_token_hash.digest()).decode()
         else:
             auth_token = None
 
@@ -745,8 +745,8 @@ class Authorizer(object):
             self.password = self.password[:-44]
 
             yubikey_hash = hashlib.sha512()
-            yubikey_hash.update(yubikey)
-            yubikey_hash = base64.b64encode(yubikey_hash.digest())
+            yubikey_hash.update(yubikey.encode())
+            yubikey_hash = base64.b64encode(yubikey_hash.digest()).decode()
 
             allow = False
             if settings.app.sso_cache and not self.server_auth_token:

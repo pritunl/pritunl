@@ -1,7 +1,7 @@
 from time import time as _time
 import threading as _threading
 from collections import deque
-import Queue
+import queue
 
 # Copy of Queue.Queue returning None instead of raising Queue.Empty
 # for better performance
@@ -107,7 +107,7 @@ class NoneQueue:
             if self.maxsize > 0:
                 if not block:
                     if self._qsize() == self.maxsize:
-                        raise Queue.Full
+                        raise queue.Full
                 elif timeout is None:
                     while self._qsize() == self.maxsize:
                         self.not_full.wait()
@@ -118,7 +118,7 @@ class NoneQueue:
                     while self._qsize() == self.maxsize:
                         remaining = endtime - _time()
                         if remaining <= 0.0:
-                            raise Queue.Full
+                            raise queue.Full
                         self.not_full.wait(remaining)
             self._put(item)
             self.unfinished_tasks += 1

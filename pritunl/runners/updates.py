@@ -5,7 +5,7 @@ from pritunl import logger
 from pritunl import utils
 
 import threading
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import json
 
 @interrupter
@@ -20,9 +20,9 @@ def _check_updates():
             if settings.app.dedicated:
                 url = settings.app.dedicated + '/notification'
 
-            request = urllib2.Request(
+            request = urllib.request.Request(
                 url + '/%s' % settings.local.version_int)
-            response = urllib2.urlopen(request, timeout=60)
+            response = urllib.request.urlopen(request, timeout=60)
             data = json.load(response)
 
             settings.local.notification = str(data.get('message', ''))

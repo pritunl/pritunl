@@ -36,7 +36,7 @@ class Organization(mongo.MongoObject):
     }
 
     def __init__(self, name=None, auth_api=None, type=None, **kwargs):
-        mongo.MongoObject.__init__(self, **kwargs)
+        mongo.MongoObject.__init__(self)
         self.last_search_count = None
         self.processes = []
         self.queue_com = queue.QueueCom()
@@ -289,7 +289,7 @@ class Organization(mongo.MongoObject):
 
     def create_user_key_link(self, user_id, one_time=False):
         success = False
-        for _ in xrange(256):
+        for _ in range(256):
             key_id = utils.rand_str(32)
 
             if one_time:

@@ -39,4 +39,4 @@ class LogHandler(logging.Handler):
             log_queue.append(msg)
 
         if not settings.local.quiet:
-            print self.log_view.format_line(msg)
+            print(self.log_view.format_line(msg))

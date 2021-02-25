@@ -6,7 +6,7 @@ from pritunl import logger
 try:
     from urllib.request import urlopen, Request # Python 3
 except ImportError:
-    from urllib2 import urlopen, Request # Python 2
+    from urllib.request import urlopen, Request # Python 2
 
 #DEFAULT_CA = "https://acme-v02.api.letsencrypt.org" # DEPRECATED! USE DEFAULT_DIRECTORY_URL INSTEAD
 #DEFAULT_DIRECTORY_URL = "https://acme-v02.api.letsencrypt.org/directory"

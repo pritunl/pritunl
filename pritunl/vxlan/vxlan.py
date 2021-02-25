@@ -265,7 +265,7 @@ class Vxlan(object):
             if not self.running:
                 return
 
-            for i in xrange(2):
+            for i in range(2):
                 try:
                     if i == 0:
                         check_func = utils.check_output
@@ -305,7 +305,7 @@ class Vxlan(object):
             ])
 
             if host_dst6:
-                for i in xrange(2):
+                for i in range(2):
                     try:
                         if i == 0:
                             check_func = utils.check_output
@@ -336,7 +336,7 @@ class Vxlan(object):
                                 'dev',
                                 self.iface_name,
                             ])
-                            for j in xrange(30):
+                            for j in range(30):
                                 try:
                                     utils.check_call_silent([
                                         'ip',
@@ -362,7 +362,7 @@ class Vxlan(object):
             self.running_lock.release()
 
 def _get_ids():
-    ids = range(0, 256)
+    ids = list(range(0, 256))
     random.shuffle(ids)
     return ids
 

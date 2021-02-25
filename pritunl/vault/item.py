@@ -4,7 +4,7 @@ class Item(object):
     def __init__(self, collection, id, key, value, signature=None):
         from pritunl import utils
 
-        if not isinstance(value, basestring) or value[:8] != '$SEAV1$&':
+        if not isinstance(value, str) or value[:8] != '$SEAV1$&':
             value = json.dumps(value, default=utils.json_default)
 
         self._data = {

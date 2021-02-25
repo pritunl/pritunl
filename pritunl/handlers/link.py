@@ -644,8 +644,8 @@ def link_state_put():
         return flask.abort(413)
 
     auth_test_signature = base64.b64encode(hmac.new(
-        host.secret.encode(), auth_string,
-        hashlib.sha512).digest())
+        host.secret.encode(), auth_string.encode(),
+        hashlib.sha512).digest()).decode()
     if not utils.const_compare(auth_signature, auth_test_signature):
         return flask.abort(401)
 
@@ -675,17 +675,18 @@ def link_state_put():
     data += (16 - len(data) % 16) * '\x00'
 
     iv = os.urandom(16)
-    key = hashlib.sha256(host.secret).digest()
+    key = hashlib.sha256(host.secret.encode()).digest()
     cipher = Cipher(
         algorithms.AES(key),
         modes.CBC(iv),
         backend=default_backend()
     ).encryptor()
-    enc_data = base64.b64encode(cipher.update(data) + cipher.finalize())
+    enc_data = base64.b64encode(cipher.update(
+        data.encode()) + cipher.finalize())
 
     enc_signature = base64.b64encode(hmac.new(
         host.secret.encode(), enc_data,
-        hashlib.sha512).digest())
+        hashlib.sha512).digest()).decode()
 
     resp = flask.Response(response=enc_data, mimetype='application/base64')
     resp.headers.add('Cache-Control', 'no-cache, no-store, must-revalidate')
@@ -734,8 +735,8 @@ def link_state_delete():
         return flask.abort(413)
 
     auth_test_signature = base64.b64encode(hmac.new(
-        host.secret.encode(), auth_string,
-        hashlib.sha512).digest())
+        host.secret.encode(), auth_string.encode(),
+        hashlib.sha512).digest()).decode()
     if not utils.const_compare(auth_signature, auth_test_signature):
         return flask.abort(401)
 

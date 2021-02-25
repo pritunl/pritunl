@@ -28,7 +28,7 @@ def oracle_get_metadata():
     fingerprint = fingerprint.hexdigest()
     fingerprint = ':'.join(fingerprint[i:i + 2] for i in range(0, 32, 2))
 
-    output = subprocess.check_output(['oci-metadata', '--json'])
+    output = subprocess.check_output(['oci-metadata', '--json']).encode()
     metadata = json.loads(output)
 
     return {

@@ -2,7 +2,7 @@ from pritunl.helpers import *
 from pritunl import logger
 
 import threading
-import Queue
+import queue
 
 class CallQueue(object):
     def __init__(self, checker=None, maxsize=0):
@@ -11,7 +11,7 @@ class CallQueue(object):
         else:
             self._check = checker
         self._close = False
-        self._queue = Queue.Queue(maxsize)
+        self._queue = queue.Queue(maxsize)
 
     def put(self, func, *args, **kwargs):
         self._queue.put((func, args, kwargs))
@@ -24,7 +24,7 @@ class CallQueue(object):
             func, args, kwargs = self._queue.get(timeout=timeout)
             func(*args, **kwargs)
             return True
-        except Queue.Empty:
+        except queue.Empty:
             return False
         except:
             logger.exception('Error in queued called', 'callqueue')
@@ -37,7 +37,7 @@ class CallQueue(object):
                 return
 
     def start(self, threads=1):
-        for _ in xrange(threads):
+        for _ in range(threads):
             thread = threading.Thread(target=self._thread)
             thread.daemon = True
             thread.start()

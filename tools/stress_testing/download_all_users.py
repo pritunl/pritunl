@@ -17,7 +17,7 @@ def auth_request(method, path, headers=None, data=None):
     auth_string = '&'.join([API_TOKEN, auth_timestamp, auth_nonce,
         method.upper(), path] + ([data] if data else []))
     auth_signature = base64.b64encode(hmac.new(
-        API_SECRET, auth_string, hashlib.sha256).digest())
+        API_SECRET.encode(), auth_string.encode(), hashlib.sha256).digest())
     auth_headers = {
         'Auth-Token': API_TOKEN,
         'Auth-Timestamp': auth_timestamp,

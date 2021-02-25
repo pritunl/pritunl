@@ -30,7 +30,7 @@ def update():
         settings.local.sub_balance = None
         settings.local.sub_url_key = None
     else:
-        for i in xrange(2):
+        for i in range(2):
             try:
                 url = 'https://app.pritunl.com/subscription'
                 if settings.app.dedicated:

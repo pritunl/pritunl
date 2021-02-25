@@ -17,13 +17,13 @@ class SettingsGroupFile(SettingsGroupBase):
         with open(self.path, 'r') as settings_file:
             doc = json.loads(settings_file.read())
 
-        for field, value in doc.items():
+        for field, value in list(doc.items()):
             setattr(self, field, value)
 
     def commit(self):
         doc = {}
 
-        for field, default in self.fields.iteritems():
+        for field, default in self.fields.items():
             if hasattr(self, field):
                 value = getattr(self, field)
                 if field in self.commit_fields or value != default:

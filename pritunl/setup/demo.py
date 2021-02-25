@@ -88,7 +88,7 @@ def setup_demo():
                         'mac_addr': utils.rand_str(16),
                         'network': svr.network,
                         'real_address': str(
-                            ipaddress.IPAddress(100000000 + random.randint(
+                            ipaddress.ip_address(100000000 + random.randint(
                                 0, 1000000000))),
                         'virt_address': virt_address,
                         'virt_address6': virt_address6,

@@ -542,7 +542,7 @@ def user_put(org_id, user_id):
 
         for network_link in flask.request.json['network_links'] or []:
             try:
-                network_link = str(ipaddress.IPNetwork(network_link))
+                network_link = str(ipaddress.ip_network(network_link))
             except (ipaddress.AddressValueError, ValueError):
                 return _network_link_invalid()
             network_links_new.add(network_link)
