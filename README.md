@@ -12,17 +12,33 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 ## Install From Source
 
 ```bash
-export VERSION=X.XX.XX.XX # Set current pritunl version here
+# Install MongoDB if running single host configuration
+sudo tee /etc/yum.repos.d/mongodb-org-4.4.repo << EOF
+[mongodb-org-4.4]
+name=MongoDB Repository
+baseurl=https://repo.mongodb.org/yum/redhat/8/mongodb-org/4.4/x86_64/
+gpgcheck=1
+enabled=1
+gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
+EOF
+
+sudo yum -y install mongodb-org
+sudo systemctl start mongod
+sudo systemctl enable mongod
+
+# Set current pritunl version X.XX.XXXX.XX
+# Set to master to run code from repository (only for testing)
+export VERSION="master"
 
 sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates
 
-wget https://golang.org/dl/go1.15.7.linux-amd64.tar.gz
-echo "0d142143794721bb63ce6c8a6180c4062bcf8ef4715e7d6d6609f3a8282629b3 go1.15.7.linux-amd64.tar.gz" | sha256sum -c -
+wget https://golang.org/dl/go1.16.linux-amd64.tar.gz
+echo "013a489ebb3e24ef3d915abe5b94c3286c070dfe0818d5bca8108f1d6e8440d2 go1.16.linux-amd64.tar.gz" | sha256sum -c -
 
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xf go1.15.7.linux-amd64.tar.gz
-rm -f go1.15.7.linux-amd64.tar.gz
+sudo tar -C /usr/local -xf go1.16.linux-amd64.tar.gz
+rm -f go1.16.linux-amd64.tar.gz
 tee -a ~/.bashrc << EOF
 export GOPATH=\$HOME/go
 export PATH=/usr/local/go/bin:\$PATH
@@ -39,12 +55,13 @@ tar xf $VERSION.tar.gz
 cd pritunl-master
 python3 setup.py build
 sudo pip3 install -U -r requirements.txt
+
 sudo python3 setup.py install
 sudo ln -sf /usr/local/bin/pritunl /usr/bin/pritunl
 
 sudo systemctl daemon-reload
-sudo systemctl start mongod pritunl
-sudo systemctl enable mongod pritunl
+sudo systemctl start pritunl
+sudo systemctl enable pritunl
 ```
 
 ## License
