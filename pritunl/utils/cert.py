@@ -68,19 +68,48 @@ def generate_private_ec_key():
 
 def generate_csr(private_key, domain):
     private_key_path = get_temp_path() + '.key'
+    csr_config_path = get_temp_path() + '.cnf'
 
     with open(private_key_path, 'w') as private_key_file:
         os.chmod(private_key_path, 0600)
         private_key_file.write(private_key)
 
+    parts = domain.split(',')
+    domain = parts[0]
+
+    san = ["DNS.0 = {}".format(domain).strip()]
+    if len(parts) > 1:
+        for i in range(1, len(parts)):
+            san += ["DNS.{} = {}".format(i, parts[i].strip())]
+
+    with open(csr_config_path, 'w') as fh:
+        os.chmod(csr_config_path, 0600)
+        fh.write('''
+[ req ]
+default_bits = 2048
+prompt = no
+default_md = sha256
+distinguished_name = dn
+req_extensions = req_ext
+
+[ dn ]
+CN = {}
+
+[ req_ext ]
+subjectAltName = @alt_names
+
+[ alt_names ]
+{}
+'''.format(domain, "\n".join(san)).strip())
+
     csr = check_output_logged([
         'openssl',
         'req',
         '-new',
-        '-batch',
+        '-nodes',
         '-sha256',
         '-key', private_key_path,
-        '-subj', '/CN=%s' % domain,
+        '-config', csr_config_path
     ])
 
     try:

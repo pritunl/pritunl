@@ -339,7 +339,8 @@ def settings_put():
         settings_commit = True
 
         acme_domain = utils.filter_str(
-            flask.request.json['acme_domain'] or None)
+            flask.request.json['acme_domain'] or None,
+            allow=",") # wildcards not allowed because they are not http-01
         if acme_domain:
             acme_domain = acme_domain.replace('https://', '')
             acme_domain = acme_domain.replace('http://', '')

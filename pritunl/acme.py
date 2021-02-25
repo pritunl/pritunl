@@ -1,17 +1,22 @@
 from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
+from pritunl import logger
+from pymongo import errors
 
 import os
 
 def set_acme(token, authorization):
     coll = mongo.get_collection('acme_challenges')
 
-    coll.insert({
-        '_id': token,
-        'authorization': authorization,
-        'timestamp': utils.now(),
-    })
+    try:
+        coll.insert({
+            '_id': token,
+            'authorization': authorization,
+            'timestamp': utils.now(),
+        })
+    except errors.DuplicateKeyError as e:
+        logger.info('{}'.format(e), 'acme')
 
 def get_authorization(token):
     coll = mongo.get_collection('acme_challenges')
@@ -63,8 +68,11 @@ def update_acme_cert():
         settings.app.acme_key = utils.generate_private_key()
         settings.commit()
 
+    logger.info('Generating Private EC Key...', 'acme')
     private_key = utils.generate_private_ec_key()
+    logger.info('Generating CSR...', 'acme')
     csr = utils.generate_csr(private_key, settings.app.acme_domain)
+    logger.info('Generating Certificate...', 'acme')
     cert = get_acme_cert(settings.app.acme_key, csr)
 
     settings.app.server_key = private_key.strip()

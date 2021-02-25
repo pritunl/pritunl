@@ -282,12 +282,15 @@ def rmtree(path):
                 )
             time.sleep(0.01)
 
-def filter_str(in_str):
+def filter_str(in_str, allow=""):
+    include = set()
+    if isinstance(allow, str):
+        include = {x for x in allow}
     if in_str is not None:
         in_str = str(in_str)
     if not in_str:
         return in_str
-    return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
+    return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS|include)
 
 def filter_str_uni(in_str):
     if in_str is not None:
