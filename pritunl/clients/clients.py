@@ -266,6 +266,8 @@ class Clients(object):
             'gateway': network_gateway,
             'gateway6': network_gateway6,
             'port': self.server.port_wg,
+            'web_port': settings.app.server_port,
+            'web_no_ssl': not settings.app.server_ssl,
             'public_key': self.instance.wg_public_key,
             'routes': [],
             'routes6': [],
