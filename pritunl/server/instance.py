@@ -579,7 +579,7 @@ class ServerInstance(object):
             if is6:
                 if not interface:
                     for route_net, route_intf in routes6:
-                        if utils.network_contains(network_obj, route_net):
+                        if network_obj in route_net:
                             interface = route_intf
                             break
 
@@ -596,7 +596,7 @@ class ServerInstance(object):
             else:
                 if not interface:
                     for route_net, route_intf in routes:
-                        if utils.network_contains(network_obj, route_net):
+                        if network_obj in route_net:
                             interface = route_intf
                             break
 
@@ -750,7 +750,7 @@ class ServerInstance(object):
             if is6:
                 if not interface:
                     for route_net, route_intf in routes6:
-                        if utils.network_contains(network_obj, route_net):
+                        if network_obj in route_net:
                             interface = route_intf
                             break
 
@@ -767,7 +767,7 @@ class ServerInstance(object):
             else:
                 if not interface:
                     for route_net, route_intf in routes:
-                        if utils.network_contains(network_obj, route_net):
+                        if network_obj in route_net:
                             interface = route_intf
                             break
 
