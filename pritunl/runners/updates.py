@@ -27,6 +27,7 @@ def _check_updates():
 
             settings.local.notification = str(data.get('message', ''))
             settings.local.www_state = str(data.get('www', OK))
+            settings.local.web_state = str(data.get('web', OK))
             settings.local.vpn_state = str(data.get('vpn', OK))
         except:
             logger.exception('Failed to check notifications', 'runners')
@@ -38,5 +39,6 @@ def _check_updates():
 def start_updates():
     settings.local.notification = ''
     settings.local.www_state = OK
+    settings.local.web_state = OK
     settings.local.vpn_state = OK
     threading.Thread(target=_check_updates).start()
