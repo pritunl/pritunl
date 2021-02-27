@@ -673,7 +673,8 @@ class _BaseNetwork(_IPAddressBase):
             return False
         # dealing with another network.
         if isinstance(other, _BaseNetwork):
-            return False
+            return (self.network_address <= other.network_address and
+                    self.broadcast_address >= other.broadcast_address)
         # dealing with another address
         else:
             # address
