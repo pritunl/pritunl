@@ -1,4 +1,5 @@
 from pritunl.exceptions import *
+from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import logger
 from pritunl import journal
@@ -38,6 +39,15 @@ def update_server(delay=0):
         return
 
     _update_lock.acquire()
+    if settings.local.web_state == DISABLED:
+        logger.warning(
+            'Web server disabled',
+            'server',
+            message=settings.local.notification,
+        )
+        stop_server()
+        return
+
     try:
         if _cur_ssl != settings.app.server_ssl or \
                 _cur_cert != settings.app.server_cert or \
@@ -70,6 +80,19 @@ def update_server(delay=0):
                 restart_server(delay=delay)
     finally:
         _update_lock.release()
+
+def stop_server(delay=0):
+    _watch_event.clear()
+    def thread_func():
+        time.sleep(delay)
+        set_app_server_interrupt()
+        if app_server:
+            app_server.interrupt = ServerStop('Stop')
+        time.sleep(1)
+        clear_app_server_interrupt()
+    thread = threading.Thread(target=thread_func)
+    thread.daemon = True
+    thread.start()
 
 def restart_server(delay=0):
     _watch_event.clear()
@@ -224,6 +247,8 @@ def _run_server(restart):
         return
     except ServerRestart:
         raise
+    except ServerStop:
+        return
     except:
         logger.exception('Server error occurred', 'app')
         raise
@@ -238,6 +263,9 @@ def _run_wsgi():
     restart = False
     while True:
         try:
+            if settings.local.web_state == DISABLED:
+                time.sleep(1)
+                continue
             _run_server(restart)
         except ServerRestart:
             restart = True
