@@ -1035,6 +1035,16 @@ class ServerInstance(object):
             error_count = 0
 
             while not self.interrupt:
+                if settings.local.vpn_state == DISABLED:
+                    logger.warning(
+                        'VPN server disabled',
+                        'server',
+                        message=settings.local.notification,
+                    )
+                    if self.stop_process():
+                        return
+                    continue
+
                 try:
                     doc = self.collection.find_and_modify({
                         '_id': self.server.id,

@@ -1508,6 +1508,14 @@ class Server(mongo.MongoObject):
             self.commit('ca_certificate')
 
     def run(self, send_events=False):
+        if settings.local.vpn_state == DISABLED:
+            logger.warning(
+                'VPN server disabled',
+                'server',
+                message=settings.local.notification,
+            )
+            return
+
         self.pre_start_check()
         instance = ServerInstance(self)
         instance.run(send_events=send_events)
