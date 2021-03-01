@@ -29,7 +29,10 @@ def _dict():
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
-            'influxdb_uri': 'demo',
+            'influxdb_url': 'demo',
+            'influxdb_token': 'demo',
+            'influxdb_org': 'demo',
+            'influxdb_bucket': 'demo',
             'email_from': settings.app.email_from,
             'email_server': 'demo',
             'email_username': 'demo',
@@ -130,7 +133,10 @@ def _dict():
             'theme': settings.app.theme,
             'auditing': settings.app.auditing,
             'monitoring': settings.app.monitoring,
-            'influxdb_uri': settings.app.influxdb_uri,
+            'influxdb_url': settings.app.influxdb_url,
+            'influxdb_token': settings.app.influxdb_token,
+            'influxdb_org': settings.app.influxdb_org,
+            'influxdb_bucket': settings.app.influxdb_bucket,
             'email_from': settings.app.email_from,
             'email_server': settings.app.email_server,
             'email_username': settings.app.email_username,
@@ -383,10 +389,25 @@ def settings_put():
         monitoring = flask.request.json['monitoring'] or None
         settings.app.monitoring = monitoring
 
-    if 'influxdb_uri' in flask.request.json:
+    if 'influxdb_url' in flask.request.json:
         settings_commit = True
-        influxdb_uri = flask.request.json['influxdb_uri'] or None
-        settings.app.influxdb_uri = influxdb_uri
+        influxdb_url = flask.request.json['influxdb_url'] or None
+        settings.app.influxdb_url = influxdb_url
+
+    if 'influxdb_token' in flask.request.json:
+        settings_commit = True
+        influxdb_token = flask.request.json['influxdb_token'] or None
+        settings.app.influxdb_token = influxdb_token
+
+    if 'influxdb_org' in flask.request.json:
+        settings_commit = True
+        influxdb_org = flask.request.json['influxdb_org'] or None
+        settings.app.influxdb_org = influxdb_org
+
+    if 'influxdb_bucket' in flask.request.json:
+        settings_commit = True
+        influxdb_bucket = flask.request.json['influxdb_bucket'] or None
+        settings.app.influxdb_bucket = influxdb_bucket
 
     if 'email_from' in flask.request.json:
         settings_commit = True
