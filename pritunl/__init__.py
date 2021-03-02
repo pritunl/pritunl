@@ -6,7 +6,7 @@ __version__ = '1.29.2664.67'
 __author__ = 'Pritunl'
 __email__ = 'contact@pritunl.com'
 __license__ = 'Custom'
-__copyright__ = 'Copyright 2013-2016 Pritunl <contact@pritunl.com>'
+__copyright__ = 'Copyright 2013-2021 Pritunl <contact@pritunl.com>'
 conf_path = DEFAULT_CONF_PATH
 
 def set_conf_path(path=None):
