@@ -140,10 +140,6 @@ def subnet_to_cidr(subnet):
         count += 1
     return 32 - count
 
-def network_contains(x, y):
-    return (x.network_address <= y.network_address and
-        x.broadcast_address >= y.broadcast_address)
-
 def network_addr(ip, subnet):
     return '%s/%s' % (long_to_ip(ip_to_long(ip) & ip_to_long(subnet)),
         subnet_to_cidr(subnet))
