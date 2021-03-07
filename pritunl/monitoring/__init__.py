@@ -1,16 +1,20 @@
 from pritunl.monitoring.utils import get_servers
 
-from pritunl import influxdb
-from pritunl import utils
 from pritunl import settings
 from pritunl import logger
 
 import threading
+import influxdb_client
+import influxdb_client.client.write_api
 
 _queue = []
 _queue_lock = threading.Lock()
 _client = None
-_cur_influxdb_uri = None
+_cur_influxdb_url = None
+_cur_influxdb_org = None
+_cur_influxdb_bucket = None
+_cur_influxdb_token = None
+_write_options = influxdb_client.client.write_api.SYNCHRONOUS
 
 def insert_point(measurement, tags, fields):
     _queue_lock.acquire()
@@ -18,12 +22,17 @@ def insert_point(measurement, tags, fields):
         if not _client:
             return
 
-        _queue.append({
-            'measurement': settings.app.influxdb_prefix + measurement,
-            'tags': tags,
-            'time': utils.now(),
-            'fields': fields,
-        })
+        point = influxdb_client.Point(
+            settings.app.influxdb_prefix + measurement
+        )
+
+        for key, val in tags.items():
+            point.tag(key, val)
+
+        for key, val in fields.items():
+            point.field(key, val)
+
+        _queue.append(point)
     finally:
         _queue_lock.release()
 
@@ -42,7 +51,8 @@ def write_queue():
 
     if client:
         try:
-            client.write_points(queue)
+            write_api = client.write_api(write_options=_write_options)
+            write_api.write(bucket=_cur_influxdb_bucket, record=queue)
         except:
             _queue_lock.acquire()
             try:
@@ -53,44 +63,49 @@ def write_queue():
 
 def connect():
     global _client
-    global _cur_influxdb_uri
+    global _cur_influxdb_url
+    global _cur_influxdb_org
+    global _cur_influxdb_bucket
+    global _cur_influxdb_token
 
-    influxdb_uri = settings.app.influxdb_uri
-    if influxdb_uri == _cur_influxdb_uri:
+    influxdb_url = settings.app.influxdb_url
+    influxdb_org = settings.app.influxdb_org
+    influxdb_bucket = settings.app.influxdb_bucket
+    influxdb_token = settings.app.influxdb_token
+    if influxdb_url == _cur_influxdb_url and \
+            influxdb_org == _cur_influxdb_org and \
+            influxdb_bucket == _cur_influxdb_bucket and \
+            influxdb_token == _cur_influxdb_token:
         return
 
-    if not influxdb_uri:
+    if not influxdb_url:
         _queue_lock.acquire()
         try:
             _client = None
         finally:
             _queue_lock.release()
-        _cur_influxdb_uri = influxdb_uri
+        _cur_influxdb_url = influxdb_url
+        _cur_influxdb_org = influxdb_org
+        _cur_influxdb_bucket = influxdb_bucket
+        _cur_influxdb_token = influxdb_token
         return
 
-    hosts, username, password, database = get_servers(influxdb_uri)
-
     logger.info('Connecting to InfluxDB', 'monitoring',
-        influxdb_uri=influxdb_uri,
+        influxdb_url=influxdb_url,
+        influxdb_org=influxdb_org,
+        influxdb_bucket=influxdb_bucket,
     )
 
-    if len(hosts) == 1:
-        _client = influxdb.InfluxDBClient(
-            hosts[0][0],
-            hosts[0][1],
-            username=username,
-            password=password,
-            database=database,
-        )
-    else:
-        _client = influxdb.InfluxDBClusterClient(
-            hosts,
-            username=username,
-            password=password,
-            database=database,
-        )
+    _client = influxdb_client.InfluxDBClient(
+        url=influxdb_url,
+        org=influxdb_org,
+        token=influxdb_token,
+    )
 
-    _cur_influxdb_uri = influxdb_uri
+    _cur_influxdb_url = influxdb_url
+    _cur_influxdb_org = influxdb_org
+    _cur_influxdb_bucket = influxdb_bucket
+    _cur_influxdb_token = influxdb_token
 
 def init():
     try:
