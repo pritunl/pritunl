@@ -11,6 +11,18 @@
         <option value="all" <%= auditing === 'all' ? 'selected' : '' %>>All</option>
       </select>
     </div>
+    <div class="influxdb-url-box">
+      <div class="influxdb-url form-group" <%= monitoring === 'influxdb' ? '' : 'style="display: none;"' %>>
+        <label>InfluxDB URL</label>
+        <input type="text" class="form-control" placeholder="Enter InfluxDB URL" value="<%- influxdb_url || '' %>">
+      </div>
+    </div>
+    <div class="influxdb-token-box">
+      <div class="influxdb-token form-group" <%= monitoring === 'influxdb' ? '' : 'style="display: none;"' %>>
+        <label>InfluxDB Token</label>
+        <input type="text" class="form-control" placeholder="Enter InfluxDB token" value="<%- influxdb_token || '' %>">
+      </div>
+    </div>
     <div class="pin-mode form-group">
       <label>Pin Mode</label>
       <select class="form-control" data-toggle="tooltip" title="Pin mode">
@@ -154,10 +166,16 @@
         <option value="influxdb" <%= monitoring === 'influxdb' ? 'selected' : '' %>>InfluxDB</option>
       </select>
     </div>
-    <div class="influxdb-uri-box">
-      <div class="influxdb-uri form-group" <%= monitoring === 'influxdb' ? '' : 'style="display: none;"' %>>
-        <label>InfluxDB URI</label>
-        <input type="text" class="form-control" placeholder="Enter InfluxDB URI" value="<%- influxdb_uri || '' %>">
+    <div class="influxdb-org-box">
+      <div class="influxdb-org form-group" <%= monitoring === 'influxdb' ? '' : 'style="display: none;"' %>>
+        <label>InfluxDB Org</label>
+        <input type="text" class="form-control" placeholder="Enter InfluxDB org" value="<%- influxdb_org || '' %>">
+      </div>
+    </div>
+    <div class="influxdb-bucket-box">
+      <div class="influxdb-bucket form-group" <%= monitoring === 'influxdb' ? '' : 'style="display: none;"' %>>
+        <label>InfluxDB Bucket</label>
+        <input type="text" class="form-control" placeholder="Enter InfluxDB bucket" value="<%- influxdb_bucket || '' %>">
       </div>
     </div>
     <div class="theme form-group">
