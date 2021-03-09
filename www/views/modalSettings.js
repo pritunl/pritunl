@@ -884,10 +884,16 @@ define([
     },
     onMonitoringChange: function() {
       if (this.$('.monitoring select').val() === 'influxdb') {
-        this.$('.influxdb-uri').slideDown(window.slideTime);
+        this.$('.influxdb-url').slideDown(window.slideTime);
+        this.$('.influxdb-org').slideDown(window.slideTime);
+        this.$('.influxdb-bucket').slideDown(window.slideTime);
+        this.$('.influxdb-token').slideDown(window.slideTime);
       }
       else {
-        this.$('.influxdb-uri').slideUp(window.slideTime);
+        this.$('.influxdb-url').slideUp(window.slideTime);
+        this.$('.influxdb-org').slideUp(window.slideTime);
+        this.$('.influxdb-bucket').slideUp(window.slideTime);
+        this.$('.influxdb-token').slideUp(window.slideTime);
       }
     },
     onThemeChange: function() {
@@ -931,7 +937,10 @@ define([
       var serverPort = this.$('.server-port input').val();
       var acmeDomain = this.$('.acme-domain input').val() || null;
       var monitoring = this.$('.monitoring select').val();
-      var influxdbUriKey = this.$('.influxdb-uri input').val();
+      var influxdbUrl = this.$('.influxdb-url input').val();
+      var influxdbOrg = this.$('.influxdb-org input').val();
+      var influxdbBucket = this.$('.influxdb-bucket input').val();
+      var influxdbToken = this.$('.influxdb-token input').val();
       var publicAddress = this.$('.public-address input').val();
       var publicAddress6 = this.$('.public-address6 input').val();
       var routedSubnet6 = this.$('.routed-subnet6 input').val();
@@ -1107,7 +1116,10 @@ define([
       }
 
       if (monitoring !== 'influxdb') {
-        influxdbUriKey = null;
+        influxdbUrl = null;
+        influxdbOrg = null;
+        influxdbBucket = null;
+        influxdbToken = null;
       }
 
       if (sso) {
@@ -1189,7 +1201,10 @@ define([
         username: username,
         auditing: auditing,
         monitoring: monitoring,
-        influxdb_uri: influxdbUriKey,
+        influxdb_url: influxdbUrl,
+        influxdb_org: influxdbOrg,
+        influxdb_bucket: influxdbBucket,
+        influxdb_token: influxdbToken,
         email_from: emailFrom,
         email_server: emailServer,
         email_username: emailUsername,
