@@ -7,11 +7,13 @@ import os
 def set_acme(token, authorization):
     coll = mongo.get_collection('acme_challenges')
 
-    coll.insert({
+    coll.update({
+        '_id': token,
+    }, {
         '_id': token,
         'authorization': authorization,
         'timestamp': utils.now(),
-    })
+    }, upsert=True)
 
 def get_authorization(token):
     coll = mongo.get_collection('acme_challenges')
