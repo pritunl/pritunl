@@ -1147,7 +1147,7 @@ class User(mongo.MongoObject):
         else:
             raise ValueError('Unknown hash version')
 
-        test_hash = base64.b64encode(hash_func(pin_salt, test_pin))
+        test_hash = base64.b64encode(hash_func(pin_salt, test_pin)).decode()
         return test_hash == pin_hash
 
     def set_pin(self, pin):
