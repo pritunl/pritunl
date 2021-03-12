@@ -31,7 +31,7 @@ sudo systemctl enable mongod
 export VERSION="master"
 
 sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates
+sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel python3-virtualenv
 
 wget https://golang.org/dl/go1.16.linux-amd64.tar.gz
 echo "013a489ebb3e24ef3d915abe5b94c3286c070dfe0818d5bca8108f1d6e8440d2 go1.16.linux-amd64.tar.gz" | sha256sum -c -
@@ -45,19 +45,31 @@ export PATH=/usr/local/go/bin:\$PATH
 EOF
 source ~/.bashrc
 
+sudo mkdir -p /usr/lib/pritunl
+sudo mkdir -p /var/lib/pritunl
+sudo virtualenv-3 /usr/lib/pritunl
+
 go get -u github.com/pritunl/pritunl-dns
 go get -u github.com/pritunl/pritunl-web
-sudo ln -sf ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
-sudo ln -sf ~/go/bin/pritunl-web /usr/bin/pritunl-web
+sudo cp -f ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
+sudo cp -f ~/go/bin/pritunl-web /usr/bin/pritunl-web
 
 wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
 tar xf $VERSION.tar.gz
 cd pritunl-master
-python3 setup.py build
-sudo pip3 install -U -r requirements.txt
+/usr/lib/pritunl/bin/python setup.py build
+sudo /usr/lib/pritunl/bin/pip3 install -U -r requirements.txt
+sudo /usr/lib/pritunl/bin/python setup.py install
+sudo ln -sf /usr/lib/pritunl/bin/pritunl /usr/bin/pritunl
 
-sudo python3 setup.py install
-sudo ln -sf /usr/local/bin/pritunl /usr/bin/pritunl
+cd selinux8
+ln -s /usr/share/selinux/devel/Makefile
+make
+
+sudo make load
+sudo cp pritunl.pp /usr/share/selinux/packages/pritunl.pp
+sudo cp pritunl_dns.pp /usr/share/selinux/packages/pritunl_dns.pp
+sudo cp pritunl_web.pp /usr/share/selinux/packages/pritunl_web.pp
 
 sudo systemctl daemon-reload
 sudo systemctl start pritunl
