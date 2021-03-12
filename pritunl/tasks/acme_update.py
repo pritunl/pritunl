@@ -14,24 +14,10 @@ class AcmeUpdate(task.Task):
         if not acme_domain:
             return
 
-        if not settings.app.acme_timestamp:
-            logger.exception(
-                'Failed to update acme certificate. Timestamp not set',
-                'tasks',
-                acme_domain=acme_domain,
-            )
-            return
-
-        if not settings.app.acme_key:
-            logger.exception(
-                'Failed to update acme certificate. Account key not set',
-                'tasks',
-                acme_domain=acme_domain,
-            )
-            return
-
-        if utils.time_now() - settings.app.acme_timestamp < \
-                settings.app.acme_renew:
+        if settings.app.acme_timestamp and \
+            settings.app.acme_key and \
+                utils.time_now() - settings.app.acme_timestamp < \
+                    settings.app.acme_renew:
             return
 
         logger.info(
