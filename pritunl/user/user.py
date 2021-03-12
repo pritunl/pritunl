@@ -1066,7 +1066,7 @@ class User(mongo.MongoObject):
                 '-out', user_p12_path,
             ])
 
-            with open(user_p12_path, 'r') as user_key_p12:
+            with open(user_p12_path, 'rb') as user_key_p12:
                 user_key_base64 = base64.b64encode(user_key_p12.read())
                 user_cert_id = '{%s}' % hashlib.md5(
                     user_key_base64).hexdigest()
