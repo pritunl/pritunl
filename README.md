@@ -65,7 +65,6 @@ sudo ln -sf /usr/lib/pritunl/bin/pritunl /usr/bin/pritunl
 cd selinux8
 ln -s /usr/share/selinux/devel/Makefile
 make
-
 sudo make load
 sudo cp pritunl.pp /usr/share/selinux/packages/pritunl.pp
 sudo cp pritunl_dns.pp /usr/share/selinux/packages/pritunl_dns.pp
