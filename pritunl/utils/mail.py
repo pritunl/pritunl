@@ -2,6 +2,7 @@ from pritunl.exceptions import *
 from pritunl import settings
 
 import smtplib
+import ssl
 import email.mime.multipart
 import email.mime.text
 
@@ -25,17 +26,18 @@ def send_email(to_addr, subject, text_body, html_body):
     msg.attach(email.mime.text.MIMEText(html_body, 'html'))
 
     try:
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS)
         if not email_username and not email_password:
             smtp_conn = smtplib.SMTP(email_server)
             if settings.app.email_tls:
                 smtp_conn.ehlo()
-                smtp_conn.starttls()
+                smtp_conn.starttls(context=context)
                 smtp_conn.ehlo()
         else:
             if settings.app.email_tls:
                 smtp_conn = smtplib.SMTP(email_server)
                 smtp_conn.ehlo()
-                smtp_conn.starttls()
+                smtp_conn.starttls(context=context)
                 smtp_conn.ehlo()
                 smtp_conn.login(email_username, email_password)
             else:
