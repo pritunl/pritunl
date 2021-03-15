@@ -76,7 +76,7 @@ class SettingsApp(SettingsGroupMongo):
         'email_username': None,
         'email_password': None,
         'email_from': None,
-        'email_tls': False,
+        'email_tls': True,
         'id': None,
         'sso': False,
         'sso_cache': False,
