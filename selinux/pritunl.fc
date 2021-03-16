@@ -8,6 +8,6 @@
 /run/pritunl.* -- gen_context(system_u:object_r:pritunl_var_run_t,s0)
 /run/pritunl.* -s gen_context(system_u:object_r:pritunl_var_run_t,s0)
 /usr/lib/pritunl/bin/python -- gen_context(system_u:object_r:pritunl_exec_t,s0)
-/usr/lib/pritunl/bin/python2 -- gen_context(system_u:object_r:pritunl_exec_t,s0)
-/usr/lib/pritunl/bin/python2.7 -- gen_context(system_u:object_r:pritunl_exec_t,s0)
+/usr/lib/pritunl/bin/python3 -- gen_context(system_u:object_r:pritunl_exec_t,s0)
+/usr/lib/pritunl/bin/python3.6 -- gen_context(system_u:object_r:pritunl_exec_t,s0)
 /usr/lib/pritunl/bin/pritunl -- gen_context(system_u:object_r:pritunl_exec_t,s0)
