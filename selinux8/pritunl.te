@@ -1,7 +1,5 @@
 policy_module(pritunl, 1.0.0)
 
-# SMTP
-
 require {
   type pritunl_web_t;
   type pritunl_web_exec_t;
@@ -83,6 +81,7 @@ require {
   type security_t;
   type setroubleshootd_t;
   type shell_exec_t;
+  type smtp_port_t;
   type sshd_t;
   type sssd_public_t;
   type sssd_t;
@@ -246,7 +245,7 @@ allow pritunl_t getty_t:file { getattr open read };
 allow pritunl_t getty_t:lnk_file { read read };
 allow pritunl_t gssproxy_t:dir search;
 allow pritunl_t gssproxy_t:file { getattr open read };
-allow pritunl_t gssproxy_t:lnk_file read;
+allow pritunl_t gssproxy_t:lnk_file { read read };
 allow pritunl_t hostname_t:dir search;
 allow pritunl_t hostname_t:file { getattr open read };
 allow pritunl_t http_port_t:tcp_socket name_connect;
@@ -260,7 +259,7 @@ allow pritunl_t init_var_lib_t:file { getattr open read };
 allow pritunl_t initrc_t:dir search;
 allow pritunl_t initrc_t:file { getattr open read };
 allow pritunl_t insmod_exec_t:file { execute execute_no_trans open read };
-allow pritunl_t iptables_exec_t:file { execute execute_no_trans map map open read };
+allow pritunl_t iptables_exec_t:file { execute execute_no_trans getattr map map open read };
 allow pritunl_t iptables_var_run_t:file { execute lock open read write };
 allow pritunl_t irqbalance_t:dir search;
 allow pritunl_t irqbalance_t:file { getattr open read };
@@ -318,8 +317,9 @@ allow pritunl_t rngd_t:dir { search search };
 allow pritunl_t rngd_t:file { getattr getattr open open read read };
 allow pritunl_t rngd_t:lnk_file { read read };
 allow pritunl_t root_t:dir { add_name write };
-allow pritunl_t rpcbind_t:dir search;
-allow pritunl_t rpcbind_t:file read;
+allow pritunl_t rpcbind_t:dir { search search };
+allow pritunl_t rpcbind_t:file { getattr open read };
+allow pritunl_t rpcbind_t:lnk_file read;
 allow pritunl_t rpm_t:dir search;
 allow pritunl_t rpm_t:file { getattr open read };
 allow pritunl_t security_t:dir { add_name write };
@@ -339,6 +339,7 @@ allow pritunl_t setroubleshootd_t:dir { search search };
 allow pritunl_t setroubleshootd_t:file { getattr getattr open open read read };
 allow pritunl_t setroubleshootd_t:lnk_file { read read };
 allow pritunl_t shell_exec_t:file { execute execute_no_trans map map };
+allow pritunl_t smtp_port_t:tcp_socket name_connect;
 allow pritunl_t sshd_t:dir search;
 allow pritunl_t sshd_t:file { getattr open read };
 allow pritunl_t sshd_t:lnk_file { read read };
@@ -388,7 +389,7 @@ allow pritunl_t unconfined_t:file { getattr open read };
 allow pritunl_t unconfined_t:lnk_file { read read };
 allow pritunl_t unreserved_port_t:tcp_socket { name_bind name_connect };
 allow pritunl_t unreserved_port_t:udp_socket name_bind;
-allow pritunl_t usermodehelper_t:file { getattr ioctl open read };
+allow pritunl_t usermodehelper_t:file { getattr ioctl ioctl open read };
 allow pritunl_t usr_t:file { map map };
 allow pritunl_t virt_qemu_ga_t:dir { search search };
 allow pritunl_t virt_qemu_ga_t:file { getattr getattr map open open read read write };
