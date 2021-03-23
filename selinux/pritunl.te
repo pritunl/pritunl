@@ -71,6 +71,7 @@ require {
   type rpm_t;
   type security_t;
   type shell_exec_t;
+  type smtp_port_t;
   type sshd_t;
   type sysctl_fs_t;
   type sysctl_net_t;
@@ -89,6 +90,7 @@ require {
   type unreserved_port_t;
   type user_tmp_t;
   type usermodehelper_t;
+  type virt_qemu_ga_t;
 }
 
 type pritunl_t;
@@ -260,9 +262,9 @@ allow pritunl_t postfix_pickup_t:file { getattr open read };
 allow pritunl_t postfix_qmgr_t:dir search;
 allow pritunl_t postfix_qmgr_t:file { getattr open read };
 allow pritunl_t pritunl_tmp_t:file map;
-allow pritunl_t proc_net_t:file { getattr open read };
+allow pritunl_t proc_net_t:file { getattr ioctl open read };
 allow pritunl_t proc_t:dir read;
-allow pritunl_t proc_t:file { getattr open read };
+allow pritunl_t proc_t:file { getattr ioctl open read };
 allow pritunl_t proc_t:filesystem getattr;
 allow pritunl_t random_device_t:chr_file { open read };
 allow pritunl_t rhnsd_t:dir search;
@@ -286,6 +288,7 @@ allow pritunl_t self:tun_socket { accept bind connect create getattr getopt ioct
 allow pritunl_t self:udp_socket { accept bind connect create getattr getopt ioctl listen read setopt shutdown write };
 allow pritunl_t self:unix_dgram_socket { create ioctl };
 allow pritunl_t shell_exec_t:file { execute execute_no_trans };
+allow pritunl_t smtp_port_t:tcp_socket name_connect;
 allow pritunl_t sshd_t:dir search;
 allow pritunl_t sshd_t:file { getattr open read };
 allow pritunl_t sysctl_fs_t:dir search;
@@ -302,6 +305,7 @@ allow pritunl_t systemd_hostnamed_t:dir search;
 allow pritunl_t systemd_hostnamed_t:file { getattr open read };
 allow pritunl_t systemd_logind_t:dir search;
 allow pritunl_t systemd_logind_t:file { getattr open read };
+allow pritunl_t tmp_t:file { setattr write };
 allow pritunl_t tmpfs_t:dir { add_name write };
 allow pritunl_t tmpfs_t:file { execute open read write };
 allow pritunl_t tun_tap_device_t:chr_file { ioctl open read write };
@@ -316,6 +320,9 @@ allow pritunl_t unconfined_t:file { getattr open read };
 allow pritunl_t unreserved_port_t:tcp_socket { name_bind name_connect };
 allow pritunl_t unreserved_port_t:udp_socket name_bind;
 allow pritunl_t user_tmp_t:dir getattr;
-allow pritunl_t usermodehelper_t:file { getattr open read };
+allow pritunl_t usermodehelper_t:file { getattr ioctl open read };
+allow pritunl_t virt_qemu_ga_t:dir search;
+allow pritunl_t virt_qemu_ga_t:file { getattr open read };
+allow pritunl_web_t sysfs_t:file open;
 allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read };
 allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr map open read };
