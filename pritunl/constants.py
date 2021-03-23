@@ -1171,6 +1171,7 @@ rcvbuf 393216
 reneg-sec 2592000
 hash-size 1024 1024
 txqueuelen 1000
+ncp-disable
 verb %s
 mute %s
 """
@@ -1200,6 +1201,7 @@ rcvbuf 393216
 reneg-sec 2592000
 hash-size 1024 1024
 txqueuelen 1000
+ncp-disable
 verb %s
 mute %s
 """
