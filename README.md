@@ -31,7 +31,7 @@ sudo systemctl enable mongod
 export VERSION="master"
 
 sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
-sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel python3-virtualenv
+sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel python3-virtualenv wget
 
 wget https://golang.org/dl/go1.16.2.linux-amd64.tar.gz
 echo "542e936b19542e62679766194364f45141fde55169db2d8d01046555ca9eb4b8 go1.16.2.linux-amd64.tar.gz" | sha256sum -c -
@@ -45,18 +45,22 @@ export PATH=/usr/local/go/bin:\$PATH
 EOF
 source ~/.bashrc
 
+sudo systemctl stop pritunl || true
+sudo rm -rf /usr/lib/pritunl
+
 sudo mkdir -p /usr/lib/pritunl
 sudo mkdir -p /var/lib/pritunl
 sudo virtualenv-3 /usr/lib/pritunl
 
-go get -u github.com/pritunl/pritunl-dns
-go get -u github.com/pritunl/pritunl-web
+GO111MODULE=off go get -v -u github.com/pritunl/pritunl-dns
+GO111MODULE=off go get -v -u github.com/pritunl/pritunl-web
 sudo cp -f ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
 sudo cp -f ~/go/bin/pritunl-web /usr/bin/pritunl-web
 
 wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
 tar xf $VERSION.tar.gz
-cd pritunl-master
+rm $VERSION.tar.gz
+cd ./pritunl-master
 /usr/lib/pritunl/bin/python setup.py build
 sudo /usr/lib/pritunl/bin/pip3 install -U -r requirements.txt
 sudo /usr/lib/pritunl/bin/python setup.py install
@@ -69,6 +73,23 @@ sudo make load
 sudo cp pritunl.pp /usr/share/selinux/packages/pritunl.pp
 sudo cp pritunl_dns.pp /usr/share/selinux/packages/pritunl_dns.pp
 sudo cp pritunl_web.pp /usr/share/selinux/packages/pritunl_web.pp
+
+sudo semodule -i /usr/share/selinux/packages/pritunl.pp /usr/share/selinux/packages/pritunl_dns.pp /usr/share/selinux/packages/pritunl_web.pp
+sudo restorecon -v -R /tmp/pritunl* || true
+sudo restorecon -v -R /run/pritunl* || true
+sudo restorecon -v /etc/systemd/system/pritunl.service || true
+sudo restorecon -v /usr/lib/systemd/system/pritunl.service || true
+sudo restorecon -v /usr/lib/pritunl/bin/pritunl || true
+sudo restorecon -v /usr/lib/pritunl/bin/python || true
+sudo restorecon -v /usr/lib/pritunl/bin/python3 || true
+sudo restorecon -v /usr/lib/pritunl/bin/python3.6 || true
+sudo restorecon -v /usr/bin/pritunl-web || true
+sudo restorecon -v /usr/bin/pritunl-dns || true
+sudo restorecon -v -R /var/lib/pritunl || true
+sudo restorecon -v /var/log/pritunl* || true
+
+cd ../../
+sudo rm -rf ./pritunl-master
 
 sudo systemctl daemon-reload
 sudo systemctl start pritunl
