@@ -121,7 +121,7 @@ class Duo(object):
                 logger.error('Invalid Duo username',
                     'sso',
                     username=self.username,
-                    data=resp_data,
+                    data=data,
                 )
                 raise InvalidUser('Invalid username')
         else:
