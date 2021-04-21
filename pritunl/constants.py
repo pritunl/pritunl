@@ -1102,6 +1102,7 @@ management %s unix
 management-client-auth
 auth-user-pass-optional
 topology subnet
+tls-version-min 1.2
 max-clients %s
 ping %s
 ping-restart %s
@@ -1131,6 +1132,7 @@ management %s unix
 management-client-auth
 auth-user-pass-optional
 topology subnet
+tls-version-min 1.2
 max-clients %s
 ping %s
 ping-restart %s
