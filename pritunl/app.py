@@ -227,11 +227,7 @@ def _run_server(restart):
         if process.wait() and process_state:
             time.sleep(0.25)
             if not check_global_interrupt():
-                stdout, stderr = process._communicate(None)
-                logger.error('Web server process exited unexpectedly', 'app',
-                    stdout=stdout,
-                    stderr=stderr,
-                )
+                logger.error('Web server process exited unexpectedly', 'app')
                 time.sleep(1)
                 restart_server(1)
 
