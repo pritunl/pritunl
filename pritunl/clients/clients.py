@@ -1530,6 +1530,13 @@ class Clients(object):
             '-j', 'ACCEPT',
         ]
 
+        forward_base_args6 = [
+            'FORWARD',
+            '-d', client_addr6,
+            '-o', self.instance.interface,
+            '-j', 'ACCEPT',
+        ]
+
         prerouting_base_args = [
             'PREROUTING',
             '-t', 'nat',
@@ -1556,7 +1563,15 @@ class Clients(object):
         ] + extra_args
         rules.append(forward2_base_rule)
         if self.server.ipv6:
-            rules6.append(forward2_base_rule)
+            forward2_base_rule6 = [
+                'FORWARD',
+                '-s', client_addr6,
+                '-i', self.instance.interface,
+                '-m', 'conntrack',
+                '--ctstate','RELATED,ESTABLISHED',
+                '-j', 'ACCEPT',
+            ] + extra_args
+            rules6.append(forward2_base_rule6)
 
         for data in usr.port_forwarding:
             proto = data.get('protocol')
@@ -1625,6 +1640,11 @@ class Clients(object):
                 ] + extra_args
                 rules.append(rule)
                 if self.server.ipv6:
+                    rule = forward_base_args6 + [
+                        '-p', proto,
+                        '-m', proto,
+                        '--dport', port or dport,
+                    ] + extra_args
                     rules6.append(rule)
 
         return rules, rules6
@@ -1642,6 +1662,13 @@ class Clients(object):
         forward_base_args = [
             'FORWARD',
             '-d', client_addr,
+            '-o', self.instance.interface_wg,
+            '-j', 'ACCEPT',
+        ]
+
+        forward_base_args6 = [
+            'FORWARD',
+            '-d', client_addr6,
             '-o', self.instance.interface_wg,
             '-j', 'ACCEPT',
         ]
@@ -1672,7 +1699,15 @@ class Clients(object):
         ] + extra_args
         rules.append(forward2_base_rule)
         if self.server.ipv6:
-            rules6.append(forward2_base_rule)
+            forward2_base_rule6 = [
+                'FORWARD',
+                '-s', client_addr6,
+                '-i', self.instance.interface_wg,
+                '-m', 'conntrack',
+                '--ctstate','RELATED,ESTABLISHED',
+                '-j', 'ACCEPT',
+            ] + extra_args
+            rules6.append(forward2_base_rule6)
 
         for data in usr.port_forwarding:
             proto = data.get('protocol')
@@ -1741,6 +1776,11 @@ class Clients(object):
                 ] + extra_args
                 rules.append(rule)
                 if self.server.ipv6:
+                    rule = forward_base_args6 + [
+                        '-p', proto,
+                        '-m', proto,
+                        '--dport', port or dport,
+                    ] + extra_args
                     rules6.append(rule)
 
         return rules, rules6
