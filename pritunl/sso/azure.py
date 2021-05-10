@@ -15,7 +15,7 @@ def verify_azure(user_name):
             'grant_type': 'client_credentials',
             'client_id': settings.app.sso_azure_app_id,
             'client_secret': settings.app.sso_azure_app_secret,
-            'resource': 'https://graph.windows.net',
+            'resource': 'https://graph.microsoft.com',
         },
         timeout=30,
     )
@@ -33,15 +33,15 @@ def verify_azure(user_name):
     access_token = data['access_token']
 
     response = requests.get(
-        'https://graph.windows.net/%s/users/%s' % (
+        'https://graph.microsoft.com/v1.0/%s/users/%s' % (
             settings.app.sso_azure_directory_id,
             urllib.parse.quote(user_name),
         ),
+        params={
+            '$select': 'accountEnabled',
+        },
         headers={
             'Authorization': 'Bearer %s' % access_token,
-        },
-        params={
-            'api-version': '1.6',
         },
         timeout=30,
     )
@@ -64,16 +64,17 @@ def verify_azure(user_name):
         )
         return False, []
 
-    response = requests.get(
-        'https://graph.windows.net/%s/users/%s/memberOf' % (
+    response = requests.post(
+        'https://graph.microsoft.com/v1.0/%s/users/%s/getMemberGroups' % (
             settings.app.sso_azure_directory_id,
             urllib.parse.quote(user_name),
         ),
         headers={
             'Authorization': 'Bearer %s' % access_token,
+            'Content-Type': 'application/json',
         },
-        params={
-            'api-version': '1.6',
+        json={
+            'securityEnabledOnly': 'false',
         },
         timeout=30,
     )
@@ -90,9 +91,22 @@ def verify_azure(user_name):
 
     roles = []
 
-    for membership in data['value']:
-        if membership.get('objectType') != 'Group':
-            continue
-        roles.append(membership.get('displayName'))
+    for group_id in data['value']:
+        response = requests.get(
+            'https://graph.microsoft.com/v1.0/%s/groups/%s' % (
+                settings.app.sso_azure_directory_id,
+                group_id,
+            ),
+            params={
+                '$select': 'displayName',
+            },
+            headers={
+                'Authorization': 'Bearer %s' % access_token,
+            },
+            timeout=30,
+        )
+        data = response.json()
+        display_name = data['displayName']
+        roles.append(display_name)
 
     return True, roles
