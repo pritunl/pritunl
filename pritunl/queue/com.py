@@ -45,8 +45,8 @@ class QueueCom(object):
                         'queue',
                         cmd=args,
                         return_code=return_code,
-                        stdout=stdoutdata,
-                        stderr=stderrdata,
+                        stdout=stdoutdata.decode(),
+                        stderr=stderrdata.decode(),
                     )
                     raise ValueError('Popen returned ' +
                         'error exit code %r' % return_code)

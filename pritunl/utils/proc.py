@@ -38,8 +38,8 @@ class Process(object):
             stdoutdata, stderrdata = self._process.communicate()
             return_code = self._process.poll()
 
-            self._stdoutdata = stdoutdata
-            self._stderrdata = stderrdata
+            self._stdoutdata = stdoutdata.decode()
+            self._stderrdata = stderrdata.decode()
             self._return_code = return_code
 
             self._event.set()

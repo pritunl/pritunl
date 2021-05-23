@@ -227,8 +227,8 @@ def server_thread():
                 stdout, stderr = web_process._communicate(None)
                 logger.error(
                     'Setup web server process exited unexpectedly', 'setup',
-                    stdout=stdout,
-                    stderr=stderr,
+                    stdout=stdout.decode(),
+                    stderr=stderr.decode(),
                 )
             set_global_interrupt()
         else:

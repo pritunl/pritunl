@@ -229,12 +229,12 @@ def check_output_logged(*args, **kwargs):
         logger.error('Popen returned error exit code', 'utils',
             cmd=cmd,
             return_code=return_code,
-            stdout=stdoutdata,
-            stderr=stderrdata,
+            stdout=stdoutdata.decode(),
+            stderr=stderrdata.decode(),
         )
 
         raise subprocess.CalledProcessError(
-            return_code, cmd, output=stdoutdata)
+            return_code, cmd, output=stdoutdata.decode())
 
     return stdoutdata.decode()
 

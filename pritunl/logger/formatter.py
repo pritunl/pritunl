@@ -63,7 +63,7 @@ class LogFormatter(logging.Formatter):
                 if stderr_lines and not stderr_lines[-1]:
                     stderr_lines.pop()
                 for line in stderr_lines:
-                    formatted_record += '\n  ' + line.decode()
+                    formatted_record += '\n  ' + line
 
             if traceback:
                 formatted_record += \
