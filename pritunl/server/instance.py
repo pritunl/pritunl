@@ -183,7 +183,7 @@ class ServerInstance(object):
 
             metric = route.get('metric')
             if metric:
-                metric_def = ' default %s' % metric
+                metric_def = ' vpn_gateway %s' % metric
                 metric = ' %s' % metric
             else:
                 metric_def = ''
