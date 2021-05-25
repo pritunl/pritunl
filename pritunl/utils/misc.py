@@ -176,6 +176,9 @@ def check_output(*args, **kwargs):
     stdoutdata, stderrdata = process.communicate()
     return_code = process.poll()
 
+    stdoutdata = stdoutdata.decode()
+    stderrdata = stderrdata.decode()
+
     if return_code:
         cmd = kwargs.get('args', args[0])
 
@@ -187,7 +190,7 @@ def check_output(*args, **kwargs):
         raise subprocess.CalledProcessError(
             return_code, cmd, output=stdoutdata)
 
-    return stdoutdata.decode()
+    return stdoutdata
 
 def check_output_logged(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
@@ -217,6 +220,9 @@ def check_output_logged(*args, **kwargs):
     stdoutdata, stderrdata = process.communicate(input=com_input)
     return_code = process.poll()
 
+    stdoutdata = stdoutdata.decode()
+    stderrdata = stderrdata.decode()
+
     if return_code:
         from pritunl import logger
         cmd = kwargs.get('args', args[0])
@@ -229,14 +235,14 @@ def check_output_logged(*args, **kwargs):
         logger.error('Popen returned error exit code', 'utils',
             cmd=cmd,
             return_code=return_code,
-            stdout=stdoutdata.decode(),
-            stderr=stderrdata.decode(),
+            stdout=stdoutdata,
+            stderr=stderrdata,
         )
 
         raise subprocess.CalledProcessError(
-            return_code, cmd, output=stdoutdata.decode())
+            return_code, cmd, output=stdoutdata)
 
-    return stdoutdata.decode()
+    return stdoutdata
 
 def check_call_silent(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
