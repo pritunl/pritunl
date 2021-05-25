@@ -81,6 +81,8 @@ class Iptables(object):
 
         self._lock.acquire()
         try:
+            if self.cleared:
+                return
             self._other.append(rule)
             if not self._exists_iptables_rule(rule):
                 self._insert_iptables_rule(rule)
@@ -93,6 +95,8 @@ class Iptables(object):
 
         self._lock.acquire()
         try:
+            if self.cleared:
+                return
             self._other6.append(rule)
             if not self._exists_iptables_rule(rule, ipv6=True):
                 self._insert_iptables_rule(rule, ipv6=True)
@@ -105,6 +109,8 @@ class Iptables(object):
 
         self._lock.acquire()
         try:
+            if self.cleared:
+                return
             self._other.remove(rule)
             self._remove_iptables_rule(rule)
         except ValueError:
@@ -121,6 +127,8 @@ class Iptables(object):
 
         self._lock.acquire()
         try:
+            if self.cleared:
+                return
             self._other6.remove(rule)
             self._remove_iptables_rule(rule, ipv6=True)
         except ValueError:
