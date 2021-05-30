@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Migrate to python 3
+
 Version 1.29.2664.67 2020-12-28
 -------------------------------
 
