@@ -885,9 +885,9 @@ class Iptables(object):
                     self._accept.append([
                         'POSTROUTING',
                         '-t', 'nat',
-                        '-s', nat_network,
+                        '-s', nat_network]
                         + (['-o', all_interface] if all_interface != None else []) +
-                        '-j', 'MASQUERADE',
+                        ['-j', 'MASQUERADE',
                     ])
 
         if self._accept_all and all_interface6:
@@ -902,9 +902,9 @@ class Iptables(object):
                     self._accept6.append([
                         'POSTROUTING',
                         '-t', 'nat',
-                        '-s', nat_network,
+                        '-s', nat_network]
                         + (['-o', all_interface6] if all_interface6 != None else []) +
-                        '-j', 'MASQUERADE',
+                        ['-j', 'MASQUERADE',
                     ])
 
         for cidr in sorted(cidrs):
@@ -922,9 +922,9 @@ class Iptables(object):
                             'POSTROUTING',
                             '-t', 'nat',
                             '-s', nat_network,
-                            '-d', route,
+                            '-d', route]
                             + (['-o', interface] if interface != None else []) +
-                            '-j', 'MASQUERADE',
+                            ['-j', 'MASQUERADE',
                         ])
 
             for route in sorted_routes[cidr]:
@@ -959,9 +959,9 @@ class Iptables(object):
                             'POSTROUTING',
                             '-t', 'nat',
                             '-s', nat_network,
-                            '-d', route,
+                            '-d', route]
                             + (['-o', interface] if interface != None else []) +
-                            '-j', 'MASQUERADE',
+                            ['-j', 'MASQUERADE',
                         ])
 
             for route in sorted_routes6[cidr]:
