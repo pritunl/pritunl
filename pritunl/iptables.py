@@ -886,7 +886,7 @@ class Iptables(object):
                         'POSTROUTING',
                         '-t', 'nat',
                         '-s', nat_network,
-                        '-o', all_interface,
+                        + (['-o', all_interface] if all_interface != None else []) +
                         '-j', 'MASQUERADE',
                     ])
 
@@ -903,7 +903,7 @@ class Iptables(object):
                         'POSTROUTING',
                         '-t', 'nat',
                         '-s', nat_network,
-                        '-o', all_interface6,
+                        + (['-o', all_interface6] if all_interface6 != None else []) +
                         '-j', 'MASQUERADE',
                     ])
 
@@ -923,7 +923,7 @@ class Iptables(object):
                             '-t', 'nat',
                             '-s', nat_network,
                             '-d', route,
-                            '-o', interface,
+                            + (['-o', interface] if interface != None else []) +
                             '-j', 'MASQUERADE',
                         ])
 
@@ -960,7 +960,7 @@ class Iptables(object):
                             '-t', 'nat',
                             '-s', nat_network,
                             '-d', route,
-                            '-o', interface,
+                            + (['-o', interface] if interface != None else []) +
                             '-j', 'MASQUERADE',
                         ])
 

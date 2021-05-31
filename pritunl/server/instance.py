@@ -626,7 +626,7 @@ class ServerInstance(object):
             self.iptables.add_route(
                 network,
                 nat=nat,
-                nat_interface=interface,
+                nat_interface=interface if nat == False else route['nat_interface'], #if nat == True, linux kernel can select outbound interface automatically, we doesn't need to detect it.
             )
 
         if self.vxlan:
@@ -797,7 +797,7 @@ class ServerInstance(object):
             self.iptables_wg.add_route(
                 network,
                 nat=nat,
-                nat_interface=interface,
+                nat_interface=interface if nat == False else route['nat_interface'], #if nat == True, linux kernel can select outbound interface automatically, we doesn't need to detect it.
             )
 
         if self.vxlan:
