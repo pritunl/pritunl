@@ -1,0 +1,21 @@
+FROM python:3.8.10-slim-buster
+ENV VERSION 1.30.2817.44
+RUN apt update
+# Change this to UTC
+RUN ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
+RUN apt -y install git \
+    wget \
+    ca-certificates \
+    openvpn \
+    python3-pip \
+    python3-dev
+RUN wget https://github.com/packethost/pritunl/archive/${VERSION}.tar.gz \
+    && tar zxvf ${VERSION}.tar.gz \
+    && cd pritunl-${VERSION} \
+    && python3 setup.py build \
+    && pip install -r requirements.txt \
+    && python3 setup.py install \
+    && cd .. \
+    && rm -rf /tmp/*
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+EXPOSE 80 443 1194
