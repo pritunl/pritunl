@@ -110,7 +110,7 @@ setup(
     name='pritunl',
     version=VERSION,
     description='Enterprise VPN server',
-    long_description=open('README.md').read(),
+    long_description=open('README.md', 'rb').read().decode(),
     author='Pritunl',
     author_email='contact@pritunl.com',
     url='https://github.com/pritunl/pritunl',
@@ -121,7 +121,7 @@ setup(
         'virtual private network, virtual networks, openvpn client, ' +
         'openvpn server, vpn tutorial',
     packages=packages,
-    license=open('LICENSE').read(),
+    license=open('LICENSE', 'rb').read().decode(),
     zip_safe=False,
     data_files=data_files,
     entry_points={
