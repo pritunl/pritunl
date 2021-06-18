@@ -32,7 +32,7 @@ def verify_radius(username, password):
         req = conn.CreateAuthPacket(
             code=packet.AccessRequest,
             User_Name=(
-                settings.app.sso_radius_prefix or '') + username.encode(),
+                settings.app.sso_radius_prefix or '') + str(username),
         )
         req['User-Password'] = req.PwCrypt(password)
 
