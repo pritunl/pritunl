@@ -425,7 +425,7 @@ def check_session(csrf_check):
 
         auth_test_signature = base64.b64encode(hmac.new(
             administrator.secret.encode(), auth_string.encode(),
-            hashlib.sha256).digest())
+            hashlib.sha256).digest()).decode()
         if not utils.const_compare(auth_signature, auth_test_signature):
             return False
 
