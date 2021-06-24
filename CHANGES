@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve routing mangement
+
 Version 1.30.2817.44 2021-05-30
 -------------------------------
 
