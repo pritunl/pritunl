@@ -624,7 +624,7 @@ class ServerInstance(object):
                 )
 
             nat_interface = route['nat_interface']
-            if nat is False:
+            if network == '0.0.0.0/0' or network == '::/0':
                 nat_interface = interface
 
             self.iptables.add_route(
@@ -799,7 +799,7 @@ class ServerInstance(object):
                 )
 
             nat_interface = route['nat_interface']
-            if nat is False:
+            if network == '0.0.0.0/0' or network == '::/0':
                 nat_interface = interface
 
             self.iptables_wg.add_route(
