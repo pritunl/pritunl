@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix routing issue
+
 Version 1.30.2847.71 2021-06-29
 -------------------------------
 
