@@ -557,9 +557,6 @@ class ServerInstance(object):
                     'Failed to find default IPv6 network interface')
         routes6.reverse()
 
-        interfaces = set()
-        interfaces6 = set()
-
         for route in self.server.get_routes(
                     include_hidden=True,
                     include_server_links=True,
@@ -592,7 +589,6 @@ class ServerInstance(object):
                             network=network,
                         )
                         interface = default_interface6
-                interfaces6.add(interface)
             else:
                 if not interface:
                     for route_net, route_intf in routes:
@@ -609,7 +605,6 @@ class ServerInstance(object):
                             network=network,
                         )
                         interface = default_interface
-                interfaces.add(interface)
 
             nat = route['nat']
             if network == '::/0' and self.server.ipv6 and \
@@ -735,9 +730,6 @@ class ServerInstance(object):
                     'Failed to find default IPv6 network interface')
         routes6.reverse()
 
-        interfaces = set()
-        interfaces6 = set()
-
         for route in self.server.get_routes(
             include_hidden=True,
             include_server_links=True,
@@ -767,7 +759,6 @@ class ServerInstance(object):
                             network=network,
                             )
                         interface = default_interface6
-                interfaces6.add(interface)
             else:
                 if not interface:
                     for route_net, route_intf in routes:
@@ -784,7 +775,6 @@ class ServerInstance(object):
                             network=network,
                             )
                         interface = default_interface
-                interfaces.add(interface)
 
             nat = route['nat']
             if network == '::/0' and self.server.ipv6 and \
