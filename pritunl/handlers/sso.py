@@ -796,7 +796,10 @@ def sso_callback_get():
                 )
     elif doc.get('type') == AUTHZERO_AUTH:
         username = params.get('username')[0]
-        email = None
+        if params.get('email'):
+            email = params.get('email')[0]
+        else:
+            email = None
 
         valid, authzero_groups = sso.verify_authzero(username)
         if not valid:
