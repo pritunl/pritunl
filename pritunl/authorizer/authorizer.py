@@ -408,7 +408,8 @@ class Authorizer(object):
             )
             raise AuthError('Unknown user type')
 
-        if not self.server.check_groups(self.user.groups):
+        if not self.server.check_groups(self.user.groups) and \
+                self.user.type != CERT_SERVER:
             self.user.audit_event(
                 'user_connection',
                 ('User connection to "%s" denied. User not in ' +
@@ -1027,7 +1028,8 @@ class Authorizer(object):
             )
             raise AuthError('Failed secondary authentication')
 
-        if not self.server.check_groups(self.user.groups):
+        if not self.server.check_groups(self.user.groups) and \
+                self.user.type != CERT_SERVER:
             self.user.audit_event(
                 'user_connection',
                 ('User connection to "%s" denied. User not in ' +
