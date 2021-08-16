@@ -1423,7 +1423,6 @@ class Clients(object):
     def ping_wg(self, user, org, wg_public_key, remote_ip):
         updated = self.clients.update_id(wg_public_key, {
             'timestamp_wg': time.time(),
-            'real_address': remote_ip,
         })
         if not updated:
             return False
