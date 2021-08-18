@@ -1420,7 +1420,7 @@ class Clients(object):
             self.instance.disconnect_wg(wg_public_key)
             connect_callback_once(False, 'Error parsing client connect')
 
-    def ping_wg(self, user, org, wg_public_key, remote_ip):
+    def ping_wg(self, user, org, wg_public_key):
         updated = self.clients.update_id(wg_public_key, {
             'timestamp_wg': time.time(),
         })
