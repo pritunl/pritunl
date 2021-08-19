@@ -21,6 +21,7 @@ Commands:
   reconfigure           Reconfigure database connection
   set-mongodb           Set the mongodb uri
   logs                  View server logs
+  clear-auth-limit      Reset failed authentication attempt limiter
   clear-logs            Clear server logs"""
 
 def main(default_conf=None):
@@ -390,6 +391,19 @@ def main(default_conf=None):
                 natural=options.natural,
                 limit=options.limit,
             ))
+
+        sys.exit(0)
+    elif cmd == 'clear-auth-limit':
+        from pritunl import setup
+        from pritunl import logger
+        from pritunl import mongo
+        from pritunl import settings
+
+        setup.setup_db()
+
+        mongo.get_collection('auth_limiter').delete_many({})
+
+        print('Auth limiter cleared')
 
         sys.exit(0)
     elif cmd == 'clear-logs':
