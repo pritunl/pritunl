@@ -1361,7 +1361,6 @@ def key_wg_put(org_id, user_id, server_id):
         user=usr,
         org=org,
         wg_public_key=client_wg_public_key,
-        remote_ip=remote_addr,
     )
 
     send_data = {
