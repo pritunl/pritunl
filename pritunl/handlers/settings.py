@@ -67,6 +67,7 @@ def _dict():
             'sso_onelogin_mode': utils.get_onelogin_mode(),
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
+            'ipv6': settings.vpn.ipv6,
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'restrict_import': settings.user.restrict_import,
@@ -171,6 +172,7 @@ def _dict():
             'sso_onelogin_mode': utils.get_onelogin_mode(),
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
+            'ipv6': settings.vpn.ipv6,
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'restrict_import': settings.user.restrict_import,
@@ -659,6 +661,12 @@ def settings_put():
             settings_commit = True
             sso_onelogin_mode = flask.request.json['sso_onelogin_mode']
             settings.app.sso_onelogin_mode = sso_onelogin_mode
+
+    if 'ipv6' in flask.request.json:
+        settings_commit = True
+        ipv6 = True if \
+            flask.request.json['ipv6'] else False
+        settings.vpn.ipv6 = ipv6
 
     if 'sso_cache' in flask.request.json:
         settings_commit = True
