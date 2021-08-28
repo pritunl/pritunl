@@ -427,6 +427,8 @@ def main(default_conf=None):
         mongo.database.create_collection(prefix + 'log_entries', capped=True,
             size=log_entry_limit * 512, max=log_entry_limit)
 
+        print('Log entries cleared')
+
         sys.exit(0)
     elif cmd != 'start':
         raise ValueError('Invalid command')
