@@ -123,6 +123,12 @@
       <label>Yubico Client ID</label>
       <input type="text" class="form-control" placeholder="Enter client ID" value="<%- sso_yubico_client || '' %>">
     </div>
+    <div class="ipv6 toggle-form form-group" data-toggle="tooltip" title="Accept both IPv4 and IPv6 connections on VPN servers.">
+      <label>Accept IPv6 Connections</label>
+      <div class="selector <%= ipv6 ? 'selected' : '' %> no-select">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="sso-cache toggle-form form-group" data-toggle="tooltip" title="Enable an 8 hour secondary authentication cache using client ID, IP address and MAC address. This will allow clients to reconnect without secondary authentication. Works with Duo push, Okta push, OneLogin push, Duo passcodes and YubiKeys. Supported by all OpenVPN clients">
       <label>OpenVPN Authentication Cache</label>
       <div class="selector <%= sso_cache ? 'selected' : '' %> no-select">
