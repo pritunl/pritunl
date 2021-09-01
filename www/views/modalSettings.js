@@ -25,6 +25,7 @@ define([
         'paste .pass input': 'onPassEvent',
         'input .pass input': 'onPassEvent',
         'change .route53-region select': 'updateZones',
+        'click .ipv6': 'onIpv6Select',
         'click .sso-cache': 'onSsoCacheSelect',
         'click .sso-client-cache': 'onSsoClientCacheSelect',
         'click .restrict-import': 'onRestrictImportSelect',
@@ -801,8 +802,24 @@ define([
         this.$('.sso-duo-mode').slideDown(window.slideTime);
       }
     },
+    getIpv6Select: function() {
+      return this.$('.ipv6 .selector').hasClass('selected');
+    },
+    setIpv6Select: function(state) {
+      if (state) {
+        this.$('.ipv6 .selector').addClass('selected');
+        this.$('.ipv6 .selector-inner').show();
+      }
+      else {
+        this.$('.ipv6 .selector').removeClass('selected');
+        this.$('.ipv6 .selector-inner').hide();
+      }
+    },
+    onIpv6Select: function() {
+      this.setIpv6Select(!this.getIpv6Select());
+    },
     getSsoCacheSelect: function() {
-      return this.$('.sso-cache .selector').hasClass('selected');
+      return this.$('.ipv6 .selector').hasClass('selected');
     },
     setSsoCacheSelect: function(state) {
       if (state) {
@@ -958,6 +975,7 @@ define([
       var ssoYubicoClient = this.$('.sso-yubico-client input').val();
       var ssoYubicoSecret = this.$('.sso-yubico-secret input').val();
       var clientReconnect = this.getClientReconnect();
+      var ipv6 = this.getIpv6Select();
       var ssoCache = this.getSsoCacheSelect();
       var ssoClientCache = this.getSsoClientCacheSelect();
       var restrictImport = this.getRestrictImportSelect();
@@ -1239,6 +1257,7 @@ define([
         sso_onelogin_mode: ssoOneLoginMode,
         sso_radius_host: ssoRadiusHost,
         sso_radius_secret: ssoRadiusSecret,
+        ipv6: ipv6,
         sso_cache: ssoCache,
         sso_client_cache: ssoClientCache,
         restrict_import: restrictImport,
