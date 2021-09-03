@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improve server mangement
 Fix linked server connection issue
 
 Version 1.30.2856.5 2021-07-08
