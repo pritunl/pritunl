@@ -269,12 +269,14 @@ class Host(mongo.MongoObject):
             return
 
         links = []
+        hosts = {}
         state = {
             'id': self.id,
             'ipv6': self.link.ipv6,
             'action': self.link.action,
             'type': self.location.type,
             'links': links,
+            'hosts': hosts,
         }
         active_host = self.location.get_active_host()
         active = active_host and active_host.id == self.id
@@ -374,6 +376,16 @@ class Host(mongo.MongoObject):
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
                     })
+
+        if self.link.type != DIRECT:
+            for location in locations:
+                if location.id in loc_excludes or \
+                    location.id == self.location.id:
+                    continue
+
+                for host in location.iter_hosts():
+                    hosts[str(host.id)] = host.address6 if \
+                        host.link.ipv6 else host.public_address
 
         for lnk in links:
             link_hash = hashlib.md5(json.dumps(
@@ -673,7 +685,8 @@ class Location(mongo.MongoObject):
                 if location_state == ACTIVE_UNAVAILABLE:
                     peer_status = 'unknown'
                 else:
-                    peer_status = status.get(str(i)) or 'disconnected'
+                    peer_status = status.get(str(location.id)) or \
+                        status.get(str(i)) or 'disconnected'
 
                 peers_names.add(location.name)
                 peers_name[location.name].append({
