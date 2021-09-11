@@ -619,7 +619,10 @@ def link_state_put():
     if not auth_token or not auth_timestamp or not auth_nonce or \
             not auth_signature:
         return flask.abort(406)
+    auth_token = auth_token[:256]
+    auth_timestamp = auth_timestamp[:64]
     auth_nonce = auth_nonce[:32]
+    auth_signature = auth_signature[:512]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
@@ -710,7 +713,10 @@ def link_state_delete():
     if not auth_token or not auth_timestamp or not auth_nonce or \
             not auth_signature:
         return flask.abort(406)
+    auth_token = auth_token[:256]
+    auth_timestamp = auth_timestamp[:64]
     auth_nonce = auth_nonce[:32]
+    auth_signature = auth_signature[:512]
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
