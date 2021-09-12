@@ -20,6 +20,7 @@ class Host(mongo.MongoObject):
         'secret',
         'status',
         'active',
+        'hosts',
         'timeout',
         'priority',
         'ping_timestamp_ttl',
@@ -37,7 +38,7 @@ class Host(mongo.MongoObject):
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
-            timeout=None, priority=None, ping_timestamp_ttl=None,
+            hosts=None, timeout=None, priority=None, ping_timestamp_ttl=None,
             static=None, public_address=None, local_address=None,
             address6=None, version=None, tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self)
@@ -62,6 +63,9 @@ class Host(mongo.MongoObject):
 
         if active is not None:
             self.active = active
+
+        if hosts is not None:
+            self.hosts = hosts
 
         if timeout is not None:
             self.timeout = timeout
@@ -260,8 +264,8 @@ class Host(mongo.MongoObject):
         self.status = AVAILABLE
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
             seconds=self.timeout or settings.vpn.link_timeout)
-        self.commit(('public_address', 'address6', 'local_address', 'version',
-            'status', 'ping_timestamp_ttl'))
+        self.commit(('public_address', 'address6', 'local_address',
+            'version', 'status', 'hosts', 'ping_timestamp_ttl'))
 
         if not self.link.key:
             self.link.generate_key()
