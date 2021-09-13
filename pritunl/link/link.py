@@ -20,7 +20,9 @@ class Host(mongo.MongoObject):
         'secret',
         'status',
         'active',
+        'timestamp',
         'hosts',
+        'hosts_hist',
         'timeout',
         'priority',
         'ping_timestamp_ttl',
@@ -38,9 +40,10 @@ class Host(mongo.MongoObject):
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
-            hosts=None, timeout=None, priority=None, ping_timestamp_ttl=None,
-            static=None, public_address=None, local_address=None,
-            address6=None, version=None, tunnels=None, **kwargs):
+            timestamp=None, hosts=None, hosts_hist=None, timeout=None,
+            priority=None, ping_timestamp_ttl=None, static=None,
+            public_address=None, local_address=None, address6=None,
+            version=None, tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         self.link = link
@@ -64,8 +67,14 @@ class Host(mongo.MongoObject):
         if active is not None:
             self.active = active
 
+        if timestamp is not None:
+            self.timestamp = timestamp
+
         if hosts is not None:
             self.hosts = hosts
+
+        if hosts_hist is not None:
+            self.hosts_hist = hosts_hist
 
         if timeout is not None:
             self.timeout = timeout
@@ -262,10 +271,12 @@ class Host(mongo.MongoObject):
 
     def get_state(self):
         self.status = AVAILABLE
+        self.timestamp = utils.now()
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
             seconds=self.timeout or settings.vpn.link_timeout)
         self.commit(('public_address', 'address6', 'local_address',
-            'version', 'status', 'hosts', 'ping_timestamp_ttl'))
+            'version', 'status', 'timestamp', 'hosts', 'hosts_hist',
+            'ping_timestamp_ttl'))
 
         if not self.link.key:
             self.link.generate_key()
