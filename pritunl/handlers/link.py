@@ -63,6 +63,7 @@ def link_post():
     type = DIRECT if flask.request.json.get('type') == DIRECT \
         else SITE_TO_SITE
     ipv6 = True if flask.request.json.get('ipv6') else False
+    host_check = True if flask.request.json.get('host_check') else False
     action = RESTART if flask.request.json.get(
         'action') == RESTART else HOLD
 
@@ -71,6 +72,7 @@ def link_post():
         type=type,
         status=ONLINE,
         ipv6=ipv6,
+        host_check=host_check,
         action=action,
     )
 
@@ -148,10 +150,12 @@ def link_put(link_id):
 
     lnk.ipv6 = True if flask.request.json.get('ipv6') else False
 
+    lnk.host_check = True if flask.request.json.get('host_check') else False
+
     lnk.action = RESTART if flask.request.json.get(
         'action') == RESTART else HOLD
 
-    lnk.commit(('name', 'status', 'key', 'ipv6', 'action'))
+    lnk.commit(('name', 'status', 'key', 'ipv6', 'host_check', 'action'))
 
     event.Event(type=LINKS_UPDATED)
 
