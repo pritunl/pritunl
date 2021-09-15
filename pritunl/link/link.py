@@ -835,6 +835,9 @@ class Location(mongo.MongoObject):
             return Host(link=self.link, location=self, doc=doc)
 
     def get_active_host(self):
+        if self.link.host_check:
+            return self._get_active_host_checked()
+
         if self.link.status != ONLINE:
             return
 
@@ -892,6 +895,111 @@ class Location(mongo.MongoObject):
         }})
 
         return Host(link=self.link, location=self, doc=doc)
+
+    def _get_active_host_checked(self):
+        if self.link.status != ONLINE:
+            return
+
+        hst = self.get_static_host()
+        if hst:
+            return hst
+
+        cursor = Host.collection.find({
+            'location_id': self.id,
+            'status': AVAILABLE,
+        }).sort('priority', pymongo.DESCENDING)
+
+        best_doc = None
+        best_active = False
+        best_hosts = 0
+
+        docs = []
+        valid_docs = []
+        doc_active = None
+        valid_doc_active = False
+        for doc in cursor:
+            docs.append(doc)
+            if doc['active']:
+                doc_active = doc
+
+            doc_hosts = 0
+            if doc.get('hosts_hist'):
+                cur_doc_hosts = 0
+                cur_doc_hosts_count = 0
+                for hosts in doc['hosts_hist']:
+                    hosts_state_available = 0
+                    hosts_state_total = 0
+                    for host_status in hosts.values():
+                        hosts_state_total += 1
+                        if host_status['state']:
+                            hosts_state_available += 1
+                    doc_hosts = hosts_state_available / hosts_state_total
+                    if cur_doc_hosts_count == 0 or \
+                        doc_hosts == cur_doc_hosts:
+                        cur_doc_hosts = doc_hosts
+                        cur_doc_hosts_count += 1
+                    else:
+                        break
+                if cur_doc_hosts_count >= 3:
+                    if doc['active']:
+                        valid_doc_active = True
+                    doc['_doc_hosts'] = cur_doc_hosts
+                    valid_docs.append(doc)
+
+        if (valid_doc_active or not doc_active) and len(valid_docs):
+            for doc in valid_docs:
+                if best_doc is None:
+                    best_doc = doc
+                    best_active = doc['active']
+                    best_hosts = doc['_doc_hosts']
+                elif doc['_doc_hosts'] > best_hosts:
+                    best_doc = doc
+                    best_active = doc['active']
+                    best_hosts = doc['_doc_hosts']
+                elif doc['_doc_hosts'] >= best_hosts and doc['active'] and \
+                    not best_active:
+                    best_doc = doc
+                    best_active = doc['active']
+                    best_hosts = doc['_doc_hosts']
+        elif doc_active:
+            best_doc = doc_active
+        else:
+            for doc in docs:
+                best_doc = doc
+                break
+
+        if not best_doc:
+            best_doc = Host.collection.find_one({
+                'location_id': self.id,
+                'active': True,
+            })
+
+            if best_doc:
+                return Host(link=self.link, location=self, doc=best_doc)
+            return
+        elif best_active:
+            return Host(link=self.link, location=self, doc=best_doc)
+
+        doc_id = best_doc['_id']
+        response = Host.collection.update({
+            '_id': doc_id,
+            'status': AVAILABLE,
+            'active': False,
+        }, {'$set': {
+            'active': True,
+        }})
+        if not response['updatedExisting']:
+            return
+        best_doc['active'] = True
+
+        Host.collection.update_many({
+            '_id': {'$ne': doc_id},
+            'location_id': self.id,
+        }, {'$set': {
+            'active': False,
+        }})
+
+        return Host(link=self.link, location=self, doc=best_doc)
 
 
 class Link(mongo.MongoObject):
