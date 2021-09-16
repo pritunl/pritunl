@@ -126,12 +126,24 @@ class Host(mongo.MongoObject):
             return self.status
 
     def dict(self):
+        hosts_state_available = 0
+        hosts_state_total = 0
+
+        if self.hosts:
+            for (host_id, host_status) in self.hosts.items():
+                hosts_state_total += 1
+                if host_status['state']:
+                    hosts_state_available += 1
+
         return {
             'id': self.id,
             'name': self.name,
             'link_id': self.link_id,
             'location_id': self.location_id,
             'status': self.state,
+            'hosts': self.hosts,
+            'hosts_state_available': hosts_state_available,
+            'hosts_state_total': hosts_state_total,
             'timeout': self.timeout,
             'priority': self.priority,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
