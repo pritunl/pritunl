@@ -1022,6 +1022,7 @@ class Link(mongo.MongoObject):
         'key',
         'excludes',
         'ipv6',
+        'host_check',
         'action',
     }
     fields_default = {
@@ -1032,7 +1033,7 @@ class Link(mongo.MongoObject):
     }
 
     def __init__(self, name=None, type=None, status=None, timeout=None,
-            key=None, ipv6=None, action=None, **kwargs):
+            key=None, ipv6=None, host_check=None, action=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if name is not None:
@@ -1052,6 +1053,9 @@ class Link(mongo.MongoObject):
 
         if ipv6 is not None:
             self.ipv6 = ipv6
+
+        if host_check is not None:
+            self.host_check = host_check
 
         if action is not None:
             self.action = action
@@ -1074,6 +1078,7 @@ class Link(mongo.MongoObject):
             'name': self.name,
             'type': self.type,
             'ipv6': self.ipv6,
+            'host_check': self.host_check,
             'action': self.action,
             'status': self.status,
         }
