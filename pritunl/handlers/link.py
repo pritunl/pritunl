@@ -177,9 +177,19 @@ def link_location_get(link_id):
     if not lnk:
         return flask.abort(404)
 
+    hosts_map = {}
     locations = []
     for location_dict in lnk.iter_locations_dict():
+        for host in location_dict['hosts']:
+            hosts_map[str(host['id'])] = '%s - %s' % (
+                location_dict['name'], host['name'])
         locations.append(location_dict)
+
+    for location in locations:
+        for host in location['hosts']:
+            if host.get('hosts'):
+                for host_id, host_status in host['hosts'].items():
+                    host_status['name'] = hosts_map.get(host_id) or host_id
 
     if settings.app.demo_mode:
         utils.demo_set_cache(locations)
@@ -672,6 +682,16 @@ def link_state_put():
     host.public_address = flask.request.json.get('public_address')
     host.local_address = flask.request.json.get('local_address')
     host.address6 = flask.request.json.get('address6')
+    if flask.request.json.get('hosts'):
+        host.hosts = flask.request.json.get('hosts')
+        if host.hosts_hist:
+            host.hosts_hist.insert(0, flask.request.json.get('hosts'))
+            host.hosts_hist = host.hosts_hist[:5]
+        else:
+            host.hosts_hist = [flask.request.json.get('hosts')]
+    else:
+        host.hosts = None
+        host.hosts_hist = None
 
     state, active = host.get_state()
     if active:
