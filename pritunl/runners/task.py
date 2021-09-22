@@ -31,6 +31,7 @@ def print_tasks():
 @interrupter
 def run_thread():
     last_run = None
+    start_time = time.time()
 
     try:
         for task_cls in task.tasks_on_start:
@@ -52,7 +53,12 @@ def run_thread():
                                 run_id = '%s_%s_%s_%s' % (task_cls.type,
                                     cur_time.hour, cur_time.minute,
                                     cur_time.second)
-                                run_task(task_cls(id=run_id, upsert=True))
+                                tsk = task_cls(id=run_id, upsert=True)
+                                if tsk.delay:
+                                    if time.time() - start_time > tsk.delay:
+                                        run_task(tsk)
+                                else:
+                                    run_task(tsk)
         except:
             logger.exception('Error in tasks run thread', 'runners')
 
