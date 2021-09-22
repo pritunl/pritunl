@@ -937,24 +937,39 @@ class Location(mongo.MongoObject):
             doc_hosts = 0
             if doc.get('hosts_hist'):
                 cur_doc_hosts = 0
+                cur_doc_hosts_best = 0
                 cur_doc_hosts_count = 0
                 for hosts in doc['hosts_hist']:
                     hosts_state_available = 0
                     hosts_state_total = 0
+
                     for host_status in hosts.values():
                         hosts_state_total += 1
                         if host_status['state']:
                             hosts_state_available += 1
                     doc_hosts = hosts_state_available / hosts_state_total
-                    if cur_doc_hosts_count == 0 or \
-                        doc_hosts == cur_doc_hosts:
-                        cur_doc_hosts = doc_hosts
-                        cur_doc_hosts_count += 1
-                    else:
-                        break
-                if cur_doc_hosts_count >= 3:
+
                     if doc['active']:
-                        valid_doc_active = True
+                        if doc_hosts != cur_doc_hosts:
+                            cur_doc_hosts = doc_hosts
+                            cur_doc_hosts_count = 1
+                        elif doc_hosts == cur_doc_hosts:
+                            cur_doc_hosts_count += 1
+                            if cur_doc_hosts_count >= 2 and \
+                                    cur_doc_hosts > cur_doc_hosts_best:
+                                cur_doc_hosts_best = cur_doc_hosts
+                    else:
+                        if cur_doc_hosts_count == 0 or \
+                                doc_hosts == cur_doc_hosts:
+                            cur_doc_hosts = doc_hosts
+                            cur_doc_hosts_count += 1
+                        else:
+                            break
+                if doc['active'] and cur_doc_hosts_best:
+                    valid_doc_active = True
+                    doc['_doc_hosts'] = cur_doc_hosts_best
+                    valid_docs.append(doc)
+                elif not doc['active'] and cur_doc_hosts_count >= 4:
                     doc['_doc_hosts'] = cur_doc_hosts
                     valid_docs.append(doc)
 
@@ -969,7 +984,7 @@ class Location(mongo.MongoObject):
                     best_active = doc['active']
                     best_hosts = doc['_doc_hosts']
                 elif doc['_doc_hosts'] >= best_hosts and doc['active'] and \
-                    not best_active:
+                        not best_active:
                     best_doc = doc
                     best_active = doc['active']
                     best_hosts = doc['_doc_hosts']
