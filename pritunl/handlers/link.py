@@ -686,7 +686,7 @@ def link_state_put():
         host.hosts = flask.request.json.get('hosts')
         if host.hosts_hist:
             host.hosts_hist.insert(0, flask.request.json.get('hosts'))
-            host.hosts_hist = host.hosts_hist[:5]
+            host.hosts_hist = host.hosts_hist[:6]
         else:
             host.hosts_hist = [flask.request.json.get('hosts')]
     else:
