@@ -94,7 +94,7 @@ sudo restorecon -v -R /var/lib/pritunl || true
 sudo restorecon -v /var/log/pritunl* || true
 
 cd ../../
-sudo rm -rf ./pritunl-master
+sudo rm -rf ./pritunl-$VERSION
 
 sudo systemctl daemon-reload
 sudo systemctl start pritunl
