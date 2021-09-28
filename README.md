@@ -65,7 +65,7 @@ sudo cp -f ~/go/bin/pritunl-web /usr/bin/pritunl-web
 wget https://github.com/pritunl/pritunl/archive/$VERSION.tar.gz
 tar xf $VERSION.tar.gz
 rm $VERSION.tar.gz
-cd ./pritunl-master
+cd ./pritunl-$VERSION
 /usr/lib/pritunl/bin/python setup.py build
 sudo /usr/lib/pritunl/bin/pip3 install -U -r requirements.txt
 sudo /usr/lib/pritunl/bin/python setup.py install
@@ -94,7 +94,7 @@ sudo restorecon -v -R /var/lib/pritunl || true
 sudo restorecon -v /var/log/pritunl* || true
 
 cd ../../
-sudo rm -rf ./pritunl-master
+sudo rm -rf ./pritunl-$VERSION
 
 sudo systemctl daemon-reload
 sudo systemctl start pritunl
