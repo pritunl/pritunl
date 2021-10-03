@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add link host checking
+
 Version 1.30.2919.89 2021-09-09
 -------------------------------
 
