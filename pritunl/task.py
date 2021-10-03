@@ -29,6 +29,7 @@ class Task(mongo.MongoObject):
         'ttl': settings.mongo.task_ttl,
     }
     type = None
+    delay = None
 
     def __init__(self, run_id=None, **kwargs):
         mongo.MongoObject.__init__(self)
