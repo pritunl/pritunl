@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add link host checking
+Fix Lets Encrypt certificates
 
 Version 1.30.2919.89 2021-09-09
 -------------------------------
