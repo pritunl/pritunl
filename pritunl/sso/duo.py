@@ -11,7 +11,7 @@ import urllib.request, urllib.parse, urllib.error
 import requests
 
 def _sign(method, path, params):
-    now = email.Utils.formatdate()
+    now = email.utils.formatdate()
     canon = [now, method.upper(), settings.app.sso_duo_host.lower(), path]
     args = []
     for key in sorted(params.keys()):
@@ -30,11 +30,12 @@ def _sign(method, path, params):
         canon.encode(),
         hashlib.sha1,
     )
-    auth = '%s:%s' % (settings.app.sso_duo_token.encode(), sig.hexdigest())
+    auth = '%s:%s' % (settings.app.sso_duo_token, sig.hexdigest())
 
     return {
         'Date': now,
-        'Authorization': 'Basic %s' % base64.b64encode(auth),
+        'Authorization': 'Basic %s' % base64.b64encode(
+            auth.encode()).decode(),
     }
 
 class Duo(object):
