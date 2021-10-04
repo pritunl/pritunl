@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.2944.96 2021-10-04
+-------------------------------
 
 Fix Duo api error
 
