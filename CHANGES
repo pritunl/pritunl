@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix certificate error
+
 Version 1.30.2944.96 2021-10-04
 -------------------------------
 
