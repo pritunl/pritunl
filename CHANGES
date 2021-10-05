@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Change installation paths
+
 Version 1.30.2945.35 2021-10-05
 -------------------------------
 
