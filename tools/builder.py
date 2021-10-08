@@ -632,6 +632,7 @@ if cmd == 'build' or cmd == 'build-upload':
                 '"[a-f0-9]{64}"',
                 '"%s"' % archive_sha256_sum.decode('utf-8'),
                 pkgbuild_data,
+                count=1,
             )
 
         with open(pkgbuild_path, 'w') as pkgbuild_file:
