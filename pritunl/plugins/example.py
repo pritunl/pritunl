@@ -133,7 +133,7 @@ def server_start(host_id, host_name, server_id, server_name, port, protocol,
         dh_param_bits, multi_device, dns_servers, search_domain, otp_auth,
         cipher, hash, inter_client, ping_interval, ping_timeout,
         link_ping_interval, link_ping_timeout, max_clients, replica_count,
-        dns_mapping, debug, interface, bridge_interface, vxlan, **kwargs):
+        dns_mapping, debug, interface, bridge_interface, vxlan, interface_wg, **kwargs):
     pass
 
 # [SYNCHRONOUS] Called when a server is stopped.
@@ -143,5 +143,5 @@ def server_stop(host_id, host_name, server_id, server_name, port, protocol,
         dh_param_bits, multi_device, dns_servers, search_domain, otp_auth,
         cipher, hash, inter_client, ping_interval, ping_timeout,
         link_ping_interval, link_ping_timeout, max_clients, replica_count,
-        dns_mapping, debug, interface, bridge_interface, vxlan, **kwargs):
+        dns_mapping, debug, interface, bridge_interface, vxlan, interface_wg, **kwargs):
     pass
