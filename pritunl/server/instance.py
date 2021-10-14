@@ -1683,6 +1683,7 @@ class ServerInstance(object):
                 interface=self.interface,
                 bridge_interface=self.bridge_interface,
                 vxlan=self.vxlan,
+                interface_wg=self.interface_wg,
             )
             try:
                 while True:
@@ -1730,6 +1731,7 @@ class ServerInstance(object):
                     interface=self.interface,
                     bridge_interface=self.bridge_interface,
                     vxlan=self.vxlan,
+                    interface_wg=self.interface_wg,
                 )
 
             if not self.clean_exit:
