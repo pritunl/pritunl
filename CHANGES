@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.2959.58 2021-10-19
+-------------------------------
 
 Fix Radius authentication
 
