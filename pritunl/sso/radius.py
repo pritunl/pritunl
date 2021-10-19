@@ -76,6 +76,9 @@ def verify_radius(username, password):
 
     org_names = org_names or org_names2
 
+    org_names = [x.decode() for x in org_names]
+    group_names = [x.decode() for x in group_names]
+
     groups = set()
     for group in group_names:
         groups.add(group)
