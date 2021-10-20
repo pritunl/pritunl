@@ -21,3 +21,4 @@ pyopenssl==19.1.0
 cryptography==3.4.7
 pynacl==1.4.0
 certifi==2021.10.8
+cffi==1.14.6
