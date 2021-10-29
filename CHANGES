@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for Azure graph API
+
 Version 1.30.2960.4 2021-10-20
 ------------------------------
 
