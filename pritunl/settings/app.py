@@ -92,6 +92,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_azure_directory_id': None,
         'sso_azure_app_id': None,
         'sso_azure_app_secret': None,
+        'sso_azure_version': 1,
         'sso_authzero_mode': 'org',
         'sso_authzero_domain': None,
         'sso_authzero_app_id': None,
