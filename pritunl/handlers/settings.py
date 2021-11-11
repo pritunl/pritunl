@@ -371,8 +371,8 @@ def settings_put():
 
         if settings.app.auditing == ALL and auditing != ALL:
             return utils.jsonify({
-                'error': CANNOT_DISABLE_AUTIDING,
-                'error_msg': CANNOT_DISABLE_AUTIDING_MSG,
+                'error': CANNOT_DISABLE_AUDITING,
+                'error_msg': CANNOT_DISABLE_AUDITING_MSG,
             }, 400)
 
         if settings.app.auditing != auditing:
