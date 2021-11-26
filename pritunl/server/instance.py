@@ -26,6 +26,8 @@ import traceback
 import re
 import pymongo
 import datetime
+import pwd
+import grp
 
 _instances = {}
 _instances_lock = threading.Lock()
@@ -308,6 +310,9 @@ class ServerInstance(object):
             8 if self.server.debug else 3,
         )
 
+        if settings.vpn.drop_permissions:
+            server_conf += 'user nobody\ngroup nobody\n'
+
         if self.server.bind_address:
             server_conf += 'local %s\n' % self.server.bind_address
 
@@ -408,6 +413,12 @@ class ServerInstance(object):
         server_conf += '<dh>\n%s\n</dh>\n' % self.server.dh_params
 
         with open(self.ovpn_conf_path, 'w') as ovpn_conf:
+            if settings.vpn.drop_permissions:
+                os.chown(
+                    self.ovpn_conf_path,
+                    pwd.getpwnam('nobody')[2],
+                    grp.getgrnam('nobody')[2],
+                )
             os.chmod(self.ovpn_conf_path, 0o600)
             ovpn_conf.write(server_conf)
 
