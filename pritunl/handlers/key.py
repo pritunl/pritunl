@@ -1029,7 +1029,8 @@ def key_wg_post(org_id, user_id, server_id):
         client_wg_public_key = base64.b64decode(client_wg_public_key)
         if len(client_wg_public_key) != 32:
             raise ValueError('Invalid length')
-        client_wg_public_key = base64.b64encode(client_wg_public_key)
+        client_wg_public_key = base64.b64encode(
+            client_wg_public_key).decode()
     except:
         journal.entry(
             journal.USER_WG_FAILURE,
