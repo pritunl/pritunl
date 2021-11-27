@@ -310,7 +310,16 @@ class ServerInstance(object):
             8 if self.server.debug else 3,
         )
 
+        drop_permissions = False
         if settings.vpn.drop_permissions:
+            try:
+                pwd.getpwnam('nobody')
+                grp.getgrnam('nobody')
+                drop_permissions = True
+            except KeyError:
+                pass
+
+        if drop_permissions:
             server_conf += 'user nobody\ngroup nobody\n'
 
         if self.server.bind_address:
@@ -413,7 +422,7 @@ class ServerInstance(object):
         server_conf += '<dh>\n%s\n</dh>\n' % self.server.dh_params
 
         with open(self.ovpn_conf_path, 'w') as ovpn_conf:
-            if settings.vpn.drop_permissions:
+            if drop_permissions:
                 os.chown(
                     self.ovpn_conf_path,
                     pwd.getpwnam('nobody')[2],
