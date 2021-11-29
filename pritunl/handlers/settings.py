@@ -43,6 +43,7 @@ def _dict():
             'sso_azure_directory_id': 'demo',
             'sso_azure_app_id': 'demo',
             'sso_azure_app_secret': 'demo',
+            'sso_azure_version': settings.app.sso_azure_version,
             'sso_authzero_domain': 'demo',
             'sso_authzero_app_id': 'demo',
             'sso_authzero_app_secret': 'demo',
@@ -148,6 +149,7 @@ def _dict():
             'sso_azure_directory_id': settings.app.sso_azure_directory_id,
             'sso_azure_app_id': settings.app.sso_azure_app_id,
             'sso_azure_app_secret': settings.app.sso_azure_app_secret,
+            'sso_azure_version': settings.app.sso_azure_version,
             'sso_authzero_domain': settings.app.sso_authzero_domain,
             'sso_authzero_app_id': settings.app.sso_authzero_app_id,
             'sso_authzero_app_secret': settings.app.sso_authzero_app_secret,
@@ -488,6 +490,16 @@ def settings_put():
         if sso_azure_app_secret != settings.app.sso_azure_app_secret:
             changes.add('sso')
         settings.app.sso_azure_app_secret = sso_azure_app_secret
+
+    if 'sso_azure_version' in flask.request.json:
+        settings_commit = True
+        sso_azure_version = flask.request.json['sso_azure_version'] or None
+        sso_azure_version = int(sso_azure_version)
+        if sso_azure_version not in (1, 2):
+            sso_azure_version = 2
+        if sso_azure_version != settings.app.sso_azure_version:
+            changes.add('sso')
+        settings.app.sso_azure_version = sso_azure_version
 
     if 'sso_authzero_domain' in flask.request.json:
         settings_commit = True
