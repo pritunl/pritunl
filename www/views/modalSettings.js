@@ -117,12 +117,15 @@ define([
       return this.$('.sso-mode select').val();
     },
     setSsoMode: function(mode) {
+      this.$('.sso-azure-version select').val('2');
+
       if (!mode) {
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -162,6 +165,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -185,6 +189,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -216,6 +221,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -243,6 +249,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -266,6 +273,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -297,6 +305,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -324,6 +333,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -347,6 +357,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -375,6 +386,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -399,6 +411,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -449,10 +462,12 @@ define([
         this.$('.sso-azure-directory-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-secret').slideDown(window.slideTime);
+        this.$('.sso-azure-version').slideDown(window.slideTime);
       } else if (mode === 'authzero') {
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -483,6 +498,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -507,6 +523,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -553,6 +570,7 @@ define([
         this.$('.sso-azure-directory-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-secret').slideDown(window.slideTime);
+        this.$('.sso-azure-version').slideDown(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
         this.$('.sso-host').slideDown(window.slideTime);
@@ -561,6 +579,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -577,9 +596,9 @@ define([
         this.$('.sso-match-google').slideUp(window.slideTime);
         this.$('.sso-google-key').slideUp(window.slideTime);
         this.$('.sso-google-email').slideUp(window.slideTime);
-        this.$('.sso-azure-directory-id').slideDown(window.slideTime);
-        this.$('.sso-azure-app-id').slideDown(window.slideTime);
-        this.$('.sso-azure-app-secret').slideDown(window.slideTime);
+        this.$('.sso-authzero-domain').slideDown(window.slideTime);
+        this.$('.sso-authzero-app-id').slideDown(window.slideTime);
+        this.$('.sso-authzero-app-secret').slideDown(window.slideTime);
         this.$('.sso-token').slideDown(window.slideTime);
         this.$('.sso-secret').slideDown(window.slideTime);
         this.$('.sso-host').slideDown(window.slideTime);
@@ -588,6 +607,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -615,6 +635,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -665,10 +686,12 @@ define([
         this.$('.sso-azure-directory-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-id').slideDown(window.slideTime);
         this.$('.sso-azure-app-secret').slideDown(window.slideTime);
+        this.$('.sso-azure-version').slideDown(window.slideTime);
       } else if (mode === 'authzero_yubico') {
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-saml-url').slideUp(window.slideTime);
         this.$('.sso-saml-issuer-url').slideUp(window.slideTime);
         this.$('.sso-saml-cert').slideUp(window.slideTime);
@@ -696,6 +719,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -723,6 +747,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -750,6 +775,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -777,6 +803,7 @@ define([
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-id').slideUp(window.slideTime);
         this.$('.sso-azure-app-secret').slideUp(window.slideTime);
+        this.$('.sso-azure-version').slideUp(window.slideTime);
         this.$('.sso-authzero-domain').slideUp(window.slideTime);
         this.$('.sso-authzero-app-id').slideUp(window.slideTime);
         this.$('.sso-authzero-app-secret').slideUp(window.slideTime);
@@ -1097,6 +1124,7 @@ define([
       var ssoAzureDirectoryId = null;
       var ssoAzureAppId = null;
       var ssoAzureAppSecret = null;
+      var ssoAzureVersion = null;
       var ssoAuthzeroDomain = null;
       var ssoAuthzeroAppId = null;
       var ssoAuthzeroAppSecret = null;
@@ -1172,6 +1200,12 @@ define([
             '.sso-azure-directory-id input').val();
           ssoAzureAppId = this.$('.sso-azure-app-id input').val();
           ssoAzureAppSecret = this.$('.sso-azure-app-secret input').val();
+          ssoAzureVersion = this.$('.sso-azure-version select').val();
+          if (ssoAzureVersion) {
+            ssoAzureVersion = parseInt(ssoAzureVersion, 10);
+          } else {
+            ssoAzureVersion = 2;
+          }
         }
 
         if (sso.indexOf('authzero') !== -1) {
@@ -1240,6 +1274,7 @@ define([
         sso_azure_directory_id: ssoAzureDirectoryId,
         sso_azure_app_id: ssoAzureAppId,
         sso_azure_app_secret: ssoAzureAppSecret,
+        sso_azure_version: ssoAzureVersion,
         sso_authzero_domain: ssoAuthzeroDomain,
         sso_authzero_app_id: ssoAuthzeroAppId,
         sso_authzero_app_secret: ssoAuthzeroAppSecret,
