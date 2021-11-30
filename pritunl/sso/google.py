@@ -28,6 +28,7 @@ def verify_google(user_email):
         io.StringIO(data['private_key']),
         'notasecret',
         scopes=[
+            'https://www.googleapis.com/auth/admin.directory.user.readonly',
             'https://www.googleapis.com/auth/admin.directory.group.readonly',
         ],
     )
@@ -36,6 +37,10 @@ def verify_google(user_email):
 
     service = apiclient.discovery.build(
         'admin', 'directory_v1', credentials=credentials)
+
+    data = service.users().get(userKey=user_email).execute()
+    if data.get('suspended'):
+        return False, []
 
     results = service.groups().list(userKey=user_email).execute()
 
