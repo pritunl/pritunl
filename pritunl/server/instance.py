@@ -310,17 +310,26 @@ class ServerInstance(object):
             8 if self.server.debug else 3,
         )
 
+        unix_user = 'nobody'
+        unix_group = 'nobody'
         drop_permissions = False
         if settings.vpn.drop_permissions:
             try:
-                pwd.getpwnam('nobody')
-                grp.getgrnam('nobody')
+                pwd.getpwnam(unix_user)
+                grp.getgrnam(unix_group)
                 drop_permissions = True
             except KeyError:
-                pass
+                try:
+                    unix_user = 'nobody'
+                    unix_group = 'nogroup'
+                    pwd.getpwnam(unix_user)
+                    grp.getgrnam(unix_group)
+                    drop_permissions = True
+                except KeyError:
+                    pass
 
         if drop_permissions:
-            server_conf += 'user nobody\ngroup nobody\n'
+            server_conf += 'user %s\ngroup %s\n' % (unix_user, unix_group)
 
         if self.server.bind_address:
             server_conf += 'local %s\n' % self.server.bind_address
@@ -425,8 +434,8 @@ class ServerInstance(object):
             if drop_permissions:
                 os.chown(
                     self.ovpn_conf_path,
-                    pwd.getpwnam('nobody')[2],
-                    grp.getgrnam('nobody')[2],
+                    pwd.getpwnam(unix_user)[2],
+                    grp.getgrnam(unix_group)[2],
                 )
             os.chmod(self.ovpn_conf_path, 0o600)
             ovpn_conf.write(server_conf)
