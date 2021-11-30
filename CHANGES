@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3001.87 2021-11-30
+-------------------------------
 
 Improve server mangement
 
