@@ -493,7 +493,7 @@ def settings_put():
 
     if 'sso_azure_version' in flask.request.json:
         settings_commit = True
-        sso_azure_version = flask.request.json['sso_azure_version'] or None
+        sso_azure_version = flask.request.json['sso_azure_version'] or 0
         sso_azure_version = int(sso_azure_version)
         if sso_azure_version not in (1, 2):
             sso_azure_version = 2
