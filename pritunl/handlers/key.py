@@ -496,7 +496,9 @@ def user_linked_key_page_get(short_code):
         key_page = key_page.replace('<%= user_otp_key %>', usr.otp_secret)
         key_page = key_page.replace('<%= user_otp_url %>',
             'otpauth://totp/%s@%s?secret=%s' % (
-                usr.name, org.name, usr.otp_secret))
+                urllib.parse.quote(usr.name),
+                urllib.parse.quote(org.name),
+                usr.otp_secret))
     else:
         key_page = key_page.replace('<%= user_otp_key %>', '')
         key_page = key_page.replace('<%= user_otp_url %>', '')
