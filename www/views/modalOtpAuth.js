@@ -40,10 +40,11 @@ define([
       }
       this.$('input').val(this.model.get('otp_secret'));
 
-      var name = this.model.get('name') || this.model.get('username');
+      var name = encodeURIComponent(
+        this.model.get('name') || this.model.get('username'));
       var org = this.model.get('organization_name');
       if (org) {
-        name += '@' + org;
+        name += '@' + encodeURIComponent(org);
       }
 
       var otpUrl = 'otpauth://totp/' + name + '?secret=' +
