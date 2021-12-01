@@ -14,7 +14,8 @@ define([
     okText: 'Save',
     events: function() {
       return _.extend({
-        'click .ipv6-toggle': 'onIpv6Select'
+        'click .ipv6-toggle': 'onIpv6Select',
+        'click .host-check-toggle': 'onHostCheckSelect'
       }, ModalModifyLinkView.__super__.events);
     },
     body: function() {
@@ -36,9 +37,26 @@ define([
     onIpv6Select: function() {
       this.setIpv6Select(!this.getIpv6Select());
     },
+    getHostCheckSelect: function() {
+      return this.$('.host-check-toggle .selector').hasClass('selected');
+    },
+    setHostCheckSelect: function(state) {
+      if (state) {
+        this.$('.host-check-toggle .selector').addClass('selected');
+        this.$('.host-check-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.host-check-toggle .selector').removeClass('selected');
+        this.$('.host-check-toggle .selector-inner').hide();
+      }
+    },
+    onHostCheckSelect: function() {
+      this.setHostCheckSelect(!this.getHostCheckSelect());
+    },
     onOk: function() {
       var name = this.$('.name input').val();
       var ipv6 = this.getIpv6Select();
+      var hostCheck = this.getHostCheckSelect();
       var linkAction = this.$('.link-action select').val();
 
       if (!name) {
@@ -50,6 +68,7 @@ define([
       this.model.save({
         name: name,
         ipv6: ipv6,
+        host_check: hostCheck,
         action: linkAction
       }, {
         success: function() {
