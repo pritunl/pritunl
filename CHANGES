@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3007.74 2021-12-06
+-------------------------------
 
 Fix server startup issues
 
