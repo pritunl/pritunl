@@ -24,7 +24,7 @@ class SettingsVpn(SettingsGroupMongo):
         'op_timeout': 25,
         'startup_timeout': 300,
         'link_timeout': 10,
-        'drop_permissions': True,
+        'drop_permissions': False,
         'iptables_update': False,
         'iptables_update_rate': 900,
         'bandwidth_update_rate': 15,
