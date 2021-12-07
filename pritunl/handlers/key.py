@@ -26,6 +26,7 @@ import threading
 import urllib.parse
 import requests
 import json
+import unicodedata
 import nacl.public
 from cryptography.exceptions import InvalidSignature
 
@@ -36,7 +37,9 @@ def _get_key_tar_archive(org_id, user_id):
     response = flask.Response(response=key_archive,
         mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s.tar"' % usr.name)
+        'attachment; filename="%s.tar"' %
+        unicodedata.normalize(
+            'NFKD', usr.name).encode('ascii', 'ignore').decode())
     return (usr, response)
 
 def _get_key_zip_archive(org_id, user_id):
@@ -46,7 +49,12 @@ def _get_key_zip_archive(org_id, user_id):
     response = flask.Response(response=key_archive,
         mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s_%s.zip"' % (org.name, usr.name))
+        'attachment; filename="%s_%s.zip"' % (
+            unicodedata.normalize(
+                'NFKD', org.name).encode('ascii', 'ignore').decode(),
+            unicodedata.normalize(
+                'NFKD', usr.name).encode('ascii', 'ignore').decode(),
+        ))
     return (usr, response)
 
 def _get_onc_archive(org_id, user_id):
@@ -56,7 +64,12 @@ def _get_onc_archive(org_id, user_id):
     response = flask.Response(response=onc_conf,
         mimetype='application/x-onc')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s_%s.onc"' % (org.name, usr.name))
+        'attachment; filename="%s_%s.onc"' % (
+            unicodedata.normalize(
+                'NFKD', org.name).encode('ascii', 'ignore').decode(),
+            unicodedata.normalize(
+                'NFKD', usr.name).encode('ascii', 'ignore').decode(),
+        ))
     return (usr, response)
 
 def _find_doc(query, one_time=None, one_time_new=False):
