@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3012.75 2021-12-11
+-------------------------------
 
 Fix connection issues
 Fix profile download issues
