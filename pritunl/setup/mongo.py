@@ -264,7 +264,7 @@ def upsert_indexes():
     upsert_index('users_key_link', 'timestamp',
         background=True, expireAfterSeconds=settings.app.key_link_timeout)
     upsert_index('acme_challenges', 'timestamp',
-        background=True, expireAfterSeconds=180)
+        background=True, expireAfterSeconds=3600)
     upsert_index('auth_sessions', 'timestamp',
         background=True, expireAfterSeconds=settings.app.session_timeout)
     upsert_index('auth_nonces', 'timestamp',
