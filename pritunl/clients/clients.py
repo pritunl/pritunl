@@ -2206,6 +2206,9 @@ class Clients(object):
                     if self.server.session_timeout and \
                             time.time() - client['timestamp_start'] > \
                             self.server.session_timeout:
+                        self.instance_com.push_output(
+                            'Client session timeout ' +
+                            'user_id=%s' % client['user_id'])
                         if len(client_id) > 32:
                             self.instance.disconnect_wg(client_id)
                         else:
