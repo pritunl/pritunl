@@ -324,6 +324,7 @@ def main(default_conf=None):
         mongo.get_collection('sso_push_cache').drop()
         mongo.get_collection('sso_client_cache').drop()
         mongo.get_collection('sso_passcode_cache').drop()
+        mongo.get_collection('acme_challenges').drop()
 
         mongo.get_collection('logs').drop()
         mongo.get_collection('log_entries').drop()
