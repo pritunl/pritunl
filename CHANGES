@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix connection issue
+
 Version 1.30.3012.75 2021-12-11
 -------------------------------
 
