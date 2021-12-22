@@ -1126,7 +1126,7 @@ class Clients(object):
             ),
         )
 
-        data = json.loads(str(plaintext))
+        data = json.loads(plaintext.decode())
 
         auth_password = data.get('password')
         auth_password = str(auth_password) if auth_password else None
