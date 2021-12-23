@@ -63,6 +63,9 @@
         <option value="saml_onelogin" <%= sso === 'saml_onelogin' ? 'selected' : '' %>>OneLogin</option>
         <option value="saml_onelogin_duo" <%= sso === 'saml_onelogin_duo' ? 'selected' : '' %>>OneLogin + Duo Security</option>
         <option value="saml_onelogin_yubico" <%= sso === 'saml_onelogin_yubico' ? 'selected' : '' %>>OneLogin + Yubico</option>
+        <option value="saml_jumpcloud" <%= sso === 'saml_jumpcloud' ? 'selected' : '' %>>JumpCloud</option>
+        <option value="saml_jumpcloud_duo" <%= sso === 'saml_jumpcloud_duo' ? 'selected' : '' %>>JumpCloud + Duo Security</option>
+        <option value="saml_jumpcloud_yubico" <%= sso === 'saml_jumpcloud_yubico' ? 'selected' : '' %>>JumpCloud + Yubico</option>
         <option value="authzero" <%= sso === 'authzero' ? 'selected' : '' %>>Auth0</option>
         <option value="authzero_duo" <%= sso === 'authzero_duo' ? 'selected' : '' %>>Auth0 + Duo Security</option>
         <option value="authzero_yubico" <%= sso === 'authzero_yubico' ? 'selected' : '' %>>Auth0 + Yubico</option>
@@ -293,6 +296,10 @@
         <option value="push" <%= sso_okta_mode === 'push' ? 'selected' : '' %>>Push</option>
         <option value="push_none" <%= sso_okta_mode === 'push_none' ? 'selected' : '' %>>Push when available</option>
       </select>
+    </div>
+    <div class="sso-jumpcloud-secret form-group" <%= !sso || sso.indexOf('jumpcloud') === -1 ? 'style="display: none;"' : '' %>>
+      <label>JumpCloud API Key</label>
+      <input type="text" class="form-control" placeholder="Enter JumpCloud API key" value="<%- sso_jumpcloud_secret || '' %>" data-toggle="tooltip" title="JumpCloud API key">
     </div>
     <div class="sso-yubico-secret form-group">
       <label>Yubico Secret Key</label>
