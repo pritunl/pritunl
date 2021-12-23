@@ -253,7 +253,9 @@ def sso_request_get():
             SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
             SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
             SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
-            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
+            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
+            SAML_JUMPCLOUD_AUTH, SAML_JUMPCLOUD_DUO_AUTH,
+            SAML_JUMPCLOUD_YUBICO_AUTH):
         return flask.abort(404)
 
     state = utils.rand_str(64)
@@ -472,7 +474,9 @@ def sso_callback_get():
             SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
             SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
             SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
-            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
+            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
+            SAML_JUMPCLOUD_AUTH, SAML_JUMPCLOUD_DUO_AUTH,
+            SAML_JUMPCLOUD_YUBICO_AUTH):
         return flask.abort(405)
 
     remote_addr = utils.get_remote_addr()
@@ -1062,7 +1066,8 @@ def sso_yubico_post():
 
     if sso_mode not in (AZURE_YUBICO_AUTH, GOOGLE_YUBICO_AUTH,
             AUTHZERO_YUBICO_AUTH, SLACK_YUBICO_AUTH, SAML_YUBICO_AUTH,
-            SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_YUBICO_AUTH):
+            SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
+            SAML_JUMPCLOUD_YUBICO_AUTH):
         return flask.abort(404)
 
     if not token or not key:
