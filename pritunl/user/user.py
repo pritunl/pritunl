@@ -550,6 +550,19 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
+        elif SAML_JUMPCLOUD_AUTH in self.auth_type and \
+                SAML_JUMPCLOUD_AUTH in sso_mode:
+            if settings.user.skip_remote_sso_check:
+                return True
+
+            try:
+                return sso.auth_jumpcloud(self.name)
+            except:
+                logger.exception('JumpCloud auth check error', 'user',
+                    user_id=self.id,
+                    user_name=self.name,
+                )
+            return False
         elif SAML_OKTA_AUTH in self.auth_type and \
                 SAML_OKTA_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
