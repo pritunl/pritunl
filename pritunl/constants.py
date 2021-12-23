@@ -378,6 +378,7 @@ IP_REGEX = r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}'
 VALID_DH_PARAM_BITS = (1024, 1536, 2048, 3072, 4096)
 AUTH_SERVER = 'https://auth.pritunl.com'
 ONELOGIN_URL = 'https://api.onelogin.com'
+JUMPCLOUD_URL = 'https://console.jumpcloud.com'
 NTP_SERVER = 'ntp.ubuntu.com'
 STATIC_FILE_EXTENSIONS = {
     '.css',
@@ -473,6 +474,9 @@ SAML_OKTA_YUBICO_AUTH = 'saml_okta_yubico'
 SAML_ONELOGIN_AUTH = 'saml_onelogin'
 SAML_ONELOGIN_DUO_AUTH = 'saml_onelogin_duo'
 SAML_ONELOGIN_YUBICO_AUTH = 'saml_onelogin_yubico'
+SAML_JUMPCLOUD_AUTH = 'saml_jumpcloud'
+SAML_JUMPCLOUD_DUO_AUTH = 'saml_jumpcloud_duo'
+SAML_JUMPCLOUD_YUBICO_AUTH = 'saml_jumpcloud_yubico'
 RADIUS_AUTH = 'radius'
 RADIUS_DUO_AUTH = 'radius_duo'
 PLUGIN_AUTH = 'plugin'
@@ -502,6 +506,9 @@ AUTH_TYPES = {
     SAML_ONELOGIN_AUTH,
     SAML_ONELOGIN_DUO_AUTH,
     SAML_ONELOGIN_YUBICO_AUTH,
+    SAML_JUMPCLOUD_AUTH,
+    SAML_JUMPCLOUD_DUO_AUTH,
+    SAML_JUMPCLOUD_YUBICO_AUTH,
     RADIUS_AUTH,
     RADIUS_DUO_AUTH,
     PLUGIN_AUTH,
