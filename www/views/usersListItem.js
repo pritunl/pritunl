@@ -258,6 +258,13 @@ define([
           this.$('.onelogin-logo').hide();
         }
 
+        if (sso.indexOf('jumpcloud') !== -1 &&
+          auth_type.indexOf('jumpcloud') !== -1) {
+          this.$('.jumpcloud-logo').show();
+        } else {
+          this.$('.jumpcloud-logo').hide();
+        }
+
         if (sso === 'radius' && auth_type === 'radius') {
           this.$('.radius-logo').show();
         } else {
