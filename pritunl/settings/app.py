@@ -117,6 +117,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_onelogin_mode': None,
         'sso_onelogin_push': False,
         'sso_onelogin_skip_unavailable': True,
+        'sso_jumpcloud_secret': None,
         'sso_radius_prefix': None,
         'sso_radius_host': None,
         'sso_radius_secret': None,
