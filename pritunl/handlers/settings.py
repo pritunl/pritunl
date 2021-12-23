@@ -66,6 +66,7 @@ def _dict():
             'sso_onelogin_id': 'demo',
             'sso_onelogin_secret': 'demo',
             'sso_onelogin_mode': utils.get_onelogin_mode(),
+            'sso_jumpcloud_secret': 'demo',
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
             'ipv6': settings.vpn.ipv6,
@@ -172,6 +173,7 @@ def _dict():
             'sso_onelogin_id': settings.app.sso_onelogin_id,
             'sso_onelogin_secret': settings.app.sso_onelogin_secret,
             'sso_onelogin_mode': utils.get_onelogin_mode(),
+            'sso_jumpcloud_secret': settings.app.sso_jumpcloud_secret,
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
             'ipv6': settings.vpn.ipv6,
@@ -674,6 +676,14 @@ def settings_put():
             sso_onelogin_mode = flask.request.json['sso_onelogin_mode']
             settings.app.sso_onelogin_mode = sso_onelogin_mode
 
+    if 'sso_jumpcloud_secret' in flask.request.json:
+        settings_commit = True
+        sso_jumpcloud_secret = \
+            flask.request.json['sso_jumpcloud_secret'] or None
+        if sso_jumpcloud_secret != settings.app.sso_jumpcloud_secret:
+            changes.add('sso')
+        settings.app.sso_jumpcloud_secret = sso_jumpcloud_secret
+
     if 'ipv6' in flask.request.json:
         settings_commit = True
         ipv6 = True if \
@@ -929,6 +939,7 @@ def settings_put():
         settings.app.sso_onelogin_app_id = None
         settings.app.sso_onelogin_id = None
         settings.app.sso_onelogin_secret = None
+        settings.app.sso_jumpcloud_secret = None
         settings.app.sso_radius_secret = None
         settings.app.sso_radius_host = None
     else:
