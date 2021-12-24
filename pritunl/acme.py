@@ -1,6 +1,7 @@
 from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
+from pritunl import acme_tiny
 
 import os
 
@@ -26,8 +27,6 @@ def get_authorization(token):
         return doc.get('authorization')
 
 def get_acme_cert(account_key, csr):
-    from pritunl import acme_tiny
-
     temp_path = utils.get_temp_path()
     account_key_path = temp_path + '.key'
     csr_path = temp_path + '.csr'
