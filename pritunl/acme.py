@@ -1,7 +1,7 @@
 from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
-from pritunl import acme_tiny
+from pritunl import acmetiny
 
 import os
 
@@ -38,7 +38,7 @@ def get_acme_cert(account_key, csr):
     with open(csr_path, 'w') as csr_file:
         csr_file.write(csr)
 
-    certificate = acme_tiny.get_crt(
+    certificate = acmetiny.get_crt(
         account_key_path,
         csr_path,
         set_acme,
