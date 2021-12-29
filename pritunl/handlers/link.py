@@ -7,6 +7,7 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import link
 from pritunl import event
+from pritunl import database
 
 import pymongo
 import flask
@@ -527,7 +528,7 @@ def link_location_peer_post(link_id, location_id):
     if not loc:
         return flask.abort(404)
 
-    peer_id = utils.ObjectId(flask.request.json.get('peer_id'))
+    peer_id = database.ParseObjectId(flask.request.json.get('peer_id'))
     loc.remove_exclude(peer_id)
 
     lnk.commit('excludes')
@@ -584,7 +585,7 @@ def link_location_transit_post(link_id, location_id):
     if not loc:
         return flask.abort(404)
 
-    transit_id = utils.ObjectId(flask.request.json.get('transit_id'))
+    transit_id = database.ParseObjectId(flask.request.json.get('transit_id'))
     loc.add_transit(transit_id)
 
     loc.commit('transits')
@@ -645,7 +646,7 @@ def link_state_put():
     except ValueError:
         return flask.abort(405)
 
-    host = link.get_host(utils.ObjectId(auth_token))
+    host = link.get_host(database.ObjectId(auth_token))
     if not host:
         return flask.abort(404)
 
@@ -749,7 +750,7 @@ def link_state_delete():
     except ValueError:
         return flask.abort(405)
 
-    host = link.get_host(utils.ObjectId(auth_token))
+    host = link.get_host(database.ObjectId(auth_token))
     if not host:
         return flask.abort(404)
 

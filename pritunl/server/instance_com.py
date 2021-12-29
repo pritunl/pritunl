@@ -9,6 +9,7 @@ from pritunl import mongo
 from pritunl import clients
 from pritunl import ipaddress
 from pritunl import monitoring
+from pritunl import database
 
 import os
 import time
@@ -107,8 +108,8 @@ class ServerInstanceCom(object):
                         org_id = tls_env[2:cn_index]
                         user_id = tls_env[cn_index + 3:]
 
-                    self.client['org_id'] = utils.ObjectId(org_id)
-                    self.client['user_id'] = utils.ObjectId(user_id)
+                    self.client['org_id'] = database.ParseObjectId(org_id)
+                    self.client['user_id'] = database.ParseObjectId(user_id)
                 elif env_key == 'IV_HWADDR':
                     self.client['mac_addr'] = env_val
                 elif env_key == 'untrusted_ip':

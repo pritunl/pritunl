@@ -2,6 +2,7 @@ from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import cache
 from pritunl import utils
+from pritunl import database
 
 import pymongo
 import time
@@ -32,7 +33,7 @@ def publish(channels, message, extra=None, transaction=None):
         if isinstance(channels, str):
             doc['channel'] = channels
             tran_collection.update({
-                'nonce': utils.ObjectId(),
+                'nonce': database.ObjectId(),
             }, {
                 '$set': doc,
             }, upsert=True)
@@ -42,7 +43,7 @@ def publish(channels, message, extra=None, transaction=None):
                 doc_copy['channel'] = channel
 
                 tran_collection.bulk().find({
-                    'nonce': utils.ObjectId(),
+                    'nonce': database.ObjectId(),
                 }).upsert().update({
                     '$set': doc_copy,
                 })

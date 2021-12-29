@@ -4,6 +4,7 @@ from pritunl import settings
 from pritunl import mongo
 from pritunl import logger
 from pritunl import utils
+from pritunl import database
 
 import pymongo
 import datetime
@@ -34,7 +35,7 @@ class Task(mongo.MongoObject):
     def __init__(self, run_id=None, **kwargs):
         mongo.MongoObject.__init__(self)
         self.type = self.type
-        self.runner_id = utils.ObjectId()
+        self.runner_id = database.ObjectId()
 
     @cached_static_property
     def collection(cls):

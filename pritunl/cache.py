@@ -2,6 +2,7 @@ from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
 from pritunl import logger
+from pritunl import database
 
 import time
 import json
@@ -79,7 +80,7 @@ def publish(channels, message, extra=None, cap=50, ttl=300):
 
     for channel in channels:
         doc = {
-            '_id': utils.ObjectId(),
+            '_id': database.ObjectId(),
             'message': message,
             'timestamp': utils.now(),
         }

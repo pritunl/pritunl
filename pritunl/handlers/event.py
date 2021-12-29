@@ -4,6 +4,7 @@ from pritunl import event
 from pritunl import app
 from pritunl import auth
 from pritunl import settings
+from pritunl import database
 
 import flask
 import time
@@ -22,7 +23,7 @@ def event_get(cursor=None):
         raise flask.abort(500)
 
     if cursor is not None:
-        cursor = utils.ObjectId(cursor)
+        cursor = database.ParseObjectId(cursor)
 
     return utils.jsonify(event.get_events(
         cursor=cursor, yield_app_server=True))

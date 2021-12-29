@@ -1,5 +1,6 @@
 from pritunl.exceptions import *
 from pritunl.helpers import *
+from pritunl import database
 
 import os
 import copy
@@ -29,10 +30,10 @@ class MongoObject(object):
                     return None
                 mongo_object.exists = False
                 if not id:
-                    mongo_object.id = utils.ObjectId()
+                    mongo_object.id = database.ObjectId()
         else:
             mongo_object.exists = False
-            mongo_object.id = utils.ObjectId()
+            mongo_object.id = database.ObjectId()
         return mongo_object
 
     def __setattr__(self, name, value):

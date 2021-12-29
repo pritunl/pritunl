@@ -10,6 +10,7 @@ from pritunl import logger
 from pritunl import journal
 from pritunl import plugins
 from pritunl import sso
+from pritunl import database
 
 import base64
 import os
@@ -444,7 +445,8 @@ def check_session(csrf_check):
         admin_id = utils.session_opt_str('admin_id')
         if not admin_id:
             return False
-        admin_id = utils.ObjectId(admin_id)
+
+        admin_id = database.ParseObjectId(admin_id)
         session_id = utils.session_opt_str('session_id')
 
         signature = utils.session_opt_str('signature')

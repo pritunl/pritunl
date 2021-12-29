@@ -10,6 +10,7 @@ from pritunl import sso
 from pritunl import logger
 from pritunl import journal
 from pritunl import limiter
+from pritunl import database
 
 import flask
 import time
@@ -430,7 +431,7 @@ def auth_delete():
     )
 
     if admin_id and session_id:
-        admin_id = utils.ObjectId(admin_id)
+        admin_id = database.ParseObjectId(admin_id)
         auth.clear_session(admin_id, str(session_id))
     flask.session.clear()
 

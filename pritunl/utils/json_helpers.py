@@ -1,7 +1,8 @@
-from pritunl.utils.misc import ObjectId, fnv32a
+from pritunl.utils.misc import fnv32a
 
 from pritunl.constants import *
 from pritunl import mongo
+from pritunl import database
 
 import datetime
 import calendar
@@ -18,7 +19,7 @@ def json_object_hook_handler(obj):
     if obj_data:
         object_type, obj_data = obj_data
         if object_type == 'oid':
-            return ObjectId(obj_data)
+            return database.ObjectId(obj_data)
         elif object_type == 'date':
             return datetime.datetime.fromtimestamp(obj_data / 1000.,
                 bson.tz_util.utc)

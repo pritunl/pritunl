@@ -8,6 +8,7 @@ from pritunl import logger
 from pritunl import mongo
 from pritunl import messenger
 from pritunl import utils
+from pritunl import database
 
 import datetime
 import threading
@@ -43,7 +44,7 @@ class Queue(mongo.MongoObject):
         self.ttl = settings.mongo.queue_ttl
         self.type = self.type
         self.reserve_id = self.reserve_id
-        self.runner_id = utils.ObjectId()
+        self.runner_id = database.ObjectId()
         self.claimed = False
         self.queue_com = QueueCom()
         self.keep_alive_thread = None

@@ -10,6 +10,7 @@ from pritunl import ipaddress
 from pritunl import server
 from pritunl import organization
 from pritunl import logger
+from pritunl import database
 
 import flask
 
@@ -588,7 +589,7 @@ def settings_put():
         sso_org = flask.request.json['sso_org'] or None
 
         if sso_org:
-            sso_org = utils.ObjectId(sso_org)
+            sso_org = database.ParseObjectId(sso_org)
         else:
             sso_org = None
 

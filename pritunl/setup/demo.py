@@ -1,6 +1,7 @@
 from pritunl.constants import *
 from pritunl import ipaddress
 from pritunl import utils
+from pritunl import database
 
 import threading
 import datetime
@@ -52,7 +53,7 @@ def setup_demo():
             instances = []
             for hst in prefered_hosts:
                 instances.append({
-                    'instance_id': utils.ObjectId(),
+                    'instance_id': database.ObjectId(),
                     'host_id': hst,
                     'ping_timestamp': utils.now(),
                 })
@@ -77,7 +78,7 @@ def setup_demo():
                     virt_address6 = svr.ip4to6(virt_address) + '/64'
 
                     doc = {
-                        '_id': utils.ObjectId(),
+                        '_id': database.ObjectId(),
                         'user_id': usr.id,
                         'server_id': svr.id,
                         'host_id': settings.local.host_id,

@@ -16,6 +16,7 @@ from pritunl import iptables
 from pritunl import ipaddress
 from pritunl import plugins
 from pritunl import vxlan
+from pritunl import database
 
 import os
 import signal
@@ -35,7 +36,7 @@ _instances_lock = threading.Lock()
 class ServerInstance(object):
     def __init__(self, server):
         self.server = server
-        self.id = utils.ObjectId()
+        self.id = database.ObjectId()
         self.interrupt = False
         self.sock_interrupt = False
         self.startup_interrupt = False

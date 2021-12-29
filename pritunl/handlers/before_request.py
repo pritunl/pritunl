@@ -1,7 +1,7 @@
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import app
-from pritunl import utils
+from pritunl import database
 
 import flask
 
@@ -18,6 +18,6 @@ def parse_object_id(_, values):
                 val = values[key]
                 if len(val) > 10:
                     try:
-                        values[key] = utils.ObjectIdSilent(val)
+                        values[key] = database.ObjectIdSilent(val)
                     except:
                         values[key] = None

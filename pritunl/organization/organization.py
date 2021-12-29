@@ -7,6 +7,7 @@ from pritunl import queue
 from pritunl import pooler
 from pritunl import user
 from pritunl import utils
+from pritunl import database
 
 import uuid
 import math
@@ -190,7 +191,7 @@ class Organization(mongo.MongoObject):
                 user_id = user_id[0] if user_id else ''
                 if user_id:
                     type_search = True
-                    spec['_id'] = utils.ObjectId(user_id)
+                    spec['_id'] = database.ParseObjectId(user_id)
                 search = search[:n] + search[n + 3 + len(user_id):].strip()
 
             n = search.find('type:')

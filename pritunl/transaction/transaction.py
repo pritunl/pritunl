@@ -6,6 +6,7 @@ from pritunl import settings
 from pritunl import mongo
 from pritunl import logger
 from pritunl import utils
+from pritunl import database
 
 import collections
 import datetime
@@ -36,7 +37,7 @@ class Transaction(mongo.MongoObject):
         if lock_id is not None:
             self.lock_id = lock_id
         if self.lock_id is None:
-            self.lock_id = utils.ObjectId()
+            self.lock_id = database.ObjectId()
 
         if priority is not None:
             self.priority = priority

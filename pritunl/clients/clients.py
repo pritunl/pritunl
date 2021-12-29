@@ -17,6 +17,7 @@ from pritunl import monitoring
 from pritunl import plugins
 from pritunl import vxlan
 from pritunl import journal
+from pritunl import database
 
 import time
 import collections
@@ -819,7 +820,7 @@ class Clients(object):
         platform = client_data.get('platform')
         mac_addr = client_data.get('mac_addr')
         remote_ip = client_data.get('remote_ip')
-        doc_id = utils.ObjectId()
+        doc_id = database.ObjectId()
 
         if reauth:
             doc = self.clients.find_id(client_id)
@@ -976,7 +977,7 @@ class Clients(object):
             user_id = user.id
             org_id = org.id
             client_id = wg_public_key
-            doc_id = utils.ObjectId()
+            doc_id = database.ObjectId()
 
             user.audit_event(
                 'user_connection_wg',
