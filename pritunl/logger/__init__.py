@@ -5,16 +5,16 @@ from pritunl.logger.entry import *
 from pritunl.logger.view import *
 
 from pritunl.constants import *
-from pritunl import utils
 
 import logging
 import traceback
 import threading
+import queue
 
 logger = logging.getLogger(APP_NAME)
 log_filter = None
 log_handler = None
-_log_queue = utils.PyQueue()
+_log_queue = queue.Queue()
 
 def _logger_thread():
     while True:
@@ -67,7 +67,7 @@ def critical(log_msg, log_type=None, **kwargs):
 
 def exception(log_msg, log_type=None, **kwargs):
     # Fix for python #15541
-    _log('error', log_msg, log_type, exc_info=1, **kwargs)
+    _log('error', log_msg, log_type, exc_info=True, **kwargs)
 
 _thread = threading.Thread(target=_logger_thread)
 _thread.daemon = True

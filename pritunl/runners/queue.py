@@ -9,9 +9,10 @@ from pritunl import queues
 
 import threading
 import time
+from queue import PriorityQueue
 
 running_queues = {}
-runner_queues = [utils.PyPriorityQueue() for _ in range(3)]
+runner_queues = [PriorityQueue() for _ in range(3)]
 thread_limits = [threading.Semaphore(x) for x in (
     settings.app.queue_low_thread_limit,
     settings.app.queue_med_thread_limit,
