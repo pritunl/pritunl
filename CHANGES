@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix DNS mapping issue when running multiple servers
+
 Version 1.30.3030.85 2021-12-29
 -------------------------------
 
