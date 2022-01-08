@@ -60,6 +60,7 @@ class Clients(object):
             'virt_address',
         )
         self.clients_queue = collections.deque()
+        self.ip_network = ipaddress.IPv4Network(self.server.network)
 
         self.server.generate_auth_key_commit()
         self.server_private_key = self.server.get_auth_private_key()
