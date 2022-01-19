@@ -16,7 +16,7 @@ except:
 _global_lock = threading.Lock()
 
 class Iptables(object):
-    def __init__(self):
+    def __init__(self, server_id, server_type):
         self._tables = {}
         self._routes = set()
         self._routes6 = set()
@@ -24,6 +24,15 @@ class Iptables(object):
         self._nat_routes6 = {}
         self._nat_networks = set()
         self._nat_networks6 = set()
+        name_prefix = '%s_%s'  % (server_id, server_type)
+        self._routes_name = name_prefix + 'r'
+        self._routes6_name = name_prefix + 'r6'
+        self._nat_routes_name = name_prefix + 'n'
+        self._nat_routes6_name = name_prefix + 'n6'
+        self._nat_networks_name = name_prefix + 'h'
+        self._nat_networks6_name = name_prefix + 'h6'
+        self._sets = {}
+        self._sets6 = {}
         self._netmaps = {}
         self._accept = []
         self._accept6 = []
@@ -138,6 +147,39 @@ class Iptables(object):
                 )
         finally:
             self._lock.release()
+
+    def _generate_sets(self):
+        routes_set = set()
+        routes6_set = set()
+        nat_routes_set = set()
+        nat_routes6_set = set()
+        nat_networks_set = set()
+        nat_networks6_set = set()
+
+        for route in self._routes:
+            routes_set.add(route)
+        for route in self._routes6:
+            routes6_set.add(route)
+
+        for route in list(self._nat_routes.keys()):
+            nat_routes_set.add(route)
+        for route in list(self._nat_routes6.keys()):
+            nat_routes6_set.add(route)
+
+        for route in self._nat_networks:
+            nat_networks_set.add(route)
+        for route in self._nat_networks6:
+            nat_networks6_set.add(route)
+
+        self._sets[self._routes_name] = routes_set
+        self._sets6[self._routes6_name] = routes6_set
+        self._sets[self._nat_routes_name] = nat_routes_set
+        self._sets6[self._nat_routes6_name] = nat_routes6_set
+        self._sets[self._nat_networks_name] = nat_networks_set
+        self._sets6[self._nat_networks6_name] = nat_networks6_set
+
+        self._delete_sets()
+        self._create_sets()
 
     def _generate_input(self):
         if self._accept_all:
@@ -273,35 +315,67 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in itertools.chain(self._routes, list(self._nat_routes.keys())):
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule()
-                rule.in_interface = self.virt_interface
-                rule.dst = route
-                rule.create_target('ACCEPT')
-                self._accept.append(('INPUT', rule))
-            else:
-                self._accept.append([
-                    'INPUT',
-                    '-i', self.virt_interface,
-                    '-d', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._routes_name, 'dst']
+            rule.create_target('ACCEPT')
+            self._accept.append(('INPUT', rule))
+        else:
+            self._accept.append([
+                'INPUT',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._routes_name, 'dst',
+                '-j', 'ACCEPT',
+            ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._nat_routes_name, 'dst']
+            rule.create_target('ACCEPT')
+            self._accept.append(('INPUT', rule))
+        else:
+            self._accept.append([
+                'INPUT',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._nat_routes_name, 'dst',
+                '-j', 'ACCEPT',
+            ])
 
-        for route in itertools.chain(self._routes6, list(self._nat_routes6.keys())):
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule6()
-                rule.in_interface = self.virt_interface
-                rule.dst = route
-                rule.create_target('ACCEPT')
-                self._accept6.append(('INPUT', rule))
-            else:
-                self._accept6.append([
-                    'INPUT',
-                    '-i', self.virt_interface,
-                    '-d', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._routes6_name, 'dst']
+            rule.create_target('ACCEPT')
+            self._accept6.append(('INPUT', rule))
+        else:
+            self._accept6.append([
+                'INPUT',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._routes6_name, 'dst',
+                '-j', 'ACCEPT',
+            ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._nat_routes6_name, 'dst']
+            rule.create_target('ACCEPT')
+            self._accept6.append(('INPUT', rule))
+        else:
+            self._accept6.append([
+                'INPUT',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._nat_routes6_name, 'dst',
+                '-j', 'ACCEPT',
+            ])
 
         if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule()
@@ -412,35 +486,67 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in itertools.chain(self._routes, list(self._nat_routes.keys())):
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule()
-                rule.out_interface = self.virt_interface
-                rule.src = route
-                rule.create_target('ACCEPT')
-                self._accept.append(('OUTPUT', rule))
-            else:
-                self._accept.append([
-                    'OUTPUT',
-                    '-o', self.virt_interface,
-                    '-s', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._routes_name, 'src']
+            rule.create_target('ACCEPT')
+            self._accept.append(('OUTPUT', rule))
+        else:
+            self._accept.append([
+                'OUTPUT',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._routes_name, 'src',
+                '-j', 'ACCEPT',
+            ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._nat_routes_name, 'src']
+            rule.create_target('ACCEPT')
+            self._accept.append(('OUTPUT', rule))
+        else:
+            self._accept.append([
+                'OUTPUT',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._nat_routes_name, 'src',
+                '-j', 'ACCEPT',
+            ])
 
-        for route in itertools.chain(self._routes6, list(self._nat_routes6.keys())):
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule6()
-                rule.out_interface = self.virt_interface
-                rule.src = route
-                rule.create_target('ACCEPT')
-                self._accept6.append(('OUTPUT', rule))
-            else:
-                self._accept6.append([
-                    'OUTPUT',
-                    '-o', self.virt_interface,
-                    '-s', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._routes6_name, 'src']
+            rule.create_target('ACCEPT')
+            self._accept6.append(('OUTPUT', rule))
+        else:
+            self._accept6.append([
+                'OUTPUT',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._routes6_name, 'src',
+                '-j', 'ACCEPT',
+            ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._nat_routes6_name, 'src']
+            rule.create_target('ACCEPT')
+            self._accept6.append(('OUTPUT', rule))
+        else:
+            self._accept6.append([
+                'OUTPUT',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._nat_routes6_name, 'src',
+                '-j', 'ACCEPT',
+            ])
 
         if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule()
@@ -641,131 +747,143 @@ class Iptables(object):
                     '-j', 'ACCEPT',
                 ])
 
-        for route in self._routes:
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule()
-                rule.in_interface = self.virt_interface
-                rule.dst = route
-                rule.create_target('ACCEPT')
-                self._accept.append(('FORWARD', rule))
-            else:
-                self._accept.append([
-                    'FORWARD',
-                    '-i', self.virt_interface,
-                    '-d', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._routes_name, 'dst']
+            rule.create_target('ACCEPT')
+            self._accept.append(('FORWARD', rule))
+        else:
+            self._accept.append([
+                'FORWARD',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._routes_name, 'dst',
+                '-j', 'ACCEPT',
+            ])
 
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule()
-                rule.out_interface = self.virt_interface
-                rule.src = route
-                rule.create_target('ACCEPT')
-                self._accept.append(('FORWARD', rule))
-            else:
-                self._accept.append([
-                    'FORWARD',
-                    '-o', self.virt_interface,
-                    '-s', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._routes_name, 'src']
+            rule.create_target('ACCEPT')
+            self._accept.append(('FORWARD', rule))
+        else:
+            self._accept.append([
+                'FORWARD',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._routes_name, 'src',
+                '-j', 'ACCEPT',
+            ])
 
-        for route in self._routes6:
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule6()
-                rule.in_interface = self.virt_interface
-                rule.dst = route
-                rule.create_target('ACCEPT')
-                self._accept6.append(('FORWARD', rule))
-            else:
-                self._accept6.append([
-                    'FORWARD',
-                    '-i', self.virt_interface,
-                    '-d', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._routes6_name, 'dst']
+            rule.create_target('ACCEPT')
+            self._accept6.append(('FORWARD', rule))
+        else:
+            self._accept6.append([
+                'FORWARD',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._routes6_name, 'dst',
+                '-j', 'ACCEPT',
+            ])
 
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule6()
-                rule.out_interface = self.virt_interface
-                rule.src = route
-                rule.create_target('ACCEPT')
-                self._accept6.append(('FORWARD', rule))
-            else:
-                self._accept6.append([
-                    'FORWARD',
-                    '-o', self.virt_interface,
-                    '-s', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._routes6_name, 'src']
+            rule.create_target('ACCEPT')
+            self._accept6.append(('FORWARD', rule))
+        else:
+            self._accept6.append([
+                'FORWARD',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._routes6_name, 'src',
+                '-j', 'ACCEPT',
+            ])
 
-        for route in list(self._nat_routes.keys()):
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule()
-                rule.in_interface = self.virt_interface
-                rule.dst = route
-                rule.create_target('ACCEPT')
-                self._accept.append(('FORWARD', rule))
-            else:
-                self._accept.append([
-                    'FORWARD',
-                    '-i', self.virt_interface,
-                    '-d', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._nat_routes_name, 'dst']
+            rule.create_target('ACCEPT')
+            self._accept.append(('FORWARD', rule))
+        else:
+            self._accept.append([
+                'FORWARD',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._nat_routes_name, 'dst',
+                '-j', 'ACCEPT',
+            ])
 
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule()
-                rule.out_interface = self.virt_interface
-                rule.src = route
-                match = iptc.Match(rule, 'conntrack')
-                match.ctstate = 'RELATED,ESTABLISHED'
-                rule.add_match(match)
-                rule.create_target('ACCEPT')
-                self._accept.append(('FORWARD', rule))
-            else:
-                self._accept.append([
-                    'FORWARD',
-                    '-o', self.virt_interface,
-                    '-s', route,
-                    '-m', 'conntrack',
-                    '--ctstate', 'RELATED,ESTABLISHED',
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._nat_routes_name, 'src']
+            match = iptc.Match(rule, 'conntrack')
+            match.ctstate = 'RELATED,ESTABLISHED'
+            rule.add_match(match)
+            rule.create_target('ACCEPT')
+            self._accept.append(('FORWARD', rule))
+        else:
+            self._accept.append([
+                'FORWARD',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._nat_routes_name, 'src',
+                '-m', 'conntrack',
+                '--ctstate', 'RELATED,ESTABLISHED',
+                '-j', 'ACCEPT',
+            ])
 
-        for route in list(self._nat_routes6.keys()):
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule6()
-                rule.in_interface = self.virt_interface
-                rule.dst = route
-                rule.create_target('ACCEPT')
-                self._accept6.append(('FORWARD', rule))
-            else:
-                self._accept6.append([
-                    'FORWARD',
-                    '-i', self.virt_interface,
-                    '-d', route,
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._nat_routes6_name, 'dst']
+            rule.create_target('ACCEPT')
+            self._accept6.append(('FORWARD', rule))
+        else:
+            self._accept6.append([
+                'FORWARD',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._nat_routes6_name, 'dst',
+                '-j', 'ACCEPT',
+            ])
 
-            if settings.vpn.lib_iptables and LIB_IPTABLES:
-                rule = self._init_rule6()
-                rule.out_interface = self.virt_interface
-                rule.src = route
-                match = iptc.Match(rule, 'conntrack')
-                match.ctstate = 'RELATED,ESTABLISHED'
-                rule.add_match(match)
-                rule.create_target('ACCEPT')
-                self._accept6.append(('FORWARD', rule))
-            else:
-                self._accept6.append([
-                    'FORWARD',
-                    '-o', self.virt_interface,
-                    '-s', route,
-                    '-m', 'conntrack',
-                    '--ctstate', 'RELATED,ESTABLISHED',
-                    '-j', 'ACCEPT',
-                ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._nat_routes6_name, 'src']
+            match = iptc.Match(rule, 'conntrack')
+            match.ctstate = 'RELATED,ESTABLISHED'
+            rule.add_match(match)
+            rule.create_target('ACCEPT')
+            self._accept6.append(('FORWARD', rule))
+        else:
+            self._accept6.append([
+                'FORWARD',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._nat_routes6_name, 'src',
+                '-m', 'conntrack',
+                '--ctstate', 'RELATED,ESTABLISHED',
+                '-j', 'ACCEPT',
+            ])
 
         if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule()
@@ -874,38 +992,40 @@ class Iptables(object):
             sorted_nat_routes6[cidr].append((route, interface))
 
         if self._accept_all and all_interface:
-            for nat_network in self._nat_networks:
-                if settings.vpn.lib_iptables and LIB_IPTABLES:
-                    rule = self._init_rule()
-                    rule.src = nat_network
-                    rule.out_interface = all_interface
-                    rule.create_target('MASQUERADE')
-                    self._accept.append(('POSTROUTING', rule))
-                else:
-                    self._accept.append([
-                        'POSTROUTING',
-                        '-t', 'nat',
-                        '-s', nat_network,
-                        '-o', all_interface,
-                        '-j', 'MASQUERADE',
-                    ])
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
+                rule = self._init_rule()
+                match = rule.create_match('set')
+                match.match_set = [self._nat_networks_name, 'src']
+                rule.out_interface = all_interface
+                rule.create_target('MASQUERADE')
+                self._accept.append(('POSTROUTING', rule))
+            else:
+                self._accept.append([
+                    'POSTROUTING',
+                    '-t', 'nat',
+                    '-m', 'set',
+                    '--match-set', self._nat_networks_name, 'src',
+                    '-o', all_interface,
+                    '-j', 'MASQUERADE',
+                ])
 
         if self._accept_all and all_interface6:
-            for nat_network in self._nat_networks6:
-                if settings.vpn.lib_iptables and LIB_IPTABLES:
-                    rule = self._init_rule6()
-                    rule.src = nat_network
-                    rule.out_interface = all_interface6
-                    rule.create_target('MASQUERADE')
-                    self._accept6.append(('POSTROUTING', rule))
-                else:
-                    self._accept6.append([
-                        'POSTROUTING',
-                        '-t', 'nat',
-                        '-s', nat_network,
-                        '-o', all_interface6,
-                        '-j', 'MASQUERADE',
-                    ])
+            if settings.vpn.lib_iptables and LIB_IPTABLES:
+                rule = self._init_rule6()
+                match = rule.create_match('set')
+                match.match_set = [self._nat_networks6_name, 'src']
+                rule.out_interface = all_interface6
+                rule.create_target('MASQUERADE')
+                self._accept6.append(('POSTROUTING', rule))
+            else:
+                self._accept6.append([
+                    'POSTROUTING',
+                    '-t', 'nat',
+                    '-m', 'set',
+                    '--match-set', self._nat_networks6_name, 'src',
+                    '-o', all_interface6,
+                    '-j', 'MASQUERADE',
+                ])
 
         for cidr in sorted(cidrs):
             for route, interface in sorted_nat_routes[cidr]:
@@ -992,6 +1112,7 @@ class Iptables(object):
         self._drop = []
         self._drop6 = []
 
+        self._generate_sets()
         self._generate_input()
         self._generate_output()
         self._generate_forward()
@@ -1000,16 +1121,14 @@ class Iptables(object):
 
     def _init_rule(self):
         rule = iptc.Rule()
-        # match = iptc.Match(rule, 'comment')
-        # match.comment = 'pritunl-%s' % self.id
-        # rule.add_match(match)
+        match = rule.create_match('comment')
+        match.comment = 'pritunl-%s' % self.id
         return rule
 
     def _init_rule6(self):
         rule = iptc.Rule6()
-        # match = iptc.Match(rule, 'comment')
-        # match.comment = 'pritunl-%s' % self.id
-        # rule.add_match(match)
+        match = rule.create_match('comment')
+        match.comment = 'pritunl-%s' % self.id
         return rule
 
     def _parse_rule(self, rule):
@@ -1214,6 +1333,41 @@ class Iptables(object):
         finally:
             _global_lock.release()
 
+    def _create_sets(self, log=False):
+        for (name, routes) in self._sets.items():
+            print(['ipset', 'create', name, 'hash:net', 'family', 'inet'])
+            utils.check_output_logged(
+                ['ipset', 'create', name, 'hash:net', 'family', 'inet'],
+            )
+
+            for route in routes:
+                print(['ipset', 'add', name, route])
+                utils.check_output_logged(
+                    ['ipset', 'add', name, route],
+                )
+
+        for (name, routes) in self._sets6.items():
+            print(['ipset', 'create', name, 'hash:net', 'family', 'inet6'])
+            utils.check_output_logged(
+                ['ipset', 'create', name, 'hash:net', 'family', 'inet6'],
+            )
+
+            for route in routes:
+                print(['ipset', 'add', name, route])
+                utils.check_output_logged(
+                    ['ipset', 'add', name, route],
+                )
+
+    def _delete_sets(self, log=False):
+        for (name, routes) in self._sets.items():
+            print(['ipset', 'destroy', name])
+            try:
+                utils.check_call_silent(
+                    ['ipset', 'destroy', name],
+                )
+            except subprocess.CalledProcessError:
+                return False
+
     def upsert_rules(self, log=False):
         if self.cleared:
             return
@@ -1297,12 +1451,14 @@ class Iptables(object):
         finally:
             self._lock.release()
 
-    def clear_rules(self):
+    def clear_rules(self, clean=False):
         if self.cleared:
             return
 
         self._lock.acquire()
         try:
+            self._delete_sets()
+
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 tables = {
                     'nat': iptc.Table(iptc.Table.NAT),
