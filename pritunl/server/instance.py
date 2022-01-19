@@ -50,9 +50,9 @@ class ServerInstance(object):
         self.primary_user = None
         self.process = None
         self.vxlan = None
-        self.iptables = iptables.Iptables()
+        self.iptables = iptables.Iptables(self.id, 'o')
         self.iptables_lock = threading.Lock()
-        self.iptables_wg = iptables.Iptables()
+        self.iptables_wg = iptables.Iptables(self.id, 'w')
         self.tun_nat = False
         self.server_links = []
         self.route_advertisements = set()
