@@ -1335,32 +1335,27 @@ class Iptables(object):
 
     def _create_sets(self, log=False):
         for (name, routes) in self._sets.items():
-            print(['ipset', 'create', name, 'hash:net', 'family', 'inet'])
             utils.check_output_logged(
                 ['ipset', 'create', name, 'hash:net', 'family', 'inet'],
             )
 
             for route in routes:
-                print(['ipset', 'add', name, route])
                 utils.check_output_logged(
                     ['ipset', 'add', name, route],
                 )
 
         for (name, routes) in self._sets6.items():
-            print(['ipset', 'create', name, 'hash:net', 'family', 'inet6'])
             utils.check_output_logged(
                 ['ipset', 'create', name, 'hash:net', 'family', 'inet6'],
             )
 
             for route in routes:
-                print(['ipset', 'add', name, route])
                 utils.check_output_logged(
                     ['ipset', 'add', name, route],
                 )
 
     def _delete_sets(self, log=False):
         for (name, routes) in self._sets.items():
-            print(['ipset', 'destroy', name])
             try:
                 utils.check_call_silent(
                     ['ipset', 'destroy', name],
@@ -1451,7 +1446,7 @@ class Iptables(object):
         finally:
             self._lock.release()
 
-    def clear_rules(self, clean=False):
+    def clear_rules(self):
         if self.cleared:
             return
 
