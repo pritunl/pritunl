@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3053.58 2022-01-21
+-------------------------------
 
 Fix server startup with large route lists
 
