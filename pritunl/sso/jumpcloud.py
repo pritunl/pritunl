@@ -34,7 +34,7 @@ def auth_jumpcloud(username):
 
     data = response.json()
 
-    if not data.get('totalCount') or data.get('totalCount') < 0:
+    if not data.get('totalCount') or data.get('totalCount') < 1:
         logger.warning('JumpCloud user not found', 'sso',
             username=username,
         )
