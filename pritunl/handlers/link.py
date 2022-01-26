@@ -357,6 +357,7 @@ def link_location_host_post(link_id, location_id):
     name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
     timeout = int(flask.request.json.get('timeout') or 0) or None
     priority = abs(int(flask.request.json.get('priority') or 1)) or 1
+    backoff = int(flask.request.json.get('backoff') or 0) or None
     static = bool(flask.request.json.get('static'))
     public_address = utils.filter_str(
         flask.request.json.get('public_address'))
@@ -371,6 +372,7 @@ def link_location_host_post(link_id, location_id):
         name=name,
         timeout=timeout,
         priority=priority,
+        backoff=backoff,
         static=static,
         public_address=public_address,
         local_address=local_address,
@@ -467,13 +469,14 @@ def link_location_host_put(link_id, location_id, host_id):
     hst.name = utils.filter_str(flask.request.json.get('name')) or 'undefined'
     hst.timeout = abs(int(flask.request.json.get('timeout') or 0)) or None
     hst.priority = abs(int(flask.request.json.get('priority') or 1)) or 1
+    hst.backoff = abs(int(flask.request.json.get('backoff') or 0)) or None
     hst.static = bool(flask.request.json.get('static'))
     hst.public_address = utils.filter_str(
         flask.request.json.get('public_address'))
     hst.local_address = utils.filter_str(
         flask.request.json.get('local_address'))
 
-    hst.commit(('name', 'timeout', 'priority', 'static',
+    hst.commit(('name', 'timeout', 'priority', 'backoff', 'static',
         'public_address', 'local_address'))
 
     event.Event(type=LINKS_UPDATED)
