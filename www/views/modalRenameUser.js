@@ -109,7 +109,7 @@ define([
     onAuthType: function() {
       var authType = this.$('.auth-type select').val();
 
-      if (authType === 'yubico') {
+      if (authType.indexOf('yubico') !== -1) {
         this.$('.yubikey-id').slideDown(window.slideTime);
       } else {
         this.$('.yubikey-id').slideUp(window.slideTime);
