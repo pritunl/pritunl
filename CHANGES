@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix server routing
+
 Version 1.30.3053.58 2022-01-21
 -------------------------------
 
