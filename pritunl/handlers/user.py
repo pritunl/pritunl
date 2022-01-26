@@ -245,7 +245,7 @@ def _create_user(users, org, user_data, remote_addr, pool):
     if auth_type not in AUTH_TYPES:
         auth_type = LOCAL_AUTH
 
-    if auth_type == YUBICO_AUTH:
+    if YUBICO_AUTH in auth_type:
         yubico_id = user_data.get('yubico_id')
         yubico_id = yubico_id[:12] if yubico_id else None
     else:
@@ -462,7 +462,7 @@ def user_put(org_id, user_id):
                 reset_user_cache = True
             user.auth_type = auth_type
 
-    if 'yubico_id' in flask.request.json and user.auth_type == YUBICO_AUTH:
+    if 'yubico_id' in flask.request.json and YUBICO_AUTH in user.auth_type:
         yubico_id = utils.filter_str(flask.request.json['yubico_id']) or None
         yubico_id = yubico_id[:12] if yubico_id else None
         if yubico_id != user.yubico_id:
