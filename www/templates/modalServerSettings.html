@@ -84,9 +84,9 @@
         <option value="none" <%= cipher === 'none' ? 'selected' : '' %>>None</option>
         <option value="bf128" <%= cipher === 'bf128' ? 'selected' : '' %>>Blowfish 128bit</option>
         <option value="bf256" <%= cipher === 'bf256' ? 'selected' : '' %>>Blowfish 256bit</option>
-        <option value="aes128" <%= cipher === 'aes128' ? 'selected' : '' %>>AES 128bit</option>
-        <option value="aes192" <%= cipher === 'aes192' ? 'selected' : '' %>>AES 192bit</option>
-        <option value="aes256" <%= cipher === 'aes256' ? 'selected' : '' %>>AES 256bit</option>
+        <option value="aes128" <%= cipher === 'aes128' ? 'selected' : '' %>>AES 128bit GCM</option>
+        <option value="aes192" <%= cipher === 'aes192' ? 'selected' : '' %>>AES 192bit GCM</option>
+        <option value="aes256" <%= cipher === 'aes256' ? 'selected' : '' %>>AES 256bit GCM</option>
       </select>
     </div>
     <div class="ping-interval form-group">
