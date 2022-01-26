@@ -1097,7 +1097,8 @@ class ServerInstance(object):
                         })
 
                         doc_hosts = ((doc or {}).get('hosts') or [])
-                        if settings.local.host_id in doc_hosts:
+                        if settings.local.host_id in doc_hosts and \
+                                not self.sock_interrupt:
                             logger.error(
                                 'Instance doc lost, stopping server. ' +
                                 'Check datetime settings',
