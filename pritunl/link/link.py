@@ -25,6 +25,8 @@ class Host(mongo.MongoObject):
         'hosts_hist',
         'timeout',
         'priority',
+        'backoff',
+        'backoff_timestamp',
         'ping_timestamp_ttl',
         'static',
         'public_address',
@@ -41,9 +43,10 @@ class Host(mongo.MongoObject):
     def __init__(self, link=None, location=None, name=None, link_id=None,
             location_id=None, secret=None, status=None, active=None,
             timestamp=None, hosts=None, hosts_hist=None, timeout=None,
-            priority=None, ping_timestamp_ttl=None, static=None,
-            public_address=None, local_address=None, address6=None,
-            version=None, tunnels=None, **kwargs):
+            priority=None, backoff=None, backoff_timestamp=None,
+            ping_timestamp_ttl=None, static=None, public_address=None,
+            local_address=None, address6=None, version=None,
+            tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         self.link = link
@@ -81,6 +84,12 @@ class Host(mongo.MongoObject):
 
         if priority is not None:
             self.priority = priority
+
+        if backoff is not None:
+            self.backoff = backoff
+
+        if backoff_timestamp is not None:
+            self.backoff_timestamp = backoff_timestamp
 
         if ping_timestamp_ttl is not None:
             self.ping_timestamp_ttl = ping_timestamp_ttl
@@ -146,6 +155,7 @@ class Host(mongo.MongoObject):
             'hosts_state_total': hosts_state_total,
             'timeout': self.timeout,
             'priority': self.priority,
+            'backoff': self.backoff,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'static': bool(self.static),
             'public_address': self.public_address if not \
@@ -165,6 +175,7 @@ class Host(mongo.MongoObject):
             'location_id': self.location_id,
             'timeout': self.timeout,
             'priority': self.priority,
+            'backoff': self.backoff,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'static': bool(self.static),
             'public_address': self.public_address if not \
@@ -193,19 +204,27 @@ class Host(mongo.MongoObject):
                 has_available = True
                 break
 
+        cur_timestamp = utils.now()
+
         if has_available:
             response = self.collection.update({
                 '_id': self.id,
                 'ping_timestamp_ttl': self.ping_timestamp_ttl,
+                '$or': [
+                    {'active': True},
+                    {'status': {'$ne': UNAVAILABLE}},
+                ],
             }, {'$set': {
                 'status': UNAVAILABLE,
                 'active': False,
+                'backoff_timestamp': cur_timestamp,
                 'ping_timestamp_ttl': None,
             }})
 
             if response['updatedExisting']:
                 self.active = False
                 self.status = UNAVAILABLE
+                self.backoff_timestamp = cur_timestamp
                 self.ping_timestamp_ttl = None
             return
 
@@ -215,13 +234,16 @@ class Host(mongo.MongoObject):
         response = self.collection.update({
             '_id': self.id,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
+            'status': {'$ne': UNAVAILABLE},
         }, {'$set': {
             'status': UNAVAILABLE,
+            'backoff_timestamp': cur_timestamp,
             'ping_timestamp_ttl': None,
         }})
 
         if response['updatedExisting']:
             self.status = UNAVAILABLE
+            self.backoff_timestamp = cur_timestamp
             self.ping_timestamp_ttl = None
 
     def load_link(self):
@@ -257,7 +279,9 @@ class Host(mongo.MongoObject):
         self.status = UNAVAILABLE
         self.active = False
         self.ping_timestamp_ttl = None
-        self.commit(('status', 'active', 'ping_timestamp_ttl'))
+        self.backoff_timestamp = utils.now()
+        self.commit(('status', 'active', 'ping_timestamp_ttl',
+            'backoff_timestamp'))
 
     def get_state_locations(self):
         loc_excludes = set()
@@ -872,11 +896,20 @@ class Location(mongo.MongoObject):
             'active': False,
         }, {
             '_id': True,
+            'backoff': True,
+            'backoff_timestamp': True,
         }).sort('priority', pymongo.DESCENDING).limit(1)
 
         doc = None
         for doc in cursor:
+            if is_backoff(doc):
+                doc = None
+                continue
             break
+
+        if not doc:
+            for doc in cursor:
+                break
 
         if not doc:
             doc = Host.collection.find_one({
@@ -924,6 +957,7 @@ class Location(mongo.MongoObject):
         best_doc = None
         best_active = False
         best_hosts = 0
+        best_priority = 0
 
         docs = []
         valid_docs = []
@@ -975,19 +1009,52 @@ class Location(mongo.MongoObject):
 
         if (valid_doc_active or not doc_active) and len(valid_docs):
             for doc in valid_docs:
+                if is_backoff(doc):
+                    continue
+
                 if best_doc is None:
                     best_doc = doc
                     best_active = doc['active']
                     best_hosts = doc['_doc_hosts']
-                elif doc['_doc_hosts'] > best_hosts:
+                    best_priority = doc['priority']
+                elif doc['_doc_hosts'] > best_hosts or (
+                        doc['_doc_hosts'] == best_hosts and
+                        doc['priority'] > best_priority):
                     best_doc = doc
                     best_active = doc['active']
                     best_hosts = doc['_doc_hosts']
-                elif doc['_doc_hosts'] >= best_hosts and doc['active'] and \
+                    best_priority = doc['priority']
+                elif doc['_doc_hosts'] >= best_hosts and \
+                        doc['active'] and \
+                        doc['priority'] >= best_priority and \
                         not best_active:
                     best_doc = doc
                     best_active = doc['active']
                     best_hosts = doc['_doc_hosts']
+                    best_priority = doc['priority']
+
+            if not best_doc:
+                for doc in valid_docs:
+                    if best_doc is None:
+                        best_doc = doc
+                        best_active = doc['active']
+                        best_hosts = doc['_doc_hosts']
+                        best_priority = doc['priority']
+                    elif doc['_doc_hosts'] > best_hosts or (
+                            doc['_doc_hosts'] == best_hosts and
+                            doc['priority'] > best_priority):
+                        best_doc = doc
+                        best_active = doc['active']
+                        best_hosts = doc['_doc_hosts']
+                        best_priority = doc['priority']
+                    elif doc['_doc_hosts'] >= best_hosts and \
+                            doc['active'] and \
+                            doc['priority'] >= best_priority and \
+                            not best_active:
+                        best_doc = doc
+                        best_active = doc['active']
+                        best_hosts = doc['_doc_hosts']
+                        best_priority = doc['priority']
         elif doc_active:
             best_doc = doc_active
         else:
@@ -1166,3 +1233,14 @@ class Link(mongo.MongoObject):
         for name in sorted(list(locations_names)):
             for location in locations_name[name]:
                 yield location
+
+def is_backoff(host_doc):
+    backoff = host_doc.get('backoff')
+    timestamp = host_doc.get('backoff_timestamp')
+    if not backoff or not timestamp:
+        return False
+
+    if utils.now() - datetime.timedelta(seconds=backoff) > timestamp:
+        return False
+
+    return True
