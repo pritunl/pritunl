@@ -277,6 +277,7 @@ allow pritunl_t rpm_t:file { getattr open read };
 allow pritunl_t security_t:dir { add_name write };
 allow pritunl_t self:capability { dac_override net_admin net_bind_service net_raw sys_module };
 allow pritunl_t self:netlink_generic_socket { bind create getattr read write };
+allow pritunl_t self:netlink_netfilter_socket { bind bind create create getattr getattr read setopt setopt write };
 allow pritunl_t self:netlink_route_socket { bind create getattr nlmsg_read nlmsg_write read setopt write };
 allow pritunl_t self:netlink_socket { bind create getattr read write };
 allow pritunl_t self:packet_socket { bind create ioctl setopt };
