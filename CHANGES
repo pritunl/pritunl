@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3065.49 2022-02-02
+-------------------------------
 
 Fix server issue on rhel7
 
