@@ -157,8 +157,12 @@ class Iptables(object):
         nat_networks6_set = set()
 
         for route in self._routes:
+            if route == '0.0.0.0/0':
+                continue
             routes_set.add(route)
         for route in self._routes6:
+            if route == '::/0':
+                continue
             routes6_set.add(route)
 
         for route in list(self._nat_routes.keys()):
