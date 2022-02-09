@@ -116,6 +116,7 @@ def _verify_azure_2(user_name):
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
             'sso',
+            username=user_name,
             status_code=response.status_code,
             response=response.content,
         )
@@ -134,7 +135,7 @@ def _verify_azure_2(user_name):
             'Authorization': 'Bearer %s' % access_token,
         },
         params={
-            '$select': 'accountEnabled',
+            '$select': 'id,userPrincipalName,accountEnabled',
         },
         timeout=30,
     )
@@ -142,12 +143,21 @@ def _verify_azure_2(user_name):
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
             'sso',
+            username=user_name,
             status_code=response.status_code,
             response=response.content,
         )
         return False, []
 
     data = response.json()
+
+    if data.get('userPrincipalName', '').lower() != user_name.lower():
+        logger.error('Bad status from Azure api',
+            'sso',
+            username=user_name,
+            azure_username=data['userPrincipalName'],
+        )
+        return False, []
 
     if not data.get('accountEnabled'):
         logger.error('Azure account is disabled',
@@ -157,10 +167,9 @@ def _verify_azure_2(user_name):
         )
         return False, []
 
-    response = requests.post(
-        'https://graph.microsoft.com/v1.0/%s/users/%s/getMemberGroups' % (
-            settings.app.sso_azure_directory_id,
-            urllib.parse.quote(user_name),
+    response = requests.get(
+        'https://graph.microsoft.com/v1.0/users/%s/memberOf' % (
+            data['id'],
         ),
         headers={
             'Authorization': 'Bearer %s' % access_token,
@@ -175,6 +184,7 @@ def _verify_azure_2(user_name):
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
             'sso',
+            username=user_name,
             status_code=response.status_code,
             response=response.content,
         )
@@ -184,24 +194,10 @@ def _verify_azure_2(user_name):
 
     roles = []
 
-    for group_id in data['value']:
-        response = requests.get(
-            'https://graph.microsoft.com/v1.0/%s/groups/%s' % (
-                settings.app.sso_azure_directory_id,
-                group_id,
-            ),
-            headers={
-                'Authorization': 'Bearer %s' % access_token,
-            },
-            params={
-                '$select': 'displayName',
-            },
-            timeout=30,
-        )
-        data = response.json()
-
-        display_name = data['displayName']
-
+    for group_data in data['value']:
+        display_name = group_data.get('displayName')
+        if not display_name:
+            continue
         roles.append(display_name)
 
     return True, roles
