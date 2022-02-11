@@ -328,6 +328,8 @@ class Host(mongo.MongoObject):
             'type': self.location.type,
             'links': links,
             'hosts': hosts,
+            'preferred_ike': self.link.preferred_ike,
+            'preferred_esp': self.link.preferred_esp,
         }
         active_host = self.location.get_active_host()
         active = active_host and active_host.id == self.id
@@ -1106,6 +1108,8 @@ class Link(mongo.MongoObject):
         'ipv6',
         'host_check',
         'action',
+        'preferred_ike',
+        'preferred_esp',
     }
     fields_default = {
         'type': SITE_TO_SITE,
@@ -1115,7 +1119,8 @@ class Link(mongo.MongoObject):
     }
 
     def __init__(self, name=None, type=None, status=None, timeout=None,
-            key=None, ipv6=None, host_check=None, action=None, **kwargs):
+            key=None, ipv6=None, host_check=None, action=None,
+            preferred_ike=None, preferred_esp=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if name is not None:
@@ -1142,6 +1147,12 @@ class Link(mongo.MongoObject):
         if action is not None:
             self.action = action
 
+        if preferred_ike is not None:
+            self.preferred_ike = preferred_ike
+
+        if preferred_esp is not None:
+            self.preferred_esp = preferred_esp
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('links')
@@ -1163,6 +1174,8 @@ class Link(mongo.MongoObject):
             'host_check': self.host_check,
             'action': self.action,
             'status': self.status,
+            'preferred_ike': self.preferred_ike,
+            'preferred_esp': self.preferred_esp,
         }
 
     def remove(self):
