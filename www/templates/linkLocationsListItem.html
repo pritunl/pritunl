@@ -38,6 +38,15 @@
       <a data-id="<%- host.id %>" class="host-name title" data-toggle="tooltip" title="Click to modify this host"><%- host.name %><%- ' (' + ((ipv6 ? host.address6 : host.public_address) || 'Unknown') + ')' %><%- !host.static && host.version ? ' v' + host.version : '' %></a>
     </div>
     <div class="button-container">
+      <% var tooltip = 'Interlink Latency<br>' %>
+      <% _.each(host.hosts, function(host_status) { %>
+      <% if (host_status['state']) { %>
+      <% tooltip += host_status['name'] + ': ' + (host_status['latency'] / 1000).toFixed(2) + 'ms<br>' %>
+      <% } else { %>
+      <% tooltip += host_status['name'] + ': disconnected<br>' %>
+      <% } %>
+      <% }); %>
+      <div class="link-host-status label label-<%= host.hosts_state_available === host.hosts_state_total ? 'success' : 'danger' %> no-select" data-toggle="tooltip" data-html="true" title="<%= tooltip %>" <%= (host.hosts_state_total && (host.status === 'active' || host.status === 'available')) ? '' : 'style="display: none"' %>><%- host.hosts_state_available %>/<%- host.hosts_state_total %></div>
       <div class="link-host-static label label-success no-select" <%= host.static ? '' : 'style="display: none"' %>>Static</div>
       <div class="link-host-active label label-success no-select" <%= !host.static && host.status === 'active' ? '' : 'style="display: none"' %>>Active</div>
       <div class="link-host-available label label-primary no-select" <%= !host.static && host.status === 'available' ? '' : 'style="display: none"' %>>Available</div>
