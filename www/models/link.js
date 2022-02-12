@@ -10,6 +10,7 @@ define([
       'name': null,
       'type': null,
       'ipv6': null,
+      'host_check': null,
       'action': null,
       'status': null,
       'locations': null,
