@@ -12,6 +12,7 @@ define([
       'name': null,
       'timeout': null,
       'priority': null,
+      'backoff': null,
       'static': null,
       'public_address': null,
       'local_address': null,
