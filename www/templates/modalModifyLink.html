@@ -10,6 +10,12 @@
     <span class="selector-inner glyphicon glyphicon-ok"></span>
   </div>
 </div>
+<div class="host-check-toggle toggle-form form-group">
+  <label>Host Checking</label>
+  <div class="selector <%= host_check ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable advanced host to host checking to support detecting more complex network failures.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
 <div class="form-group link-action">
   <label>Action</label>
   <select class="form-control" data-toggle="tooltip" title="Action for ipsec client to take when connection issue occurs. For most configurations hold will provide the best reliability.">
