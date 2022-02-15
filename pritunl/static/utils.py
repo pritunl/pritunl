@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 import sys
 import zlib
 import time

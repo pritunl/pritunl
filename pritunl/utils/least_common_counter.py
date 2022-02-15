@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 import collections
 import heapq
 import operator

@@ -1,3 +1,4 @@
+# pylama:ignore=E117,E203,E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils

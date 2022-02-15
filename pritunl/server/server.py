@@ -1,3 +1,4 @@
+# pylama:ignore=E122,E124,E128,E302,E502,E722,W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth

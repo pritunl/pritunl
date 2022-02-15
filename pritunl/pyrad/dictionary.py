@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E713
 # Copyright 2002-2008 Wichert Akkerman. All rights reserved.
 # Copyright 2007-2008 Simplon. All rights reserved.
 #

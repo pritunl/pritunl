@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 from pritunl import listener
 from pritunl import subscription
 

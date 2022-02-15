@@ -1,3 +1,4 @@
+# pylama:ignore=E302,W0401
 from pritunl.upgrade.utils import get_collection
 
 from pritunl.constants import *

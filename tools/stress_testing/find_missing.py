@@ -1,3 +1,4 @@
+# pylama:ignore=E124,E128,E305,E402,E0100
 BASE_URL = 'https://sn.pritunl.net'
 API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
 API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'
@@ -56,4 +57,4 @@ for user in response.json():
     cur_names.add(name)
 
 for name in sorted(list(names - cur_names)):
-    print name
+    print name  # FIXME SyntaxError, pylama ignore won't hide

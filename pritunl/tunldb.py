@@ -1,3 +1,4 @@
+# pylama:ignore=E302,E722
 import queue
 import time
 import collections

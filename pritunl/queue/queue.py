@@ -1,3 +1,4 @@
+# pylama:ignore=E124,E128,E131,E302,E502,E722,W0401
 from pritunl.queue.com import QueueCom
 
 from pritunl.constants import *

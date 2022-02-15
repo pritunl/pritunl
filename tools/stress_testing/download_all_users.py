@@ -1,3 +1,4 @@
+# pylama:ignore=E124,E128,E302,E305,E402,E722
 BASE_URL = 'https://sn0.pritunl.net'
 API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
 API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'

@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 from pritunl.auth.administrator import check_session
 
 import flask

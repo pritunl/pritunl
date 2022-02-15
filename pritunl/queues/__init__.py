@@ -1,3 +1,4 @@
+# pylama:ignore=W0611
 from pritunl.queues.assign_ip_addr import QueueAssignIpAddr
 from pritunl.queues.assign_ip_pool import QueueAssignIpPool
 from pritunl.queues.dh_params import QueueDhParams

@@ -1,3 +1,4 @@
+# pylama:ignore=E124,E128,E131,E302,E502,W0612
 from pritunl import settings
 from pritunl import logger
 

@@ -1,3 +1,4 @@
+# pylama:ignore=E122,E124,E125,E128,E131,E302,E502,E722,W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface

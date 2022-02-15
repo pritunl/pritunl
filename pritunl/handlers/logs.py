@@ -1,3 +1,4 @@
+# pylama:ignore=E302,W0401
 from pritunl.constants import *
 
 from pritunl import app

@@ -1,3 +1,4 @@
+# pylama:ignore=E124,E128,E302,E305,E502,E722
 import pritunl
 
 import optparse
@@ -462,7 +463,7 @@ def main(default_conf=None):
         print('# |__/                                                       #')
         print('#                                                            #')
         print('##############################################################')
-
+        # FIXME ^^^^^ Invalid Escape Sequences ^^^^
     pritunl.init_server()
 
 if __name__ == '__main__':

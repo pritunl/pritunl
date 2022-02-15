@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302,E306,W0401
 from pritunl.host import usage_utils
 
 from pritunl.helpers import *

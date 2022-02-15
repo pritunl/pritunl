@@ -1,3 +1,4 @@
+# pylama:ignore=E302,W0401,W0611
 from pritunl import patches
 from pritunl.constants import *
 

@@ -1,3 +1,4 @@
+# pylama:ignore=E302,E305
 from pritunl.settings.settings import Settings
 
 from pritunl.settings.app import SettingsApp

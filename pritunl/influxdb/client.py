@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# pylama:ignore=W291,W0612
 # The MIT License (MIT)
 # 
 # Copyright (c) 2013 InfluxDB

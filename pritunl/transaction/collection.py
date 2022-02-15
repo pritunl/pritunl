@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E261,E302,W0401
 from pritunl.transaction.action import TransactionAction
 
 from pritunl.constants import *

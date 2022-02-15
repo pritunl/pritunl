@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E131
 from setuptools import setup
 import os
 import sys

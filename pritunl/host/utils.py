@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl.host.host import Host
 
 from pritunl.constants import *

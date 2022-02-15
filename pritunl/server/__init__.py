@@ -1,3 +1,4 @@
+# pylama:ignore=W0401,W0611
 from pritunl.server.server import Server, dict_fields, operation_fields
 from pritunl.server.instance import get_instance
 from pritunl.server.bandwidth import ServerBandwidth

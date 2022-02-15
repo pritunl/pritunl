@@ -1,3 +1,4 @@
+# pylama:ignore=E0100
 import re
 import json
 import datetime
@@ -8,7 +9,7 @@ CONF_FILE_PATH = '/etc/pritunl.conf'
 with open(CONF_FILE_PATH, 'r') as conf_file:
     mongodb_uri = json.loads(conf_file.read())['mongodb_uri']
 
-print 'DATABASE CONNECT'
+print 'DATABASE CONNECT'  # FIXME SyntaxError, pylama ignore won't hide
 
 mongo_client = pymongo.MongoClient(mongodb_uri)
 mongo_db = mongo_client.get_default_database()

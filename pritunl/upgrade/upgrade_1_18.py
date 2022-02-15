@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 from pritunl.upgrade.utils import get_collection
 
 def upgrade_1_18():

@@ -1,3 +1,4 @@
+# pylama:ignore=E302,E303,E305
 import optparse
 import datetime
 import re

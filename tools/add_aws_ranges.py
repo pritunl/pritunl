@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302,E305
 import requests
 import time
 import uuid

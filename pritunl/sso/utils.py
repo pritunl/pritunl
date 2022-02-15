@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302
 from pritunl import settings
 from pritunl import plugins
 

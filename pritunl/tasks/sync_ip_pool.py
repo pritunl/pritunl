@@ -1,3 +1,4 @@
+# pylama:ignore=E124,E128,E302,E305,E722
 from pritunl import task
 from pritunl import logger
 from pritunl import server

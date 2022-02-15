@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 _channels = {}
 
 def add_listener(instance_id, callback):

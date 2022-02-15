@@ -1,3 +1,4 @@
+# pylama:ignore=E122,E302,E713
 from pritunl import settings
 
 import json

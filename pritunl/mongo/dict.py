@@ -1,3 +1,4 @@
+# pylama:ignore=E261,E302,E0602
 import abc
 
 class DictMeta(abc.ABCMeta):

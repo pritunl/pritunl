@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E131,E302,E305,W0401,W0611
 from pritunl.auth.utils import *
 from pritunl.auth.csrf import validate_token
 

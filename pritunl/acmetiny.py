@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# pylama:ignore=E227,E261,E265,E302,E401,W0611
 # Copyright Daniel Roesler, under MIT license, see LICENSE at github.com/diafygi/acme-tiny
 import argparse, subprocess, json, os, sys, base64, binascii, time, hashlib, re, copy, textwrap, logging
 from pritunl import settings

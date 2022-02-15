@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302,W0401
 from pritunl.organization.organization import Organization
 
 from pritunl.constants import *

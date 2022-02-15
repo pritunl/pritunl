@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 from pritunl import settings
 
 def get_onelogin_mode():

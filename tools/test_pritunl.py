@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302,E303,E305,E0100
 import threading
 import unittest
 import requests
@@ -78,7 +79,7 @@ def _log_request(method, endpoint, start_time):
             color = '\033[93m'
         else:
             color = '\033[92m'
-    print '%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)
+    print '%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)  # FIXME SyntaxError, pylama ignore won't hide
 
 _request = requests.api.request
 def request(method, endpoint, **kwargs):

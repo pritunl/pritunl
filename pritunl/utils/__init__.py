@@ -1,3 +1,4 @@
+# pylama:ignore=W0401,W0611
 from pritunl.utils.cert import *
 from pritunl.utils.filter import *
 from pritunl.utils.json_helpers import *

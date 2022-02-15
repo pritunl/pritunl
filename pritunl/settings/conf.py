@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 from pritunl.settings.group_file import SettingsGroupFile
 
 from pritunl import conf_path

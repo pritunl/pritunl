@@ -1,3 +1,4 @@
+# pylama:ignore=E302,E305
 from pritunl import settings
 from pritunl import task
 from pritunl import link

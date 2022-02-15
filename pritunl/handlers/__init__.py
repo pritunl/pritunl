@@ -1,3 +1,4 @@
+# pylama:ignore=W0611
 import pritunl.handlers.errors
 import pritunl.handlers.auth
 import pritunl.handlers.before_request

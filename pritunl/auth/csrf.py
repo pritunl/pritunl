@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 from pritunl import utils
 from pritunl import mongo
 

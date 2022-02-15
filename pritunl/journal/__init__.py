@@ -1,3 +1,4 @@
+# pylama:ignore=E302,W0401
 from pritunl.journal.events import *
 
 from pritunl.constants import *

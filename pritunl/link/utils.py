@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302
 from pritunl.link.link import Link, Location, Host
 
 from pritunl import settings

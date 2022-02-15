@@ -1,3 +1,4 @@
+# pylama:ignore=E302,W0401
 from pritunl.server.output import ServerOutput
 
 from pritunl.constants import *

@@ -1,3 +1,4 @@
+# pylama:ignore=W0401,W0611
 from pritunl.sso.duo import Duo
 from pritunl.sso.yubico import auth_yubico
 from pritunl.sso.azure import verify_azure

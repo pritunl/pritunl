@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302,W0401
 from pritunl.utils.misc import fnv32a
 
 from pritunl.constants import *

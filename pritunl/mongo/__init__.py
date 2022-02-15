@@ -1,3 +1,4 @@
+# pylama:ignore=E302,W0611
 from pritunl.mongo.dict import MongoDict
 from pritunl.mongo.list import MongoList
 from pritunl.mongo.object import MongoObject

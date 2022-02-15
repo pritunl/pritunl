@@ -1,3 +1,4 @@
+# pylama:ignore=E302,W0401
 from pritunl.logger.view import LogView
 from pritunl.logger.formatter import LogFormatter
 

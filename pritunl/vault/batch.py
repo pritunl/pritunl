@@ -1,3 +1,4 @@
+# pylama:ignore=E302,W0401
 from pritunl.vault.nonces import *
 
 from pritunl.exceptions import *

@@ -1,3 +1,4 @@
+# pylama:ignore=E128,E302,W0401
 from pritunl.static.utils import *
 from pritunl.cachelocal import cache_db
 

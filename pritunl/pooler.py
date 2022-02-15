@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 pooler_types = {}
 
 def add_pooler(fill_type):

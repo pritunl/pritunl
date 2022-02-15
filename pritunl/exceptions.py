@@ -1,3 +1,4 @@
+# pylama:ignore=E302
 class BaseError(Exception):
     def __init__(self, message, data=None):
         if data:

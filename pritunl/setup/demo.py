@@ -1,3 +1,4 @@
+# pylama:ignore=E221,E302,W0401
 from pritunl.constants import *
 from pritunl import ipaddress
 from pritunl import utils
