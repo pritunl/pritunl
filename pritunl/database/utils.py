@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401,W0611
+# pylama:ignore=E722,W0401,W0611
 from pritunl.constants import *
 from pritunl import logger
 
@@ -6,6 +6,7 @@ import bson
 import time
 
 start = time.time()
+
 
 def ObjectId(oid=None):
     if oid is not None:
@@ -19,12 +20,14 @@ def ObjectId(oid=None):
                              )
     return oid
 
+
 def ObjectIdSilent(oid=None):
     if oid is not None:
         oid = str(oid)
     if oid is None or len(oid) != 32:
         return bson.ObjectId(oid)
     return oid
+
 
 def ParseObjectId(oid):
     if oid:

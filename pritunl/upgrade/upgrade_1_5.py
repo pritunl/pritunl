@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl.upgrade.utils import get_collection
+
 
 def upgrade_1_5():
     settings_collection = get_collection('settings')

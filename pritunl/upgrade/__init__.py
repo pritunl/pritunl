@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.upgrade.upgrade_1_4 import upgrade_1_4
 from pritunl.upgrade.upgrade_1_5 import upgrade_1_5
 from pritunl.upgrade.upgrade_1_17 import upgrade_1_17
@@ -9,6 +9,7 @@ from pritunl.constants import *
 
 from pritunl import logger
 from pritunl import utils
+
 
 def upgrade_server():
     upgraded = False

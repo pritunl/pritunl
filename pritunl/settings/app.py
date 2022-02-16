@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl.settings.group_mongo import SettingsGroupMongo
+
 
 class SettingsApp(SettingsGroupMongo):
     group = 'app'

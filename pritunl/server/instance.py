@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E125,E131,E302,E502,E722,W0401
+# pylama:ignore=E122,E125,E131,E502,E722,W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
@@ -33,6 +33,7 @@ import grp
 
 _instances = {}
 _instances_lock = threading.Lock()
+
 
 class ServerInstance(object):
     def __init__(self, server):
@@ -1897,6 +1898,7 @@ class ServerInstance(object):
             return
 
         threading.Thread(target=self._run_thread, args=(send_events,)).start()
+
 
 def get_instance(server_id):
     try:

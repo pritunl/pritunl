@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0611
+# pylama:ignore=W0611
 from pritunl.mongo.dict import MongoDict
 from pritunl.mongo.list import MongoList
 from pritunl.mongo.object import MongoObject
@@ -7,6 +7,7 @@ database = None
 secondary_database = None
 prefix = ''
 collection_types = {}
+
 
 def get_collection(name):
     coll_type = collection_types.get(name)

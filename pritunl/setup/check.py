@@ -1,8 +1,9 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import logger
 
 import pymongo
 import bson
+
 
 def setup_check():
     if not pymongo.has_c():

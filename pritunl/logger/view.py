@@ -1,4 +1,4 @@
-# pylama:ignore=E111,E302,E502,E722,W0401
+# pylama:ignore=E111,E502,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
@@ -8,6 +8,7 @@ import pymongo
 import tarfile
 import os
 import collections
+
 
 class LogView(object):
     def __init__(self):

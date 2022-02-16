@@ -1,7 +1,8 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import sys
 import zlib
 import time
+
 
 def generate_etag(file_name, file_size, mtime):
     file_name = file_name.encode(sys.getfilesystemencoding())

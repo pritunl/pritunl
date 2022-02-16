@@ -1,10 +1,11 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import utils
 
 import pymongo
+
 
 class LogEntry(mongo.MongoObject):
     fields = {
@@ -37,6 +38,7 @@ class LogEntry(mongo.MongoObject):
         from pritunl import event
         mongo.MongoObject.commit(self, *args, **kwargs)
         event.Event(type=LOG_UPDATED)
+
 
 def iter_log_entries():
     for doc in LogEntry.collection.find().sort(

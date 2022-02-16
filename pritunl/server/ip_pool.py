@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import ipaddress
@@ -8,6 +8,7 @@ from pritunl import settings
 from pritunl import utils
 
 import pymongo
+
 
 class ServerIpPool:
     def __init__(self, server):
@@ -360,6 +361,7 @@ class ServerIpPool:
 
         if doc:
             return doc['address']
+
 
 def multi_get_ip_addr(org_id, user_ids):
     spec = {

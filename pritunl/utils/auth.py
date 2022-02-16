@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import settings
+
 
 def get_onelogin_mode():
     if settings.app.sso_onelogin_mode is not None:
@@ -9,6 +10,7 @@ def get_onelogin_mode():
             return 'push_none'
         return 'push'
     return ''
+
 
 def get_okta_mode():
     if settings.app.sso_okta_mode is not None:

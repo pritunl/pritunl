@@ -1,7 +1,8 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl.upgrade.utils import get_collection
 
 from pritunl import utils
+
 
 def upgrade_1_4():
     ip_pool_collection = get_collection('servers_ip_pool')

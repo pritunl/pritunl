@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import logger
@@ -7,6 +7,7 @@ import time
 import threading
 import subprocess
 import copy
+
 
 class QueueCom(object):
     def __init__(self):

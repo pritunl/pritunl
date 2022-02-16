@@ -1,8 +1,9 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import threading
 import collections
 import bson
 import copy
+
 
 class DocDb(object):
     def __init__(self, *indexes):

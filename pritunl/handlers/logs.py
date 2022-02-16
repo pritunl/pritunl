@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 
 from pritunl import app
@@ -6,6 +6,7 @@ from pritunl import logger
 from pritunl import utils
 from pritunl import auth
 from pritunl import settings
+
 
 @app.app.route('/logs', methods=['GET'])
 @auth.session_auth

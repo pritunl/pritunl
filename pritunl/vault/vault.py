@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.vault.nonces import *
 
 from pritunl.constants import *
@@ -15,6 +15,7 @@ import pymongo
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
 
 def init():
     from pritunl import settings
@@ -45,6 +46,7 @@ def init():
 
     settings.local.se_authorize_key = base64.b64decode(data[0])
     settings.local.se_encryption_key = base64.b64decode(data[1])
+
 
 def init_host_key():
     from pritunl import settings
@@ -98,6 +100,7 @@ def init_host_key():
 
     if resp.status_code != 200:
         raise RequestError('Vault bad status %s' % resp.status_code)
+
 
 def init_server_key():
     from pritunl import settings
@@ -158,6 +161,7 @@ def init_server_key():
         's': data['s'].strip(),
         'c': base64.b64decode(settings.local.se_client_pub_key).strip(),
     }
+
 
 def init_master_key(cipher_data):
     from pritunl import settings

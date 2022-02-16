@@ -1,10 +1,11 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import pooler
 from pritunl import mongo
 from pritunl import utils
 from pritunl import organization
+
 
 @pooler.add_pooler('user')
 def fill_user():

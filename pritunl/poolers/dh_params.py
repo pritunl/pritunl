@@ -1,10 +1,11 @@
-# pylama:ignore=E302,W0401,W0612
+# pylama:ignore=W0401,W0612
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import pooler
 from pritunl import mongo
 from pritunl import utils
 from pritunl import queue
+
 
 @pooler.add_pooler('dh_params')
 def fill_dh_params():

@@ -1,7 +1,8 @@
-# pylama:ignore=E302,W0611
+# pylama:ignore=W0611
 from pritunl import settings
 
 import boto3
+
 
 def setup_boto_conf():
     pass

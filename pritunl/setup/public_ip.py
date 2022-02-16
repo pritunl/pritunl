@@ -1,8 +1,9 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import settings
 from pritunl import utils
 
 import threading
+
 
 def setup_public_ip():
     utils.sync_public_ip()

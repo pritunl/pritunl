@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.organization.organization import Organization
 
 from pritunl.constants import *
@@ -10,6 +10,7 @@ from pritunl import settings
 import threading
 import math
 
+
 def new_pooled():
     thread = threading.Thread(target=new_org, kwargs={
         'type': ORG_POOL,
@@ -17,6 +18,7 @@ def new_pooled():
     })
     thread.daemon = True
     thread.start()
+
 
 def reserve_pooled(name=None, auth_api=None, type=ORG_DEFAULT):
     doc = {}
@@ -36,6 +38,7 @@ def reserve_pooled(name=None, auth_api=None, type=ORG_DEFAULT):
 
     if doc:
         return Organization(doc=doc)
+
 
 def new_org(type=ORG_DEFAULT, block=True, **kwargs):
     if type == ORG_DEFAULT:
@@ -60,8 +63,10 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
 
         return org
 
+
 def get_by_id(id, fields=None):
     return Organization(id=id, fields=fields)
+
 
 def get_by_name(name, fields=None):
     doc = Organization.collection.find_one({
@@ -71,6 +76,7 @@ def get_by_name(name, fields=None):
     if doc:
         return Organization(doc=doc, fields=fields)
 
+
 def get_by_token(token, fields=None):
     doc = Organization.collection.find_one({
         'auth_token': token,
@@ -78,6 +84,7 @@ def get_by_token(token, fields=None):
 
     if doc:
         return Organization(doc=doc, fields=fields)
+
 
 def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None, page=None):
     limit = None
@@ -107,6 +114,7 @@ def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None, page=None):
     for doc in cursor:
         yield Organization(doc=doc, fields=fields)
 
+
 def get_org_page_total():
     org_collection = mongo.get_collection('organizations')
 
@@ -118,6 +126,7 @@ def get_org_page_total():
 
     return int(math.floor(max(0, float(count - 1)) /
                settings.app.org_page_count))
+
 
 def get_user_count(org_ids, type=CERT_CLIENT):
     user_collection = mongo.get_collection('users')
@@ -132,6 +141,7 @@ def get_user_count(org_ids, type=CERT_CLIENT):
         }).count()
 
     return org_user_count
+
 
 def get_user_count_multi(org_ids=None, type=CERT_CLIENT):
     spec = {

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E401,E722,W0401
+# pylama:ignore=E401,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -8,6 +8,7 @@ from pritunl import utils
 import threading
 import urllib.request, urllib.error, urllib.parse
 import json
+
 
 @interrupter
 def _check_updates():
@@ -36,6 +37,7 @@ def _check_updates():
         utils.sync_public_ip()
 
         yield interrupter_sleep(settings.app.update_check_rate)
+
 
 def start_updates():
     settings.local.notification = ''

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E712,W0401
+# pylama:ignore=E712,W0401
 from pritunl.constants import *
 from pritunl import utils
 from pritunl import event
@@ -9,6 +9,7 @@ from pritunl import journal
 
 import flask
 import pymongo
+
 
 @app.app.route('/admin', methods=['GET'])
 @app.app.route('/admin/<admin_id>', methods=['GET'])
@@ -38,6 +39,7 @@ def admin_get(admin_id=None):
     if settings.app.demo_mode:
         utils.demo_set_cache(admins)
     return utils.jsonify(admins)
+
 
 @app.app.route('/admin/<admin_id>', methods=['PUT'])
 @auth.session_auth
@@ -265,6 +267,7 @@ def admin_put(admin_id):
 
     return utils.jsonify(admin.dict())
 
+
 @app.app.route('/admin', methods=['POST'])
 @auth.session_auth
 def admin_post():
@@ -320,6 +323,7 @@ def admin_post():
 
     return utils.jsonify(admin.dict())
 
+
 @app.app.route('/admin/<admin_id>', methods=['DELETE'])
 @auth.session_auth
 def admin_delete(admin_id):
@@ -352,6 +356,7 @@ def admin_delete(admin_id):
     event.Event(type=ADMINS_UPDATED)
 
     return utils.jsonify({})
+
 
 @app.app.route('/admin/<admin_id>/audit', methods=['GET'])
 @auth.session_auth

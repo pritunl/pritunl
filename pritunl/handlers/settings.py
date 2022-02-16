@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import utils
@@ -23,6 +23,7 @@ _changes_audit_text = {
     'restrict_import': 'Restrict import setting changed',
     'sso': 'Single sign-on settings changed',
 }
+
 
 def _dict():
     if settings.app.demo_mode:
@@ -258,6 +259,7 @@ def _dict():
             'sa_east_1_secret_key': settings.app.sa_east_1_secret_key,
         }
 
+
 @app.app.route('/settings', methods=['GET'])
 @auth.session_auth
 def settings_get():
@@ -272,6 +274,7 @@ def settings_get():
     if settings.app.demo_mode:
         utils.demo_set_cache(response)
     return utils.jsonify(response)
+
 
 @app.app.route('/settings', methods=['PUT'])
 @auth.session_auth
@@ -1013,6 +1016,7 @@ def settings_put():
     response = flask.g.administrator.dict()
     response.update(_dict())
     return utils.jsonify(response)
+
 
 @app.app.route('/settings/zones', methods=['GET'])
 @auth.session_auth

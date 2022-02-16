@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305,E722,W0401
+# pylama:ignore=E305,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -11,6 +11,7 @@ from pritunl import host
 
 import datetime
 import collections
+
 
 class TaskServer(task.Task):
     type = 'server'

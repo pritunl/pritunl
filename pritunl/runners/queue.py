@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E711,E722,W0401,W0611
+# pylama:ignore=E711,E722,W0401,W0611
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -19,6 +19,7 @@ thread_limits = [threading.Semaphore(x) for x in (
     settings.app.queue_med_thread_limit,
     settings.app.queue_high_thread_limit,
 )]
+
 
 def add_queue_item(queue_item):
     if queue_item.id in running_queues:
@@ -42,6 +43,7 @@ def add_queue_item(queue_item):
                 ))
                 thread_limits[running_queue.cpu_type].release()
 
+
 def _on_msg(msg):
     try:
         if msg['message'][0] == PENDING:
@@ -52,6 +54,7 @@ def _on_msg(msg):
                 que.stop()
     except TypeError:
         pass
+
 
 def run_timeout_queues():
     cur_timestamp = utils.now()
@@ -73,6 +76,7 @@ def run_timeout_queues():
                 queue_item,
             ))
 
+
 @interrupter
 def _check_thread():
     while True:
@@ -84,6 +88,7 @@ def _check_thread():
             logger.exception('Error in queue check thread', 'runners')
 
         yield interrupter_sleep(settings.mongo.queue_ttl)
+
 
 def run_queue_item(queue_item, thread_limit):
     release = True
@@ -98,6 +103,7 @@ def run_queue_item(queue_item, thread_limit):
         if release:
             thread_limit.release()
 
+
 def _runner_thread(cpu_priority, thread_limit, runner_queue):
     while True:
         try:
@@ -111,6 +117,7 @@ def _runner_thread(cpu_priority, thread_limit, runner_queue):
         except:
             logger.exception('Error in runner thread', 'runners')
             time.sleep(0.5)
+
 
 def start_queue():
     for cpu_priority in (LOW_CPU, NORMAL_CPU, HIGH_CPU):

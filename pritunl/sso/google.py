@@ -1,10 +1,11 @@
-# pylama:ignore=E122,E302,E713
+# pylama:ignore=E122,E713
 from pritunl import settings
 
 import json
 import io
 import apiclient.discovery
 import oauth2client.service_account
+
 
 def verify_google(user_email):
     user_domain = user_email.split('@')[-1]

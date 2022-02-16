@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E401,E502
+# pylama:ignore=E401,E502
 from pritunl import settings
 from pritunl import logger
 
@@ -8,9 +8,11 @@ import time
 import urllib.parse
 import requests
 
+
 def _getokta_url():
     parsed = urllib.parse.urlparse(settings.app.sso_saml_url)
     return '%s://%s' % (parsed.scheme, parsed.netloc)
+
 
 def get_user_id(username):
     try:
@@ -53,6 +55,7 @@ def get_user_id(username):
         return None
 
     return user_id
+
 
 def auth_okta(username):
     user_id = get_user_id(username)
@@ -108,6 +111,7 @@ def auth_okta(username):
                    )
 
     return False
+
 
 def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
     user_id = get_user_id(username)

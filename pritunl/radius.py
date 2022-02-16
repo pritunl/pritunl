@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E201,E221,E223,E231,E261,E302,E305,E502,E701,E701,E711,E722,W0611
+# pylama:ignore=E201,E221,E223,E231,E261,E305,E502,E701,E701,E711,E722,W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).
@@ -56,9 +56,11 @@ ACCESS_REJECT	= 3
 DEFAULT_RETRIES = 3
 DEFAULT_TIMEOUT = 5
 
+
 class Error(Exception): pass
 class NoResponse(Error): pass
 class SocketError(NoResponse): pass
+
 
 def authenticate(username,password,secret,host='radius',port=1645):
     '''Return 1 for a successful authentication. Other values indicate
@@ -68,6 +70,7 @@ def authenticate(username,password,secret,host='radius',port=1645):
 
     r = RADIUS(secret,host,port)
     return r.authenticate(username,password)
+
 
 class RADIUS:
 

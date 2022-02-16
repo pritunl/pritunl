@@ -1,9 +1,10 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import logger
 
 import threading
 import queue
+
 
 class CallQueue(object):
     def __init__(self, checker=None, maxsize=0):

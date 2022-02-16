@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -10,6 +10,7 @@ from pritunl import queue
 from pritunl import utils
 
 import datetime
+
 
 @queue.add_queue
 class QueueAssignIpPool(queue.Queue):

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722
+# pylama:ignore=E722
 # Available libraries included with a default Pritunl installation
 from pritunl import logger
 # import requests
@@ -9,6 +9,8 @@ from pritunl import logger
 # Called on authorization of user connection attempt. Allow will be True
 # when user authenticated sucessfully. When allow is False reason will
 # explain why the user was not authenticated.
+
+
 def user_connection(host_id, server_id, org_id, user_id, host_name,
                     server_name, org_name, user_name, platform, device_id, device_name,
                     remote_ip, mac_addr, password, auth_password, auth_token, auth_nonce,
@@ -27,13 +29,18 @@ def user_connection(host_id, server_id, org_id, user_id, host_name,
                          )
 
 # Called after user has connected.
+
+
 def user_connected(host_id, server_id, org_id, user_id, host_name,
                    server_name, org_name, user_name, platform, device_id, device_name,
                    virtual_ip, virtual_ip6, remote_ip, mac_addr, wg_public_key, **kwargs):
     pass
 
 # Called on user disconnect, may not always be called if a server is stopped
+
 # or unexpected failure occurs.
+
+
 def user_disconnected(host_id, server_id, org_id, user_id, host_name,
                       server_name, org_name, user_name, remote_ip, virtual_ip, virtual_ip6,
                       wg_public_key, **kwargs):
@@ -41,6 +48,8 @@ def user_disconnected(host_id, server_id, org_id, user_id, host_name,
 
 # [SYNCHRONOUS] Called on user connect must return True or False to allow
 # connection and None if allowed or a string with reason if not allowed.
+
+
 def user_connect(host_id, server_id, org_id, user_id, host_name,
                  server_name, org_name, user_name, remote_ip, mac_addr, platform,
                  device_id, device_name, password, **kwargs):
@@ -54,7 +63,10 @@ def user_connect(host_id, server_id, org_id, user_id, host_name,
 # be included. Also called on each user connection. This plugin is used to
 # support user logins with credentials from other systems. The user_name and
 # password must be verified in the plugin, no other authentication will be
+
 # checked.
+
+
 def user_authenticate(host_id, host_name, user_name, password, remote_ip,
                       **kwargs):
     if not 'auth_ok':
@@ -64,7 +76,10 @@ def user_authenticate(host_id, host_name, user_name, password, remote_ip,
 
 # [SYNCHRONOUS] Called when a user configuration is synced or downloaded
 # to return custom configuration lines that will be added to the users
+
 # OpenVPN configuration.
+
+
 def user_config(host_id, host_name, org_id, user_id, user_name, server_id,
                 server_name, server_port, server_protocol, server_ipv6,
                 server_ipv6_firewall, server_network, server_network6,
@@ -78,12 +93,15 @@ def user_config(host_id, host_name, org_id, user_id, user_name, server_id,
                 server_dns_mapping, server_debug, **kwargs):
     return ''
 
+
 # Called on log entries. The kwargs includes variables from the log event.
 def log_entry(host_id, host_name, message, **kwargs):
     pass
 
 # Called on audit event. User id can be referring to a user or administrator.
 # The org_id will be None for administrators.
+
+
 def audit_event(host_id, host_name, user_id, org_id, timestamp, type,
                 remote_addr, message, **kwargs):
     pass
@@ -95,7 +113,10 @@ def audit_event(host_id, host_name, user_id, org_id, timestamp, type,
 # secondary authentication method and the organization name from Duo is set it
 # will have priority over the organization name from the primary SSO provider.
 # The sso_org_names will specify the list of org names provided by SAML and
+
 # Slack single sign-on.
+
+
 def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
                      remote_ip, sso_org_names, sso_group_names, **kwargs):
     if sso_type == 'duo':
@@ -115,7 +136,10 @@ def sso_authenticate(sso_type, host_id, host_name, user_name, user_email,
         return False, None, None
 
 # [SYNCHRONOUS] Called when a server is started to return custom configuration
+
 # lines that will be added to the servers OpenVPN configuration.
+
+
 def server_config(host_id, host_name, server_id, server_name, port, protocol,
                   ipv6, ipv6_firewall, network, network6, network_mode, network_start,
                   network_stop, restrict_routes, bind_address, onc_hostname,
@@ -127,6 +151,8 @@ def server_config(host_id, host_name, server_id, server_name, port, protocol,
     return ''
 
 # [SYNCHRONOUS] Called when a server is started. Call occurs after OpenVPN
+
+
 # process has been configured and started.
 def server_start(host_id, host_name, server_id, server_name, port, protocol,
                  ipv6, ipv6_firewall, network, network6, network_mode, network_start,
@@ -138,6 +164,8 @@ def server_start(host_id, host_name, server_id, server_name, port, protocol,
     pass
 
 # [SYNCHRONOUS] Called when a server is stopped.
+
+
 def server_stop(host_id, host_name, server_id, server_name, port, protocol,
                 ipv6, ipv6_firewall, network, network6, network_mode, network_start,
                 network_stop, restrict_routes, bind_address, onc_hostname,

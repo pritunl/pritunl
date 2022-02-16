@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -8,6 +8,7 @@ import os
 import json
 import random
 import datetime
+
 
 class ServerBandwidth(object):
     def __init__(self, server_id):

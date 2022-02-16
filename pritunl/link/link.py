@@ -1,4 +1,4 @@
-# pylama:ignore=E125,E131,E302,E303,E502,W0401
+# pylama:ignore=E125,E131,E502,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -12,6 +12,7 @@ import json
 import datetime
 import pymongo
 import collections
+
 
 class Host(mongo.MongoObject):
     fields = {
@@ -615,6 +616,7 @@ class Host(mongo.MongoObject):
 
         return conf.rstrip()
 
+
 class Location(mongo.MongoObject):
     fields = {
         'name',
@@ -734,7 +736,6 @@ class Location(mongo.MongoObject):
                             'status': transit_status,
                             'static': static_location,
                         })
-
 
                 if location_state == ACTIVE_UNAVAILABLE:
                     peer_status = 'unknown'
@@ -1247,6 +1248,7 @@ class Link(mongo.MongoObject):
         for name in sorted(list(locations_names)):
             for location in locations_name[name]:
                 yield location
+
 
 def is_backoff(host_doc):
     backoff = host_doc.get('backoff')

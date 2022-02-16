@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401,W0611
+# pylama:ignore=E722,W0401,W0611
 from pritunl.helpers import *
 from pritunl.setup.clean import setup_clean
 from pritunl.setup.local import setup_local
@@ -27,6 +27,7 @@ from pritunl.setup.plugins import setup_plugins
 from pritunl.setup.demo import setup_demo
 
 import resource
+
 
 def setup_all():
     from pritunl import logger
@@ -71,6 +72,7 @@ def setup_all():
         set_global_interrupt()
         raise
 
+
 def setup_db():
     setup_local()
 
@@ -81,6 +83,7 @@ def setup_db():
         from pritunl import logger
         logger.exception('Pritunl setup failed', 'setup')
         raise
+
 
 def setup_db_host():
     setup_local()
@@ -93,6 +96,7 @@ def setup_db_host():
         from pritunl import logger
         logger.exception('Pritunl setup failed', 'setup')
         raise
+
 
 def setup_loc():
     setup_local()

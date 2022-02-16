@@ -1,6 +1,7 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import settings
 from pritunl import subscription
+
 
 def setup_host_fix():
     subscription.update()

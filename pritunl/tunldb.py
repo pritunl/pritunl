@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722
+# pylama:ignore=E722
 import queue
 import time
 import collections
@@ -29,6 +29,7 @@ TRANSACTION_METHODS = {
 }
 CHANNEL_TTL = 120
 CHANNEL_BUFFER = 128
+
 
 class TunlDB(object):
     def __init__(self, strict=True):
@@ -534,6 +535,7 @@ class TunlDB(object):
                 if 'commit_log' in import_data:
                     for tran in import_data['commit_log']:
                         self._apply_trans(tran)
+
 
 class TunlDBTransaction(object):
     def __init__(self, cache):

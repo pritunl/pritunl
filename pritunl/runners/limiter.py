@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import logger
 from pritunl import settings
@@ -6,6 +6,7 @@ from pritunl import limiter
 
 import time
 import threading
+
 
 @interrupter
 def _limiter_runner_thread():
@@ -24,6 +25,7 @@ def _limiter_runner_thread():
         except:
             logger.exception('Error in limiter runner thread', 'runners')
             time.sleep(0.5)
+
 
 def start_limiter():
     threading.Thread(target=_limiter_runner_thread).start()

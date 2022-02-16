@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import app
@@ -21,6 +21,7 @@ from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import (
     Cipher, algorithms, modes
 )
+
 
 @app.app.route('/link', methods=['GET'])
 @auth.session_auth
@@ -50,6 +51,7 @@ def link_get():
     if settings.app.demo_mode:
         utils.demo_set_cache(data)
     return utils.jsonify(data)
+
 
 @app.app.route('/link', methods=['POST'])
 @auth.session_auth
@@ -107,6 +109,7 @@ def link_post():
 
     return utils.jsonify(lnk.dict())
 
+
 @app.app.route('/link/<link_id>', methods=['DELETE'])
 @auth.session_auth
 def link_delete(link_id):
@@ -126,6 +129,7 @@ def link_delete(link_id):
     event.Event(type=LINKS_UPDATED)
 
     return utils.jsonify({})
+
 
 @app.app.route('/link/<link_id>', methods=['PUT'])
 @auth.session_auth
@@ -163,6 +167,7 @@ def link_put(link_id):
 
     return utils.jsonify(lnk.dict())
 
+
 @app.app.route('/link/<link_id>/location', methods=['GET'])
 @auth.session_auth
 def link_location_get(link_id):
@@ -197,6 +202,7 @@ def link_location_get(link_id):
         utils.demo_set_cache(locations)
     return utils.jsonify(locations)
 
+
 @app.app.route('/link/<link_id>/location', methods=['POST'])
 @auth.session_auth
 def link_location_post(link_id):
@@ -224,6 +230,7 @@ def link_location_post(link_id):
 
     return utils.jsonify(loc.dict())
 
+
 @app.app.route('/link/<link_id>/location/<location_id>', methods=['PUT'])
 @auth.session_auth
 def link_location_put(link_id, location_id):
@@ -250,6 +257,7 @@ def link_location_put(link_id, location_id):
 
     return utils.jsonify(loc.dict())
 
+
 @app.app.route('/link/<link_id>/location/<location_id>', methods=['DELETE'])
 @auth.session_auth
 def link_location_delete(link_id, location_id):
@@ -273,6 +281,7 @@ def link_location_delete(link_id, location_id):
     event.Event(type=LINKS_UPDATED)
 
     return utils.jsonify({})
+
 
 @app.app.route('/link/<link_id>/location/<location_id>/route',
                methods=['POST'])
@@ -309,6 +318,7 @@ def link_location_route_post(link_id, location_id):
         'id': network,
     })
 
+
 @app.app.route('/link/<link_id>/location/<location_id>/route/<network>',
                methods=['DELETE'])
 @auth.session_auth
@@ -335,6 +345,7 @@ def link_location_route_delete(link_id, location_id, network):
     event.Event(type=LINKS_UPDATED)
 
     return utils.jsonify({})
+
 
 @app.app.route('/link/<link_id>/location/<location_id>/host',
                methods=['POST'])
@@ -387,6 +398,7 @@ def link_location_host_post(link_id, location_id):
 
     return utils.jsonify(hst.dict())
 
+
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>/uri',
                methods=['GET'])
 @auth.session_auth
@@ -414,6 +426,7 @@ def link_location_host_uri_get(link_id, location_id, host_id):
     data['uri'] = hst.get_uri()
 
     return utils.jsonify(data)
+
 
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>/conf',
                methods=['GET'])
@@ -443,6 +456,7 @@ def link_location_host_conf_get(link_id, location_id, host_id):
     data['ubnt_conf'] = hst.get_ubnt_conf()
 
     return utils.jsonify(data)
+
 
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>',
                methods=['PUT'])
@@ -484,6 +498,7 @@ def link_location_host_put(link_id, location_id, host_id):
 
     return utils.jsonify(hst.dict())
 
+
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>',
                methods=['DELETE'])
 @auth.session_auth
@@ -512,6 +527,7 @@ def link_location_host_delete(link_id, location_id, host_id):
     event.Event(type=LINKS_UPDATED)
 
     return utils.jsonify({})
+
 
 @app.app.route('/link/<link_id>/location/<location_id>/peer',
                methods=['POST'])
@@ -542,6 +558,7 @@ def link_location_peer_post(link_id, location_id):
 
     return utils.jsonify({})
 
+
 @app.app.route('/link/<link_id>/location/<location_id>/peer/<peer_id>',
                methods=['DELETE'])
 @auth.session_auth
@@ -569,6 +586,7 @@ def link_location_peer_delete(link_id, location_id, peer_id):
     event.Event(type=LINKS_UPDATED)
 
     return utils.jsonify({})
+
 
 @app.app.route('/link/<link_id>/location/<location_id>/transit',
                methods=['POST'])
@@ -598,6 +616,7 @@ def link_location_transit_post(link_id, location_id):
 
     return utils.jsonify({})
 
+
 @app.app.route('/link/<link_id>/location/<location_id>/transit/<transit_id>',
                methods=['DELETE'])
 @auth.session_auth
@@ -624,6 +643,7 @@ def link_location_transit_delete(link_id, location_id, transit_id):
     event.Event(type=LINKS_UPDATED)
 
     return utils.jsonify({})
+
 
 @app.app.route('/link/state', methods=['PUT'])
 @auth.open_auth
@@ -728,6 +748,7 @@ def link_state_put():
     resp.headers.add('Cipher-Signature', enc_signature)
 
     return resp
+
 
 @app.app.route('/link/state', methods=['DELETE'])
 @auth.open_auth

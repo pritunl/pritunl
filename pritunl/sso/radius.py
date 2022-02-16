@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
@@ -7,6 +7,7 @@ from pritunl.pyrad import packet
 from pritunl.pyrad import dictionary
 
 import io
+
 
 def verify_radius(username, password):
     hosts = settings.app.sso_radius_host.split(',')

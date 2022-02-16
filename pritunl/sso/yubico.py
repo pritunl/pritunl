@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722
+# pylama:ignore=E722
 from pritunl import settings
 from pritunl import logger
 from pritunl import mongo
@@ -9,6 +9,7 @@ import base64
 import pymongo
 import yubico_client
 import certifi
+
 
 def auth_yubico(yubikey):
     yubikey_collection = mongo.get_collection('yubikey')

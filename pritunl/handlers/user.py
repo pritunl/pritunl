@@ -1,4 +1,4 @@
-# pylama:ignore=E231,E302,E722,W0401
+# pylama:ignore=E231,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -23,11 +23,13 @@ import threading
 _users_background = False
 _users_background_lock = threading.Lock()
 
+
 def _network_link_invalid():
     return utils.jsonify({
         'error': NETWORK_LINK_INVALID,
         'error_msg': NETWORK_LINK_INVALID_MSG,
     }, 400)
+
 
 @app.app.route('/user/<org_id>', methods=['GET'])
 @app.app.route('/user/<org_id>/<user_id>', methods=['GET'])
@@ -226,6 +228,7 @@ def user_get(org_id, user_id=None, page=None):
         utils.demo_set_cache(resp, page, search, limit)
     return utils.jsonify(resp)
 
+
 def _create_user(users, org, user_data, remote_addr, pool):
     name = utils.filter_str(user_data['name'])
     email = utils.filter_str(user_data.get('email'))
@@ -324,6 +327,7 @@ def _create_user(users, org, user_data, remote_addr, pool):
 
     users.append(user.dict())
 
+
 def _create_users(org_id, users_data, remote_addr, background):
     global _users_background
 
@@ -370,6 +374,7 @@ def _create_users(org_id, users_data, remote_addr, background):
         logger.LogEntry(message='Created %s new users.' % len(users))
     return utils.jsonify(users)
 
+
 @app.app.route('/user/<org_id>', methods=['POST'])
 @app.app.route('/user/<org_id>/multi', methods=['POST'])
 @auth.session_auth
@@ -404,6 +409,7 @@ def user_post(org_id):
         }, 202)
 
     return _create_users(org_id, users_data, remote_addr, False)
+
 
 @app.app.route('/user/<org_id>/<user_id>', methods=['PUT'])
 @auth.session_auth
@@ -741,6 +747,7 @@ def user_put(org_id, user_id):
 
     return utils.jsonify(user.dict())
 
+
 @app.app.route('/user/<org_id>/<user_id>', methods=['DELETE'])
 @auth.session_auth
 def user_delete(org_id, user_id):
@@ -771,6 +778,7 @@ def user_delete(org_id, user_id):
 
     return utils.jsonify({})
 
+
 @app.app.route('/user/<org_id>/<user_id>/otp_secret', methods=['PUT'])
 @auth.session_auth
 def user_otp_secret_put(org_id, user_id):
@@ -797,6 +805,7 @@ def user_otp_secret_put(org_id, user_id):
     user.commit()
     event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(user.dict())
+
 
 @app.app.route('/user/<org_id>/<user_id>/audit', methods=['GET'])
 @auth.session_auth

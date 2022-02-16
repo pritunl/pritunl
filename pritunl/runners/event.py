@@ -1,10 +1,11 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import event
 from pritunl import logger
 
 import time
 import threading
+
 
 @interrupter
 def _event_runner_thread():
@@ -52,6 +53,7 @@ def _event_runner_thread():
         except:
             logger.exception('Error in event runner thread.', 'runners')
             time.sleep(0.5)
+
 
 def start_event():
     threading.Thread(target=_event_runner_thread).start()

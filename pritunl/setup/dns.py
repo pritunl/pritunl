@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import logger
@@ -7,6 +7,7 @@ import os
 import threading
 import subprocess
 import time
+
 
 @interrupter
 def _dns_thread():
@@ -62,6 +63,7 @@ def _dns_thread():
             logger.exception('Error in dns service', 'setup')
 
         yield interrupter_sleep(1)
+
 
 def setup_dns():
     threading.Thread(target=_dns_thread).start()

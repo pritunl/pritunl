@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -17,6 +17,7 @@ import flask
 import time
 import random
 import hashlib
+
 
 def _auth_radius(username, password, remote_addr):
     sso_mode = settings.app.sso
@@ -218,6 +219,7 @@ def _auth_radius(username, password, remote_addr):
         'redirect': utils.get_url_root() + key_link['view_url'],
     }, 202)
 
+
 def _auth_plugin(username, password, remote_addr):
     if not settings.local.sub_plan or \
             'enterprise' not in settings.local.sub_plan:
@@ -338,6 +340,7 @@ def _auth_plugin(username, password, remote_addr):
         'redirect': utils.get_url_root() + key_link['view_url'],
     }, 202)
 
+
 @app.app.route('/auth/session', methods=['POST'])
 @auth.open_auth
 def auth_session_post():
@@ -413,6 +416,7 @@ def auth_session_post():
         'default': admin.default or False,
     })
 
+
 @app.app.route('/auth/session', methods=['DELETE'])
 @auth.open_auth
 def auth_delete():
@@ -439,6 +443,7 @@ def auth_delete():
     return utils.jsonify({
         'authenticated': False,
     })
+
 
 @app.app.route('/state', methods=['GET'])
 @auth.session_light_auth

@@ -1,7 +1,8 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import collections
 import heapq
 import operator
+
 
 class LeastCommonCounter(collections.Counter):
     def least_common(self, n=None):

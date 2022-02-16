@@ -1,10 +1,11 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import event
 from pritunl import organization
 from pritunl import user
 from pritunl import queue
+
 
 @queue.add_queue
 class QueueInitUser(queue.Queue):

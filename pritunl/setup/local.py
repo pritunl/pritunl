@@ -1,4 +1,4 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import __version__
 
 from pritunl import settings
@@ -6,6 +6,7 @@ from pritunl import utils
 
 import uuid
 import os
+
 
 def setup_local():
     settings.local.iptables_wait = utils.check_iptables_wait()

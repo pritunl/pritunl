@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.utils.misc import check_output_logged
 
 from pritunl.constants import *
@@ -24,6 +24,7 @@ _sockfd = None
 _ip_route = pyroute2.iproute.IPRoute()
 _ip_route_lock = threading.Lock()
 
+
 def interface_acquire(interface_type):
     if interface_type == 'tun':
         intf = _tun_interfaces.popleft()
@@ -36,6 +37,7 @@ def interface_acquire(interface_type):
 
     _used_interfaces.add(intf)
     return intf
+
 
 def interface_release(interface_type, interface):
     if interface not in _used_interfaces:
@@ -51,6 +53,7 @@ def interface_release(interface_type, interface):
     else:
         raise ValueError('Unknown interface type %s' % interface_type)
 
+
 def get_remote_addr():
     if settings.app.reverse_proxy:
         forward_ip = flask.request.headers.get('PR-Forwarded-Header')
@@ -63,6 +66,7 @@ def get_remote_addr():
 
     return flask.request.remote_addr
 
+
 def get_interface_address(iface):
     try:
         addrs = netifaces.ifaddresses(iface)
@@ -74,6 +78,7 @@ def get_interface_address(iface):
         return
 
     return addrs[0].get('addr')
+
 
 def get_interface_address6(iface):
     try:
@@ -88,6 +93,7 @@ def get_interface_address6(iface):
     addr = addrs[0].get('addr')
     if addr:
         return addr.split('%')[0]
+
 
 def get_ip_pool_reverse(network, network_start):
     ip_pool = network_reverse_hosts(network)
@@ -111,6 +117,7 @@ def get_ip_pool_reverse(network, network_start):
 
     return ip_pool
 
+
 def network_reverse_hosts(net):
     cur = int(net.broadcast_address) - 1
     end = int(net.network_address) + 1
@@ -118,12 +125,14 @@ def network_reverse_hosts(net):
         cur -= 1
         yield ipaddress.ip_address(cur + 1)
 
+
 def ip_to_long(ip_str):
     ip = ip_str.split('.')
     ip.reverse()
     while len(ip) < 4:
         ip.insert(1, '0')
     return sum(int(byte) << 8 * i for i, byte in enumerate(ip))
+
 
 def long_to_ip(ip_num):
     return '.'.join(map(str, [
@@ -133,6 +142,7 @@ def long_to_ip(ip_num):
         ip_num & 0xff,
     ]))
 
+
 def subnet_to_cidr(subnet):
     if subnet == '0.0.0.0':
         return 0
@@ -141,21 +151,26 @@ def subnet_to_cidr(subnet):
         count += 1
     return 32 - count
 
+
 def network_addr(ip, subnet):
     return '%s/%s' % (long_to_ip(ip_to_long(ip) & ip_to_long(subnet)),
                       subnet_to_cidr(subnet))
+
 
 def parse_network(network):
     address = ipaddress.ip_network(network, strict=False)
     return str(address.network_address), str(address.netmask)
 
+
 def get_network_gateway(network):
     return str(next(ipaddress.ip_network(network).hosts()))
+
 
 def get_network_gateway_cidr(network):
     network = ipaddress.ip_network(network, strict=False)
     cidr = network.prefixlen
     return str(next(network.hosts())) + '/' + str(cidr)
+
 
 def get_default_interface():
     gateways = netifaces.gateways()
@@ -164,15 +179,18 @@ def get_default_interface():
         return
     return default_iface[1]
 
+
 def get_local_address():
     default_iface = get_default_interface()
     if default_iface:
         return get_interface_address(default_iface)
 
+
 def get_local_address6():
     default_iface = get_default_interface()
     if default_iface:
         return get_interface_address6(default_iface)
+
 
 def get_local_networks():
     ifaces = netifaces.interfaces()
@@ -199,6 +217,7 @@ def get_local_networks():
 
     return networks
 
+
 def get_routes():
     routes_output = check_output_logged(['route', '-n'])
 
@@ -210,6 +229,7 @@ def get_routes():
         routes[line_split[0]] = line_split[7]
 
     return routes
+
 
 def get_interfaces():
     ifaces = netifaces.interfaces()
@@ -263,6 +283,7 @@ def get_interfaces():
 
     return interfaces
 
+
 def get_interface_mac_address(iface):
     ifaddrs = netifaces.ifaddresses(iface)
     if not ifaddrs:
@@ -273,6 +294,7 @@ def get_interface_mac_address(iface):
         return
 
     return mac_addrs[0].get('addr')
+
 
 def find_interface(network):
     network = ipaddress.ip_network(network, strict=False)
@@ -286,6 +308,7 @@ def find_interface(network):
         if address in network and data['netmask'] == str(network.netmask):
             return data
 
+
 def find_interface_addr(addr):
     match_addr = ipaddress.ip_address(addr)
 
@@ -297,6 +320,7 @@ def find_interface_addr(addr):
 
         if match_addr == address:
             return data
+
 
 def net4to6x64(prefix, net):
     net = net.split('/')[0]
@@ -314,6 +338,7 @@ def net4to6x64(prefix, net):
 
     return net6
 
+
 def net4to6x96(prefix, net):
     prefix = str(ipaddress.IPv6Network(prefix)).split('/')[0]
     net = net.split('/')[0]
@@ -330,6 +355,7 @@ def net4to6x96(prefix, net):
 
     return str(ipaddress.IPv6Network(net6))
 
+
 def ip4to6x64(prefix, net, addr):
     addrs = addr.split('/')[0].split('.')
     net = net.split('/')[0]
@@ -343,6 +369,7 @@ def ip4to6x64(prefix, net, addr):
         addrs[0] + ':' + addrs[1] + ':' + addrs[2] + ':' + addrs[3]
 
     return str(ipaddress.IPv6Address(addr6))
+
 
 def ip4to6x96(prefix, net, addr):
     prefix = str(ipaddress.IPv6Network(prefix)).split('/')[0]
@@ -365,6 +392,7 @@ def ip4to6x96(prefix, net, addr):
         addr_hex[2:6] + ':' + addr_hex[6:10]
 
     return str(ipaddress.IPv6Address(addr6))
+
 
 def add_route(dst_addr, via_addr, dev=None):
     if '/' not in dst_addr:
@@ -402,6 +430,7 @@ def add_route(dst_addr, via_addr, dev=None):
     finally:
         _ip_route_lock.release()
 
+
 def del_route(dst_addr):
     if '/' not in dst_addr:
         dst_addr += '/32'
@@ -417,6 +446,7 @@ def del_route(dst_addr):
             raise
     finally:
         _ip_route_lock.release()
+
 
 def add_route6(dst_addr, via_addr, dev=None):
     if '/' not in dst_addr:
@@ -457,6 +487,7 @@ def add_route6(dst_addr, via_addr, dev=None):
     finally:
         _ip_route_lock.release()
 
+
 def del_route6(dst_addr):
     if '/' not in dst_addr:
         dst_addr += '/128'
@@ -473,6 +504,7 @@ def del_route6(dst_addr):
             raise
     finally:
         _ip_route_lock.release()
+
 
 def check_network_overlap(test_network, networks):
     test_net = ipaddress.ip_network(test_network)
@@ -494,6 +526,7 @@ def check_network_overlap(test_network, networks):
 
     return False
 
+
 def check_network_private(test_network):
     test_net = ipaddress.ip_network(test_network)
     test_start = test_net.network_address
@@ -509,6 +542,7 @@ def check_network_private(test_network):
 
     return False
 
+
 def check_network_range(test_network, start_addr, end_addr):
     test_net = ipaddress.ip_network(test_network)
     start_addr = ipaddress.ip_address(start_addr)
@@ -521,6 +555,7 @@ def check_network_range(test_network, start_addr, end_addr):
         start_addr in test_net,
         end_addr in test_net,
     ))
+
 
 def random_ip_addr():
     return str(ipaddress.ip_address(100000000 + random.randint(

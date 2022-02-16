@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.host.usage import HostUsage
 
 from pritunl.constants import *
@@ -9,6 +9,7 @@ from pritunl import mongo
 from pritunl import logger
 from pritunl import event
 from pritunl import journal
+
 
 class Host(mongo.MongoObject):
     fields = {

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -20,6 +20,7 @@ import hashlib
 import base64
 import urllib.parse
 import requests
+
 
 def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
                    http_redirect=False, yubico_id=None):
@@ -168,6 +169,7 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
             'redirect': utils.get_url_root() + key_link['view_url'],
         }, 200)
 
+
 @app.app.route('/sso/authenticate', methods=['POST'])
 @auth.open_auth
 def sso_authenticate_post():
@@ -242,6 +244,7 @@ def sso_authenticate_post():
 
     return _validate_user(username, email, DUO_AUTH, org_id, groups,
                           remote_addr)
+
 
 @app.app.route('/sso/request', methods=['GET'])
 @auth.open_auth
@@ -463,6 +466,7 @@ def sso_request_get():
 
     else:
         return flask.abort(404)
+
 
 @app.app.route('/sso/callback', methods=['GET'])
 @auth.open_auth
@@ -937,6 +941,7 @@ def sso_callback_get():
     return _validate_user(username, email, sso_mode, org_id, groups,
                           remote_addr, http_redirect=True)
 
+
 @app.app.route('/sso/duo', methods=['POST'])
 @auth.open_auth
 def sso_duo_post():
@@ -1056,6 +1061,7 @@ def sso_duo_post():
 
     return _validate_user(username, email, sso_mode, org_id, groups,
                           remote_addr)
+
 
 @app.app.route('/sso/yubico', methods=['POST'])
 @auth.open_auth

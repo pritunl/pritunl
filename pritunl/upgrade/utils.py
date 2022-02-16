@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import utils
@@ -9,6 +9,7 @@ import pymongo
 _prefix = None
 _database = None
 
+
 def database_setup():
     global _prefix
     global _database
@@ -18,14 +19,17 @@ def database_setup():
                                  connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
     _database = client.get_default_database()
 
+
 def database_clean_up():
     global _prefix
     global _database
     _prefix = None
     _database = None
 
+
 def get_collection(collection):
     return getattr(_database, _prefix + collection)
+
 
 def setup_cert():
     server_cert = None
@@ -49,6 +53,7 @@ def setup_cert():
         server_key,
         acme_domain,
     )
+
 
 def get_server_port():
     port = settings.conf.port

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401,W0612
+# pylama:ignore=E722,W0401,W0612
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -8,6 +8,7 @@ import boto3
 import requests
 import time
 
+
 def connect_ec2(aws_key, aws_secret, region):
     return boto3.client(
         'ec2',
@@ -15,6 +16,7 @@ def connect_ec2(aws_key, aws_secret, region):
         aws_secret_access_key=aws_secret,
         region_name=region,
     )
+
 
 def get_instance_id():
     try:
@@ -29,6 +31,7 @@ def get_instance_id():
         return resp.content
     except:
         pass
+
 
 def get_metadata():
     metadata = boto.utils.get_instance_metadata()
@@ -59,6 +62,7 @@ def get_metadata():
         'vpc_id': vpc_id,
         'region': region,
     }
+
 
 def add_vpc_route(network):
     time.sleep(0.1)
@@ -152,6 +156,7 @@ def add_vpc_route(network):
                 if not response['Return']:
                     raise ValueError('Invalid response')
 
+
 def get_vpcs():
     vpcs_data = {}
 
@@ -180,6 +185,7 @@ def get_vpcs():
             })
 
     return vpcs_data
+
 
 def get_zones():
     zones_data = {}
@@ -212,6 +218,7 @@ def get_zones():
             zone_data.append(hosted_zone['Name'])
 
     return zones_data
+
 
 def set_zone_record(region, zone_name, host_name, ip_addr, ip_addr6):
     region_key = region.replace('-', '_')

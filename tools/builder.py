@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E303,E305
+# pylama:ignore=E305
 import optparse
 import datetime
 import re
@@ -46,12 +46,14 @@ os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
 cur_date = datetime.datetime.utcnow()
 pacur_path = None
 
+
 def wget(url, cwd=None, output=None):
     if output:
         args = ['wget', '-O', output, url]
     else:
         args = ['wget', url]
     subprocess.check_call(args, cwd=cwd)
+
 
 def post_git_asset(release_id, file_name, file_path):
     for i in range(5):
@@ -83,6 +85,7 @@ def post_git_asset(release_id, file_name, file_path):
         print(data)
         sys.exit(1)
 
+
 def get_ver(version):
     day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
     min_num = int(math.floor(((cur_date.hour * 60) + cur_date.minute) / 14.4))
@@ -91,6 +94,7 @@ def get_ver(version):
     ver_str += ''.join(re.findall('[a-z]+', version))
 
     return ver_str
+
 
 def get_int_ver(version):
     ver = re.findall(r'\d+', version)
@@ -107,6 +111,7 @@ def get_int_ver(version):
         ver[-1] = str(int(ver[-1]) + 4000)
 
     return int(''.join([x.zfill(4) for x in ver]))
+
 
 def iter_packages():
     for target in BUILD_TARGETS:
@@ -127,6 +132,7 @@ def iter_packages():
 
             yield name, path
 
+
 def generate_last_modifited_etag(file_path):
     import werkzeug.http
     file_name = os.path.basename(file_path).encode(
@@ -140,7 +146,9 @@ def generate_last_modifited_etag(file_path):
         time.mktime(file_mtime.timetuple()),
         file_size,
         zlib.adler32(file_name) & 0xffffffff,
+
     ))
+
 
 def sync_db():
     import pymongo
@@ -180,7 +188,9 @@ def sync_db():
 if len(sys.argv) > 1:
     cmd = sys.argv[1]
 else:
+
     cmd = 'version'
+
 
 def aes_encrypt(passphrase, data):
     enc_salt = os.urandom(32)
@@ -207,8 +217,10 @@ def aes_encrypt(passphrase, data):
     return '\n'.join([
         base64.b64encode(enc_salt).decode('utf-8'),
         base64.b64encode(enc_iv).decode('utf-8'),
+
         base64.b64encode(enc_data).decode('utf-8'),
     ])
+
 
 def aes_decrypt(passphrase, data):
     data = data.split('\n')
@@ -369,7 +381,6 @@ if cmd == 'set-version':
     is_snapshot = 'snapshot' in new_version
     pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
-
     # Update changes
     if not is_snapshot:
         with open(CHANGES_PATH, 'r') as changes_file:
@@ -382,8 +393,6 @@ if cmd == 'set-version':
                 '<%= version %>',
                 '%s\n%s' % (ver_date_str, '-' * len(ver_date_str)),
             ))
-
-
     # Check for duplicate version
     response = requests.get(
         'https://api.github.com/repos/%s/%s/releases' % (
@@ -403,7 +412,6 @@ if cmd == 'set-version':
         if release['tag_name'] == new_version:
             print('Version already exists in github')
             sys.exit(1)
-
 
     # Build webapp
     subprocess.check_call([
@@ -470,10 +478,8 @@ if cmd == 'set-version':
         subprocess.check_call(['git', 'commit', '-S', '-m', 'Rebuild dist'])
         subprocess.check_call(['git', 'push'])
 
-
     # Sync db
     sync_db()
-
 
     # Generate changelog
     version = None
@@ -504,7 +510,6 @@ if cmd == 'set-version':
         sys.exit(1)
     release_body = release_body.rstrip('\n')
 
-
     # Update init
     with open(INIT_PATH, 'r') as init_file:
         init_data = init_file.read()
@@ -515,7 +520,6 @@ if cmd == 'set-version':
             "__version__ = '%s'" % new_version,
             init_data,
         ))
-
 
     # Update setup
     with open(SETUP_PATH, 'r') as setup_file:
@@ -528,7 +532,6 @@ if cmd == 'set-version':
             setup_data,
         ))
 
-
     # Git commit
     subprocess.check_call(['git', 'reset', 'HEAD', '.'])
     subprocess.check_call(['git', 'add', CHANGES_PATH])
@@ -537,13 +540,11 @@ if cmd == 'set-version':
     subprocess.check_call(['git', 'commit', '-S', '-m', 'Create new release'])
     subprocess.check_call(['git', 'push'])
 
-
     # Create branch
     if not is_snapshot:
         subprocess.check_call(['git', 'branch', new_version])
         subprocess.check_call(['git', 'push', '-u', 'origin', new_version])
     time.sleep(6)
-
 
     # Create release
     response = requests.post(
@@ -570,7 +571,6 @@ if cmd == 'set-version':
     subprocess.check_call(['git', 'pull'])
     subprocess.check_call(['git', 'push', '--tags'])
     time.sleep(6)
-
 
     # Create gitlab release
     response = requests.post(
@@ -603,7 +603,6 @@ if cmd == 'build' or cmd == 'build-upload':
     is_snapshot = 'snapshot' in build_version
     pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
-
     # Get sha256 sum
     archive_name = '%s.tar.gz' % build_version
     archive_path = os.path.join(os.path.sep, 'tmp', archive_name)
@@ -617,7 +616,6 @@ if cmd == 'build' or cmd == 'build-upload':
     archive_sha256_sum = subprocess.check_output(
         ['sha256sum', archive_path]).split()[0]
     os.remove(archive_path)
-
 
     # Update sha256 sum and pkgver in PKGBUILD
     for target in BUILD_TARGETS:
@@ -639,7 +637,6 @@ if cmd == 'build' or cmd == 'build-upload':
         with open(pkgbuild_path, 'w') as pkgbuild_file:
             pkgbuild_file.write(pkgbuild_data)
 
-
     # Run pacur project build
     for build_target in BUILD_TARGETS:
         subprocess.check_call(
@@ -656,7 +653,6 @@ if cmd == 'upload' or cmd == 'build-upload':
 
     is_snapshot = 'snapshot' in build_version
     pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
-
 
     # Get release id
     release_id = None
@@ -677,13 +673,11 @@ if cmd == 'upload' or cmd == 'build-upload':
         print('Version does not exists in github')
         sys.exit(1)
 
-
     # Run pacur project build
     subprocess.check_call(
         ['sudo', 'pacur', 'project', 'repo'],
         cwd=pacur_path,
     )
-
 
     # Sync mirror
     subprocess.check_call([
@@ -720,7 +714,6 @@ if cmd == 'upload-github':
     is_snapshot = 'snapshot' in build_version
     pacur_path = TEST_PACUR_PATH if is_snapshot else STABLE_PACUR_PATH
 
-
     # Get release id
     release_id = None
     response = requests.get(
@@ -739,7 +732,6 @@ if cmd == 'upload-github':
     if not release_id:
         print('Version does not exists in github')
         sys.exit(1)
-
 
     # Add to github
     for name, path in iter_packages():

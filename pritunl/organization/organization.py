@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -16,6 +16,7 @@ import pymongo
 import threading
 import hashlib
 import re
+
 
 class Organization(mongo.MongoObject):
     fields = {

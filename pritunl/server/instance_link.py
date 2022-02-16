@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -13,6 +13,7 @@ import subprocess
 import threading
 import traceback
 import uuid
+
 
 class ServerInstanceLink(object):
     def __init__(self, server, linked_server):

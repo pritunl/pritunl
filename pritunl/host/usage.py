@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E306,W0401
+# pylama:ignore=E306,W0401
 from pritunl.host import usage_utils
 
 from pritunl.helpers import *
@@ -11,6 +11,7 @@ import os
 import json
 import random
 import datetime
+
 
 class HostUsage(object):
     def __init__(self, host_id):

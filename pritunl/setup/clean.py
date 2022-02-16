@@ -1,9 +1,10 @@
-# pylama:ignore=E302,E303,E722,W391
+# pylama:ignore=E722,W391
 from pritunl import utils
 from pritunl import logger
 
 import subprocess
 import time
+
 
 def setup_clean():
     try:
@@ -77,8 +78,6 @@ def setup_clean():
         except subprocess.CalledProcessError:
             pass
 
-
-
         output = utils.check_output([
             'ip',
             '-o',
@@ -115,8 +114,6 @@ def setup_clean():
                 ])
             except subprocess.CalledProcessError:
                 pass
-
-
 
         output = utils.check_output([
             'iptables-save',

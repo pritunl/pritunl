@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305
+# pylama:ignore=E305
 import requests
 import time
 import uuid
@@ -36,6 +36,7 @@ REGIONS = {
     #
     # 'us-gov-west-1',
 }
+
 
 def auth_request(method, path, headers=None, data=None):
     auth_timestamp = str(int(time.time()))

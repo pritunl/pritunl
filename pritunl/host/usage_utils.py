@@ -1,8 +1,9 @@
-# pylama:ignore=E302,E722
+# pylama:ignore=E722
 from pritunl import utils
 from pritunl import logger
 
 import datetime
+
 
 def get_period_timestamp(period, timestamp):
     timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
@@ -22,6 +23,7 @@ def get_period_timestamp(period, timestamp):
     elif period == '1d':
         return timestamp - datetime.timedelta(
             hours=timestamp.hour, minutes=timestamp.minute)
+
 
 def get_period_max_timestamp(period, timestamp):
     timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
@@ -44,12 +46,14 @@ def get_period_max_timestamp(period, timestamp):
             hours=timestamp.hour,
             minutes=timestamp.minute) - datetime.timedelta(days=365)
 
+
 def get_proc_stat():
     try:
         with open('/proc/stat') as stat_file:
             return stat_file.readline().split()[1:]
     except:
         logger.exception('Failed to read proc stat', 'host')
+
 
 def calc_cpu_usage(last_proc_stat, proc_stat):
     try:
@@ -60,6 +64,7 @@ def calc_cpu_usage(last_proc_stat, proc_stat):
     except:
         logger.exception('Failed to calculate cpu usage', 'host')
     return 0
+
 
 def get_mem_usage():
     try:

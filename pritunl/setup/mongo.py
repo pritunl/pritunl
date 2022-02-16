@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E302,E305,E502,E722,W0401
+# pylama:ignore=E131,E305,E502,E722,W0401
 from pritunl.constants import *
 from pritunl import app
 from pritunl import settings
@@ -11,6 +11,7 @@ import pymongo
 import pymongo.helpers
 import time
 import collections
+
 
 def _get_read_pref(name):
     return {
@@ -27,6 +28,7 @@ def _get_read_pref(name):
     }.get(name)
 
 coll_indexes = collections.defaultdict(set)
+
 
 def upsert_index(coll_name, index, **kwargs):
     coll = mongo.get_collection(coll_name)
@@ -46,6 +48,7 @@ def upsert_index(coll_name, index, **kwargs):
             pass
         coll.create_index(index, **kwargs)
 
+
 def drop_index(coll, index, **kwargs):
     try:
         keys = pymongo.helpers._index_list(index)
@@ -53,6 +56,7 @@ def drop_index(coll, index, **kwargs):
         coll.drop_index(name)
     except:
         pass
+
 
 def clean_indexes():
     for coll_name in list(mongo.collection_types.keys()):
@@ -68,6 +72,7 @@ def clean_indexes():
                 coll.drop_index(name)
         except pymongo.errors.OperationFailure:
             pass
+
 
 def upsert_indexes():
     prefix = settings.conf.mongodb_collection_prefix or ''
@@ -300,7 +305,9 @@ def upsert_indexes():
     try:
         clean_indexes()
     except:
+
         logger.exception('Failed to clean indexes', 'setup')
+
 
 def setup_mongo():
     prefix = settings.conf.mongodb_collection_prefix or ''

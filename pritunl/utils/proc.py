@@ -1,8 +1,9 @@
-# pylama:ignore=E302,E722,W0401,W0611
+# pylama:ignore=E722,W0401,W0611
 from pritunl.constants import *
 
 import subprocess
 import threading
+
 
 class Process(object):
     def __init__(self, *args, **kwargs):

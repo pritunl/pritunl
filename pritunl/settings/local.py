@@ -1,10 +1,11 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl.settings.group_local import SettingsGroupLocal
 
 import threading
 
 server_start = threading.Event()
 server_start.set()
+
 
 class SettingsLocal(SettingsGroupLocal):
     group = 'local'

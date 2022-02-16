@@ -1,9 +1,10 @@
-# pylama:ignore=E302,E305
+# pylama:ignore=E305
 from pritunl import settings
 from pritunl import task
 from pritunl import link
 
 import collections
+
 
 class TaskLink(task.Task):
     type = 'link'

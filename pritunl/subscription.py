@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl.exceptions import *
@@ -10,6 +10,7 @@ from pritunl import mongo
 from pritunl import messenger
 
 import requests
+
 
 def update():
     license = settings.app.license
@@ -126,6 +127,7 @@ def update():
 
     return True
 
+
 def dict():
     if settings.app.demo_mode:
         url_key = 'demo'
@@ -144,6 +146,7 @@ def dict():
         'balance': settings.local.sub_balance,
         'url_key': url_key,
     }
+
 
 def update_license(license):
     settings.app.license = license

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305,E502,E722
+# pylama:ignore=E305,E502,E722
 import pritunl
 
 import optparse
@@ -24,6 +24,7 @@ Commands:
   logs                  View server logs
   clear-auth-limit      Reset failed authentication attempt limiter
   clear-logs            Clear server logs"""
+
 
 def main(default_conf=None):
     if len(sys.argv) > 1:

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E303,E305,E0100
+# pylama:ignore=E305,E0100
 import threading
 import unittest
 import requests
@@ -60,6 +60,7 @@ AUTH_HANDLERS = [
 ]
 RUN_ONLY = []
 
+
 def _log_request(method, endpoint, start_time):
     if endpoint.startswith('/event'):
         return
@@ -82,6 +83,8 @@ def _log_request(method, endpoint, start_time):
     print '%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)  # FIXME SyntaxError, pylama ignore won't hide
 
 _request = requests.api.request
+
+
 def request(method, endpoint, **kwargs):
     headers = {
         'Accept': 'application/json',
@@ -158,7 +161,6 @@ class SessionTestCase(unittest.TestCase):
                 response = self.session.delete('/organization/%s' % org['id'])
                 self.assertEqual(response.status_code, 200)
 
-
         response = self.session.get('/user/%s' % self.org_id)
         self.assertEqual(response.status_code, 200)
 
@@ -170,7 +172,6 @@ class SessionTestCase(unittest.TestCase):
                 self.assertEqual(response.status_code, 200)
                 time.sleep(0.1)
 
-
         response = self.session.get('/server')
         self.assertEqual(response.status_code, 200)
 
@@ -180,7 +181,6 @@ class SessionTestCase(unittest.TestCase):
                                   TEST_SERVER_NAME + '3'):
                 response = self.session.delete('/server/%s' % server['id'])
                 self.assertEqual(response.status_code, 200)
-
 
         response = self.session.get('/server/%s/organization' % self.server_id)
         self.assertEqual(response.status_code, 200)
@@ -201,7 +201,6 @@ class SessionTestCase(unittest.TestCase):
                 if org['name'] == TEST_ORG_NAME:
                     self.org_id = org['id']
 
-
         if not self.org_id:
             response = self.session.post('/organization', json_data={
                 'name': TEST_ORG_NAME,
@@ -214,7 +213,6 @@ class SessionTestCase(unittest.TestCase):
             self.assertEqual(data['name'], TEST_ORG_NAME)
             self.org_id = data['id']
 
-
         if not self.user_id:
             response = self.session.get('/user/%s' % self.org_id)
             self.assertEqual(response.status_code, 200)
@@ -223,7 +221,6 @@ class SessionTestCase(unittest.TestCase):
             for user in data:
                 if user['name'] == TEST_USER_NAME:
                     self.user_id = user['id']
-
 
         if not self.user_id:
             response = self.session.post('/user/%s' % self.org_id, json_data={
@@ -238,7 +235,6 @@ class SessionTestCase(unittest.TestCase):
             self.assertEqual(data['name'], TEST_USER_NAME)
             self.user_id = data['id']
 
-
         if not self.server_id:
             response = self.session.get('/server')
             self.assertEqual(response.status_code, 200)
@@ -247,7 +243,6 @@ class SessionTestCase(unittest.TestCase):
             for server in data:
                 if server['name'] == TEST_SERVER_NAME:
                     self.server_id = server['id']
-
 
         if not self.server_id:
             response = self.session.post('/server', json_data={
@@ -279,7 +274,6 @@ class Auth(SessionTestCase):
         })
         self.assertEqual(response.status_code, 200)
 
-
         response = self.session.get('/auth')
         self.assertEqual(response.status_code, 200)
 
@@ -291,7 +285,6 @@ class Auth(SessionTestCase):
         self.assertEqual(data['email_from'], TEST_EMAIL_FROM)
         self.assertIn('email_api_key', data)
         self.assertEqual(data['email_api_key'], TEST_EMAIL_API_KEY)
-
 
         response = self.session.put('/auth', json_data={
             'username': USERNAME,
@@ -316,7 +309,6 @@ class Auth(SessionTestCase):
         self.assertIn('authenticated', data)
         self.assertTrue(data['authenticated'])
 
-
         response = session.get('/auth/session')
         self.assertEqual(response.status_code, 200)
 
@@ -324,14 +316,12 @@ class Auth(SessionTestCase):
         self.assertIn('authenticated', data)
         self.assertTrue(data['authenticated'])
 
-
         response = session.delete('/auth/session')
         self.assertEqual(response.status_code, 200)
 
         data = response.json()
         self.assertIn('authenticated', data)
         self.assertFalse(data['authenticated'])
-
 
         response = session.get('/auth/session')
         self.assertEqual(response.status_code, 200)
@@ -401,7 +391,6 @@ class Key(SessionTestCase):
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
 
-
         response = self.session.get('/key/%s/%s' % (
             self.org_id, self.user_id))
         self.assertEqual(response.status_code, 200)
@@ -421,7 +410,6 @@ class Key(SessionTestCase):
         exp = r'^/ku/[a-zA-Z0-9]+$'
         self.assertRegexpMatches(data['uri_url'], exp)
 
-
         response = self.session.get(data['key_url'])
         self.assertEqual(response.status_code, 200)
 
@@ -431,7 +419,6 @@ class Key(SessionTestCase):
         content_disposition = response.headers['content-disposition']
         exp = r'^attachment; filename="%s.tar"$' % TEST_USER_NAME
         self.assertRegexpMatches(content_disposition, exp)
-
 
         response = self.session.get(data['view_url'])
         self.assertEqual(response.status_code, 200)
@@ -490,21 +477,17 @@ class Key(SessionTestCase):
         delete_link = response.text[start_index:end_index]
         self.assertEqual(data['view_url'], delete_link)
 
-
         response = self.session.get(data['uri_url'])
         self.assertEqual(response.status_code, 200)
 
         content_type = response.headers['content-type']
         self.assertEqual(content_type, 'application/json')
 
-
         response = self.session.delete(data['view_url'])
         self.assertEqual(response.status_code, 200)
 
-
         response = self.session.get(data['view_url'])
         self.assertEqual(response.status_code, 404)
-
 
         response = self.session.delete('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
@@ -551,7 +534,6 @@ class Org(SessionTestCase):
         self.assertEqual(data['name'], TEST_ORG_NAME + '2')
         org_id = data['id']
 
-
         response = self.session.put('/organization/%s' % org_id, json_data={
             'name': TEST_ORG_NAME + '3',
         })
@@ -561,7 +543,6 @@ class Org(SessionTestCase):
         self.assertIn('id', data)
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_ORG_NAME + '3')
-
 
         response = self.session.get('/organization')
         self.assertEqual(response.status_code, 200)
@@ -578,10 +559,8 @@ class Org(SessionTestCase):
                 self.assertEqual(org['id'], org_id)
         self.assertTrue(test_org_found)
 
-
         response = self.session.delete('/organization/%s' % org_id)
         self.assertEqual(response.status_code, 200)
-
 
         response = self.session.get('/organization')
         self.assertEqual(response.status_code, 200)
@@ -659,7 +638,6 @@ class Server(SessionTestCase):
         self.assertFalse(data['lzo_compression'])
         server_id = data['id']
 
-
         response = self.session.put('/server/%s' % server_id, json_data={
             'name': TEST_SERVER_NAME + '3',
         })
@@ -696,7 +674,6 @@ class Server(SessionTestCase):
         self.assertFalse(data['otp_auth'])
         self.assertIn('lzo_compression', data)
         self.assertFalse(data['lzo_compression'])
-
 
         response = self.session.get('/server')
         self.assertEqual(response.status_code, 200)
@@ -740,10 +717,8 @@ class Server(SessionTestCase):
                 self.assertFalse(server['lzo_compression'])
         self.assertTrue(test_server_found)
 
-
         response = self.session.delete('/server/%s' % server_id)
         self.assertEqual(response.status_code, 200)
-
 
         response = self.session.get('/server')
         self.assertEqual(response.status_code, 200)
@@ -769,7 +744,6 @@ class Server(SessionTestCase):
         self.assertIn('name', data)
         self.assertEqual(data['name'], TEST_ORG_NAME)
 
-
         response = self.session.get('/server/%s/organization' % self.server_id)
         self.assertEqual(response.status_code, 200)
 
@@ -787,7 +761,6 @@ class Server(SessionTestCase):
                 self.assertEqual(server_org['id'], self.org_id)
         self.assertTrue(test_server_org_found)
 
-
         response = self.session.delete('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
@@ -804,7 +777,6 @@ class Server(SessionTestCase):
         self.assertIn('server', data)
         self.assertEqual(data['server'], self.server_id)
 
-
         response = self.session.put('/server/%s/start' % self.server_id)
         self.assertEqual(response.status_code, 200)
 
@@ -813,7 +785,6 @@ class Server(SessionTestCase):
         self.assertEqual(data['id'], self.server_id)
         self.assertIn('status', data)
         self.assertTrue(data['status'])
-
 
         response = self.session.put('/server/%s/restart' % self.server_id)
         self.assertEqual(response.status_code, 200)
@@ -824,7 +795,6 @@ class Server(SessionTestCase):
         self.assertIn('status', data)
         self.assertTrue(data['status'])
 
-
         response = self.session.put('/server/%s/stop' % self.server_id)
         self.assertEqual(response.status_code, 200)
 
@@ -833,7 +803,6 @@ class Server(SessionTestCase):
         self.assertEqual(data['id'], self.server_id)
         self.assertIn('status', data)
         self.assertFalse(data['status'])
-
 
         response = self.session.delete('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
@@ -891,7 +860,6 @@ class Server(SessionTestCase):
         self.assertIn('sent', data['1d'])
         self.assertEqual(len(data['1d']['sent']), lengths['1d'])
 
-
         for period in ('1m', '5m', '30m', '2h', '1d'):
             response = self.session.get('/server/%s/bandwidth/%s' % (
                 self.server_id, period))
@@ -915,7 +883,6 @@ class Server(SessionTestCase):
         self.assertIn('server', data)
         self.assertEqual(data['server'], self.server_id)
 
-
         response = self.session.put('/server/%s/start' % self.server_id)
         self.assertEqual(response.status_code, 200)
 
@@ -924,7 +891,6 @@ class Server(SessionTestCase):
         self.assertEqual(data['id'], self.server_id)
         self.assertIn('status', data)
         self.assertTrue(data['status'])
-
 
         response = self.session.put('/server/%s' % self.server_id, json_data={
             'name': TEST_SERVER_NAME + '_test',
@@ -936,7 +902,6 @@ class Server(SessionTestCase):
         self.assertEqual(data['error'], 'server_not_offline')
         self.assertIn('error_msg', data)
 
-
         response = self.session.put('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 400)
@@ -946,7 +911,6 @@ class Server(SessionTestCase):
         self.assertEqual(data['error'], 'server_not_offline')
         self.assertIn('error_msg', data)
 
-
         response = self.session.delete('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 400)
@@ -955,7 +919,6 @@ class Server(SessionTestCase):
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'server_not_offline')
         self.assertIn('error_msg', data)
-
 
         response = self.session.put('/server/%s/stop' % self.server_id)
         self.assertEqual(response.status_code, 200)
@@ -966,11 +929,9 @@ class Server(SessionTestCase):
         self.assertIn('status', data)
         self.assertFalse(data['status'])
 
-
         response = self.session.delete('/server/%s/organization/%s' % (
             self.server_id, self.org_id))
         self.assertEqual(response.status_code, 200)
-
 
         for test_network in (
                     '10.254.254.024',
@@ -991,7 +952,6 @@ class Server(SessionTestCase):
             self.assertEqual(data['error'], 'network_invalid')
             self.assertIn('error_msg', data)
 
-
         for test_interface in (
                     'tun-1',
                     'tun.0',
@@ -1009,7 +969,6 @@ class Server(SessionTestCase):
             self.assertEqual(data['error'], 'interface_invalid')
             self.assertIn('error_msg', data)
 
-
         for test_port in (0, 65536):
             response = self.session.post('/server', json_data={
                 'name': TEST_SERVER_NAME + '_test',
@@ -1022,7 +981,6 @@ class Server(SessionTestCase):
             self.assertEqual(data['error'], 'port_invalid')
             self.assertIn('error_msg', data)
 
-
         response = self.session.post('/server', json_data={
             'name': TEST_SERVER_NAME + '_test',
             'dh_param_bits': 512,
@@ -1033,7 +991,6 @@ class Server(SessionTestCase):
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'dh_param_bits_invalid')
         self.assertIn('error_msg', data)
-
 
         response = self.session.post('/server', json_data={
             'name': TEST_SERVER_NAME + '_test',
@@ -1046,7 +1003,6 @@ class Server(SessionTestCase):
         self.assertEqual(data['error'], 'mode_invalid')
         self.assertIn('error_msg', data)
 
-
         response = self.session.post('/server', json_data={
             'name': TEST_SERVER_NAME + '_test',
             'dns_servers': ['8.8.8.a'],
@@ -1057,7 +1013,6 @@ class Server(SessionTestCase):
         self.assertIn('error', data)
         self.assertEqual(data['error'], 'dns_server_invalid')
         self.assertIn('error_msg', data)
-
 
         response = self.session.post('/server', json_data={
             'name': TEST_SERVER_NAME + '_test',
@@ -1127,7 +1082,6 @@ class User(SessionTestCase):
         self.assertIn('otp_secret', data)
         user_id = data['id']
 
-
         response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
                                     json_data={
                                         'name': TEST_USER_NAME + '3',
@@ -1149,7 +1103,6 @@ class User(SessionTestCase):
         self.assertIn('type', data)
         self.assertIn('otp_secret', data)
 
-
         response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
                                     json_data={
                                         'disabled': False,
@@ -1170,7 +1123,6 @@ class User(SessionTestCase):
         self.assertFalse(data['disabled'])
         self.assertIn('type', data)
         self.assertIn('otp_secret', data)
-
 
         response = self.session.get('/user/%s' % self.org_id)
         self.assertEqual(response.status_code, 200)

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import app
@@ -6,10 +6,12 @@ from pritunl import database
 
 import flask
 
+
 @app.app.before_request
 def before_request():
     if settings.local.www_state == DISABLED:
         raise flask.abort(401, settings.local.notification)
+
 
 @app.app.url_value_preprocessor
 def parse_object_id(_, values):

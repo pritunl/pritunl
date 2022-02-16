@@ -1,10 +1,11 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import logger
 from pritunl import monitoring
 
 import threading
+
 
 @interrupter
 def _monitoring_thread():
@@ -28,6 +29,7 @@ def _monitoring_thread():
                              influxdb_uri=settings.app.influxdb_uri,
                              )
             yield interrupter_sleep(5)
+
 
 def setup_monitoring():
     monitoring.init()

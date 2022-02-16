@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -8,6 +8,7 @@ from pritunl import utils
 
 import pymongo
 import datetime
+
 
 class ServerOutput(object):
     def __init__(self, server_id):

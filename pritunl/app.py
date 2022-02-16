@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E251,E302,E306,E502,E722,W0401
+# pylama:ignore=E131,E251,E306,E502,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -27,6 +27,7 @@ _cur_redirect_server = None
 _cur_reverse_proxy = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
+
 
 def update_server(delay=0):
     global _cur_ssl
@@ -82,6 +83,7 @@ def update_server(delay=0):
     finally:
         _update_lock.release()
 
+
 def stop_server(delay=0):
     _watch_event.clear()
     def thread_func():
@@ -94,6 +96,7 @@ def stop_server(delay=0):
     thread = threading.Thread(target=thread_func)
     thread.daemon = True
     thread.start()
+
 
 def restart_server(delay=0):
     _watch_event.clear()
@@ -108,6 +111,7 @@ def restart_server(delay=0):
     thread.daemon = True
     thread.start()
 
+
 def restart_server_fast():
     _watch_event.clear()
     set_app_server_interrupt()
@@ -116,10 +120,13 @@ def restart_server_fast():
     time.sleep(1)
     clear_app_server_interrupt()
 
+
 @app.before_request
 def before_request():
     flask.g.valid = False
+
     flask.g.start = time.time()
+
 
 @app.after_request
 def after_request(response):
@@ -142,6 +149,7 @@ def after_request(response):
 
     return response
 
+
 @app.route('/.well-known/acme-challenge/<token>', methods=['GET'])
 @auth.open_auth
 def acme_token_get(token):
@@ -150,6 +158,7 @@ def acme_token_get(token):
     if authorization:
         return flask.Response(authorization, mimetype='text/plain')
     return flask.abort(404)
+
 
 def _run_server(restart):
     global app_server
@@ -256,6 +265,7 @@ def _run_server(restart):
         except:
             pass
 
+
 def _run_wsgi():
     restart = False
     while True:
@@ -268,6 +278,7 @@ def _run_wsgi():
             restart = True
             logger.info('Server restarting...', 'app')
 
+
 def setup_server_cert():
     global _cur_cert
     global _cur_key
@@ -279,6 +290,7 @@ def setup_server_cert():
 
         _cur_cert = settings.app.server_cert
         _cur_key = settings.app.server_key
+
 
 def run_server():
     global _cur_ssl

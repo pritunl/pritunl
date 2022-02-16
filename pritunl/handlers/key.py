@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E306,E722,W0401,W0404,W0611,W0621
+# pylama:ignore=E306,E722,W0401,W0404,W0611,W0621
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -31,6 +31,7 @@ import unicodedata
 import nacl.public
 from cryptography.exceptions import InvalidSignature
 
+
 def _get_key_tar_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
     usr = org.get_user(user_id)
@@ -42,6 +43,7 @@ def _get_key_tar_archive(org_id, user_id):
                          unicodedata.normalize(
                             'NFKD', usr.name).encode('ascii', 'ignore').decode())
     return (usr, response)
+
 
 def _get_key_zip_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
@@ -58,6 +60,7 @@ def _get_key_zip_archive(org_id, user_id):
                                                                 ))
     return (usr, response)
 
+
 def _get_onc_archive(org_id, user_id):
     org = organization.get_by_id(org_id)
     usr = org.get_user(user_id)
@@ -72,6 +75,7 @@ def _get_onc_archive(org_id, user_id):
                                                                     'NFKD', usr.name).encode('ascii', 'ignore').decode(),
                                                                 ))
     return (usr, response)
+
 
 def _find_doc(query, one_time=None, one_time_new=False):
     utils.rand_sleep()
@@ -112,6 +116,7 @@ def _find_doc(query, one_time=None, one_time_new=False):
 
     return doc
 
+
 @app.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
 @auth.session_light_auth
 def user_key_tar_archive_get(org_id, user_id):
@@ -131,6 +136,7 @@ def user_key_tar_archive_get(org_id, user_id):
     )
 
     return resp
+
 
 @app.app.route('/key/<org_id>/<user_id>.zip', methods=['GET'])
 @auth.session_light_auth
@@ -152,6 +158,7 @@ def user_key_zip_archive_get(org_id, user_id):
 
     return resp
 
+
 @app.app.route('/key_onc/<org_id>/<user_id>.onc', methods=['GET'])
 @auth.session_light_auth
 def user_key_onc_archive_get(org_id, user_id):
@@ -171,6 +178,7 @@ def user_key_onc_archive_get(org_id, user_id):
     )
 
     return resp
+
 
 @app.app.route('/key/<org_id>/<user_id>', methods=['GET'])
 @auth.session_auth
@@ -192,6 +200,7 @@ def user_key_link_get(org_id, user_id):
     )
 
     return utils.jsonify(org.create_user_key_link(user_id))
+
 
 @app.app.route('/key/<org_id>/<user_id>/<server_id>.key', methods=['GET'])
 @auth.session_light_auth
@@ -219,6 +228,7 @@ def user_linked_key_conf_get(org_id, user_id, server_id):
                          'attachment; filename="%s"' % key_conf['name'])
 
     return response
+
 
 @app.app.route('/key/<key_id>.tar', methods=['GET'])
 @auth.open_auth
@@ -263,6 +273,7 @@ def user_linked_key_tar_archive_get(key_id):
 
     return resp
 
+
 @app.app.route('/key/<key_id>.zip', methods=['GET'])
 @auth.open_auth
 def user_linked_key_zip_archive_get(key_id):
@@ -306,6 +317,7 @@ def user_linked_key_zip_archive_get(key_id):
 
     return resp
 
+
 @app.app.route('/key_onc/<key_id>.onc', methods=['GET'])
 @auth.open_auth
 def user_linked_key_onc_archive_get(key_id):
@@ -348,6 +360,7 @@ def user_linked_key_onc_archive_get(key_id):
                     )
 
     return resp
+
 
 @app.app.route('/key_pin/<key_id>', methods=['PUT'])
 @auth.open_auth
@@ -434,6 +447,7 @@ def user_key_pin_put(key_id):
     event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     return utils.jsonify({})
+
 
 @app.app.route('/k/<short_code>', methods=['GET'])
 @auth.open_auth
@@ -548,6 +562,7 @@ def user_linked_key_page_get(short_code):
 
     return key_page
 
+
 @app.app.route('/k/<short_code>', methods=['DELETE'])
 @auth.open_auth
 def user_linked_key_page_delete(short_code):
@@ -567,6 +582,7 @@ def user_linked_key_page_delete(short_code):
     })
 
     return utils.jsonify({})
+
 
 @app.app.route('/ku/<short_code>', methods=['GET'])
 @auth.open_auth
@@ -603,6 +619,7 @@ def user_uri_key_page_get(short_code):
         keys[key['name']] = key['conf']
 
     return utils.jsonify(keys)
+
 
 @app.app.route('/key/<key_id>/<server_id>.key', methods=['GET'])
 @auth.open_auth
@@ -672,6 +689,7 @@ def user_linked_key_conf_get(key_id, server_id):
                          'attachment; filename="%s"' % key_conf['name'])
 
     return response
+
 
 @app.app.route('/key/sync/<org_id>/<user_id>/<server_id>/<key_hash>',
                methods=['GET'])
@@ -834,6 +852,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         })
 
     return utils.jsonify({})
+
 
 @app.app.route('/key/wg/<org_id>/<user_id>/<server_id>',
                methods=['POST'])
@@ -1145,6 +1164,7 @@ def key_wg_post(org_id, user_id, server_id):
         'nonce': send_nonce64,
         'signature': sync_signature,
     })
+
 
 @app.app.route('/key/wg/<org_id>/<user_id>/<server_id>',
                methods=['PUT'])

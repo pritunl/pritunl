@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import json
+
 
 class Item(object):
     def __init__(self, collection, id, key, value, signature=None):

@@ -1,6 +1,7 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.settings.group_mongo import SettingsGroupMongo
+
 
 class SettingsUser(SettingsGroupMongo):
     group = 'user'

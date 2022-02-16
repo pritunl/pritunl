@@ -1,9 +1,10 @@
-# pylama:ignore=E131,E302,E502,W0612
+# pylama:ignore=E131,E502,W0612
 from pritunl import settings
 from pritunl import logger
 
 import json
 import requests
+
 
 def verify_authzero(user_name):
     response = requests.post(

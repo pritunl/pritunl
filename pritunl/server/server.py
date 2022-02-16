@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E302,E502,E722,W0401
+# pylama:ignore=E122,E502,E722,W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
@@ -95,6 +95,7 @@ operation_fields = dict_fields + [
     'tls_auth_key',
     'ca_certificate',
 ]
+
 
 class Server(mongo.MongoObject):
     fields = {

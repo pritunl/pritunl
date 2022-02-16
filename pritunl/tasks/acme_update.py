@@ -1,10 +1,11 @@
-# pylama:ignore=E302,E305
+# pylama:ignore=E305
 from pritunl import task
 from pritunl import logger
 from pritunl import acme
 from pritunl import app
 from pritunl import utils
 from pritunl import settings
+
 
 class AcmeUpdate(task.Task):
     type = 'acme_update'

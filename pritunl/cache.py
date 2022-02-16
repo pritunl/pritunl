@@ -1,4 +1,4 @@
-# pylama:ignore=E271,E302,W0401
+# pylama:ignore=E271,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
@@ -12,6 +12,7 @@ import redis
 _set = set
 _client = None
 has_cache = False
+
 
 def init():
     global _client
@@ -33,14 +34,17 @@ def init():
         socket_connect_timeout=settings.app.redis_timeout,
     )
 
+
 def get(key):
     return _client.get(key)
+
 
 def set(key, val, ttl=None):
     if ttl:
         _client.setex(key, ttl, val)
     else:
         _client.set(key, val)
+
 
 def lpush(key, *vals, **kwargs):
     ttl = kwargs.get('ttl')
@@ -57,6 +61,7 @@ def lpush(key, *vals, **kwargs):
             pipe.expire(key, ttl)
         pipe.execute()
 
+
 def rpush(key, *vals, **kwargs):
     ttl = kwargs.get('ttl')
     cap = kwargs.get('cap')
@@ -72,8 +77,10 @@ def rpush(key, *vals, **kwargs):
             pipe.expire(key, ttl)
         pipe.execute()
 
+
 def remove(key):
     return  _client.delete(key)
+
 
 def publish(channels, message, extra=None, cap=50, ttl=300):
     if isinstance(channels, str):
@@ -99,11 +106,13 @@ def publish(channels, message, extra=None, cap=50, ttl=300):
         pipe.publish(channel, doc)
         pipe.execute()
 
+
 def get_cursor_id(channel):
     msg = _client.lindex(channel, 0)
     if msg:
         doc = json.loads(msg, object_hook=utils.json_object_hook_handler)
         return doc['_id']
+
 
 @interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,

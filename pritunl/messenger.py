@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import cache
@@ -7,6 +7,7 @@ from pritunl import database
 
 import pymongo
 import time
+
 
 def publish(channels, message, extra=None, transaction=None):
     if cache.has_cache:
@@ -61,6 +62,7 @@ def publish(channels, message, extra=None, transaction=None):
                 docs.append(doc_copy)
             collection.insert(docs, manipulate=False)
 
+
 def get_cursor_id(channels):
     if cache.has_cache:
         if not isinstance(channels, str):
@@ -85,6 +87,7 @@ def get_cursor_id(channels):
                 raise
             else:
                 publish(channels, None)
+
 
 @interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,

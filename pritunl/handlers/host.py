@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import app
 from pritunl import host
@@ -12,6 +12,7 @@ from pritunl import server
 from pritunl import settings
 
 import flask
+
 
 @app.app.route('/host', methods=['GET'])
 @app.app.route('/host/<hst>', methods=['GET'])
@@ -49,6 +50,7 @@ def host_get(hst=None):
     if settings.app.demo_mode:
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
+
 
 @app.app.route('/host/<hst>', methods=['PUT'])
 @auth.session_auth
@@ -166,6 +168,7 @@ def host_put(hst=None):
 
     return utils.jsonify(hst.dict())
 
+
 @app.app.route('/host/<hst>', methods=['DELETE'])
 @auth.session_auth
 def host_delete(hst):
@@ -179,6 +182,7 @@ def host_delete(hst):
     event.Event(type=HOSTS_UPDATED)
 
     return utils.jsonify({})
+
 
 @app.app.route('/host/<hst>/usage/<period>', methods=['GET'])
 @auth.session_auth

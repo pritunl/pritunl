@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E502,W0401,W0611
+# pylama:ignore=E502,W0401,W0611
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -12,6 +12,7 @@ import hashlib
 from cryptography.hazmat.primitives.serialization import load_pem_public_key
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+
 
 def oracle_get_metadata():
     public_key_pem = settings.app.oracle_public_key
@@ -41,6 +42,7 @@ def oracle_get_metadata():
         'compartment_ocid': metadata['instance']['compartmentId'],
         'vnic_ocid': metadata['vnics'][0]['vnicId'],
     }
+
 
 def oracle_add_route(dest_network):
     mdata = oracle_get_metadata()

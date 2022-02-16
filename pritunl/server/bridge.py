@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.exceptions import *
 from pritunl import settings
 from pritunl import logger
@@ -12,6 +12,7 @@ _lock = threading.Lock()
 _bridges = {}
 _bridges_lock = collections.defaultdict(threading.Lock)
 _interfaces = {}
+
 
 class Bridge(object):
     def __init__(self, network):
@@ -243,6 +244,7 @@ class Bridge(object):
 
         self.interfaces.remove(interface)
 
+
 def add_interface(network, interface):
     _lock.acquire()
     bridge_lock = _bridges_lock[network]
@@ -267,6 +269,7 @@ def add_interface(network, interface):
         return bridge.bridge_interface, bridge.host_interface_data
     finally:
         bridge_lock.release()
+
 
 def rem_interface(network, interface):
     _lock.acquire()

@@ -1,10 +1,11 @@
-# pylama:ignore=E302,E722
+# pylama:ignore=E722
 from pritunl import settings
 from pritunl import logger
 from pritunl import server
 from pritunl import listener
 
 import time
+
 
 def _on_msg(msg):
     if msg['message'] != 'start':
@@ -27,6 +28,7 @@ def _on_msg(msg):
         svr.run(send_events=msg.get('send_events'))
     except:
         logger.exception('Failed to run server', 'runners')
+
 
 def start_server():
     listener.add_listener('servers', _on_msg)

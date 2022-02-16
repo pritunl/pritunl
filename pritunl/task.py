@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -15,6 +15,7 @@ _task_types = {}
 tasks = collections.defaultdict(
     lambda: collections.defaultdict(lambda: collections.defaultdict(list)))
 tasks_on_start = []
+
 
 class Task(mongo.MongoObject):
     fields = {
@@ -107,11 +108,13 @@ class Task(mongo.MongoObject):
     def task(self):
         pass
 
+
 def iter_tasks(spec=None):
     for doc in Task.collection.find(spec or {}):
         task = _task_types.get(doc['type'])
         if task:
             yield task(doc=doc)
+
 
 def add_task(task_cls, hours=None, minutes=None, seconds=None,
              run_on_start=False):

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401,W0611
+# pylama:ignore=E722,W0401,W0611
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -12,6 +12,7 @@ import subprocess
 import time
 import json
 import bson
+
 
 @interrupter
 def _vault_thread():
@@ -52,6 +53,7 @@ def _vault_thread():
             logger.exception('Error in vault service', 'setup')
 
         yield interrupter_sleep(1)
+
 
 def setup_vault():
     if SE_MODE:

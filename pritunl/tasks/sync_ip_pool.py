@@ -1,7 +1,8 @@
-# pylama:ignore=E302,E305,E722
+# pylama:ignore=E305,E722
 from pritunl import task
 from pritunl import logger
 from pritunl import server
+
 
 class TaskSyncIpPool(task.Task):
     type = 'sync_ip_pool'

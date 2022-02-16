@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305,E722,W0401
+# pylama:ignore=E305,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -10,6 +10,7 @@ from pritunl import event
 from pritunl import monitoring
 
 import datetime
+
 
 class TaskHost(task.Task):
     type = 'host'

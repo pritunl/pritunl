@@ -1,4 +1,4 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl.link.link import Link, Location, Host
 
 from pritunl import settings
@@ -6,8 +6,10 @@ from pritunl import mongo
 
 import math
 
+
 def get_by_id(id):
     return Link(id=id)
+
 
 def get_by_name(name, fields=None):
     doc = Link.collection.find_one({
@@ -17,11 +19,14 @@ def get_by_name(name, fields=None):
     if doc:
         return Link(doc=doc, fields=fields)
 
+
 def get_location(id):
     return Location(id=id)
 
+
 def get_host(host_id):
     return Host(id=host_id)
+
 
 def iter_links(page=None):
     limit = None
@@ -42,11 +47,13 @@ def iter_links(page=None):
     for doc in cursor:
         yield Link(doc=doc)
 
+
 def iter_hosts(spec=None):
     cursor = Host.collection.find(spec or {})
 
     for doc in cursor:
         yield Host(doc=doc)
+
 
 def get_page_total():
     collection = mongo.get_collection('links')

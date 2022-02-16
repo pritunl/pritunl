@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -31,6 +31,7 @@ db_ready = threading.Event()
 server_ready = threading.Event()
 setup_state = None
 
+
 def stop_server():
     def stop():
         global web_process_state
@@ -47,6 +48,7 @@ def stop_server():
     settings.local.server_ready.wait()
     threading.Thread(target=stop).start()
 
+
 def redirect(location, code=302):
     url_root = flask.request.headers.get('PR-Forwarded-Url')
 
@@ -55,12 +57,14 @@ def redirect(location, code=302):
 
     return flask.redirect(urllib.parse.urljoin(url_root, location), code)
 
+
 @app.before_request
 def before_request():
     flask.g.query_count = 0
     flask.g.write_count = 0
     flask.g.query_time = 0
     flask.g.start = time.time()
+
 
 @app.after_request
 def after_request(response):
@@ -75,12 +79,14 @@ def after_request(response):
 
     return response
 
+
 @app.route('/', methods=['GET'])
 def index_get():
     if setup_state == 'upgrade':
         return redirect('upgrade')
     else:
         return redirect('setup')
+
 
 @app.route('/setup', methods=['GET'])
 def setup_get():
@@ -95,6 +101,7 @@ def setup_get():
 
     return static_file.get_response()
 
+
 @app.route('/upgrade', methods=['GET'])
 def upgrade_get():
     if setup_state != 'upgrade':
@@ -107,6 +114,7 @@ def upgrade_get():
         return flask.abort(404)
 
     return static_file.get_response()
+
 
 @app.route('/setup/s/<file_name>', methods=['GET'])
 def static_get(file_name):
@@ -124,6 +132,7 @@ def static_get(file_name):
         return flask.abort(404)
 
     return static_file.get_response()
+
 
 @app.route('/setup/mongodb', methods=['PUT'])
 def setup_mongodb_put():
@@ -175,11 +184,13 @@ def setup_mongodb_put():
 
     return ''
 
+
 @app.route('/setup/upgrade', methods=['GET'])
 def setup_upgrade_get():
     if upgrade_done.wait(15):
         return 'true'
     return ''
+
 
 def server_thread():
     global server
@@ -246,6 +257,7 @@ def server_thread():
     setup_ready.set()
     settings.local.server_start.set()
 
+
 def upgrade_database():
     upgrade.database_setup()
 
@@ -259,10 +271,12 @@ def upgrade_database():
             set_global_interrupt()
     threading.Thread(target=_upgrade_thread).start()
 
+
 def on_system_msg(msg):
     if msg['message'] == SHUT_DOWN:
         logger.warning('Received shut down event', 'setup')
         set_global_interrupt()
+
 
 def check_db_ver():
     db_ver = utils.get_db_ver()
@@ -279,6 +293,7 @@ def check_db_ver():
         exit(75)
 
     return utils.get_int_ver(MIN_DATABASE_VER) > db_min_ver_int
+
 
 def setup_server():
     global setup_state

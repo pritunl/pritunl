@@ -1,4 +1,4 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl.runners.settings import start_settings
 from pritunl.runners.logger import start_logger
 from pritunl.runners.journal import start_journal
@@ -15,6 +15,7 @@ from pritunl.runners.instance import start_instance
 from pritunl.runners.time_sync import start_time_sync
 from pritunl.runners.limiter import start_limiter
 from pritunl.runners.listener import start_listener
+
 
 def start_all():
     start_settings()

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -6,6 +6,7 @@ from pritunl import subscription
 from pritunl import logger
 
 import threading
+
 
 @interrupter
 def _subscription_thread():
@@ -17,6 +18,7 @@ def _subscription_thread():
             raise
         except:
             logger.exception('Error in subscription thread', 'runners')
+
 
 def start_subscription():
     settings.local.sub_active = None

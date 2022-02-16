@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
@@ -7,6 +7,7 @@ from pritunl import event
 from pritunl import queue
 
 import os
+
 
 @queue.add_queue
 class QueueDhParams(queue.Queue):
@@ -97,6 +98,7 @@ class QueueDhParams(queue.Queue):
     def resume_task(self):
         self.queue_com.running.set()
 
+
 @queue.add_reserve('pooled_dh_params')
 def reserve_pooled_dh_params(svr):
     doc = QueueDhParams.dh_params_collection.find_and_modify({
@@ -112,6 +114,7 @@ def reserve_pooled_dh_params(svr):
 
     svr.dh_params = doc['dh_params']
     return True
+
 
 @queue.add_reserve('queued_dh_params')
 def reserve_queued_dh_params(svr, block=False):

@@ -1,7 +1,8 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.upgrade.utils import get_collection
 
 from pritunl.constants import *
+
 
 def upgrade_1_24():
     settings_collection = get_collection('settings')

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.helpers import *
 from pritunl.constants import *
 
@@ -6,6 +6,7 @@ import base64
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
+
 
 def generate_host_key():
     private_key = rsa.generate_private_key(
@@ -21,6 +22,7 @@ def generate_host_key():
     )
 
     return base64.b64encode(private_pem)
+
 
 def generate_client_key():
     private_key = rsa.generate_private_key(

@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import inspect
+
 
 def get_functions(module):
     funcs = {}

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import logger
@@ -11,6 +11,7 @@ import subprocess
 import time
 
 default_interface6 = None
+
 
 @interrupter
 def _default_interface_thread():
@@ -47,6 +48,7 @@ def _default_interface_thread():
         default_interface6 = iface6 or iface6_alt
 
         time.sleep(10)
+
 
 @interrupter
 def _ndppd_thread():
@@ -129,6 +131,7 @@ def _ndppd_thread():
                 pass
 
         yield interrupter_sleep(1)
+
 
 def setup_ndppd():
     threading.Thread(target=_default_interface_thread).start()

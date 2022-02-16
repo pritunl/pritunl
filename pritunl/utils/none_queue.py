@@ -1,8 +1,9 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from time import time as _time
 import threading as _threading
 from collections import deque
 import queue
+
 
 # Copy of Queue.Queue returning None instead of raising Queue.Empty
 # for better performance

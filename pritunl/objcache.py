@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import threading
+
 
 class ObjCache(object):
     def __init__(self, ttl=60):

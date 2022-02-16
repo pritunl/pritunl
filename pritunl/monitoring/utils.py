@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722
+# pylama:ignore=E722
 import urllib.parse
 
 def get_servers(uri):

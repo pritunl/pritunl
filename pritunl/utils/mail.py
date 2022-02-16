@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.exceptions import *
 from pritunl import settings
 
@@ -6,6 +6,7 @@ import smtplib
 import ssl
 import email.mime.multipart
 import email.mime.text
+
 
 def send_email(to_addr, subject, text_body, html_body):
     from pritunl import logger

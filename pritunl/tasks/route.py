@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305,E722,W0401
+# pylama:ignore=E305,E722,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -9,6 +9,7 @@ from pritunl import task
 from pritunl import server
 
 import datetime
+
 
 class TaskRoute(task.Task):
     type = 'route'

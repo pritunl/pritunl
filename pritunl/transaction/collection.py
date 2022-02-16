@@ -1,7 +1,8 @@
-# pylama:ignore=E261,E302,W0401
+# pylama:ignore=E261,W0401
 from pritunl.transaction.action import TransactionAction
 
 from pritunl.constants import *
+
 
 class TransactionCollection(object):
     def __init__(self, actions=None, collection_name=None, action_sets=None):

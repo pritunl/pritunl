@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import logging
+
 
 def setup_logger():
     from pritunl.app import app

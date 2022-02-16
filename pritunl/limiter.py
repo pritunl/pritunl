@@ -1,4 +1,4 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import settings
 from pritunl import mongo
 from pritunl import utils
@@ -8,6 +8,7 @@ import datetime
 
 _get_time = time.time
 limiters = []
+
 
 class Limiter(object):
     def __init__(self, group_name, limit_name, limit_timeout_name):
@@ -31,6 +32,7 @@ class Limiter(object):
         else:
             self.peers_expire_count[peer] = (cur_time + limit_timeout, 1)
         return True
+
 
 def auth_check(user_id):
     collection = mongo.get_collection('auth_limiter')

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305
+# pylama:ignore=E305
 from pritunl.settings.settings import Settings
 
 from pritunl.settings.app import SettingsApp
@@ -16,6 +16,7 @@ local = SettingsLocal
 mongo = SettingsMongo
 user = SettingsUser
 vpn = SettingsVpn
+
 
 def commit():
     pass

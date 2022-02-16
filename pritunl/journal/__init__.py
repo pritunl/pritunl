@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.journal.events import *
 
 from pritunl.constants import *
@@ -10,6 +10,7 @@ import bson
 
 journal_queue = collections.deque()
 
+
 def get_base_entry(event):
     data = {
         'id': bson.ObjectId(),
@@ -20,6 +21,7 @@ def get_base_entry(event):
     data.update(settings.local.host.journal_data)
 
     return data
+
 
 def entry(event, *args, **kwargs):
     if settings.app.auditing != ALL:

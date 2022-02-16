@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.settings.app import SettingsApp
 from pritunl.settings.conf import SettingsConf
 from pritunl.settings.local import SettingsLocal
@@ -17,6 +17,7 @@ module_classes = (
     SettingsUser,
     SettingsVpn,
 )
+
 
 class Settings(object):
     def __init__(self):

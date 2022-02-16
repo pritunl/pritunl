@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import listener
+
 
 def setup_server_listeners():
     from pritunl import clients

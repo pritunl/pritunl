@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -8,6 +8,7 @@ from pritunl import utils
 
 import threading
 import time
+
 
 @interrupter
 def _check_thread():
@@ -38,6 +39,7 @@ def _check_thread():
         except:
             logger.exception('Error in transaction runner thread', 'runners')
             time.sleep(0.5)
+
 
 def start_transaction():
     threading.Thread(target=_check_thread).start()

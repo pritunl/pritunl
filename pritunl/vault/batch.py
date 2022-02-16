@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.vault.nonces import *
 
 from pritunl.exceptions import *
@@ -9,6 +9,7 @@ import time
 import base64
 import json
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+
 
 class Batch(object):
     def __init__(self):

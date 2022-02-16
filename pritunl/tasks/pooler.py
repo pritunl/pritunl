@@ -1,6 +1,7 @@
-# pylama:ignore=E302,E305
+# pylama:ignore=E305
 from pritunl import pooler
 from pritunl import task
+
 
 class TaskPooler(task.Task):
     type = 'pooler'

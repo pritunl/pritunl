@@ -1,7 +1,8 @@
-# pylama:ignore=E302,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
+
 
 def setup_settings():
     if not settings.app.oracle_private_key or \

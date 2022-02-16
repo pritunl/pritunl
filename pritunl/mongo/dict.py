@@ -1,11 +1,13 @@
-# pylama:ignore=E261,E302,E0602
+# pylama:ignore=E261,E0602
 import abc
+
 
 class DictMeta(abc.ABCMeta):
     def __instancecheck__(cls, other):
         if isinstance(other, dict):
             return True
         return False
+
 
 class MongoDict(object):
     __class__ = dict

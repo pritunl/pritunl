@@ -1,15 +1,17 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import settings
 
 import base64
 import hashlib
 import os
 
+
 def hash_password_v0(salt, password):
     pass_hash = hashlib.sha512()
     pass_hash.update(password[:settings.app.password_len_limit].encode())
     pass_hash.update(base64.b64decode(salt))
     return pass_hash.digest()
+
 
 def hash_password_v1(salt, password):
     pass_hash = hashlib.sha512()
@@ -24,6 +26,7 @@ def hash_password_v1(salt, password):
 
     return hash_digest
 
+
 def hash_password_v2(salt, password):
     pass_hash = hashlib.sha512()
     pass_hash.update(password[:settings.app.password_len_limit].encode())
@@ -36,6 +39,7 @@ def hash_password_v2(salt, password):
         hash_digest = pass_hash.digest()
 
     return hash_digest
+
 
 def hash_password_v3(salt, password):
     pass_hash = hashlib.sha512()
@@ -50,6 +54,7 @@ def hash_password_v3(salt, password):
 
     return hash_digest
 
+
 def hash_pin_v1(salt, pin):
     pass_hash = hashlib.sha512()
     pass_hash.update(pin[:settings.app.password_len_limit].encode())
@@ -63,6 +68,7 @@ def hash_pin_v1(salt, pin):
 
     return hash_digest
 
+
 def hash_pin_v2(salt, pin):
     pass_hash = hashlib.sha512()
     pass_hash.update(pin[:settings.app.password_len_limit].encode())
@@ -75,6 +81,7 @@ def hash_pin_v2(salt, pin):
         hash_digest = pass_hash.digest()
 
     return hash_digest
+
 
 def generate_hash_pin_v2(pin):
     salt = base64.b64encode(os.urandom(8)).decode()

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import utils
@@ -9,6 +9,7 @@ from pritunl import event
 
 import time
 import threading
+
 
 @interrupter
 def _logger_runner_thread():
@@ -40,6 +41,7 @@ def _logger_runner_thread():
         except:
             logger.exception('Error in log runner thread', 'runners')
             time.sleep(0.5)
+
 
 def start_logger():
     threading.Thread(target=_logger_runner_thread).start()

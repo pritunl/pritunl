@@ -1,9 +1,10 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import event
 from pritunl import organization
 from pritunl import queue
+
 
 @queue.add_queue
 class QueueInitOrgPooled(queue.Queue):
@@ -53,6 +54,7 @@ class QueueInitOrgPooled(queue.Queue):
 
     def resume_task(self):
         self.org.queue_com.running.set()
+
 
 @queue.add_reserve('queued_org')
 def reserve_queued_org(name=None, auth_api=None, type=None, block=False):

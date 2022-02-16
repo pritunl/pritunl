@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E712,W0401
+# pylama:ignore=E712,W0401
 from pritunl.constants import *
 from pritunl import logger
 from pritunl import utils
@@ -9,6 +9,7 @@ from pritunl import auth
 from pritunl import settings
 
 import flask
+
 
 @app.app.route('/organization', methods=['GET'])
 @app.app.route('/organization/<org_id>', methods=['GET'])
@@ -50,6 +51,7 @@ def org_get(org_id=None):
         utils.demo_set_cache(resp, page)
     return utils.jsonify(resp)
 
+
 @app.app.route('/organization', methods=['POST'])
 @auth.session_auth
 def org_post():
@@ -70,6 +72,7 @@ def org_post():
     logger.LogEntry(message='Created new organization "%s".' % org.name)
     event.Event(type=ORGS_UPDATED)
     return utils.jsonify(org.dict())
+
 
 @app.app.route('/organization/<org_id>', methods=['PUT'])
 @auth.session_auth
@@ -102,6 +105,7 @@ def org_put(org_id):
     org.commit()
     event.Event(type=ORGS_UPDATED)
     return utils.jsonify(org.dict())
+
 
 @app.app.route('/organization/<org_id>', methods=['DELETE'])
 @auth.session_auth

@@ -1,10 +1,11 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.queues.init_user import QueueInitUser
 
 from pritunl.constants import *
 from pritunl import organization
 from pritunl import queue
 from pritunl import user
+
 
 @queue.add_queue
 class QueueInitUserPooled(QueueInitUser):
@@ -44,6 +45,7 @@ class QueueInitUserPooled(QueueInitUser):
 
     def resume_task(self):
         self.org.queue_com.running.set()
+
 
 @queue.add_reserve('queued_user')
 def reserve_queued_user(org, name=None, email=None, pin=None, type=None,

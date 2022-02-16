@@ -1,4 +1,4 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import collections
 import re
 
@@ -6,6 +6,7 @@ _keys = collections.defaultdict(
     lambda: collections.defaultdict(lambda: collections.Counter()))
 _values = collections.defaultdict(
     lambda: collections.defaultdict(lambda: set()))
+
 
 class CacheTrie(object):
     __slots__ = ('name', 'key')

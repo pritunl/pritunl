@@ -1,12 +1,14 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import collections
 import abc
+
 
 class ListMeta(abc.ABCMeta):
     def __instancecheck__(cls, other):
         if isinstance(other, list):
             return True
         return False
+
 
 class MongoList(collections.UserList):
     __class__ = list

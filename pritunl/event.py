@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import messenger
 from pritunl import utils
@@ -6,6 +6,7 @@ from pritunl import utils
 import time
 
 event_queue = utils.NoneQueue()
+
 
 class Event(object):
     def __init__(self, type, resource_id=None, delay=None):
@@ -15,6 +16,7 @@ class Event(object):
             return
 
         messenger.publish('events', (type, resource_id))
+
 
 def get_events(cursor=None, yield_app_server=False):
     events = []

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E401,E722,W0401
+# pylama:ignore=E401,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -10,6 +10,7 @@ import hmac
 import hashlib
 import urllib.request, urllib.parse, urllib.error
 import requests
+
 
 def _sign(method, path, params):
     now = email.utils.formatdate()
@@ -38,6 +39,7 @@ def _sign(method, path, params):
         'Authorization': 'Basic %s' % base64.b64encode(
             auth.encode()).decode(),
     }
+
 
 class Duo(object):
     def __init__(self, username, factor=None, remote_ip=None, auth_type=None,

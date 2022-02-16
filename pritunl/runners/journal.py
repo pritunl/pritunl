@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import logger
 from pritunl import journal
@@ -8,6 +8,7 @@ import time
 import threading
 import json
 import os
+
 
 def rotate():
     base_path = settings.conf.journal_path
@@ -29,6 +30,7 @@ def rotate():
 
     if os.path.exists(base_path):
         os.rename(base_path, base_path + '.1')
+
 
 @interrupter
 def _journal_runner_thread():
@@ -58,6 +60,7 @@ def _journal_runner_thread():
         except:
             logger.exception('Error in journal runner thread', 'runners')
             time.sleep(1)
+
 
 def start_journal():
     threading.Thread(target=_journal_runner_thread).start()

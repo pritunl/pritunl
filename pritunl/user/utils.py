@@ -1,10 +1,11 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.user.user import User
 
 from pritunl.constants import *
 
 import threading
 import re
+
 
 def new_pooled_user(org, type):
     type = {
@@ -18,6 +19,7 @@ def new_pooled_user(org, type):
     })
     thread.daemon = True
     thread.start()
+
 
 def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
                         groups=None, auth_type=None, yubico_id=None, disabled=None,
@@ -70,8 +72,10 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
     if doc:
         return User(org=org, doc=doc)
 
+
 def get_user(org, id, fields=None):
     return User(org=org, id=id, fields=fields)
+
 
 def find_user(org, name=None, type=None, resource_id=None):
     spec = {
@@ -87,6 +91,7 @@ def find_user(org, name=None, type=None, resource_id=None):
     if resource_id is not None:
         spec['resource_id'] = resource_id
     return User(org, spec=spec)
+
 
 def find_user_auth(name, auth_type):
     from pritunl import organization

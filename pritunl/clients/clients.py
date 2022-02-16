@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E231,E302,E303,E722,W0401
+# pylama:ignore=E122,E231,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import utils
@@ -37,6 +37,7 @@ from cryptography.hazmat.primitives.asymmetric import padding
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
 _port_listeners = {}
 _client_listeners = {}
+
 
 class Clients(object):
     def __init__(self, svr, instance, instance_com):
@@ -1561,7 +1562,6 @@ class Clients(object):
                     ] + extra_args
                     rules6.append(rule)
 
-
                 rule = output_base_args + [
                     '-p', proto,
                     '-m', proto,
@@ -1578,7 +1578,6 @@ class Clients(object):
                         '--to-destination', client_addr_port6,
                     ] + extra_args
                     rules6.append(rule)
-
 
                 rule = forward_base_args + [
                     '-p', proto,
@@ -1697,7 +1696,6 @@ class Clients(object):
                     ] + extra_args
                     rules6.append(rule)
 
-
                 rule = output_base_args + [
                     '-p', proto,
                     '-m', proto,
@@ -1714,7 +1712,6 @@ class Clients(object):
                         '--to-destination', client_addr_port6,
                     ] + extra_args
                     rules6.append(rule)
-
 
                 rule = forward_base_args + [
                     '-p', proto,
@@ -2395,12 +2392,14 @@ class Clients(object):
         if self.server.route_clients:
             self.clear_routes()
 
+
 def on_port_forwarding(msg):
     for listener in list(_port_listeners.values()):
         listener(
             msg['message']['org_id'],
             msg['message']['user_id'],
         )
+
 
 def on_client(msg):
     for listener in list(_client_listeners.values()):

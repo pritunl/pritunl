@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305,E402,E722
+# pylama:ignore=E305,E402,E722
 BASE_URL = 'https://sn0.pritunl.net'
 API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
 API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'
@@ -11,6 +11,7 @@ import hmac
 import hashlib
 import base64
 import os
+
 
 def auth_request(method, path, headers=None, data=None):
     auth_timestamp = str(int(time.time()))

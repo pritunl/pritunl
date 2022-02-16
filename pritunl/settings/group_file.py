@@ -1,10 +1,11 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.settings.group_base import SettingsGroupBase
 
 from pritunl.constants import *
 
 import json
 import os
+
 
 class SettingsGroupFile(SettingsGroupBase):
     type = GROUP_FILE

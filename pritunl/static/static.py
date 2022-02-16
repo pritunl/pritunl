@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.static.utils import *
 from pritunl.cachelocal import cache_db
 
@@ -14,6 +14,7 @@ import datetime
 import mimetypes
 import flask
 import werkzeug.http
+
 
 class StaticFile(object):
     def __init__(self, root, path, cache=True, gzip=True):

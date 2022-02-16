@@ -1,6 +1,7 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import utils
 from pritunl import mongo
+
 
 def get_token(admin_id):
     coll = mongo.get_collection('auth_csrf_tokens')
@@ -13,6 +14,7 @@ def get_token(admin_id):
     })
 
     return token
+
 
 def validate_token(admin_id, token):
     coll = mongo.get_collection('auth_csrf_tokens')

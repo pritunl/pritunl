@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E302,E401,E502,E722,W0401
+# pylama:ignore=E122,E401,E502,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -31,6 +31,7 @@ from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric.utils import Prehashed
+
 
 class User(mongo.MongoObject):
     fields = {

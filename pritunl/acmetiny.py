@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E227,E261,E265,E302,E401,W0611
+# pylama:ignore=E227,E261,E265,E401,W0611
 # Copyright Daniel Roesler, under MIT license, see LICENSE at github.com/diafygi/acme-tiny
 import argparse, subprocess, json, os, sys, base64, binascii, time, hashlib, re, copy, textwrap, logging
 from pritunl import settings
@@ -11,6 +11,7 @@ except ImportError:
 
 #DEFAULT_CA = "https://acme-v02.api.letsencrypt.org" # DEPRECATED! USE DEFAULT_DIRECTORY_URL INSTEAD
 #DEFAULT_DIRECTORY_URL = "https://acme-v02.api.letsencrypt.org/directory"
+
 
 def get_crt(account_key, csr, set_acme, contact=None):
     directory, acct_headers, alg, jwk = None, None, None, None # global variables

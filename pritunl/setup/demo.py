@@ -1,4 +1,4 @@
-# pylama:ignore=E221,E302,W0401
+# pylama:ignore=E221,W0401
 from pritunl.constants import *
 from pritunl import ipaddress
 from pritunl import utils
@@ -7,6 +7,7 @@ from pritunl import database
 import threading
 import datetime
 import random
+
 
 def setup_demo():
     from pritunl import settings

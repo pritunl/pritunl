@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.utils.misc import fnv32a
 
 from pritunl.constants import *
@@ -15,6 +15,7 @@ import bson.objectid
 
 _demo_cache = {}
 
+
 def json_object_hook_handler(obj):
     obj_data = obj.get('$obj')
     if obj_data:
@@ -26,6 +27,7 @@ def json_object_hook_handler(obj):
                                                    bson.tz_util.utc)
     return obj
 
+
 def json_default(obj):
     if isinstance(obj, (mongo.MongoDict, mongo.MongoList)):
         return obj.data
@@ -36,6 +38,7 @@ def json_default(obj):
                                      obj.microsecond / 1000)]}
 
     raise TypeError(repr(obj) + ' is not JSON serializable')
+
 
 def jsonify(data=None, status_code=None):
     if not isinstance(data, str):
@@ -49,18 +52,22 @@ def jsonify(data=None, status_code=None):
         response.status_code = status_code
     return response
 
+
 def demo_blocked():
     return jsonify({
         'error': DEMO_BLOCKED,
         'error_msg': DEMO_BLOCKED_MSG,
     }, 400)
 
+
 def demo_cache_id(*args):
     return fnv32a(flask.request.path + ':' + '.'.join([str(x) for x in args]))
+
 
 def demo_set_cache(data, *args):
     cache_id = demo_cache_id(*args)
     _demo_cache[cache_id] = data
+
 
 def demo_get_cache(*args):
     cache_id = demo_cache_id(*args)

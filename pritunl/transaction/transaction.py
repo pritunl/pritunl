@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E302,E502,E722,W0401
+# pylama:ignore=E131,E502,E722,W0401
 from pritunl.transaction.collection import TransactionCollection
 
 from pritunl.constants import *
@@ -14,6 +14,7 @@ import datetime
 import bson
 import zlib
 import json
+
 
 class Transaction(mongo.MongoObject):
     fields = {

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.host.host import Host
 
 from pritunl.constants import *
@@ -15,8 +15,10 @@ import random
 import socket
 import math
 
+
 def get_by_id(id, fields=None):
     return Host(id=id, fields=fields)
+
 
 def iter_hosts(spec=None, fields=None, page=None):
     limit = None
@@ -43,6 +45,7 @@ def iter_hosts(spec=None, fields=None, page=None):
     for doc in cursor:
         yield Host(doc=doc, fields=fields)
 
+
 def get_host_page_total():
     host_collection = mongo.get_collection('hosts')
 
@@ -53,6 +56,7 @@ def get_host_page_total():
     return int(math.floor(max(0, float(count - 1)) /
                settings.app.host_page_count))
 
+
 def get_hosts_online():
     host_collection = mongo.get_collection('hosts')
 
@@ -62,6 +66,7 @@ def get_hosts_online():
         '_id': True,
         'status': True,
     }).count()
+
 
 def iter_hosts_dict(page=None):
     clients_collection = mongo.get_collection('clients')
@@ -102,6 +107,7 @@ def iter_hosts_dict(page=None):
         hst.users_online = users_online
 
         yield hst.dict()
+
 
 def init():
     if not settings.local.host_id:
@@ -172,6 +178,7 @@ def init():
     settings.local.host.commit()
     event.Event(type=HOSTS_UPDATED)
 
+
 def deinit():
     Host.collection.update({
         '_id': settings.local.host_id,
@@ -182,6 +189,7 @@ def deinit():
     event.Event(type=HOSTS_UPDATED)
 
     logger.LogEntry(message='Web server stopped.')
+
 
 def get_prefered_hosts(hosts, replica_count):
     return random.sample(hosts, min(replica_count, len(hosts)))

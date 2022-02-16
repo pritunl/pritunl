@@ -1,4 +1,4 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import settings
 from pritunl import utils
 from pritunl import app
@@ -6,6 +6,7 @@ from pritunl import auth
 
 import flask
 import datetime
+
 
 @app.app.route('/ping', methods=['GET'])
 @app.app.route('/check', methods=['GET'])

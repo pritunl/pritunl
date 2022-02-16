@@ -1,8 +1,9 @@
-# pylama:ignore=E302,E722
+# pylama:ignore=E722
 from pritunl import settings
 
 import logging
 import json
+
 
 class LogFormatter(logging.Formatter):
     def format(self, record):

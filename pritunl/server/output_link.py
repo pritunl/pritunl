@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.server.output import ServerOutput
 
 from pritunl.constants import *
@@ -6,6 +6,7 @@ from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import event
 from pritunl import utils
+
 
 class ServerOutputLink(ServerOutput):
     @cached_static_property

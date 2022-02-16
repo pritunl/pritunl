@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0611
+# pylama:ignore=E722,W0611
 from pritunl.monitoring.utils import get_servers
 
 from pritunl import settings
@@ -16,6 +16,7 @@ _cur_influxdb_org = None
 _cur_influxdb_bucket = None
 _cur_influxdb_token = None
 _write_options = influxdb_client.client.write_api.SYNCHRONOUS
+
 
 def insert_point(measurement, tags, fields):
     _queue_lock.acquire()
@@ -36,6 +37,7 @@ def insert_point(measurement, tags, fields):
         _queue.append(point)
     finally:
         _queue_lock.release()
+
 
 def write_queue():
     global _queue
@@ -61,6 +63,7 @@ def write_queue():
             finally:
                 _queue_lock.release()
             raise
+
 
 def connect():
     global _client
@@ -107,6 +110,7 @@ def connect():
     _cur_influxdb_org = influxdb_org
     _cur_influxdb_bucket = influxdb_bucket
     _cur_influxdb_token = influxdb_token
+
 
 def init():
     try:

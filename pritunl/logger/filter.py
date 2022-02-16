@@ -1,5 +1,6 @@
-# pylama:ignore=E302
+# pylama:ignore=
 import logging
+
 
 class LogFilter(logging.Filter):
     def filter(self, record):

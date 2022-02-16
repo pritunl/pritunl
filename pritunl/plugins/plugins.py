@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.plugins.utils import *
 from pritunl.plugins import example
 
@@ -14,6 +14,7 @@ import os
 _queue = None
 _has_plugins = False
 _handlers = {}
+
 
 def init():
     global _queue
@@ -63,6 +64,7 @@ def init():
             else:
                 _handlers[call_type].append(handler)
 
+
 def _event(event_type, **kwargs):
     for handler in _handlers[event_type]:
         try:
@@ -72,6 +74,7 @@ def _event(event_type, **kwargs):
                              handler=event_type,
                              )
 
+
 def event(event_type, **kwargs):
     if not settings.local.sub_plan or \
             'enterprise' not in settings.local.sub_plan:
@@ -79,6 +82,7 @@ def event(event_type, **kwargs):
     if not _has_plugins or event_type not in _handlers:
         return
     _queue.put(_event, event_type, **kwargs)
+
 
 def caller(caller_type, **kwargs):
     if not _has_plugins or caller_type not in _handlers:

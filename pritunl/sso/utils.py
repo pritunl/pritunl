@@ -1,6 +1,7 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import settings
 from pritunl import plugins
+
 
 def plugin_sso_authenticate(sso_type, user_name, user_email, remote_ip,
                             sso_org_names=None, sso_group_names=None):
@@ -40,6 +41,7 @@ def plugin_sso_authenticate(sso_type, user_name, user_email, remote_ip,
             org_id = org.id
 
     return True, org_id, groups or None
+
 
 def plugin_login_authenticate(user_name, password, remote_ip):
     from pritunl import organization

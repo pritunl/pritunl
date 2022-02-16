@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import utils
 from pritunl import event
@@ -9,6 +9,7 @@ from pritunl import database
 
 import flask
 import time
+
 
 @app.app.route('/event', methods=['GET'])
 @app.app.route('/event/<cursor>', methods=['GET'])

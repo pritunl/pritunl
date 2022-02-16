@@ -1,4 +1,4 @@
-# pylama:ignore=E117,E203,E302,W0401
+# pylama:ignore=E117,E203,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -11,6 +11,7 @@ import flask
 import re
 import http.client
 import requests
+
 
 @app.app.route('/subscription', methods=['GET'])
 @auth.session_auth
@@ -25,6 +26,7 @@ def subscription_get():
     if settings.app.demo_mode:
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
+
 
 @app.app.route('/subscription/styles/<plan>/<ver>.css', methods=['GET'])
 @auth.session_light_auth
@@ -43,6 +45,7 @@ def subscription_styles_get(plan, ver):
         styles['last_modified'],
         styles['data'],
     )
+
 
 @app.app.route('/subscription', methods=['POST'])
 @auth.session_auth
@@ -85,6 +88,7 @@ def subscription_post():
             'error_msg': LICENSE_INVALID_MSG,
         }, 500)
     return utils.jsonify(subscription.dict())
+
 
 @app.app.route('/subscription', methods=['PUT'])
 @auth.session_auth
@@ -131,6 +135,7 @@ def subscription_put():
     subscription.update()
 
     return utils.jsonify(subscription.dict())
+
 
 @app.app.route('/subscription', methods=['DELETE'])
 @auth.session_auth

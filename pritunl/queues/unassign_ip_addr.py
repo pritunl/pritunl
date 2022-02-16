@@ -1,9 +1,10 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import logger
 from pritunl import server
 from pritunl import queue
+
 
 @queue.add_queue
 class QueueUnassignIpAddr(queue.Queue):

@@ -1,9 +1,10 @@
-# pylama:ignore=E131,E302,E401,E502
+# pylama:ignore=E131,E401,E502
 from pritunl import settings
 from pritunl import logger
 
 import requests
 import urllib.request, urllib.parse, urllib.error
+
 
 def _verify_azure_1(user_name):
     response = requests.post(
@@ -97,6 +98,7 @@ def _verify_azure_1(user_name):
         roles.append(membership.get('displayName'))
 
     return True, roles
+
 
 def _verify_azure_2(user_name):
     response = requests.post(
@@ -202,6 +204,7 @@ def _verify_azure_2(user_name):
         roles.append(display_name)
 
     return True, roles
+
 
 def verify_azure(user_name):
     if settings.app.sso_azure_version == 1:

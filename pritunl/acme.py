@@ -1,10 +1,11 @@
-# pylama:ignore=E302,E722
+# pylama:ignore=E722
 from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
 from pritunl import acmetiny
 
 import os
+
 
 def set_acme(token, authorization):
     coll = mongo.get_collection('acme_challenges')
@@ -17,6 +18,7 @@ def set_acme(token, authorization):
         'timestamp': utils.now(),
     }, upsert=True)
 
+
 def get_authorization(token):
     coll = mongo.get_collection('acme_challenges')
 
@@ -26,6 +28,7 @@ def get_authorization(token):
 
     if doc:
         return doc.get('authorization')
+
 
 def get_acme_cert(account_key, csr):
     temp_path = utils.get_temp_path()
@@ -59,6 +62,7 @@ def get_acme_cert(account_key, csr):
         pass
 
     return certificate
+
 
 def update_acme_cert():
     if not settings.app.acme_key:

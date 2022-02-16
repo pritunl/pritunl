@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E302,E305,W0401,W0611
+# pylama:ignore=E131,E305,W0401,W0611
 from pritunl.auth.utils import *
 from pritunl.auth.csrf import validate_token
 
@@ -21,6 +21,7 @@ import datetime
 import hmac
 import pymongo
 import struct
+
 
 class Administrator(mongo.MongoObject):
     fields = {
@@ -361,12 +362,14 @@ class Administrator(mongo.MongoObject):
 
         return events
 
+
 def clear_session(id, session_id):
     Administrator.collection.update({
         '_id': id,
     }, {'$pull': {
         'sessions': session_id,
     }})
+
 
 def get_user(id, session_id):
     if not session_id:
@@ -377,6 +380,7 @@ def get_user(id, session_id):
         'sessions': session_id,
     })
 
+
 def find_user(username=None, token=None):
     spec = {}
 
@@ -386,6 +390,7 @@ def find_user(username=None, token=None):
         spec['token'] = token
 
     return Administrator(spec=spec)
+
 
 def check_session(csrf_check):
     auth_token = flask.request.headers.get('Auth-Token', None)
@@ -490,6 +495,7 @@ def check_session(csrf_check):
     flask.g.administrator = administrator
     return True
 
+
 def get_default_password():
     logger.info('Getting default administrator password', 'auth')
 
@@ -501,6 +507,7 @@ def get_default_password():
 
     return default_admin.username, default_admin.default_password
 
+
 def get_by_username(username):
     username = utils.filter_str(username).lower()
 
@@ -509,6 +516,7 @@ def get_by_username(username):
         return
 
     return admin
+
 
 def reset_password():
     logger.info('Resetting administrator password', 'auth')
@@ -533,6 +541,7 @@ def reset_password():
 
     return DEFAULT_USERNAME, default_admin.default_password
 
+
 def iter_admins(fields=None):
     if fields:
         fields = {key: True for key in fields}
@@ -542,8 +551,10 @@ def iter_admins(fields=None):
     for doc in cursor:
         yield Administrator(doc=doc, fields=fields)
 
+
 def get_by_id(id, fields=None):
     return Administrator(id=id, fields=fields)
+
 
 def new_admin(**kwargs):
     admin = Administrator(**kwargs)
@@ -559,6 +570,7 @@ def new_admin(**kwargs):
 
     return admin
 
+
 def super_user_count():
     return Administrator.collection.find({
         'super_user': {'$ne': False},
@@ -567,7 +579,10 @@ def super_user_count():
         '_id': True,
     }).count()
 
+
 has_default_pass = None
+
+
 def has_default_password():
     global has_default_pass
 

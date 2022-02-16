@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E302,E502,E722,W0401
+# pylama:ignore=E131,E502,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import logger
@@ -19,6 +19,7 @@ import base64
 import pymongo
 
 _states = tunldb.TunlDB()
+
 
 class Authorizer(object):
     def __init__(self, svr, usr, remote_ip, platform, device_id, device_name,

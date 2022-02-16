@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.server.listener import *
 
 from pritunl.constants import *
@@ -20,6 +20,7 @@ import socket
 import uuid
 import random
 import bson
+
 
 class ServerInstanceCom(object):
     def __init__(self, svr, instance):

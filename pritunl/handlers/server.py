@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -15,11 +15,13 @@ from pritunl import ipaddress
 import flask
 import random
 
+
 def _network_invalid():
     return utils.jsonify({
         'error': NETWORK_INVALID,
         'error_msg': NETWORK_INVALID_MSG,
     }, 400)
+
 
 def _network_wg_invalid():
     return utils.jsonify({
@@ -27,11 +29,13 @@ def _network_wg_invalid():
         'error_msg': NETWORK_WG_INVALID_MSG,
     }, 400)
 
+
 def _port_invalid():
     return utils.jsonify({
         'error': PORT_INVALID,
         'error_msg': PORT_INVALID_MSG,
     }, 400)
+
 
 def _port_wg_invalid():
     return utils.jsonify({
@@ -39,11 +43,13 @@ def _port_wg_invalid():
         'error_msg': PORT_WG_INVALID_MSG,
     }, 400)
 
+
 def _dh_param_bits_invalid():
     return utils.jsonify({
         'error': DH_PARAM_BITS_INVALID,
         'error_msg': DH_PARAM_BITS_INVALID_MSG,
     }, 400)
+
 
 def _local_network_invalid():
     return utils.jsonify({
@@ -51,11 +57,14 @@ def _local_network_invalid():
         'error_msg': LOCAL_NETWORK_INVALID_MSG,
     }, 400)
 
+
 def _dns_server_invalid():
     return utils.jsonify({
         'error': DNS_SERVER_INVALID,
         'error_msg': DNS_SERVER_INVALID_MSG,
+
     }, 400)
+
 
 def _check_network_overlap(test_network, networks):
     test_net = ipaddress.ip_network(test_network)
@@ -77,6 +86,7 @@ def _check_network_overlap(test_network, networks):
 
     return False
 
+
 def _check_network_private(test_network):
     test_net = ipaddress.ip_network(test_network)
     test_start = test_net.network_address
@@ -92,6 +102,7 @@ def _check_network_private(test_network):
 
     return False
 
+
 def _check_network_range(test_network, start_addr, end_addr):
     test_net = ipaddress.ip_network(test_network)
     start_addr = ipaddress.ip_address(start_addr)
@@ -104,6 +115,7 @@ def _check_network_range(test_network, start_addr, end_addr):
         start_addr in test_net,
         end_addr in test_net,
     ))
+
 
 @app.app.route('/server', methods=['GET'])
 @app.app.route('/server/<server_id>', methods=['GET'])
@@ -143,7 +155,9 @@ def server_get(server_id=None):
 
     if settings.app.demo_mode:
         utils.demo_set_cache(resp, page)
+
     return utils.jsonify(resp)
+
 
 @app.app.route('/server', methods=['POST'])
 @app.app.route('/server/<server_id>', methods=['PUT'])
@@ -735,6 +749,7 @@ def server_put_post(server_id=None):
         event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify(svr.dict())
 
+
 @app.app.route('/server/<server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_delete(server_id):
@@ -763,6 +778,7 @@ def server_delete(server_id):
         event.Event(type=USERS_UPDATED, resource_id=org.id)
     return utils.jsonify({})
 
+
 @app.app.route('/server/<server_id>/organization', methods=['GET'])
 @auth.session_auth
 def server_org_get(server_id):
@@ -780,7 +796,9 @@ def server_org_get(server_id):
 
     if settings.app.demo_mode:
         utils.demo_set_cache(orgs)
+
     return utils.jsonify(orgs)
+
 
 @app.app.route('/server/<server_id>/organization/<org_id>', methods=['PUT'])
 @auth.session_auth
@@ -808,6 +826,7 @@ def server_org_put(server_id, org_id):
         'server': svr.id,
         'name': org.name,
     })
+
 
 @app.app.route('/server/<server_id>/organization/<org_id>',
                methods=['DELETE'])
@@ -838,6 +857,8 @@ def server_org_delete(server_id, org_id):
 
     return utils.jsonify({})
 
+
+
 @app.app.route('/server/<server_id>/route', methods=['GET'])
 @auth.session_auth
 def server_route_get(server_id):
@@ -854,6 +875,7 @@ def server_route_get(server_id):
     if settings.app.demo_mode:
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
+
 
 @app.app.route('/server/<server_id>/route', methods=['POST'])
 @auth.session_auth
@@ -925,6 +947,7 @@ def server_route_post(server_id):
                     resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
+
 
 @app.app.route('/server/<server_id>/routes', methods=['POST'])
 @auth.session_auth
@@ -1000,6 +1023,7 @@ def server_routes_post(server_id):
 
     return utils.jsonify(route)
 
+
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['PUT'])
 @auth.session_auth
 def server_route_put(server_id, route_network):
@@ -1071,6 +1095,7 @@ def server_route_put(server_id, route_network):
 
     return utils.jsonify(route)
 
+
 @app.app.route('/server/<server_id>/route/<route_network>', methods=['DELETE'])
 @auth.session_auth
 def server_route_delete(server_id, route_network):
@@ -1103,6 +1128,7 @@ def server_route_delete(server_id, route_network):
                     resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
+
 
 @app.app.route('/server/<server_id>/host', methods=['GET'])
 @auth.session_auth
@@ -1140,6 +1166,7 @@ def server_host_get(server_id):
     if settings.app.demo_mode:
         utils.demo_set_cache(hosts)
     return utils.jsonify(hosts)
+
 
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['PUT'])
 @auth.session_auth
@@ -1182,6 +1209,7 @@ def server_host_put(server_id, host_id):
         'address': hst.public_addr,
     })
 
+
 @app.app.route('/server/<server_id>/host/<host_id>', methods=['DELETE'])
 @auth.session_auth
 def server_host_delete(server_id, host_id):
@@ -1203,6 +1231,7 @@ def server_host_delete(server_id, host_id):
     event.Event(type=SERVER_HOSTS_UPDATED, resource_id=svr.id)
 
     return utils.jsonify({})
+
 
 @app.app.route('/server/<server_id>/link', methods=['GET'])
 @auth.session_auth
@@ -1257,6 +1286,7 @@ def server_link_get(server_id):
         utils.demo_set_cache(links)
     return utils.jsonify(links)
 
+
 @app.app.route('/server/<server_id>/link/<link_server_id>', methods=['PUT'])
 @auth.session_auth
 def server_link_put(server_id, link_server_id):
@@ -1280,6 +1310,7 @@ def server_link_put(server_id, link_server_id):
 
     return utils.jsonify({})
 
+
 @app.app.route('/server/<server_id>/link/<link_server_id>', methods=['DELETE'])
 @auth.session_auth
 def server_link_delete(server_id, link_server_id):
@@ -1300,6 +1331,7 @@ def server_link_delete(server_id, link_server_id):
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=link_server_id)
 
     return utils.jsonify({})
+
 
 @app.app.route('/server/<server_id>/operation/<operation>', methods=['PUT'])
 @auth.session_auth
@@ -1331,6 +1363,7 @@ def server_operation_put(server_id, operation):
 
     return utils.jsonify(svr.dict())
 
+
 @app.app.route('/server/<server_id>/output', methods=['GET'])
 @auth.session_auth
 def server_output_get(server_id):
@@ -1347,6 +1380,7 @@ def server_output_get(server_id):
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
 
+
 @app.app.route('/server/<server_id>/output', methods=['DELETE'])
 @auth.session_auth
 def server_output_delete(server_id):
@@ -1355,6 +1389,7 @@ def server_output_delete(server_id):
 
     server.output_clear(server_id)
     return utils.jsonify({})
+
 
 @app.app.route('/server/<server_id>/link_output', methods=['GET'])
 @auth.session_auth
@@ -1372,6 +1407,7 @@ def server_link_output_get(server_id):
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
 
+
 @app.app.route('/server/<server_id>/link_output', methods=['DELETE'])
 @auth.session_auth
 def server_link_output_delete(server_id):
@@ -1379,7 +1415,9 @@ def server_link_output_delete(server_id):
         return utils.demo_blocked()
 
     server.output_link_clear(server_id)
+
     return utils.jsonify({})
+
 
 @app.app.route('/server/<server_id>/bandwidth/<period>', methods=['GET'])
 @auth.session_auth
@@ -1395,6 +1433,7 @@ def server_bandwidth_get(server_id, period):
     else:
         resp = server.bandwidth_get(server_id, period)
     return utils.jsonify(resp)
+
 
 @app.app.route('/server/vpcs', methods=['GET'])
 @auth.session_auth

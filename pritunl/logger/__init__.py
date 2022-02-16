@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305,W0401,W0611
+# pylama:ignore=E305,W0401,W0611
 from pritunl.logger.filter import LogFilter
 from pritunl.logger.formatter import LogFormatter
 from pritunl.logger.handler import LogHandler, log_queue
@@ -17,10 +17,12 @@ log_filter = None
 log_handler = None
 _log_queue = queue.Queue()
 
+
 def _logger_thread():
     while True:
         args, kwargs = _log_queue.get()
         _log(*args, **kwargs)
+
 
 def _log(log_level, log_msg, log_type, exc_info=None, **kwargs):
     if not log_filter or not log_handler:
@@ -34,11 +36,13 @@ def _log(log_level, log_msg, log_type, exc_info=None, **kwargs):
         },
     )
 
+
 def debug(log_msg, log_type=None, **kwargs):
     _log_queue.put((
         ('debug', log_msg, log_type),
         kwargs,
     ))
+
 
 def info(log_msg, log_type=None, **kwargs):
     _log_queue.put((
@@ -46,11 +50,13 @@ def info(log_msg, log_type=None, **kwargs):
         kwargs,
     ))
 
+
 def warning(log_msg, log_type=None, **kwargs):
     _log_queue.put((
         ('warning', log_msg, log_type),
         kwargs,
     ))
+
 
 def error(log_msg, log_type=None, **kwargs):
     kwargs['traceback'] = traceback.format_stack()
@@ -59,12 +65,14 @@ def error(log_msg, log_type=None, **kwargs):
         kwargs,
     ))
 
+
 def critical(log_msg, log_type=None, **kwargs):
     kwargs['traceback'] = traceback.format_stack()
     _log_queue.put((
         ('critical', log_msg, log_type),
         kwargs,
     ))
+
 
 def exception(log_msg, log_type=None, **kwargs):
     # Fix for python #15541

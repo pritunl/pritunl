@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E221,E231,E302,E722,W0611
+# pylama:ignore=E131,E221,E231,E722,W0611
 from pritunl import utils
 from pritunl import logger
 from pritunl import settings
@@ -15,6 +15,7 @@ except:
     LIB_IPTABLES = False
 
 _global_lock = threading.Lock()
+
 
 class Iptables(object):
     def __init__(self, server_id, server_type):

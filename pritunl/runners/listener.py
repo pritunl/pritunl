@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import listener
 from pritunl import logger
@@ -9,6 +9,7 @@ from pritunl import utils
 import threading
 import time
 import datetime
+
 
 @interrupter
 def listener_thread():
@@ -43,6 +44,7 @@ def listener_thread():
             time.sleep(0.3)
 
         yield
+
 
 def start_listener():
     threading.Thread(target=listener_thread).start()

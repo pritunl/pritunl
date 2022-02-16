@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E305,E401,E722,E741,W0401,W0404,W0611
+# pylama:ignore=E305,E401,E722,E741,W0401,W0404,W0611
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -39,21 +39,27 @@ _srcfile = os.path.normcase(_srcfile)
 PyQueue = queue.Queue
 PyPriorityQueue = queue.PriorityQueue
 
+
 def _now(ntp_time):
     start_time, sync_time = ntp_time
     return sync_time + (time.time() - start_time)
 
+
 def now():
     return datetime.datetime.utcfromtimestamp(time.time())
+
 
 def time_now():
     return time.time()
 
+
 def sync_time():
     pass
 
+
 def rand_sleep():
     time.sleep(random.randint(0, 25) / 1000.)
+
 
 def get_int_ver(version):
     ver = re.findall(r'\d+', version)
@@ -71,6 +77,7 @@ def get_int_ver(version):
 
     return int(''.join([x.zfill(4) for x in ver]))
 
+
 def _get_version_doc():
     if settings.conf.mongodb_uri:
         prefix = settings.conf.mongodb_collection_prefix or ''
@@ -87,19 +94,24 @@ def _get_version_doc():
 
     return {}
 
+
 def get_db_ver(default=True):
     return _get_version_doc().get('version') or (
         __version__ if default else None)
+
 
 def get_min_db_ver(default=True):
     return _get_version_doc().get('version_min') or (
         '1.24.0.0' if default else None)
 
+
 def get_db_ver_int():
     return get_int_ver(get_db_ver())
 
+
 def get_min_db_ver_int():
     return get_int_ver(get_min_db_ver())
+
 
 def set_db_ver(version, version_min=None):
     from pritunl import logger
@@ -138,6 +150,7 @@ def set_db_ver(version, version_min=None):
 
     return doc.get('version')
 
+
 def check_output(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
         raise ValueError('Output arguments not allowed, it will be overridden')
@@ -168,6 +181,7 @@ def check_output(*args, **kwargs):
             return_code, cmd, output=stdoutdata)
 
     return stdoutdata
+
 
 def check_output_logged(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
@@ -221,6 +235,7 @@ def check_output_logged(*args, **kwargs):
 
     return stdoutdata
 
+
 def check_call_silent(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
         raise ValueError('Output arguments not allowed, it will be overridden')
@@ -231,6 +246,7 @@ def check_call_silent(*args, **kwargs):
     if return_code:
         cmd = kwargs.get('args', args[0])
         raise subprocess.CalledProcessError(return_code, cmd)
+
 
 def find_caller():
     try:
@@ -255,6 +271,7 @@ def find_caller():
 
     return rv
 
+
 def rmtree(path):
     for i in range(8):
         try:
@@ -268,6 +285,7 @@ def rmtree(path):
                                  )
             time.sleep(0.01)
 
+
 def filter_str(in_str):
     if in_str is not None:
         in_str = str(in_str)
@@ -275,13 +293,17 @@ def filter_str(in_str):
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
 
+
 def filter_unicode(in_str):
     if not in_str:
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
 
+
 def generate_secret():
+
     return generate_secret_len(32)
+
 
 def generate_secret_len(n):
     l = int(n*1.3)
@@ -291,6 +313,7 @@ def generate_secret_len(n):
         if len(x) == n:
             return x
     raise ValueError('Failed to generate secret')
+
 
 def generate_otp_secret():
     sha_hash = hashlib.sha512()
@@ -304,10 +327,12 @@ def generate_otp_secret():
 
     return base64.b32encode(byte_hash).decode()[:settings.user.otp_secret_len]
 
+
 def get_cert_block(cert_data):
     start_index = cert_data.index('-----BEGIN CERTIFICATE-----')
     end_index = cert_data.index('-----END CERTIFICATE-----') + 25
     return cert_data[start_index:end_index]
+
 
 def get_temp_path():
     if not os.path.isdir(settings.conf.temp_path):
@@ -315,8 +340,10 @@ def get_temp_path():
 
     return os.path.join(settings.conf.temp_path, uuid.uuid4().hex)
 
+
 def check_openssl():
     return True
+
 
 def check_iptables_wait():
     try:
@@ -326,6 +353,7 @@ def check_iptables_wait():
     except:
         pass
     return False
+
 
 def roundrobin(*iterables):
     # Recipe credited to George Sakkis
@@ -339,12 +367,14 @@ def roundrobin(*iterables):
             pending -= 1
             nexts = itertools.cycle(itertools.islice(nexts, pending))
 
+
 def random_name():
     return '%s-%s-%s' % (
         random.choice(RANDOM_ONE),
         random.choice(RANDOM_TWO),
         random.randint(1000, 9999),
     )
+
 
 def stop_process(process):
     terminated = False
@@ -377,6 +407,7 @@ def stop_process(process):
 
     return terminated
 
+
 def const_compare(x, y):
     if len(x) != len(y):
         return False
@@ -384,6 +415,7 @@ def const_compare(x, y):
     for x, y in zip(x.encode(), y.encode()):
         result |= x ^ y
     return result == 0
+
 
 def response(data=None, status_code=None):
     response = flask.Response(response=data,
@@ -395,6 +427,7 @@ def response(data=None, status_code=None):
     if status_code is not None:
         response.status_code = status_code
     return response
+
 
 def styles_response(etag, last_modified, data):
     response = flask.Response(response=data, mimetype='text/css')
@@ -409,12 +442,14 @@ def styles_response(etag, last_modified, data):
     response.headers.add('Last-Modified', last_modified)
     return response
 
+
 def rand_str(length):
     s = re.sub(r'[\W_]+', '', base64.b64encode(
         os.urandom(int(length * 1.5))).decode())[:length]
     if len(s) != length:
         return rand_str(length)
     return s
+
 
 def rand_str_ne(length):
     s = re.sub(r'[\W_lIO0]+', '', base64.b64encode(
@@ -428,6 +463,7 @@ prime64 = 1099511628211
 uint32_max = 2 ** 32
 uint64_max = 2 ** 64
 
+
 def fnv32a(s):
     hval = 2166136261
     for x in s:
@@ -435,12 +471,14 @@ def fnv32a(s):
         hval = (hval * prime32) % uint32_max
     return hval
 
+
 def fnv64a(s):
     hval = 14695981039346656037
     for x in s:
         hval ^= ord(x)
         hval = (hval * prime64) % uint64_max
     return hval
+
 
 def sync_public_ip(attempts=1, timeout=5):
     from pritunl import logger
@@ -473,7 +511,9 @@ def sync_public_ip(attempts=1, timeout=5):
             pass
 
         if not settings.local.public_ip:
+
             logger.warning('Failed to get public ip address', 'utils')
+
 
 def ping(address, timeout=1):
     start = time.time()
@@ -485,13 +525,16 @@ def ping(address, timeout=1):
         return None
     return runtime
 
+
 def get_process_cpu_mem():
     proc = psutil.Process(os.getpid())
     return proc.cpu_percent(interval=0.5), proc.memory_percent()
 
+
 def redirect(location, code=302):
     location = urllib.parse.urljoin(get_url_root(), location)
     return flask.redirect(location, code)
+
 
 def get_url_root():
     url_root = flask.request.headers.get('PR-Forwarded-Url')
@@ -501,6 +544,7 @@ def get_url_root():
         url_root = url_root[:-1]
 
     return url_root
+
 
 def check_openvpn_ver():
     try:

@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E722,,W0401,W0611
+# pylama:ignore=E722,,W0401,W0611
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -10,14 +10,17 @@ import threading
 import time
 import random
 
+
 def random_sleep():
     time.sleep(random.randint(0, 50) / 1000.)
+
 
 def run_task(tsk):
     random_sleep()
     thread = threading.Thread(target=tsk.run)
     thread.daemon = True
     thread.start()
+
 
 def print_tasks():
     for hour in task.tasks:
@@ -28,6 +31,7 @@ def print_tasks():
                 print('        second:', second)
                 for tsk in task.tasks[hour][minute][second]:
                     print('            task:', tsk)
+
 
 @interrupter
 def run_thread():
@@ -66,6 +70,7 @@ def run_thread():
         time.sleep(0.5)
         yield
 
+
 @interrupter
 def check_thread():
     while True:
@@ -92,6 +97,7 @@ def check_thread():
             logger.exception('Error in task check thread', 'runners')
 
         yield interrupter_sleep(settings.mongo.task_ttl)
+
 
 def start_task():
     from pritunl import tasks

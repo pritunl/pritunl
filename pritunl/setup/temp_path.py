@@ -1,8 +1,9 @@
-# pylama:ignore=E302
+# pylama:ignore=
 from pritunl import settings
 
 import os
 import uuid
+
 
 def setup_temp_path():
     settings.conf.temp_path = settings.conf.temp_path.replace(

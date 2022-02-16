@@ -1,5 +1,6 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
+
 
 class TransactionAction:
     def __init__(self, actions, func):

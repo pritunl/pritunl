@@ -1,4 +1,4 @@
-# pylama:ignore=E231,E302,W0401
+# pylama:ignore=E231,W0401
 from pritunl.constants import *
 from pritunl import utils
 from pritunl import settings
@@ -7,6 +7,7 @@ from pritunl import app
 from pritunl import auth
 from pritunl import mongo
 from pritunl import __version__
+
 
 @app.app.route('/status', methods=['GET'])
 @auth.session_auth

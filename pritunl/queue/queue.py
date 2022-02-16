@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E302,E502,E722,W0401
+# pylama:ignore=E131,E502,E722,W0401
 from pritunl.queue.com import QueueCom
 
 from pritunl.constants import *
@@ -17,6 +17,7 @@ import time
 
 queue_types = {}
 reserve_types = {}
+
 
 class Queue(mongo.MongoObject):
     fields = {

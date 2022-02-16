@@ -1,4 +1,4 @@
-# pylama:ignore=E302,W0401
+# pylama:ignore=W0401
 from pritunl.logger.view import LogView
 from pritunl.logger.formatter import LogFormatter
 
@@ -10,6 +10,7 @@ import collections
 import os
 
 log_queue = collections.deque()
+
 
 class LogHandler(logging.Handler):
     @cached_property

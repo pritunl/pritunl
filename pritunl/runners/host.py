@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E302,E722,W0401
+# pylama:ignore=E122,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -12,6 +12,7 @@ import threading
 import time
 import os
 import datetime
+
 
 @interrupter
 def _keep_alive_thread():
@@ -162,6 +163,7 @@ def _keep_alive_thread():
                              host_name=settings.local.host.name,
                              )
             time.sleep(0.5)
+
 
 def start_host():
     threading.Thread(target=_keep_alive_thread).start()

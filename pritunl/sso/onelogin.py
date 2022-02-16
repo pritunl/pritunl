@@ -1,4 +1,4 @@
-# pylama:ignore=E302,E401,W0401
+# pylama:ignore=E401,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
@@ -10,8 +10,10 @@ import http.client
 import requests
 import xml.etree.ElementTree
 
+
 def _get_base_url():
     return 'https://api.%s.onelogin.com' % settings.app.sso_onelogin_region
+
 
 def _get_access_token():
     response = requests.post(
@@ -36,6 +38,7 @@ def _get_access_token():
         return None
 
     return response.json()['data'][0]['access_token']
+
 
 def auth_onelogin(username):
     if not settings.app.sso_onelogin_id or \
@@ -156,6 +159,7 @@ def auth_onelogin(username):
                    )
 
     return False
+
 
 def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     access_token = _get_access_token()
