@@ -1,4 +1,4 @@
-# pylama:ignore=E271,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
@@ -79,7 +79,7 @@ def rpush(key, *vals, **kwargs):
 
 
 def remove(key):
-    return  _client.delete(key)
+    return _client.delete(key)
 
 
 def publish(channels, message, extra=None, cap=50, ttl=300):
