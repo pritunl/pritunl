@@ -1,10 +1,12 @@
-# pylama:ignore=E402
+# pylama:ignore=
+
+import pymongo
+import bson
+
 COUNT = 100000
 MONGO_URI = 'mongodb://sn.pritunl.net:27017/pritunl'
 ORG_ID = '573b2d405a3d9c0a455b6dbe'
 
-import pymongo
-import bson
 
 client = pymongo.MongoClient(MONGO_URI)
 db = client.get_default_database()

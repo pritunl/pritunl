@@ -1,9 +1,4 @@
-# pylama:ignore=E402,E0100
-BASE_URL = 'https://sn.pritunl.net'
-API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
-API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'
-ORG_ID = '573b2d405a3d9c0a455b6dbe'
-
+# pylama:ignore=E0100
 import requests
 import time
 import uuid
@@ -11,6 +6,11 @@ import hmac
 import hashlib
 import base64
 import sys
+
+BASE_URL = 'https://sn.pritunl.net'
+API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
+API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'
+ORG_ID = '573b2d405a3d9c0a455b6dbe'
 
 names = set()
 
