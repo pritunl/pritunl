@@ -1,4 +1,4 @@
-# pylama:ignore=E129,E302
+# pylama:ignore=E302
 # Copyright 2007 Google Inc.
 #  Licensed to PSF under a Contributor Agreement.
 
@@ -791,7 +791,7 @@ class _BaseNetwork(_IPAddressBase):
         s1, s2 = self.subnets()
         while s1 != other and s2 != other:
             if (other.network_address >= s1.network_address and
-                other.broadcast_address <= s1.broadcast_address):
+               other.broadcast_address <= s1.broadcast_address):
                 yield s2
                 s1, s2 = s1.subnets()
             elif (other.network_address >= s2.network_address and
