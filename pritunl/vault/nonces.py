@@ -1,4 +1,3 @@
-# pylama:ignore=
 _nonces = set()
 
 

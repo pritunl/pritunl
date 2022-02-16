@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl.upgrade.utils import get_collection
 
 

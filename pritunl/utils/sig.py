@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl.utils.filter import session_str
 from pritunl.utils.misc import const_compare
 from pritunl import settings

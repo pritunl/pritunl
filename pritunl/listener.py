@@ -1,4 +1,3 @@
-# pylama:ignore=
 import collections
 
 channels = collections.defaultdict(set)

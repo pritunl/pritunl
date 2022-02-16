@@ -1,4 +1,3 @@
-# pylama:ignore=
 pooler_types = {}
 
 

@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl.utils.misc import filter_str
 from pritunl import database
 

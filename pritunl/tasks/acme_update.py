@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl import task
 from pritunl import logger
 from pritunl import acme

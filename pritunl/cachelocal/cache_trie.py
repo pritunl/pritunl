@@ -1,4 +1,3 @@
-# pylama:ignore=
 import collections
 import re
 

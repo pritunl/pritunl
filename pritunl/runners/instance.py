@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl import server
 from pritunl import listener
 

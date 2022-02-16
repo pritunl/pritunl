@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl import __version__
 
 from pritunl import settings

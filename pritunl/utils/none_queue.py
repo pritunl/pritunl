@@ -1,4 +1,3 @@
-# pylama:ignore=
 from time import time as _time
 import threading as _threading
 from collections import deque

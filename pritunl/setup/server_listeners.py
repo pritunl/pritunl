@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl import listener
 
 

@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl.settings.settings import Settings
 
 from pritunl.settings.app import SettingsApp

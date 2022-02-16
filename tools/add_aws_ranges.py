@@ -1,4 +1,3 @@
-# pylama:ignore=
 import requests
 import time
 import uuid

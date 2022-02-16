@@ -1,4 +1,3 @@
-# pylama:ignore=
 
 import pymongo
 import bson

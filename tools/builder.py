@@ -1,4 +1,3 @@
-# pylama:ignore=
 import optparse
 import datetime
 import re

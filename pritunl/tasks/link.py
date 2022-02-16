@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl import settings
 from pritunl import task
 from pritunl import link

@@ -1,4 +1,3 @@
-# pylama:ignore=
 import sys
 import zlib
 import time

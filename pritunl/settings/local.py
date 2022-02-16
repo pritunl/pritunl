@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl.settings.group_local import SettingsGroupLocal
 
 import threading

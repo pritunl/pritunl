@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl.runners.settings import start_settings
 from pritunl.runners.logger import start_logger
 from pritunl.runners.journal import start_journal

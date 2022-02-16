@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl.link.link import Link, Location, Host
 
 from pritunl import settings

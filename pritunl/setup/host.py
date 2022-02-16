@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl import mongo
 from pritunl import listener
 from pritunl import settings

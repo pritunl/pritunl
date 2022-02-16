@@ -1,4 +1,3 @@
-# pylama:ignore=
 import re
 import json
 import datetime

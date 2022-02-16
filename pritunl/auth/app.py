@@ -1,4 +1,3 @@
-# pylama:ignore=
 from pritunl.auth.administrator import check_session
 
 import flask
