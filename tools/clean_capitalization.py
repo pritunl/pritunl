@@ -1,4 +1,4 @@
-# pylama:ignore=E0100
+# pylama:ignore=
 import re
 import json
 import datetime
@@ -9,7 +9,7 @@ CONF_FILE_PATH = '/etc/pritunl.conf'
 with open(CONF_FILE_PATH, 'r') as conf_file:
     mongodb_uri = json.loads(conf_file.read())['mongodb_uri']
 
-print 'DATABASE CONNECT'  # FIXME SyntaxError, pylama ignore won't hide
+print('DATABASE CONNECT')
 
 mongo_client = pymongo.MongoClient(mongodb_uri)
 mongo_db = mongo_client.get_default_database()
@@ -46,8 +46,8 @@ operations = []
 
 for doc in response:
     if len(doc['docs']) != 2:
-        print 'ERROR Unexpected length'
-        print doc
+        print('ERROR Unexpected length')
+        print(doc)
         exit(1)
 
     id0 = doc['docs'][0]['_id']
@@ -74,25 +74,25 @@ for doc in response:
             'rename': id0,
             'new_name': new_name,
         })
-        print 'REMOVE: %r %s [%s]' % (id1, date1, name1)
-        print 'RENAME: %r %s [%s] -> [%s]' % (id0, date0, name0, new_name)
+        print('REMOVE: %r %s [%s]' % (id1, date1, name1))
+        print('RENAME: %r %s [%s] -> [%s]' % (id0, date0, name0, new_name))
     else:
         operations.append({
             'remove': id0,
             'rename': id1,
             'new_name': new_name,
         })
-        print 'REMOVE: %r %s [%s]' % (id0, date0, name0)
-        print 'RENAME: %r %s [%s] -> [%s]' % (id1, date1, name1, new_name)
+        print('REMOVE: %r %s [%s]' % (id0, date0, name0))
+        print('RENAME: %r %s [%s] -> [%s]' % (id1, date1, name1, new_name))
 
 if len(operations) == 0:
-    print 'ALL USERS CONSISTENT'
-    print 'EXIT'
+    print('ALL USERS CONSISTENT')
+    print('EXIT')
     exit()
 
-confirm = str(raw_input('CONTINUE (y/n): ')).lower().strip()
+confirm = str(raw_input('CONTINUE (y/n): ')).lower().strip()  # FIXME E0602 undefined name 'raw_input' [pyflakes]
 if confirm != 'y':
-    print 'EXIT'
+    print('EXIT')
     exit()
 
 for operation in operations:
@@ -100,7 +100,7 @@ for operation in operations:
     rename_id = operation['rename']
     new_name = operation['new_name']
 
-    print 'REMOVING: %r' % remove_id
+    print('REMOVING: %r' % remove_id)
 
     mongo_db.users_audit.delete_many({'user_id': remove_id})
     mongo_db.users_net_link.delete_many({'user_id': remove_id})
@@ -112,7 +112,7 @@ for operation in operations:
     }})
     mongo_db.users.delete_one({'_id': remove_id})
 
-    print 'RENAMING: %r' % rename_id, new_name
+    print('RENAMING: %r' % rename_id, new_name)
 
     mongo_db.users.update({
         '_id': rename_id,
@@ -120,4 +120,4 @@ for operation in operations:
         'name': new_name,
     }})
 
-print 'EXIT'
+print('EXIT')

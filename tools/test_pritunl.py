@@ -1,4 +1,4 @@
-# pylama:ignore=E0100
+# pylama:ignore=
 import threading
 import unittest
 import requests
@@ -80,7 +80,7 @@ def _log_request(method, endpoint, start_time):
             color = '\033[93m'
         else:
             color = '\033[92m'
-    print '%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint)  # FIXME SyntaxError, pylama ignore won't hide
+    print('%s%sms:%s:%s\033[0m' % (color, response_time, method, endpoint))
 
 
 _request = requests.api.request
@@ -1230,10 +1230,10 @@ class Stress(SessionTestCase):
 
         if THREADED_STRESS_TEST:
             num = 0
-            for i in xrange(8):
+            for i in xrange(8):  # FIXME E0602 undefined name 'xrange' [pyflakes]
                 threads = []
 
-                for x in xrange(512):
+                for x in xrange(512):  # FIXME E0602 undefined name 'xrange' [pyflakes]
                     name = '%s_%s' % (TEST_USER_NAME, str(num).zfill(4))
                     thread = threading.Thread(target=self._create_user,
                                               args=(org_id, name))
@@ -1245,7 +1245,7 @@ class Stress(SessionTestCase):
                     thread.join()
 
         else:
-            for i in xrange(4096):
+            for i in xrange(4096):  # FIXME E0602 undefined name 'xrange' [pyflakes]
                 name = '%s_%s' % (TEST_USER_NAME, str(i).zfill(4))
                 self._create_user(org_id, name)
 

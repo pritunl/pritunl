@@ -1,4 +1,4 @@
-# pylama:ignore=E0100
+# pylama:ignore=
 import requests
 import time
 import uuid
@@ -54,8 +54,8 @@ cur_names = set()
 for user in response.json():
     name = user['name']
     if name in cur_names:
-        print >> sys.stderr, name
+        print(sys.stderr, name)
     cur_names.add(name)
 
 for name in sorted(list(names - cur_names)):
-    print name  # FIXME SyntaxError, pylama ignore won't hide
+    print(name)
