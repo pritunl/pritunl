@@ -1,4 +1,4 @@
-# pylama:ignore
+# pylama:ignore=E722
 # Available libraries included with a default Pritunl installation
 from pritunl import logger
 # import requests

@@ -1,4 +1,4 @@
-0611
+# pylama:ignore=E722,W0611
 from pritunl.monitoring.utils import get_servers
 
 from pritunl import settings

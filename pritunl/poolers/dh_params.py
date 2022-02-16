@@ -1,4 +1,4 @@
-# pylama:ignore=W0401
+# pylama:ignore=W0401,W0612
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import pooler

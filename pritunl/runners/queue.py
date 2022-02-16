@@ -1,4 +1,4 @@
-# pylama:ignore=W0401,W0611
+# pylama:ignore=E722,W0401,W0611
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings

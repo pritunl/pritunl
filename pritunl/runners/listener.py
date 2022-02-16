@@ -1,4 +1,4 @@
-# pylama:ignore=W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import listener
 from pritunl import logger

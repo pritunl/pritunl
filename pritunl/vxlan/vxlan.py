@@ -1,4 +1,4 @@
-# pylama:ignore=W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import settings
@@ -14,6 +14,7 @@ import subprocess
 _vxlans = {}
 _vxlan_instances = {}
 _loaded = False
+
 
 class Vxlan(object):
     def __init__(self, vxlan_id, server_id, instance_id, ipv6):
@@ -362,10 +363,12 @@ class Vxlan(object):
         finally:
             self.running_lock.release()
 
+
 def _get_ids():
     ids = list(range(0, 256))
     random.shuffle(ids)
     return ids
+
 
 def get_vxlan_id(server_id):
     coll = mongo.get_collection('vxlans')
@@ -390,12 +393,15 @@ def get_vxlan_id(server_id):
 
         return vxlan_id
 
+
 def get_vxlan(server_id, instance_id, ipv6):
     return Vxlan(get_vxlan_id(server_id), server_id, instance_id, ipv6)
+
 
 def get_vxlan_net(server_id):
     vxlan_id = get_vxlan_id(server_id)
     return settings.vpn.vxlan_net_prefix + str(vxlan_id) + '.0/24'
+
 
 def get_vxlan_net6(server_id):
     vxlan_id = get_vxlan_id(server_id)
@@ -403,6 +409,7 @@ def get_vxlan_net6(server_id):
         settings.vpn.ipv6_prefix,
         vxlan_id,
     )
+
 
 def on_vxlan(msg):
     vxlan_id = msg['message']['vxlan_id']

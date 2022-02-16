@@ -1,4 +1,4 @@
-# pylama:ignore
+# pylama:ignore=E722
 from pritunl import settings
 
 import logging

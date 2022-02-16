@@ -1,4 +1,4 @@
-# pylama:ignore=W0401
+# pylama:ignore=E722,W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth

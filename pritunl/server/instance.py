@@ -1,4 +1,4 @@
-# pylama:ignore=W0401
+# pylama:ignore=E722,W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface

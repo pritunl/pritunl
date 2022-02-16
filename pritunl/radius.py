@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=W0611
+# pylama:ignore=E722,W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).

@@ -1,4 +1,4 @@
-# pylama:ignore=W0401
+# pylama:ignore=E722,W0401
 from pritunl.plugins.utils import *
 from pritunl.plugins import example
 

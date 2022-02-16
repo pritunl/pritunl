@@ -1,4 +1,4 @@
-# pylama:ignore=W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.utils.misc import check_output_logged, get_temp_path
 from pritunl import settings

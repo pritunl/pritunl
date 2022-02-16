@@ -1,3 +1,4 @@
+# pylama:ignore=W0612
 from pritunl import settings
 from pritunl import logger
 
