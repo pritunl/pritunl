@@ -1,4 +1,4 @@
-# pylama:ignore=E231,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import utils
@@ -1506,7 +1506,7 @@ class Clients(object):
             '-s', client_addr,
             '-i', self.instance.interface,
             '-m', 'conntrack',
-            '--ctstate','RELATED,ESTABLISHED',
+            '--ctstate', 'RELATED,ESTABLISHED',
             '-j', 'ACCEPT',
         ] + extra_args
         rules.append(forward2_base_rule)
@@ -1516,7 +1516,7 @@ class Clients(object):
                 '-s', client_addr6,
                 '-i', self.instance.interface,
                 '-m', 'conntrack',
-                '--ctstate','RELATED,ESTABLISHED',
+                '--ctstate', 'RELATED,ESTABLISHED',
                 '-j', 'ACCEPT',
             ] + extra_args
             rules6.append(forward2_base_rule6)
@@ -1640,7 +1640,7 @@ class Clients(object):
             '-s', client_addr,
             '-i', self.instance.interface_wg,
             '-m', 'conntrack',
-            '--ctstate','RELATED,ESTABLISHED',
+            '--ctstate', 'RELATED,ESTABLISHED',
             '-j', 'ACCEPT',
         ] + extra_args
         rules.append(forward2_base_rule)
@@ -1650,7 +1650,7 @@ class Clients(object):
                 '-s', client_addr6,
                 '-i', self.instance.interface_wg,
                 '-m', 'conntrack',
-                '--ctstate','RELATED,ESTABLISHED',
+                '--ctstate', 'RELATED,ESTABLISHED',
                 '-j', 'ACCEPT',
             ] + extra_args
             rules6.append(forward2_base_rule6)

@@ -1,4 +1,4 @@
-# pylama:ignore=E231,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import utils
 from pritunl import settings
@@ -73,7 +73,7 @@ def status_get():
             'servers': {
                 '$push': '$status',
             },
-            'local_networks': {'$push':'$local_networks'},
+            'local_networks': {'$push': '$local_networks'},
         }},
     ])
 

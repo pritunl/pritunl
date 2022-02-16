@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E201,E221,E223,E231,E701,E701,E711,E722,W0611
+# pylama:ignore=E201,E221,E223,E701,E701,E711,E722,W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).
@@ -38,7 +38,7 @@ Homepage at http://github.com/btimby/py-radius/
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 from select import select
-from struct import pack,unpack
+from struct import pack, unpack
 from random import randint
 try:
     from hashlib import md5
@@ -62,19 +62,19 @@ class NoResponse(Error): pass
 class SocketError(NoResponse): pass
 
 
-def authenticate(username,password,secret,host='radius',port=1645):
+def authenticate(username, password, secret, host='radius', port=1645):
     '''Return 1 for a successful authentication. Other values indicate
        failure (should only ever be 0 anyway).
 
        Can raise either NoResponse or SocketError'''
 
-    r = RADIUS(secret,host,port)
-    return r.authenticate(username,password)
+    r = RADIUS(secret, host, port)
+    return r.authenticate(username, password)
 
 
 class RADIUS:
 
-    def __init__(self,secret,host='radius',port=1645):
+    def __init__(self, secret, host='radius', port=1645):
         self._secret = secret
         self._host   = host
         self._port   = port
@@ -88,8 +88,8 @@ class RADIUS:
 
     def opensocket(self):
         if self._socket == None:
-            self._socket = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
-            self._socket.connect((self._host,self._port))
+            self._socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            self._socket.connect((self._host, self._port))
 
     def closesocket(self):
         if self._socket is not None:
@@ -101,14 +101,14 @@ class RADIUS:
 
     def generateAuthenticator(self):
         '''A 16 byte random string'''
-        v = list(range(0,17))
+        v = list(range(0, 17))
         v[0] = '16B'
-        for i in range(1,17):
-            v[i] = randint(1,255)
+        for i in range(1, 17):
+            v[i] = randint(1, 255)
 
         return pack(*v)
 
-    def radcrypt(self,authenticator,text):
+    def radcrypt(self, authenticator, text):
         '''Encrypt a password with the secret'''
         # First, pad the password to multiple of 16 octets.
         text += chr(0) * (16 - (len(text) % 16))
@@ -130,7 +130,7 @@ class RADIUS:
             last, text = result[-16:], text[16:]
         return result
 
-    def authenticate(self,uname,passwd):
+    def authenticate(self, uname, passwd):
         '''Attempt t authenticate with the given username and password.
            Returns 0 on failure
            Returns 1 on success
@@ -139,24 +139,24 @@ class RADIUS:
 
         try:
             self.opensocket()
-            id = randint(0,255)
+            id = randint(0, 255)
 
             authenticator = self.generateAuthenticator()
 
-            encpass = self.radcrypt(authenticator,passwd)
+            encpass = self.radcrypt(authenticator, passwd)
 
             msg = pack('!B B H 16s B B %ds B B %ds'
-                       % (len(uname),len(encpass)),
-                       1,id,
+                       % (len(uname), len(encpass)),
+                       1, id,
                        len(uname)+len(encpass) + 24,  # Length of entire message
                        authenticator,
-                       1,len(uname)+2,uname,
-                       2,len(encpass)+2,encpass)
+                       1, len(uname)+2, uname,
+                       2, len(encpass)+2, encpass)
 
-            for i in range(0,self.retries):
+            for i in range(0, self.retries):
                 self._socket.send(msg)
 
-                t = select( [self._socket,],[],[],self.timeout)
+                t = select( [self._socket], [], [], self.timeout)
                 if len(t[0]) > 0:
                     response = self._socket.recv(4096)
                 else:
@@ -205,14 +205,14 @@ if __name__ == '__main__':
     secret = ''
     while not secret: secret = getpass('RADIUS Secret? ')
 
-    r = RADIUS(secret,host,port)
+    r = RADIUS(secret, host, port)
 
-    uname,passwd = None,None
+    uname, passwd = None, None
 
     while not uname:  uname = input("Username? ")
     while not passwd: passwd = getpass("Password? ")
 
-    if r.authenticate(uname,passwd):
+    if r.authenticate(uname, passwd):
         print("Authentication Succeeded")
     else:
         print("Authentication Failed")

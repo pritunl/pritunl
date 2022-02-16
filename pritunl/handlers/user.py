@@ -1,4 +1,4 @@
-# pylama:ignore=E231,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -299,7 +299,7 @@ def _create_user(users, org, user_data, remote_addr, pool):
                         email=email, auth_type=auth_type, yubico_id=yubico_id, groups=groups,
                         pin=pin, disabled=disabled, bypass_secondary=bypass_secondary,
                         client_to_client=client_to_client, mac_addresses=mac_addresses,
-                        dns_servers=dns_servers,dns_suffix=dns_suffix,
+                        dns_servers=dns_servers, dns_suffix=dns_suffix,
                         port_forwarding=port_forwarding)
     user.audit_event('user_created',
                      'User created from web console',

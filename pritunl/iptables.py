@@ -1,4 +1,4 @@
-# pylama:ignore=E221,E231,E722,W0611
+# pylama:ignore=E221,E722,W0611
 from pritunl import utils
 from pritunl import logger
 from pritunl import settings
@@ -223,7 +223,7 @@ class Iptables(object):
                         'INPUT',
                         '-d', self.virt_network6,
                         '-m', 'conntrack',
-                        '--ctstate','RELATED,ESTABLISHED',
+                        '--ctstate', 'RELATED,ESTABLISHED',
                         '-j', 'ACCEPT',
                     ])
 
