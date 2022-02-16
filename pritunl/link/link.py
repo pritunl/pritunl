@@ -1,4 +1,4 @@
-# pylama:ignore=E125,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -435,7 +435,7 @@ class Host(mongo.MongoObject):
         if self.link.type != DIRECT:
             for location in locations:
                 if location.id in loc_excludes or \
-                    location.id == self.location.id:
+                   location.id == self.location.id:
                     continue
 
                 for host in location.iter_hosts():

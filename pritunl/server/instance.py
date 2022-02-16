@@ -1,4 +1,4 @@
-# pylama:ignore=E125,W0401
+# pylama:ignore=W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
@@ -812,8 +812,7 @@ class ServerInstance(object):
                         interface = default_interface
 
             nat = route['nat']
-            if network == '::/0' and self.server.ipv6 and \
-                settings.local.host.routed_subnet6:
+            if network == '::/0' and self.server.ipv6 and settings.local.host.routed_subnet6:
                 nat = False
 
             if nat and route['nat_netmap']:
