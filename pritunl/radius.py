@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E223,E701,E701,E711,E722,W0611
+# pylama:ignore=E701,E701,E711,E722,W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).
@@ -49,9 +49,9 @@ import socket
 __version__ = '1.0.3'
 
 # Constants
-ACCESS_REQUEST	= 1
-ACCESS_ACCEPT	= 2
-ACCESS_REJECT	= 3
+ACCESS_REQUEST = 1
+ACCESS_ACCEPT = 2
+ACCESS_REJECT = 3
 
 DEFAULT_RETRIES = 3
 DEFAULT_TIMEOUT = 5
