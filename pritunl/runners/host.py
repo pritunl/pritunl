@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -97,12 +97,12 @@ def _keep_alive_thread():
 
                     auto_public_host, auto_public_host6 = \
                         utils.set_zone_record(
-                        route53_region,
-                        route53_zone,
-                        host_name,
-                        cur_public_ip,
-                        cur_public_ip6,
-                    )
+                            route53_region,
+                            route53_zone,
+                            host_name,
+                            cur_public_ip,
+                            cur_public_ip6,
+                            )
 
                     settings.local.host.auto_public_host = auto_public_host
                     settings.local.host.auto_public_host6 = auto_public_host6

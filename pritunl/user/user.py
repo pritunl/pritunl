@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -380,9 +380,9 @@ class User(mongo.MongoObject):
             try:
                 resp = requests.get(auth_server +
                                     '/update/google?user=%s&license=%s' % (
-                                    urllib.parse.quote(self.email),
-                                    settings.app.license,
-                    ))
+                                        urllib.parse.quote(self.email),
+                                        settings.app.license,
+                                        ))
 
                 if resp.status_code != 200:
                     logger.error('Google auth check request error', 'user',
@@ -424,12 +424,12 @@ class User(mongo.MongoObject):
                 resp = requests.get(auth_server +
                                     ('/update/azure?user=%s&license=%s&' +
                                      'directory_id=%s&app_id=%s&app_secret=%s') % (
-                        urllib.parse.quote(self.name),
-                        settings.app.license,
-                        urllib.parse.quote(settings.app.sso_azure_directory_id),
-                        urllib.parse.quote(settings.app.sso_azure_app_id),
-                        urllib.parse.quote(settings.app.sso_azure_app_secret),
-                ))
+                                        urllib.parse.quote(self.name),
+                                        settings.app.license,
+                                        urllib.parse.quote(settings.app.sso_azure_directory_id),
+                                        urllib.parse.quote(settings.app.sso_azure_app_id),
+                                        urllib.parse.quote(settings.app.sso_azure_app_secret),
+                                        ))
 
                 if resp.status_code != 200:
                     logger.error('Azure auth check request error', 'user',
@@ -471,12 +471,12 @@ class User(mongo.MongoObject):
                 resp = requests.get(auth_server +
                                     ('/update/authzero?user=%s&license=%s&' +
                                      'app_domain=%s&app_id=%s&app_secret=%s') % (
-                        urllib.parse.quote(self.name),
-                        settings.app.license,
-                        urllib.parse.quote(settings.app.sso_authzero_domain),
-                        urllib.parse.quote(settings.app.sso_authzero_app_id),
-                        urllib.parse.quote(settings.app.sso_authzero_app_secret),
-                ))
+                                        urllib.parse.quote(self.name),
+                                        settings.app.license,
+                                        urllib.parse.quote(settings.app.sso_authzero_domain),
+                                        urllib.parse.quote(settings.app.sso_authzero_app_id),
+                                        urllib.parse.quote(settings.app.sso_authzero_app_secret),
+                                        ))
 
                 if resp.status_code != 200:
                     logger.error('Auth0 auth check request error', 'user',
@@ -520,10 +520,10 @@ class User(mongo.MongoObject):
             try:
                 resp = requests.get(auth_server +
                                     '/update/slack?user=%s&team=%s&license=%s' % (
-                        urllib.parse.quote(self.name),
-                        urllib.parse.quote(settings.app.sso_match[0]),
-                        settings.app.license,
-                    ))
+                                        urllib.parse.quote(self.name),
+                                        urllib.parse.quote(settings.app.sso_match[0]),
+                                        settings.app.license,
+                                        ))
 
                 if resp.status_code != 200:
                     logger.error('Slack auth check request error', 'user',

@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
@@ -1237,8 +1237,8 @@ class Server(mongo.MongoObject):
             self.stop()
             raise ServerMissingOrg('Primary user cannot be created ' +
                                    'without any organizations', {
-                                   'server_id': self.id,
-                })
+                                    'server_id': self.id,
+                                    })
 
         usr = org.new_user(name=SERVER_USER_PREFIX + str(self.id),
                            type=CERT_SERVER, resource_id=self.id)
@@ -1348,8 +1348,8 @@ class Server(mongo.MongoObject):
             hosts_set.add(host_id)
 
             spec = {
-            '_id': {'$in': [x['server_id'] for x in self.links]},
-            }
+                '_id': {'$in': [x['server_id'] for x in self.links]},
+                }
             project = {
                 '_id': True,
                 'hosts': True,
@@ -1568,8 +1568,8 @@ class Server(mongo.MongoObject):
         if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' +
                                    'without any organizations', {
-                                   'server_id': self.id,
-                })
+                                    'server_id': self.id,
+                                    })
 
         self.pre_start_check()
 

@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E713
+# pylama:ignore=E713
 from pritunl import settings
 
 import json
@@ -26,14 +26,14 @@ def verify_google(user_email):
 
     credentials = oauth2client.service_account. \
         ServiceAccountCredentials.from_p12_keyfile_buffer(
-        data['client_email'],
-        io.StringIO(data['private_key']),
-        'notasecret',
-        scopes=[
-            'https://www.googleapis.com/auth/admin.directory.user.readonly',
-            'https://www.googleapis.com/auth/admin.directory.group.readonly',
-        ],
-    )
+            data['client_email'],
+            io.StringIO(data['private_key']),
+            'notasecret',
+            scopes=[
+                'https://www.googleapis.com/auth/admin.directory.user.readonly',
+                'https://www.googleapis.com/auth/admin.directory.group.readonly',
+                ],
+                )
 
     credentials = credentials.create_delegated(google_email)
 

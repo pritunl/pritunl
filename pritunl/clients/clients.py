@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E231,E722,W0401
+# pylama:ignore=E231,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import utils
@@ -218,11 +218,11 @@ class Clients(object):
                         if ':' in network:
                             client_conf += \
                                 'push "route-ipv6 %s net_gateway%s"\n' % (
-                                network, metric)
+                                    network, metric)
                         else:
                             client_conf += \
                                 'push "route %s %s net_gateway%s"\n' % (
-                                utils.parse_network(network) + (metric,))
+                                    utils.parse_network(network) + (metric,))
                     else:
                         if ':' in network:
                             client_conf += 'push "route-ipv6 %s%s"\n' % (

@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E125,E722,W0401
+# pylama:ignore=E125,E722,W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
@@ -426,7 +426,7 @@ class ServerInstance(object):
         if self.server.tls_auth:
             server_conf += \
                 'key-direction 0\n<tls-auth>\n%s\n</tls-auth>\n' % (
-                self.server.tls_auth_key)
+                    self.server.tls_auth_key)
 
         server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
             self.primary_user.certificate)
