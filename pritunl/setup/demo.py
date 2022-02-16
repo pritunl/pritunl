@@ -1,4 +1,4 @@
-# pylama:ignore=E221,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import ipaddress
 from pritunl import utils
@@ -24,7 +24,7 @@ def setup_demo():
         platforms = list(DESKTOP_PLATFORMS)
         start_timestamp = datetime.datetime(2015, 12, 28, 4, 1, 0)
         hosts_collection = mongo.get_collection('hosts')
-        servers_collection  = mongo.get_collection('servers')
+        servers_collection = mongo.get_collection('servers')
         clients_collection = mongo.get_collection('clients')
 
         clients_collection.remove({})

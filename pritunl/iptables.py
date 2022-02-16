@@ -1,4 +1,4 @@
-# pylama:ignore=E221,E722,W0611
+# pylama:ignore=E722,W0611
 from pritunl import utils
 from pritunl import logger
 from pritunl import settings
@@ -26,7 +26,7 @@ class Iptables(object):
         self._nat_routes6 = {}
         self._nat_networks = set()
         self._nat_networks6 = set()
-        name_prefix = '%s_%s'  % (server_id, server_type)
+        name_prefix = '%s_%s' % (server_id, server_type)
         self._routes_name = name_prefix + 'r'
         self._routes6_name = name_prefix + 'r6'
         self._nat_routes_name = name_prefix + 'n'

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E201,E221,E223,E701,E701,E711,E722,W0611
+# pylama:ignore=E201,E223,E701,E701,E711,E722,W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).
@@ -76,8 +76,8 @@ class RADIUS:
 
     def __init__(self, secret, host='radius', port=1645):
         self._secret = secret
-        self._host   = host
-        self._port   = port
+        self._host = host
+        self._port = port
 
         self.retries = DEFAULT_RETRIES
         self.timeout = DEFAULT_TIMEOUT
