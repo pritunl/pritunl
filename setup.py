@@ -1,4 +1,4 @@
-# pylama:ignore=E131
+# pylama:ignore=
 from setuptools import setup
 import os
 import sys
@@ -118,9 +118,9 @@ setup(
     download_url='https://github.com/pritunl/pritunl/archive/%s.tar.gz' % (
         VERSION),
     keywords='pritunl, vpn server, distributed vpn server, ' +
-        'enterprise vpn server, open source vpn server, ' +
-        'virtual private network, virtual networks, openvpn client, ' +
-        'openvpn server, vpn tutorial',
+             'enterprise vpn server, open source vpn server, ' +
+             'virtual private network, virtual networks, openvpn client, ' +
+             'openvpn server, vpn tutorial',
     packages=packages,
     license=open('LICENSE', 'rb').read().decode(),
     zip_safe=False,

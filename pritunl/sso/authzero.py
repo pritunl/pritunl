@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E502,W0612
+# pylama:ignore=E502,W0612
 from pritunl import settings
 from pritunl import logger
 
@@ -17,7 +17,7 @@ def verify_authzero(user_name):
             'client_id': settings.app.sso_authzero_app_id,
             'client_secret': settings.app.sso_authzero_app_secret,
             'audience': 'https://%s.auth0.com/api/v2/' % \
-                settings.app.sso_authzero_domain,
+            settings.app.sso_authzero_domain,
         }),
         timeout=30,
     )

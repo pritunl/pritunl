@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E125,E131,E502,E722,W0401
+# pylama:ignore=E122,E125,E502,E722,W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
@@ -618,8 +618,8 @@ class ServerInstance(object):
                     if not interface:
                         logger.info(
                             'Failed to find interface for local ' + \
-                                'IPv6 network route, using default route',
-                                'server',
+                            'IPv6 network route, using default route',
+                            'server',
                             server_id=self.server.id,
                             network=network,
                         )
@@ -634,8 +634,8 @@ class ServerInstance(object):
                     if not interface:
                         logger.info(
                             'Failed to find interface for local ' + \
-                                'network route, using default route',
-                                'server',
+                            'network route, using default route',
+                            'server',
                             server_id=self.server.id,
                             network=network,
                         )
@@ -1009,7 +1009,7 @@ class ServerInstance(object):
                     doc = self.collection.find_and_modify({
                         '_id': self.server.id,
                         'availability_group': \
-                            settings.local.host.availability_group,
+                        settings.local.host.availability_group,
                         'instances.instance_id': self.id,
                     }, {'$set': {
                         'instances.$.ping_timestamp': utils.now(),
@@ -1082,7 +1082,7 @@ class ServerInstance(object):
                     doc = self.collection.find_and_modify({
                         '_id': self.server.id,
                         'availability_group': \
-                            settings.local.host.availability_group,
+                        settings.local.host.availability_group,
                         'instances.instance_id': self.id,
                     }, {'$set': {
                         'instances.$.ping_timestamp': utils.now(),
@@ -1886,7 +1886,7 @@ class ServerInstance(object):
                     'instance_id': self.id,
                     'host_id': settings.local.host_id,
                     'ping_timestamp': utils.now() + \
-                        datetime.timedelta(seconds=30),
+                    datetime.timedelta(seconds=30),
                 },
             },
             '$inc': {

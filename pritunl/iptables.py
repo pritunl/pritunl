@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E221,E231,E722,W0611
+# pylama:ignore=E221,E231,E722,W0611
 from pritunl import utils
 from pritunl import logger
 from pritunl import settings
@@ -1441,7 +1441,7 @@ class Iptables(object):
                     if log:
                         logger.error(
                             'Unexpected loss of iptables rule, ' +
-                                'adding again...',
+                            'adding again...',
                             'instance',
                             rule=rule,
                         )
@@ -1454,7 +1454,7 @@ class Iptables(object):
                         if log:
                             logger.error(
                                 'Unexpected loss of ip6tables rule, ' +
-                                    'adding again...',
+                                'adding again...',
                                 'instance',
                                 rule=rule,
                             )
@@ -1467,7 +1467,7 @@ class Iptables(object):
                         if log:
                             logger.error(
                                 'Unexpected loss of iptables drop rule, ' +
-                                    'adding again...',
+                                'adding again...',
                                 'instance',
                                 rule=rule,
                             )
@@ -1480,7 +1480,7 @@ class Iptables(object):
                             if log:
                                 logger.error(
                                     'Unexpected loss of ip6tables drop ' +
-                                        'rule, adding again...',
+                                    'rule, adding again...',
                                     'instance',
                                     rule=rule,
                                 )

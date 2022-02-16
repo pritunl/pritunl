@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E502,E722,W0401
+# pylama:ignore=E502,E722,W0401
 from pritunl.queue.com import QueueCom
 
 from pritunl.constants import *
@@ -80,7 +80,7 @@ class Queue(mongo.MongoObject):
                 'runner_id': self.runner_id,
             }, {'$set': {
                 'ttl_timestamp': utils.now() + \
-                    datetime.timedelta(seconds=self.ttl),
+                datetime.timedelta(seconds=self.ttl),
             }})
             if response['updatedExisting']:
                 messenger.publish('queue', [UPDATE, self.id])

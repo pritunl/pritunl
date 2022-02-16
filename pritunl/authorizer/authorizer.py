@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E502,E722,W0401
+# pylama:ignore=E502,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import logger
@@ -223,7 +223,7 @@ class Authorizer(object):
             self.user.audit_event(
                 'user_connection',
                 'User connection to "%s" denied. Auth data missing nonce' % \
-                    self.server.name,
+                self.server.name,
                 remote_addr=self.remote_ip,
             )
 
@@ -242,7 +242,7 @@ class Authorizer(object):
                 'user_connection',
                 ('User connection to "%s" denied. ' +
                     'Auth data missing timestamp') % \
-                    self.server.name,
+                self.server.name,
                 remote_addr=self.remote_ip,
             )
 
@@ -261,7 +261,7 @@ class Authorizer(object):
             self.user.audit_event(
                 'user_connection',
                 'User connection to "%s" denied. Auth timestamp expired' % \
-                    self.server.name,
+                self.server.name,
                 remote_addr=self.remote_ip,
             )
 
@@ -641,7 +641,7 @@ class Authorizer(object):
                         self.user.journal_data,
                         self.server.journal_data,
                         event_long='Authentication cached, ' + \
-                            'skipping secondary passcode',
+                        'skipping secondary passcode',
                     )
 
             if not allow:
@@ -799,7 +799,7 @@ class Authorizer(object):
                         self.user.journal_data,
                         self.server.journal_data,
                         event_long='Authentication cached, ' + \
-                            'skipping Yubikey',
+                        'skipping Yubikey',
                     )
 
             if not allow:
@@ -926,7 +926,7 @@ class Authorizer(object):
                         self.user.journal_data,
                         self.server.journal_data,
                         event_long='Authentication cached, ' + \
-                            'skipping OTP',
+                        'skipping OTP',
                     )
 
             if not allow:

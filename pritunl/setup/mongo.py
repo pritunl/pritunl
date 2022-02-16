@@ -1,4 +1,4 @@
-# pylama:ignore=E131,E502,E722,W0401
+# pylama:ignore=E502,E722,W0401
 from pritunl.constants import *
 from pritunl import app
 from pritunl import settings
@@ -16,16 +16,17 @@ import collections
 def _get_read_pref(name):
     return {
         'primary': \
-            pymongo.read_preferences.ReadPreference.PRIMARY,
+        pymongo.read_preferences.ReadPreference.PRIMARY,
         'primaryPreferred': \
-            pymongo.read_preferences.ReadPreference.PRIMARY_PREFERRED,
+        pymongo.read_preferences.ReadPreference.PRIMARY_PREFERRED,
         'secondary': \
-            pymongo.read_preferences.ReadPreference.SECONDARY,
+        pymongo.read_preferences.ReadPreference.SECONDARY,
         'secondaryPreferred': \
-            pymongo.read_preferences.ReadPreference.SECONDARY_PREFERRED,
+        pymongo.read_preferences.ReadPreference.SECONDARY_PREFERRED,
         'nearest': \
-            pymongo.read_preferences.ReadPreference.NEAREST,
+        pymongo.read_preferences.ReadPreference.NEAREST,
     }.get(name)
+
 
 coll_indexes = collections.defaultdict(set)
 
