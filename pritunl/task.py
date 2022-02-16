@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -87,8 +87,8 @@ class Task(mongo.MongoObject):
             self.complete()
         except:
             logger.exception('Error running task', 'task',
-                task_id=self.id,
-                task_type=self.type,
+                             task_id=self.id,
+                             task_type=self.type,
                              )
 
     def complete(self):
@@ -114,7 +114,7 @@ def iter_tasks(spec=None):
             yield task(doc=doc)
 
 def add_task(task_cls, hours=None, minutes=None, seconds=None,
-        run_on_start=False):
+             run_on_start=False):
     if run_on_start:
         tasks_on_start.append(task_cls)
 

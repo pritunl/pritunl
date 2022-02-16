@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E302,E305,W0401,W0611
+# pylama:ignore=E131,E302,E305,W0401,W0611
 from pritunl.auth.utils import *
 from pritunl.auth.csrf import validate_token
 
@@ -44,8 +44,8 @@ class Administrator(mongo.MongoObject):
     }
 
     def __init__(self, username=None, password=None, default=None,
-            yubikey_id=None, otp_auth=None, auth_api=None, disabled=None,
-            super_user=None, **kwargs):
+                 yubikey_id=None, otp_auth=None, auth_api=None, disabled=None,
+                 super_user=None, **kwargs):
         mongo.MongoObject.__init__(self)
         if username is not None:
             self.username = username
@@ -142,7 +142,7 @@ class Administrator(mongo.MongoObject):
         return utils.const_compare(pass_hash, test_hash)
 
     def auth_check(self, password, otp_code=None, yubico_key=None,
-            remote_addr=None):
+                   remote_addr=None):
         if not self.test_password(password):
             journal.entry(
                 journal.ADMIN_AUTH_FAILURE,

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import utils
@@ -15,7 +15,7 @@ def database_setup():
 
     _prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
-        connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+                                 connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
     _database = client.get_default_database()
 
 def database_clean_up():

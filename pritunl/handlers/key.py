@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E306,E722,W0401,W0404,W0611,W0621
+# pylama:ignore=E302,E306,E722,W0401,W0404,W0611,W0621
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -36,11 +36,11 @@ def _get_key_tar_archive(org_id, user_id):
     usr = org.get_user(user_id)
     key_archive = usr.build_key_tar_archive()
     response = flask.Response(response=key_archive,
-        mimetype='application/octet-stream')
+                              mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s.tar"' %
-        unicodedata.normalize(
-            'NFKD', usr.name).encode('ascii', 'ignore').decode())
+                         'attachment; filename="%s.tar"' %
+                         unicodedata.normalize(
+                            'NFKD', usr.name).encode('ascii', 'ignore').decode())
     return (usr, response)
 
 def _get_key_zip_archive(org_id, user_id):
@@ -48,14 +48,14 @@ def _get_key_zip_archive(org_id, user_id):
     usr = org.get_user(user_id)
     key_archive = usr.build_key_zip_archive()
     response = flask.Response(response=key_archive,
-        mimetype='application/octet-stream')
+                              mimetype='application/octet-stream')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s_%s.zip"' % (
-            unicodedata.normalize(
-                'NFKD', org.name).encode('ascii', 'ignore').decode(),
-            unicodedata.normalize(
-                'NFKD', usr.name).encode('ascii', 'ignore').decode(),
-        ))
+                         'attachment; filename="%s_%s.zip"' % (
+                                                                unicodedata.normalize(
+                                                                    'NFKD', org.name).encode('ascii', 'ignore').decode(),
+                                                                unicodedata.normalize(
+                                                                    'NFKD', usr.name).encode('ascii', 'ignore').decode(),
+                                                                ))
     return (usr, response)
 
 def _get_onc_archive(org_id, user_id):
@@ -63,14 +63,14 @@ def _get_onc_archive(org_id, user_id):
     usr = org.get_user(user_id)
     onc_conf = usr.build_onc()
     response = flask.Response(response=onc_conf,
-        mimetype='application/x-onc')
+                              mimetype='application/x-onc')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s_%s.onc"' % (
-            unicodedata.normalize(
-                'NFKD', org.name).encode('ascii', 'ignore').decode(),
-            unicodedata.normalize(
-                'NFKD', usr.name).encode('ascii', 'ignore').decode(),
-        ))
+                         'attachment; filename="%s_%s.onc"' % (
+                                                                unicodedata.normalize(
+                                                                    'NFKD', org.name).encode('ascii', 'ignore').decode(),
+                                                                unicodedata.normalize(
+                                                                    'NFKD', usr.name).encode('ascii', 'ignore').decode(),
+                                                                ))
     return (usr, response)
 
 def _find_doc(query, one_time=None, one_time_new=False):
@@ -119,8 +119,8 @@ def user_key_tar_archive_get(org_id, user_id):
     usr, resp = _get_key_tar_archive(org_id, user_id)
 
     usr.audit_event('user_profile',
-        'User tar profile downloaded from web console',
-        remote_addr=remote_addr,
+                    'User tar profile downloaded from web console',
+                    remote_addr=remote_addr,
                     )
 
     journal.entry(
@@ -139,8 +139,8 @@ def user_key_zip_archive_get(org_id, user_id):
     usr, resp = _get_key_zip_archive(org_id, user_id)
 
     usr.audit_event('user_profile',
-        'User zip profile downloaded from web console',
-        remote_addr=remote_addr,
+                    'User zip profile downloaded from web console',
+                    remote_addr=remote_addr,
                     )
 
     journal.entry(
@@ -159,8 +159,8 @@ def user_key_onc_archive_get(org_id, user_id):
     usr, resp = _get_onc_archive(org_id, user_id)
 
     usr.audit_event('user_profile',
-        'User onc profile downloaded from web console',
-        remote_addr=remote_addr,
+                    'User onc profile downloaded from web console',
+                    remote_addr=remote_addr,
                     )
 
     journal.entry(
@@ -180,8 +180,8 @@ def user_key_link_get(org_id, user_id):
     usr = org.get_user(user_id)
 
     usr.audit_event('user_profile',
-        'User temporary profile links created from web console',
-        remote_addr=remote_addr,
+                    'User temporary profile links created from web console',
+                    remote_addr=remote_addr,
                     )
 
     journal.entry(
@@ -202,8 +202,8 @@ def user_linked_key_conf_get(org_id, user_id, server_id):
     key_conf = usr.build_key_conf(server_id)
 
     usr.audit_event('user_profile',
-        'User key profile downloaded from web console',
-        remote_addr=remote_addr,
+                    'User key profile downloaded from web console',
+                    remote_addr=remote_addr,
                     )
 
     journal.entry(
@@ -214,9 +214,9 @@ def user_linked_key_conf_get(org_id, user_id, server_id):
     )
 
     response = flask.Response(response=key_conf['conf'],
-        mimetype='application/ovpn')
+                              mimetype='application/ovpn')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s"' % key_conf['name'])
+                         'attachment; filename="%s"' % key_conf['name'])
 
     return response
 
@@ -257,8 +257,8 @@ def user_linked_key_tar_archive_get(key_id):
     )
 
     usr.audit_event('user_profile',
-        'User tar profile downloaded with temporary profile link',
-        remote_addr=remote_addr,
+                    'User tar profile downloaded with temporary profile link',
+                    remote_addr=remote_addr,
                     )
 
     return resp
@@ -300,8 +300,8 @@ def user_linked_key_zip_archive_get(key_id):
     )
 
     usr.audit_event('user_profile',
-        'User zip profile downloaded with temporary profile link',
-        remote_addr=remote_addr,
+                    'User zip profile downloaded with temporary profile link',
+                    remote_addr=remote_addr,
                     )
 
     return resp
@@ -343,8 +343,8 @@ def user_linked_key_onc_archive_get(key_id):
     )
 
     usr.audit_event('user_profile',
-        'User onc profile downloaded with temporary profile link',
-        remote_addr=remote_addr,
+                    'User onc profile downloaded with temporary profile link',
+                    remote_addr=remote_addr,
                     )
 
     return resp
@@ -425,8 +425,8 @@ def user_key_pin_put(key_id):
         )
 
         usr.audit_event('user_updated',
-            'User pin changed with temporary profile link',
-            remote_addr=remote_addr,
+                        'User pin changed with temporary profile link',
+                        remote_addr=remote_addr,
                         )
 
     usr.commit()
@@ -471,8 +471,8 @@ def user_linked_key_page_get(short_code):
     )
 
     usr.audit_event('user_profile',
-        'User temporary profile link viewed',
-        remote_addr=remote_addr,
+                    'User temporary profile link viewed',
+                    remote_addr=remote_addr,
                     )
 
     if settings.local.sub_active and settings.app.theme == 'dark':
@@ -490,7 +490,7 @@ def user_linked_key_page_get(short_code):
         header_class += ' restrict-import'
 
     key_page = static.StaticFile(settings.conf.www_path, view_name,
-        cache=False, gzip=False).data
+                                 cache=False, gzip=False).data
 
     uri_url = (utils.get_url_root() + '/ku/' + doc['short_id'])
     if uri_url.startswith('https'):
@@ -509,10 +509,10 @@ def user_linked_key_page_get(short_code):
     if org.otp_auth and not usr.has_duo_passcode and not usr.has_yubikey:
         key_page = key_page.replace('<%= user_otp_key %>', usr.otp_secret)
         key_page = key_page.replace('<%= user_otp_url %>',
-            'otpauth://totp/%s@%s?secret=%s' % (
-                urllib.parse.quote(usr.name),
-                urllib.parse.quote(org.name),
-                usr.otp_secret))
+                                    'otpauth://totp/%s@%s?secret=%s' % (
+                                        urllib.parse.quote(usr.name),
+                                        urllib.parse.quote(org.name),
+                                        usr.otp_secret))
     else:
         key_page = key_page.replace('<%= user_otp_key %>', '')
         key_page = key_page.replace('<%= user_otp_url %>', '')
@@ -593,8 +593,8 @@ def user_uri_key_page_get(short_code):
     )
 
     usr.audit_event('user_profile',
-        'User temporary profile downloaded from pritunl client',
-        remote_addr=remote_addr,
+                    'User temporary profile downloaded from pritunl client',
+                    remote_addr=remote_addr,
                     )
 
     keys = {}
@@ -662,19 +662,19 @@ def user_linked_key_conf_get(key_id, server_id):
     )
 
     usr.audit_event('user_profile',
-        'User profile downloaded with temporary profile link',
-        remote_addr=remote_addr,
+                    'User profile downloaded with temporary profile link',
+                    remote_addr=remote_addr,
                     )
 
     response = flask.Response(response=key_conf['conf'],
-        mimetype='application/ovpn')
+                              mimetype='application/ovpn')
     response.headers.add('Content-Disposition',
-        'attachment; filename="%s"' % key_conf['name'])
+                         'attachment; filename="%s"' % key_conf['name'])
 
     return response
 
 @app.app.route('/key/sync/<org_id>/<user_id>/<server_id>/<key_hash>',
-    methods=['GET'])
+               methods=['GET'])
 @auth.open_auth
 def key_sync_get(org_id, user_id, server_id, key_hash):
     org_id = org_id
@@ -813,8 +813,8 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     key_conf = usr.sync_conf(server_id, key_hash)
     if key_conf:
         usr.audit_event('user_profile',
-            'User profile synced from pritunl client',
-            remote_addr=remote_addr,
+                        'User profile synced from pritunl client',
+                        remote_addr=remote_addr,
                         )
 
         journal.entry(
@@ -836,7 +836,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     return utils.jsonify({})
 
 @app.app.route('/key/wg/<org_id>/<user_id>/<server_id>',
-    methods=['POST'])
+               methods=['POST'])
 @auth.open_auth
 def key_wg_post(org_id, user_id, server_id):
     org_id = org_id
@@ -1023,7 +1023,7 @@ def key_wg_post(org_id, user_id, server_id):
     client_mac_addrs = key_data['mac_addrs']
     if client_mac_addrs:
         client_mac_addrs = [utils.filter_str(x)
-            for x in client_mac_addrs]
+                            for x in client_mac_addrs]
     else:
         client_mac_addrs = None
     client_auth_token = key_data['token']
@@ -1124,8 +1124,8 @@ def key_wg_post(org_id, user_id, server_id):
     send_cipher_data64 = base64.b64encode(send_cipher_data).decode()
 
     usr.audit_event('user_profile',
-        'User retrieved wg public key from pritunl client',
-        remote_addr=remote_addr,
+                    'User retrieved wg public key from pritunl client',
+                    remote_addr=remote_addr,
                     )
 
     journal.entry(
@@ -1147,7 +1147,7 @@ def key_wg_post(org_id, user_id, server_id):
     })
 
 @app.app.route('/key/wg/<org_id>/<user_id>/<server_id>',
-    methods=['PUT'])
+               methods=['PUT'])
 @auth.open_auth
 def key_wg_put(org_id, user_id, server_id):
     org_id = org_id

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -65,9 +65,9 @@ def before_request():
 @app.after_request
 def after_request(response):
     response.headers.add('Execution-Time',
-        int((time.time() - flask.g.start) * 1000))
+                         int((time.time() - flask.g.start) * 1000))
     response.headers.add('Query-Time',
-        int(flask.g.query_time * 1000))
+                         int(flask.g.query_time * 1000))
     response.headers.add('Query-Count', flask.g.query_count)
     response.headers.add('Write-Count', flask.g.write_count)
 
@@ -89,7 +89,7 @@ def setup_get():
 
     try:
         static_file = static.StaticFile(settings.conf.www_path,
-            DBCONF_NAME, cache=False)
+                                        DBCONF_NAME, cache=False)
     except InvalidStaticFile:
         return flask.abort(404)
 
@@ -102,7 +102,7 @@ def upgrade_get():
 
     try:
         static_file = static.StaticFile(settings.conf.www_path,
-            UPGRADE_NAME, cache=False)
+                                        UPGRADE_NAME, cache=False)
     except InvalidStaticFile:
         return flask.abort(404)
 
@@ -119,7 +119,7 @@ def static_get(file_name):
 
     try:
         static_file = static.StaticFile(settings.conf.www_path,
-            file_path, cache=False)
+                                        file_path, cache=False)
     except InvalidStaticFile:
         return flask.abort(404)
 
@@ -149,7 +149,7 @@ def setup_mongodb_put():
 
     try:
         client = pymongo.MongoClient(mongodb_uri,
-            connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+                                     connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
         client.get_default_database()
     except pymongo.errors.ConfigurationError as error:
         if 'auth failed' in str(error):
@@ -271,10 +271,10 @@ def check_db_ver():
 
     if settings.local.version_int < db_min_ver_int:
         logger.error('Pritunl version not compatible with database version',
-            'setup',
-            db_version=db_ver,
-            db_min_version=db_min_ver,
-            server_version=settings.local.version,
+                     'setup',
+                     db_version=db_ver,
+                     db_min_version=db_min_ver,
+                     server_version=settings.local.version,
                      )
         exit(75)
 

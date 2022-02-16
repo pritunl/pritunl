@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401,W0611
+# pylama:ignore=E302,W0401,W0611
 from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import database
@@ -12,7 +12,7 @@ class MongoObject(object):
     fields_required = {}
 
     def __new__(cls, id=None, doc=None, spec=None, fields=None,
-            upsert=False, **kwargs):
+                upsert=False, **kwargs):
         from pritunl import utils
         fields = fields or cls.fields
 

@@ -1,4 +1,3 @@
-# pylama:ignore=E128
 ###############################################################################
 # The MIT License (MIT)
 #
@@ -168,22 +167,22 @@ class NTPPacket:
         """
         try:
             packed = struct.pack(NTPPacket._PACKET_FORMAT,
-                (self.leap << 6 | self.version << 3 | self.mode),
-                self.stratum,
-                self.poll,
-                self.precision,
-                _to_int(self.root_delay) << 16 | _to_frac(self.root_delay, 16),
-                _to_int(self.root_dispersion) << 16 |
-                _to_frac(self.root_dispersion, 16),
-                self.ref_id,
-                _to_int(self.ref_timestamp),
-                _to_frac(self.ref_timestamp),
-                _to_int(self.orig_timestamp),
-                _to_frac(self.orig_timestamp),
-                _to_int(self.recv_timestamp),
-                _to_frac(self.recv_timestamp),
-                _to_int(self.tx_timestamp),
-                _to_frac(self.tx_timestamp))
+                                 (self.leap << 6 | self.version << 3 | self.mode),
+                                 self.stratum,
+                                 self.poll,
+                                 self.precision,
+                                 _to_int(self.root_delay) << 16 | _to_frac(self.root_delay, 16),
+                                 _to_int(self.root_dispersion) << 16 |
+                                 _to_frac(self.root_dispersion, 16),
+                                 self.ref_id,
+                                 _to_int(self.ref_timestamp),
+                                 _to_frac(self.ref_timestamp),
+                                 _to_int(self.orig_timestamp),
+                                 _to_frac(self.orig_timestamp),
+                                 _to_int(self.recv_timestamp),
+                                 _to_frac(self.recv_timestamp),
+                                 _to_int(self.tx_timestamp),
+                                 _to_frac(self.tx_timestamp))
         except struct.error:
             raise NTPException("Invalid NTP packet fields.")
         return packed
@@ -200,7 +199,7 @@ class NTPPacket:
         """
         try:
             unpacked = struct.unpack(NTPPacket._PACKET_FORMAT,
-                    data[0:struct.calcsize(NTPPacket._PACKET_FORMAT)])
+                                     data[0:struct.calcsize(NTPPacket._PACKET_FORMAT)])
         except struct.error:
             raise NTPException("Invalid NTP packet.")
 
@@ -301,7 +300,7 @@ class NTPClient:
 
             # create the request packet - mode 3 is client
             query_packet = NTPPacket(mode=3, version=version,
-                                tx_timestamp=system_to_ntp_time(time.time()))
+                                     tx_timestamp=system_to_ntp_time(time.time()))
 
             # send the request
             s.sendto(query_packet.to_data(), sockaddr)

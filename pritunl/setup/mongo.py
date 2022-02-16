@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E302,E305,E502,E722,W0401
+# pylama:ignore=E131,E302,E305,E502,E722,W0401
 from pritunl.constants import *
 from pritunl import app
 from pritunl import settings
@@ -77,12 +77,12 @@ def upsert_indexes():
     if prefix + 'logs' not in cur_collections:
         log_limit = settings.app.log_limit
         mongo.database.create_collection(prefix + 'logs', capped=True,
-            size=log_limit * 1024, max=log_limit)
+                                         size=log_limit * 1024, max=log_limit)
 
     if prefix + 'log_entries' not in cur_collections:
         log_entry_limit = settings.app.log_entry_limit
         mongo.database.create_collection(prefix + 'log_entries', capped=True,
-            size=log_entry_limit * 512, max=log_entry_limit)
+                                         size=log_entry_limit * 512, max=log_entry_limit)
 
     cur_collections = mongo.secondary_database.collection_names()
     if prefix + 'messages' not in cur_collections:
@@ -92,7 +92,7 @@ def upsert_indexes():
 
     upsert_index('logs', 'timestamp', background=True)
     upsert_index('transaction', 'lock_id',
-        background=True, unique=True)
+                 background=True, unique=True)
     upsert_index('transaction', [
         ('ttl_timestamp', pymongo.ASCENDING),
         ('state', pymongo.ASCENDING),
@@ -116,7 +116,7 @@ def upsert_indexes():
     ], background=True)
     upsert_index('messages', 'channel', background=True)
     upsert_index('administrators', 'username',
-        background=True, unique=True)
+                 background=True, unique=True)
     upsert_index('users', 'resource_id', background=True)
     upsert_index('users', [
         ('type', pymongo.ASCENDING),
@@ -142,19 +142,19 @@ def upsert_indexes():
         ('user_id', pymongo.ASCENDING),
     ], background=True)
     upsert_index('users_key_link', 'key_id',
-        background=True)
+                 background=True)
     upsert_index('users_key_link', 'short_id',
-        background=True, unique=True)
+                 background=True, unique=True)
     upsert_index('users_net_link', 'user_id',
-        background=True)
+                 background=True)
     upsert_index('users_net_link', 'org_id',
-        background=True)
+                 background=True)
     upsert_index('users_net_link', 'network',
-        background=True)
+                 background=True)
     upsert_index('clients', 'user_id', background=True)
     upsert_index('clients', 'domain', background=True)
     upsert_index('clients', 'virt_address_num',
-        background=True)
+                 background=True)
     upsert_index('clients', [
         ('server_id', pymongo.ASCENDING),
         ('type', pymongo.ASCENDING),
@@ -164,16 +164,16 @@ def upsert_indexes():
         ('type', pymongo.ASCENDING),
     ], background=True)
     upsert_index('clients_pool',
-        'client_id', background=True)
+                 'client_id', background=True)
     upsert_index('clients_pool',
-        'timestamp', background=True)
+                 'timestamp', background=True)
     upsert_index('clients_pool', [
-        ('server_id', pymongo.ASCENDING),
-        ('user_id', pymongo.ASCENDING),
-    ], background=True)
+                 ('server_id', pymongo.ASCENDING),
+                 ('user_id', pymongo.ASCENDING),
+                 ], background=True)
     upsert_index('organizations', 'type', background=True)
     upsert_index('organizations',
-        'auth_token', background=True)
+                 'auth_token', background=True)
     upsert_index('hosts', 'name', background=True)
     upsert_index('hosts_usage', [
         ('host_id', pymongo.ASCENDING),
@@ -181,7 +181,7 @@ def upsert_indexes():
     ], background=True)
     upsert_index('servers', 'name', background=True)
     upsert_index('servers', 'ping_timestamp',
-        background=True)
+                 background=True)
     upsert_index('servers_output', [
         ('server_id', pymongo.ASCENDING),
         ('timestamp', pymongo.ASCENDING),
@@ -204,9 +204,9 @@ def upsert_indexes():
         ('_id', pymongo.DESCENDING),
     ], background=True)
     upsert_index('servers_ip_pool', 'user_id',
-        background=True)
+                 background=True)
     upsert_index('links_hosts', 'link_id',
-        background=True)
+                 background=True)
     upsert_index('links_hosts', [
         ('location_id', pymongo.ASCENDING),
         ('status', pymongo.ASCENDING),
@@ -222,13 +222,13 @@ def upsert_indexes():
         ('name', pymongo.ASCENDING),
     ], background=True)
     upsert_index('links_hosts', 'ping_timestamp_ttl',
-        background=True)
+                 background=True)
     upsert_index('links_locations', 'link_id',
-        background=True)
+                 background=True)
     upsert_index('routes_reserve', 'timestamp',
-        background=True)
+                 background=True)
     upsert_index('dh_params', 'dh_param_bits',
-        background=True)
+                 background=True)
     upsert_index('auth_nonces', [
         ('token', pymongo.ASCENDING),
         ('nonce', pymongo.ASCENDING),
@@ -250,52 +250,52 @@ def upsert_indexes():
         ('server_id', pymongo.ASCENDING),
     ], background=True)
     upsert_index('vxlans', 'server_id',
-        background=True, unique=True)
+                 background=True, unique=True)
 
     upsert_index('tasks', 'timestamp',
-        background=True, expireAfterSeconds=300)
+                 background=True, expireAfterSeconds=300)
     if settings.app.demo_mode:
         drop_index(mongo.get_collection('clients'),
-            'timestamp', background=True)
+                   'timestamp', background=True)
     else:
         upsert_index('clients', 'timestamp',
-            background=True, expireAfterSeconds=settings.vpn.client_ttl)
+                     background=True, expireAfterSeconds=settings.vpn.client_ttl)
         upsert_index('clients_pool', 'timestamp',
-            background=True, expireAfterSeconds=settings.vpn.client_ttl)
+                     background=True, expireAfterSeconds=settings.vpn.client_ttl)
     upsert_index('users_key_link', 'timestamp',
-        background=True, expireAfterSeconds=settings.app.key_link_timeout)
+                 background=True, expireAfterSeconds=settings.app.key_link_timeout)
     upsert_index('acme_challenges', 'timestamp',
-        background=True, expireAfterSeconds=3600)
+                 background=True, expireAfterSeconds=3600)
     upsert_index('auth_sessions', 'timestamp',
-        background=True, expireAfterSeconds=settings.app.session_timeout)
+                 background=True, expireAfterSeconds=settings.app.session_timeout)
     upsert_index('auth_nonces', 'timestamp',
-        background=True,
-        expireAfterSeconds=max(
-            settings.app.auth_time_window * 2,
-            settings.app.auth_expire_window,
-        ))
+                 background=True,
+                 expireAfterSeconds=max(
+                    settings.app.auth_time_window * 2,
+                    settings.app.auth_expire_window,
+                    ))
     upsert_index('auth_csrf_tokens', 'timestamp',
-        background=True, expireAfterSeconds=604800)
+                 background=True, expireAfterSeconds=604800)
     upsert_index('auth_limiter', 'timestamp',
-        background=True, expireAfterSeconds=settings.app.auth_limiter_ttl)
+                 background=True, expireAfterSeconds=settings.app.auth_limiter_ttl)
     upsert_index('wg_keys', 'timestamp',
-        background=True, expireAfterSeconds=settings.app.wg_public_key_ttl)
+                 background=True, expireAfterSeconds=settings.app.wg_public_key_ttl)
     upsert_index('otp', 'timestamp', background=True,
-        expireAfterSeconds=120)
+                 expireAfterSeconds=120)
     upsert_index('otp_cache', 'timestamp',
-        background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
+                 background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
     upsert_index('yubikey', 'timestamp',
-        background=True, expireAfterSeconds=86400)
+                 background=True, expireAfterSeconds=86400)
     upsert_index('sso_tokens', 'timestamp',
-        background=True, expireAfterSeconds=600)
+                 background=True, expireAfterSeconds=600)
     upsert_index('sso_push_cache', 'timestamp',
-        background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
+                 background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
     upsert_index('sso_client_cache', 'timestamp',
-        background=True,
-        expireAfterSeconds=settings.app.sso_client_cache_timeout +
-            settings.app.sso_client_cache_window)
+                 background=True,
+                 expireAfterSeconds=settings.app.sso_client_cache_timeout +
+                 settings.app.sso_client_cache_window)
     upsert_index('sso_passcode_cache', 'timestamp',
-        background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
+                 background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
 
     try:
         clean_indexes()

@@ -1,4 +1,3 @@
-# pylama:ignore=E128
 # Copyright 2002-2008 Wichert Akkerman. All rights reserved.
 # Copyright 2007-2008 Simplon. All rights reserved.
 #
@@ -58,7 +57,7 @@ class Client(host.Host):
     :type timeout: integer
     """
     def __init__(self, server, authport=1812, acctport=1813,
-            secret=six.b(''), dict=None):
+                 secret=six.b(''), dict=None):
 
         """Constructor.
 
@@ -96,7 +95,7 @@ class Client(host.Host):
     def _SocketOpen(self):
         if not self._socket:
             self._socket = socket.socket(socket.AF_INET,
-                                       socket.SOCK_DGRAM)
+                                         socket.SOCK_DGRAM)
             self._socket.setsockopt(socket.SOL_SOCKET,
                                     socket.SO_REUSEADDR, 1)
 
@@ -156,7 +155,7 @@ class Client(host.Host):
 
             while now < waitto:
                 ready = select.select([self._socket], [], [],
-                                    (waitto - now))
+                                      (waitto - now))
 
                 if ready[0]:
                     rawreply = self._socket.recv(4096)

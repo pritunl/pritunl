@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E713
+# pylama:ignore=E713
 # Copyright 2002-2008 Wichert Akkerman. All rights reserved.
 # Copyright 2007-2008 Simplon. All rights reserved.
 #
@@ -132,7 +132,7 @@ class ParseError(Exception):
 
 class Attribute:
     def __init__(self, name, code, datatype, vendor='', values={},
-            encrypt=0, has_tag=False):
+                 encrypt=0, has_tag=False):
         if datatype not in DATATYPES:
             raise ValueError('Invalid data type')
         self.name = name
@@ -239,7 +239,7 @@ class Dictionary(object):
 
         self.attrindex.Add(attribute, key)
         self.attributes[attribute] = Attribute(attribute, code, datatype,
-                vendor, encrypt=encrypt, has_tag=has_tag)
+                                               vendor, encrypt=encrypt, has_tag=has_tag)
 
     def __ParseValue(self, state, tokens, defer):
         if len(tokens) != 4:

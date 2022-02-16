@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131
+# pylama:ignore=E131
 from setuptools import setup
 import os
 import sys
@@ -31,9 +31,9 @@ if not os.path.exists('build'):
     os.mkdir('build')
 
 main_css_path = os.path.join('www/vendor/dist/css',
-    os.listdir('www/vendor/dist/css')[0])
+                             os.listdir('www/vendor/dist/css')[0])
 main_js_path = os.path.join('www/vendor/dist/js',
-    sorted(os.listdir('www/vendor/dist/js'))[0])
+                            sorted(os.listdir('www/vendor/dist/js'))[0])
 
 data_files = [
     ('/etc', ['data/etc/pritunl.conf']),
@@ -92,9 +92,9 @@ if install_upstart:
 if install_systemd:
     patch_files.append('%s/pritunl.service' % PATCH_DIR)
     data_files.append(('/etc/systemd/system',
-        ['%s/pritunl.service' % PATCH_DIR]))
+                      ['%s/pritunl.service' % PATCH_DIR]))
     shutil.copy('data/systemd/pritunl.service',
-        '%s/pritunl.service' % PATCH_DIR)
+                '%s/pritunl.service' % PATCH_DIR)
 
 for file_name in patch_files:
     for line in fileinput.input(file_name, inplace=True):

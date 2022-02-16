@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.server.listener import *
 
 from pritunl.constants import *
@@ -58,7 +58,7 @@ class ServerInstanceCom(object):
 
     def send_client_deny(self, client_id, key_id, reason, client_reason=None):
         self.sock_send('client-deny %s %s "%s"%s\n' % (client_id, key_id,
-            reason, ((' "%s"' % client_reason) if client_reason else '')))
+                       reason, ((' "%s"' % client_reason) if client_reason else '')))
         self.push_output('ERROR User auth failed "%s"' % reason)
 
     def push_output(self, message):
@@ -98,7 +98,7 @@ class ServerInstanceCom(object):
 
                     if o_index < 0 or cn_index < 0:
                         self.send_client_deny(self.client,
-                            'Failed to parse org_id and user_id')
+                                              'Failed to parse org_id and user_id')
                         self.client = None
                         return
 
@@ -180,9 +180,9 @@ class ServerInstanceCom(object):
                 return
 
         logger.error('Server management socket path not found', 'server',
-            server_id=self.server.id,
-            instance_id=self.instance.id,
-            socket_path=self.socket_path,
+                     server_id=self.server.id,
+                     instance_id=self.instance.id,
+                     socket_path=self.socket_path,
                      )
 
     def on_msg(self, evt):
@@ -207,7 +207,7 @@ class ServerInstanceCom(object):
             if len(msg) > 4:
                 server_id = msg[4]
             self.clients.disconnect_user_mac(user_id, host_id,
-                mac_addr, server_id)
+                                             mac_addr, server_id)
         elif event_type == 'user_reconnect':
             user_id = msg[1]
             host_id = msg[2]
@@ -277,8 +277,8 @@ class ServerInstanceCom(object):
             except:
                 pass
             logger.exception('Error in management rate thread', 'server',
-                server_id=self.server.id,
-                instance_id=self.instance.id,
+                             server_id=self.server.id,
+                             instance_id=self.instance.id,
                              )
             self.instance.stop_process()
 
@@ -311,19 +311,19 @@ class ServerInstanceCom(object):
                         self.parse_line(line)
                     except:
                         logger.exception('Failed to parse line from vpn com',
-                            'server',
-                            server_id=self.server.id,
-                            instance_id=self.instance.id,
-                            line=line,
+                                         'server',
+                                         server_id=self.server.id,
+                                         instance_id=self.instance.id,
+                                         line=line,
                                          )
         except:
             if not self.instance.sock_interrupt:
                 self.push_output('ERROR Management socket exception')
                 logger.exception('Error in management socket thread',
-                    'server',
-                    server_id=self.server.id,
-                    instance_id=self.instance.id,
-                    socket_path=self.socket_path,
+                                 'server',
+                                 server_id=self.server.id,
+                                 instance_id=self.instance.id,
+                                 socket_path=self.socket_path,
                                  )
             self.instance.stop_process()
         finally:
@@ -358,9 +358,9 @@ class ServerInstanceCom(object):
                     self.clients.connect(client)
         except:
             logger.exception('Error in stress thread', 'server',
-                server_id=self.server.id,
-                instance_id=self.instance.id,
-                socket_path=self.socket_path,
+                             server_id=self.server.id,
+                             instance_id=self.instance.id,
+                             socket_path=self.socket_path,
                              )
 
     def connect(self):

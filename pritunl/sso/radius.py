@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
@@ -48,8 +48,8 @@ def verify_radius(username, password):
         if reply.code != packet.AccessAccept:
             if i == len(hosts) - 1:
                 logger.warning('Radius server rejected authentication', 'sso',
-                    username=username,
-                    reply_code=reply.code,
+                               username=username,
+                               reply_code=reply.code,
                                )
                 return False, None, None
             else:

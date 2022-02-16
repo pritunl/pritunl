@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E305,E722,W0401
+# pylama:ignore=E302,E305,E722,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -62,7 +62,7 @@ class TaskRoute(task.Task):
                     continue
 
                 messenger.publish('instance', ['route_advertisement',
-                    server_id, vpc_region, vpc_id, network])
+                                  server_id, vpc_region, vpc_id, network])
         except GeneratorExit:
             raise
         except:

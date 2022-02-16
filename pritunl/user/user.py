@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E128,E302,E401,E502,E722,W0401
+# pylama:ignore=E122,E302,E401,E502,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -67,10 +67,10 @@ class User(mongo.MongoObject):
     }
 
     def __init__(self, org, name=None, email=None, pin=None, type=None,
-            groups=None, auth_type=None, yubico_id=None, disabled=None,
-            resource_id=None, bypass_secondary=None, client_to_client=None,
-            mac_addresses=None, dns_servers=None, dns_suffix=None,
-            port_forwarding=None, **kwargs):
+                 groups=None, auth_type=None, yubico_id=None, disabled=None,
+                 resource_id=None, bypass_secondary=None, client_to_client=None,
+                 mac_addresses=None, dns_servers=None, dns_suffix=None,
+                 port_forwarding=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if org:
@@ -299,8 +299,8 @@ class User(mongo.MongoObject):
                 self.org.queue_com.popen(args)
             except (OSError, ValueError):
                 logger.exception('Failed to create user cert', 'user',
-                    org_id=self.org.id,
-                    user_id=self.id,
+                                 org_id=self.org.id,
+                                 user_id=self.id,
                                  )
                 raise
             self.read_file('certificate', cert_path)
@@ -317,22 +317,22 @@ class User(mongo.MongoObject):
             self.assign_ip_addr()
         except:
             logger.exception('Failed to assign users ip address', 'user',
-                org_id=self.org.id,
-                user_id=self.id,
+                             org_id=self.org.id,
+                             user_id=self.id,
                              )
 
     def queue_initialize(self, block, priority=LOW):
         if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
             queue.start('init_user_pooled', block=block,
-                org_doc=self.org.export(), user_doc=self.export(),
-                priority=priority)
+                        org_doc=self.org.export(), user_doc=self.export(),
+                        priority=priority)
         else:
             retry = True
             if self.type == CERT_CA:
                 retry = False
 
             queue.start('init_user', block=block, org_doc=self.org.export(),
-                user_doc=self.export(), priority=priority, retry=retry)
+                        user_doc=self.export(), priority=priority, retry=retry)
 
         if block:
             self.load()
@@ -376,25 +376,25 @@ class User(mongo.MongoObject):
 
             try:
                 resp = requests.get(auth_server +
-                    '/update/google?user=%s&license=%s' % (
-                        urllib.parse.quote(self.email),
-                        settings.app.license,
+                                    '/update/google?user=%s&license=%s' % (
+                                    urllib.parse.quote(self.email),
+                                    settings.app.license,
                     ))
 
                 if resp.status_code != 200:
                     logger.error('Google auth check request error', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
-                        status_code=resp.status_code,
-                        content=resp.content,
+                                 user_id=self.id,
+                                 user_name=self.name,
+                                 status_code=resp.status_code,
+                                 content=resp.content,
                                  )
                     return False
 
                 valid, google_groups = sso.verify_google(self.email)
                 if not valid:
                     logger.error('Google auth check failed', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
                     return False
 
@@ -409,8 +409,8 @@ class User(mongo.MongoObject):
                 return True
             except:
                 logger.exception('Google auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
         elif AZURE_AUTH in self.auth_type and AZURE_AUTH in sso_mode:
@@ -419,8 +419,8 @@ class User(mongo.MongoObject):
 
             try:
                 resp = requests.get(auth_server +
-                    ('/update/azure?user=%s&license=%s&' +
-                    'directory_id=%s&app_id=%s&app_secret=%s') % (
+                                    ('/update/azure?user=%s&license=%s&' +
+                                     'directory_id=%s&app_id=%s&app_secret=%s') % (
                         urllib.parse.quote(self.name),
                         settings.app.license,
                         urllib.parse.quote(settings.app.sso_azure_directory_id),
@@ -430,18 +430,18 @@ class User(mongo.MongoObject):
 
                 if resp.status_code != 200:
                     logger.error('Azure auth check request error', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
-                        status_code=resp.status_code,
-                        content=resp.content,
+                                 user_id=self.id,
+                                 user_name=self.name,
+                                 status_code=resp.status_code,
+                                 content=resp.content,
                                  )
                     return False
 
                 valid, azure_groups = sso.verify_azure(self.name)
                 if not valid:
                     logger.error('Azure auth check failed', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
                     return False
 
@@ -456,8 +456,8 @@ class User(mongo.MongoObject):
                 return True
             except:
                 logger.exception('Azure auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
         elif AUTHZERO_AUTH in self.auth_type and AUTHZERO_AUTH in sso_mode:
@@ -466,8 +466,8 @@ class User(mongo.MongoObject):
 
             try:
                 resp = requests.get(auth_server +
-                    ('/update/authzero?user=%s&license=%s&' +
-                     'app_domain=%s&app_id=%s&app_secret=%s') % (
+                                    ('/update/authzero?user=%s&license=%s&' +
+                                     'app_domain=%s&app_id=%s&app_secret=%s') % (
                         urllib.parse.quote(self.name),
                         settings.app.license,
                         urllib.parse.quote(settings.app.sso_authzero_domain),
@@ -477,18 +477,18 @@ class User(mongo.MongoObject):
 
                 if resp.status_code != 200:
                     logger.error('Auth0 auth check request error', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
-                        status_code=resp.status_code,
-                        content=resp.content,
+                                 user_id=self.id,
+                                 user_name=self.name,
+                                 status_code=resp.status_code,
+                                 content=resp.content,
                                  )
                     return False
 
                 valid, authzero_groups = sso.verify_authzero(self.name)
                 if not valid:
                     logger.error('Auth0 auth check failed', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
                     return False
 
@@ -503,8 +503,8 @@ class User(mongo.MongoObject):
                 return True
             except:
                 logger.exception('Auth0 auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
         elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
@@ -516,7 +516,7 @@ class User(mongo.MongoObject):
 
             try:
                 resp = requests.get(auth_server +
-                    '/update/slack?user=%s&team=%s&license=%s' % (
+                                    '/update/slack?user=%s&team=%s&license=%s' % (
                         urllib.parse.quote(self.name),
                         urllib.parse.quote(settings.app.sso_match[0]),
                         settings.app.license,
@@ -524,18 +524,18 @@ class User(mongo.MongoObject):
 
                 if resp.status_code != 200:
                     logger.error('Slack auth check request error', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
-                        status_code=resp.status_code,
-                        content=resp.content,
+                                 user_id=self.id,
+                                 user_name=self.name,
+                                 status_code=resp.status_code,
+                                 content=resp.content,
                                  )
                     return False
 
                 return True
             except:
                 logger.exception('Slack auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
         elif SAML_ONELOGIN_AUTH in self.auth_type and \
@@ -547,8 +547,8 @@ class User(mongo.MongoObject):
                 return sso.auth_onelogin(self.name)
             except:
                 logger.exception('OneLogin auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
         elif SAML_JUMPCLOUD_AUTH in self.auth_type and \
@@ -560,8 +560,8 @@ class User(mongo.MongoObject):
                 return sso.auth_jumpcloud(self.name)
             except:
                 logger.exception('JumpCloud auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
         elif SAML_OKTA_AUTH in self.auth_type and \
@@ -573,8 +573,8 @@ class User(mongo.MongoObject):
                 return sso.auth_okta(self.name)
             except:
                 logger.exception('Okta auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
         elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in sso_mode:
@@ -582,8 +582,8 @@ class User(mongo.MongoObject):
                 return sso.verify_radius(self.name, password)[0]
             except:
                 logger.exception('Radius auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
         elif PLUGIN_AUTH in self.auth_type:
@@ -595,8 +595,8 @@ class User(mongo.MongoObject):
                 )[1]
             except:
                 logger.exception('Plugin auth check error', 'user',
-                    user_id=self.id,
-                    user_name=self.name,
+                                 user_id=self.id,
+                                 user_name=self.name,
                                  )
             return False
 
@@ -702,8 +702,8 @@ class User(mongo.MongoObject):
 
     def has_passcode(self, svr):
         return bool(self.has_yubikey or self.has_duo_passcode or
-            self.has_onelogin_passcode or self.has_okta_passcode or
-            svr.otp_auth)
+                    self.has_onelogin_passcode or self.has_okta_passcode or
+                    svr.otp_auth)
 
     def has_password(self, svr):
         return bool(self._get_password_mode(svr))
@@ -1001,7 +1001,7 @@ class User(mongo.MongoObject):
             try:
                 for svr in self.iter_servers():
                     server_conf_path = os.path.join(temp_path,
-                        '%s_%s.ovpn' % (self.id, svr.id))
+                                                    '%s_%s.ovpn' % (self.id, svr.id))
                     conf_name, client_conf, conf_hash = self._generate_conf(
                         svr)
 
@@ -1033,7 +1033,7 @@ class User(mongo.MongoObject):
                         continue
 
                     server_conf_path = os.path.join(temp_path,
-                        '%s_%s.ovpn' % (self.id, svr.id))
+                                                    '%s_%s.ovpn' % (self.id, svr.id))
                     conf_name, client_conf, conf_hash = self._generate_conf(
                         svr)
 
@@ -1131,7 +1131,7 @@ class User(mongo.MongoObject):
         svr = self.get_server(server_id)
 
         conf_name, client_conf, conf_hash = self._generate_conf(svr,
-            include_user_cert)
+                                                                include_user_cert)
 
         return {
             'name': conf_name,

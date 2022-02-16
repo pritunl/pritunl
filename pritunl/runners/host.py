@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E128,E302,E722,W0401
+# pylama:ignore=E122,E302,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -32,9 +32,9 @@ def _keep_alive_thread():
         try:
             if settings.local.host.id != settings.local.host_id:
                 logger.error('Host ID mismatch',
-                    'runners',
-                    host=settings.local.host.id,
-                    host_id=settings.local.host_id,
+                             'runners',
+                             host=settings.local.host.id,
+                             host_id=settings.local.host_id,
                              )
 
             timestamp = utils.now()
@@ -54,7 +54,7 @@ def _keep_alive_thread():
                         last_proc_stat, proc_stat)
                     mem_usage = host.usage_utils.get_mem_usage()
                     settings.local.host.usage.add_period(timestamp,
-                        cpu_usage, mem_usage)
+                                                         cpu_usage, mem_usage)
 
             yield interrupter_sleep(settings.app.host_ping)
 
@@ -74,9 +74,9 @@ def _keep_alive_thread():
                 cpu_usage, mem_usage = utils.get_process_cpu_mem()
             except:
                 logger.exception('Failed to get process cpu and mem usage',
-                    'runners',
-                    host_id=settings.local.host_id,
-                    host_name=settings.local.host.name,
+                                 'runners',
+                                 host_id=settings.local.host_id,
+                                 host_name=settings.local.host.name,
                                  )
 
             host_name = settings.local.host.name
@@ -158,8 +158,8 @@ def _keep_alive_thread():
             raise
         except:
             logger.exception('Error in host keep alive update', 'runners',
-                host_id=settings.local.host_id,
-                host_name=settings.local.host.name,
+                             host_id=settings.local.host_id,
+                             host_name=settings.local.host.name,
                              )
             time.sleep(0.5)
 

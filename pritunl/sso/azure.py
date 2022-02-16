@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E302,E401,E502
+# pylama:ignore=E131,E302,E401,E502
 from pritunl import settings
 from pritunl import logger
 
@@ -23,9 +23,9 @@ def _verify_azure_1(user_name):
 
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
-            'sso',
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -49,9 +49,9 @@ def _verify_azure_1(user_name):
 
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
-            'sso',
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -59,9 +59,9 @@ def _verify_azure_1(user_name):
 
     if not data.get('accountEnabled'):
         logger.error('Azure account is disabled',
-            'sso',
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -81,9 +81,9 @@ def _verify_azure_1(user_name):
 
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
-            'sso',
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -116,10 +116,10 @@ def _verify_azure_2(user_name):
 
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
-            'sso',
-            username=user_name,
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     username=user_name,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -143,10 +143,10 @@ def _verify_azure_2(user_name):
 
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
-            'sso',
-            username=user_name,
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     username=user_name,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -154,17 +154,17 @@ def _verify_azure_2(user_name):
 
     if data.get('userPrincipalName', '').lower() != user_name.lower():
         logger.error('Bad status from Azure api',
-            'sso',
-            username=user_name,
-            azure_username=data['userPrincipalName'],
+                     'sso',
+                     username=user_name,
+                     azure_username=data['userPrincipalName'],
                      )
         return False, []
 
     if not data.get('accountEnabled'):
         logger.error('Azure account is disabled',
-            'sso',
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -184,10 +184,10 @@ def _verify_azure_2(user_name):
 
     if response.status_code != 200:
         logger.error('Bad status from Azure api',
-            'sso',
-            username=user_name,
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     username=user_name,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 

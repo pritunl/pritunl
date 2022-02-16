@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -330,7 +330,7 @@ def server_put_post(server_id=None):
         search_domain = flask.request.json['search_domain']
         if search_domain:
             search_domain = ', '.join([utils.filter_str(x.strip()) for x in
-                search_domain.split(',')])
+                                      search_domain.split(',')])
         else:
             search_domain = None
 
@@ -789,8 +789,8 @@ def server_org_put(server_id, org_id):
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id,
-        fields=('_id', 'wg', 'status', 'network', 'network_wg',
-        'network_start', 'network_end', 'organizations', 'routes', 'ipv6'))
+                           fields=('_id', 'wg', 'status', 'network', 'network_wg',
+                                   'network_start', 'network_end', 'organizations', 'routes', 'ipv6'))
     org = organization.get_by_id(org_id, fields=('_id', 'name'))
     if svr.status == ONLINE:
         return utils.jsonify({
@@ -810,16 +810,16 @@ def server_org_put(server_id, org_id):
     })
 
 @app.app.route('/server/<server_id>/organization/<org_id>',
-    methods=['DELETE'])
+               methods=['DELETE'])
 @auth.session_auth
 def server_org_delete(server_id, org_id):
     if settings.app.demo_mode:
         return utils.demo_blocked()
 
     svr = server.get_by_id(server_id,
-        fields=('_id', 'wg', 'status', 'network', 'network_wg',
-            'network_start', 'network_end', 'primary_organization',
-            'primary_user', 'organizations', 'routes', 'ipv6'))
+                           fields=('_id', 'wg', 'status', 'network', 'network_wg',
+                                   'network_start', 'network_end', 'primary_organization',
+                                   'primary_user', 'organizations', 'routes', 'ipv6'))
     org = organization.get_by_id(org_id, fields=('_id'))
 
     if svr.status == ONLINE:
@@ -847,8 +847,8 @@ def server_route_get(server_id):
             return utils.jsonify(resp)
 
     svr = server.get_by_id(server_id, fields=('_id', 'wg', 'network',
-        'network_wg', 'links', 'network_start', 'network_end', 'routes',
-        'organizations', 'ipv6'))
+                                              'network_wg', 'links', 'network_start', 'network_end', 'routes',
+                                              'organizations', 'ipv6'))
 
     resp = svr.get_routes(include_server_links=True, include_hidden=True)
     if settings.app.demo_mode:
@@ -873,7 +873,7 @@ def server_route_post(server_id):
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            nat_netmap, advertise, None, None, net_gateway, comment, metric)
+                                 nat_netmap, advertise, None, None, net_gateway, comment, metric)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -922,7 +922,7 @@ def server_route_post(server_id):
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for svr_link in svr.links:
         event.Event(type=SERVER_ROUTES_UPDATED,
-            resource_id=svr_link['server_id'])
+                    resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
 
@@ -946,8 +946,8 @@ def server_routes_post(server_id):
 
         try:
             route = svr.upsert_route(route_network, nat_route, nat_interface,
-                nat_netmap, advertise, None, None, net_gateway, comment,
-                metric)
+                                     nat_netmap, advertise, None, None, net_gateway, comment,
+                                     metric)
         except ServerOnlineError:
             return utils.jsonify({
                 'error': SERVER_ROUTE_ONLINE,
@@ -996,7 +996,7 @@ def server_routes_post(server_id):
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for svr_link in svr.links:
         event.Event(type=SERVER_ROUTES_UPDATED,
-            resource_id=svr_link['server_id'])
+                    resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
 
@@ -1018,7 +1018,7 @@ def server_route_put(server_id, route_network):
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            nat_netmap, advertise, None, None, net_gateway, comment, metric)
+                                 nat_netmap, advertise, None, None, net_gateway, comment, metric)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -1067,7 +1067,7 @@ def server_route_put(server_id, route_network):
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for svr_link in svr.links:
         event.Event(type=SERVER_ROUTES_UPDATED,
-            resource_id=svr_link['server_id'])
+                    resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
 
@@ -1100,7 +1100,7 @@ def server_route_delete(server_id, route_network):
     event.Event(type=SERVER_ROUTES_UPDATED, resource_id=svr.id)
     for svr_link in svr.links:
         event.Event(type=SERVER_ROUTES_UPDATED,
-            resource_id=svr_link['server_id'])
+                    resource_id=svr_link['server_id'])
 
     return utils.jsonify(route)
 
@@ -1114,13 +1114,13 @@ def server_host_get(server_id):
 
     hosts = []
     svr = server.get_by_id(server_id, fields=('_id', 'status',
-        'replica_count', 'hosts', 'instances'))
+                                              'replica_count', 'hosts', 'instances'))
     active_hosts = set([x['host_id'] for x in svr.instances])
     hosts_offline = svr.replica_count - len(active_hosts) > 0
 
     for hst in svr.iter_hosts(fields=('_id', 'name',
-            'public_address', 'auto_public_address', 'auto_public_host',
-            'public_address6', 'auto_public_address6', 'auto_public_host6')):
+                                      'public_address', 'auto_public_address', 'auto_public_host',
+                                      'public_address6', 'auto_public_address6', 'auto_public_host6')):
         if svr.status == ONLINE and hst.id in active_hosts:
             status = ONLINE
         elif svr.status == ONLINE and hosts_offline:
@@ -1151,8 +1151,8 @@ def server_host_put(server_id, host_id):
     if not svr:
         return flask.abort(404)
     hst = host.get_by_id(host_id, fields=('_id', 'name',
-        'public_address', 'auto_public_address', 'auto_public_host',
-        'public_address6', 'auto_public_address6', 'auto_public_host6'))
+                                          'public_address', 'auto_public_address', 'auto_public_host',
+                                          'public_address6', 'auto_public_address6', 'auto_public_host6'))
     if not svr:
         return flask.abort(404)
 
@@ -1214,7 +1214,7 @@ def server_link_get(server_id):
 
     links = []
     svr = server.get_by_id(server_id, fields=('_id', 'status', 'links',
-        'replica_count', 'instances'))
+                                              'replica_count', 'instances'))
     if not svr:
         return flask.abort(404)
     hosts_offline = svr.replica_count - len(svr.instances) > 0

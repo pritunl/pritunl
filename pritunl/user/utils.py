@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.user.user import User
 
 from pritunl.constants import *
@@ -20,10 +20,10 @@ def new_pooled_user(org, type):
     thread.start()
 
 def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
-        groups=None, auth_type=None, yubico_id=None, disabled=None,
-        resource_id=None, mac_addresses=None, dns_servers=None,
-        dns_suffix=None, bypass_secondary=None, client_to_client=None,
-        port_forwarding=None):
+                        groups=None, auth_type=None, yubico_id=None, disabled=None,
+                        resource_id=None, mac_addresses=None, dns_servers=None,
+                        dns_suffix=None, bypass_secondary=None, client_to_client=None,
+                        port_forwarding=None):
     doc = {}
 
     if name is not None:

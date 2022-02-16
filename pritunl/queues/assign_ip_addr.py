@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import logger
@@ -18,7 +18,7 @@ class QueueAssignIpAddr(queue.Queue):
     type = 'assign_ip_addr'
 
     def __init__(self, server_id=None,
-            org_id=None, user_id=None, **kwargs):
+                 org_id=None, user_id=None, **kwargs):
         queue.Queue.__init__(self, **kwargs)
 
         if server_id is not None:
@@ -32,8 +32,8 @@ class QueueAssignIpAddr(queue.Queue):
         svr = server.get_by_id(self.server_id)
         if not svr:
             logger.warning('Tried to run assign_ip_addr queue ' +
-                'but server is no longer available', 'queues',
-                server_id=self.server_id,
+                           'but server is no longer available', 'queues',
+                           server_id=self.server_id,
                            )
             return
 

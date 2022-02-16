@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722
+# pylama:ignore=E302,E722
 from pritunl import utils
 from pritunl import logger
 
@@ -6,7 +6,7 @@ import datetime
 
 def get_period_timestamp(period, timestamp):
     timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-            seconds=timestamp.second)
+                                    seconds=timestamp.second)
 
     if period == '1m':
         return timestamp
@@ -25,7 +25,7 @@ def get_period_timestamp(period, timestamp):
 
 def get_period_max_timestamp(period, timestamp):
     timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-            seconds=timestamp.second)
+                                    seconds=timestamp.second)
 
     if period == '1m':
         return timestamp - datetime.timedelta(hours=6)

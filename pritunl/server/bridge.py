@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.exceptions import *
 from pritunl import settings
 from pritunl import logger
@@ -18,7 +18,7 @@ class Bridge(object):
         self.host_interface_data = utils.find_interface(network)
         if not self.host_interface_data:
             logger.error('Failed to find bridged network interface', 'server',
-                network=network,
+                         network=network,
                          )
             raise BridgeLookupError(
                 'Failed to find bridged network interface')

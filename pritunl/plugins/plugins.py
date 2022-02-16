@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.plugins.utils import *
 from pritunl.plugins import example
 
@@ -38,7 +38,7 @@ def init():
             if file_ext != '.py':
                 continue
             logger.info('Loading plugin', 'plugins',
-                name=file_name,
+                        name=file_name,
                         )
             plugins_loaded.add(file_name)
             modules.append(imp.load_source('plugin_' + file_name, file_path))
@@ -47,7 +47,7 @@ def init():
     if missing_plugins:
         try:
             logger.error('Missing required plugins', 'plugins',
-                missing=list(missing_plugins),
+                         missing=list(missing_plugins),
                          )
         finally:
             set_global_interrupt()
@@ -69,7 +69,7 @@ def _event(event_type, **kwargs):
             handler(**kwargs)
         except:
             logger.exception('Error in plugin handler', 'plugins',
-                handler=event_type,
+                             handler=event_type,
                              )
 
 def event(event_type, **kwargs):

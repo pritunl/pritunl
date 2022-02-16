@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import app
@@ -18,7 +18,7 @@ def static_get(file_path=None):
 
     try:
         static_file = static.StaticFile(settings.conf.www_path,
-            file_path, cache=True)
+                                        file_path, cache=True)
     except InvalidStaticFile:
         return flask.abort(404)
 
@@ -28,42 +28,42 @@ def static_get(file_path=None):
 @auth.open_auth
 def fredoka_eot_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
-        'fonts/fredoka-one.eot', cache=True)
+                                    'fonts/fredoka-one.eot', cache=True)
     return static_file.get_response()
 
 @app.app.route('/ubuntu-bold.eot', methods=['GET'])
 @auth.open_auth
 def ubuntu_eot_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
-        'fonts/ubuntu-bold.eot', cache=True)
+                                    'fonts/ubuntu-bold.eot', cache=True)
     return static_file.get_response()
 
 @app.app.route('/fredoka-one.woff', methods=['GET'])
 @auth.open_auth
 def fredoka_woff_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
-        'fonts/fredoka-one.woff', cache=True)
+                                    'fonts/fredoka-one.woff', cache=True)
     return static_file.get_response()
 
 @app.app.route('/ubuntu-bold.woff', methods=['GET'])
 @auth.open_auth
 def ubuntu_woff_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
-        'fonts/ubuntu-bold.woff', cache=True)
+                                    'fonts/ubuntu-bold.woff', cache=True)
     return static_file.get_response()
 
 @app.app.route('/logo.png', methods=['GET'])
 @auth.open_auth
 def logo_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
-        'logo.png', cache=True)
+                                    'logo.png', cache=True)
     return static_file.get_response()
 
 @app.app.route('/robots.txt', methods=['GET'])
 @auth.open_auth
 def robots_static_get():
     static_file = static.StaticFile(settings.conf.www_path,
-        'robots.txt', cache=True)
+                                    'robots.txt', cache=True)
     return static_file.get_response()
 
 @app.app.route('/', methods=['GET'])
@@ -73,7 +73,7 @@ def index_static_get():
         return utils.redirect('login')
 
     static_file = static.StaticFile(settings.conf.www_path,
-        'index.html', cache=False)
+                                    'index.html', cache=False)
 
     return static_file.get_response()
 
@@ -84,7 +84,7 @@ def login_static_get():
         return utils.redirect('')
 
     static_file = static.StaticFile(settings.conf.www_path,
-        'login.html', cache=False, gzip=False)
+                                    'login.html', cache=False, gzip=False)
 
     body_class = ''
 

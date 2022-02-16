@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401,W0611
+# pylama:ignore=E302,E722,W0401,W0611
 from pritunl.constants import *
 
 import subprocess
@@ -8,7 +8,7 @@ class Process(object):
     def __init__(self, *args, **kwargs):
         if 'stdout' in kwargs or 'stderr' in kwargs:
             raise ValueError('Output arguments not allowed, '
-                'it will be overridden')
+                             'it will be overridden')
 
         try:
             self._ignore_states = kwargs.pop('ignore_states')
@@ -46,7 +46,7 @@ class Process(object):
             self._event.set()
         except:
             logger.exception('Popen exception', 'utils',
-                cmd=cmd,
+                             cmd=cmd,
                              )
 
     def run(self, timeout=None):
@@ -62,8 +62,8 @@ class Process(object):
 
         if not self._event.is_set():
             logger.error('Popen process timeout', 'utils',
-                cmd=cmd,
-                timeout=timeout,
+                         cmd=cmd,
+                         timeout=timeout,
                          )
             try:
                 self._process.kill()
@@ -79,11 +79,11 @@ class Process(object):
                         return self._stdoutdata
 
             logger.error('Popen returned error exit code', 'utils',
-                cmd=cmd,
-                timeout=timeout,
-                return_code=self._return_code,
-                stdout=self._stdoutdata,
-                stderr=self._stderrdata,
+                         cmd=cmd,
+                         timeout=timeout,
+                         return_code=self._return_code,
+                         stdout=self._stdoutdata,
+                         stderr=self._stderrdata,
                          )
 
             raise subprocess.CalledProcessError(

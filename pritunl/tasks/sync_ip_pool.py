@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E305,E722
+# pylama:ignore=E302,E305,E722
 from pritunl import task
 from pritunl import logger
 from pritunl import server
@@ -12,8 +12,8 @@ class TaskSyncIpPool(task.Task):
                 svr.ip_pool.sync_ip_pool()
             except:
                 logger.exception('Failed to sync server IP pool', 'tasks',
-                    server_id=svr.id,
-                    task_id=self.id,
+                                 server_id=svr.id,
+                                 task_id=self.id,
                                  )
 
 task.add_task(TaskSyncIpPool, hours=4, minutes=7)

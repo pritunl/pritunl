@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E303,E305,E0100
+# pylama:ignore=E302,E303,E305,E0100
 import threading
 import unittest
 import requests
@@ -93,7 +93,7 @@ def request(method, endpoint, **kwargs):
         kwargs['data'] = json.dumps(kwargs.pop('json_data'))
     start_time = time.time()
     response = _request(method, BASE_URL + endpoint, headers=headers,
-        verify=False, **kwargs)
+                        verify=False, **kwargs)
     _log_request(method, endpoint, start_time)
     return response
 requests.api.request = request
@@ -118,7 +118,7 @@ class Session:
             kwargs['data'] = json.dumps(kwargs.pop('json_data'))
         start_time = time.time()
         response = getattr(self._session, method)(BASE_URL + endpoint,
-            headers=headers, verify=False, **kwargs)
+                                                  headers=headers, verify=False, **kwargs)
         _log_request(method, endpoint, start_time)
         return response
 
@@ -177,7 +177,7 @@ class SessionTestCase(unittest.TestCase):
         data = response.json()
         for server in data:
             if server['name'] in (TEST_SERVER_NAME + '2',
-                    TEST_SERVER_NAME + '3'):
+                                  TEST_SERVER_NAME + '3'):
                 response = self.session.delete('/server/%s' % server['id'])
                 self.assertEqual(response.status_code, 200)
 
@@ -445,7 +445,7 @@ class Key(SessionTestCase):
         self.assertNotEqual(end_index, -1)
         key_title = response.text[start_index:end_index]
         self.assertEqual('%s - %s' % (TEST_ORG_NAME, TEST_USER_NAME),
-            key_title)
+                         key_title)
 
         start_index = response.text.find(
             '<input id="key" type="text" readonly value="') + 44
@@ -1129,9 +1129,9 @@ class User(SessionTestCase):
 
 
         response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
-            json_data={
-                'name': TEST_USER_NAME + '3',
-            })
+                                    json_data={
+                                        'name': TEST_USER_NAME + '3',
+                                        })
         self.assertEqual(response.status_code, 200)
         time.sleep(0.1)
 
@@ -1151,9 +1151,9 @@ class User(SessionTestCase):
 
 
         response = self.session.put('/user/%s/%s' % (self.org_id, user_id),
-            json_data={
-                'disabled': False,
-            })
+                                    json_data={
+                                        'disabled': False,
+                                        })
         self.assertEqual(response.status_code, 200)
         time.sleep(0.1)
 
@@ -1253,7 +1253,7 @@ class Stress(SessionTestCase):
         self.assertEqual(data['organization'], org_id)
         self.assertIn('organization_name', data)
         self.assertEqual(data['organization_name'],
-            TEST_ORG_NAME + '_stress')
+                         TEST_ORG_NAME + '_stress')
         self.assertIn('name', data)
         self.assertEqual(data['name'], name)
         self.assertIn('type', data)
@@ -1281,7 +1281,7 @@ class Stress(SessionTestCase):
                 for x in xrange(512):
                     name = '%s_%s' % (TEST_USER_NAME, str(num).zfill(4))
                     thread = threading.Thread(target=self._create_user,
-                        args=(org_id, name))
+                                              args=(org_id, name))
                     thread.start()
                     threads.append(thread)
                     num += 1

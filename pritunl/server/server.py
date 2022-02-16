@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E128,E302,E502,E722,W0401
+# pylama:ignore=E122,E302,E502,E722,W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
@@ -203,19 +203,19 @@ class Server(mongo.MongoObject):
     cache_prefix = 'server'
 
     def __init__(self, name=None, groups=None, network_wg=None,
-            network=None, network_mode=None, network_start=None,
-            network_end=None, restrict_routes=None, wg=None, ipv6=None,
-            ipv6_firewall=None, bind_address=None, port=None,
-            protocol=None, port_wg=None, dh_param_bits=None,
-            multi_device=None, dns_servers=None, search_domain=None,
-            otp_auth=None, cipher=None, hash=None, block_outside_dns=None,
-            jumbo_frames=None, lzo_compression=None, inter_client=None,
-            ping_interval=None, ping_timeout=None, ping_timeout_wg=None,
-            link_ping_interval=None, link_ping_timeout=None,
-            inactive_timeout=None, session_timeout=None,
-            allowed_devices=None, max_clients=None, max_devices=None,
-            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
-            pre_connect_msg=None, mss_fix=None, **kwargs):
+                 network=None, network_mode=None, network_start=None,
+                 network_end=None, restrict_routes=None, wg=None, ipv6=None,
+                 ipv6_firewall=None, bind_address=None, port=None,
+                 protocol=None, port_wg=None, dh_param_bits=None,
+                 multi_device=None, dns_servers=None, search_domain=None,
+                 otp_auth=None, cipher=None, hash=None, block_outside_dns=None,
+                 jumbo_frames=None, lzo_compression=None, inter_client=None,
+                 ping_interval=None, ping_timeout=None, ping_timeout_wg=None,
+                 link_ping_interval=None, link_ping_timeout=None,
+                 inactive_timeout=None, session_timeout=None,
+                 allowed_devices=None, max_clients=None, max_devices=None,
+                 replica_count=None, vxlan=None, dns_mapping=None, debug=None,
+                 pre_connect_msg=None, mss_fix=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if 'network' in self.loaded_fields:
@@ -456,7 +456,7 @@ class Server(mongo.MongoObject):
         if routed_subnet6:
             return utils.ip4to6x96(routed_subnet6, self.network, addr)
         return utils.ip4to6x64(settings.vpn.ipv6_prefix,
-            self.network, addr)
+                               self.network, addr)
 
     def ip4to6wg(self, addr):
         routed_subnet6 = settings.local.host.routed_subnet6_wg
@@ -545,7 +545,7 @@ class Server(mongo.MongoObject):
             if not cert:
                 continue
             certs.append(cert.replace('-----END CERTIFICATE-----',
-                '').replace('\n', ''))
+                         '').replace('\n', ''))
 
         return certs
 
@@ -612,7 +612,7 @@ class Server(mongo.MongoObject):
 
     def queue_dh_params(self, block=False):
         queue.start('dh_params', block=block, server_id=self.id,
-            dh_param_bits=self.dh_param_bits, priority=HIGH)
+                    dh_param_bits=self.dh_param_bits, priority=HIGH)
         self.dh_params = None
 
         if block:
@@ -625,7 +625,7 @@ class Server(mongo.MongoObject):
         return False
 
     def get_routes(self, include_hidden=False, include_default=True,
-            include_server_links=False):
+                   include_server_links=False):
         routes = []
         link_routes = []
         routes_dict = {}
@@ -658,9 +658,9 @@ class Server(mongo.MongoObject):
 
         if include_server_links:
             for link_svr in self.iter_links(fields=('_id', 'wg',
-                   'network', 'network_wg', 'network_start',
-                   'network_end', 'routes', 'organizations', 'links',
-                   'ipv6')):
+                                                    'network', 'network_wg', 'network_start',
+                                                    'network_end', 'routes', 'organizations', 'links',
+                                                    'ipv6')):
                 for route in link_svr.get_routes():
                     if route['network'] == '0.0.0.0/0':
                         continue
@@ -877,7 +877,7 @@ class Server(mongo.MongoObject):
         return routes + link_routes
 
     def upsert_route(self, network, nat_route, nat_interface, nat_netmap,
-            advertise, vpc_region, vpc_id, net_gateway, comment, metric):
+                     advertise, vpc_region, vpc_id, net_gateway, comment, metric):
         exists = False
 
         if self.status == ONLINE:
@@ -1011,14 +1011,14 @@ class Server(mongo.MongoObject):
             self.ip_pool.assign_ip_addr(org_id, user_id)
         else:
             queue.start('assign_ip_addr', server_id=self.id, org_id=org_id,
-                user_id=user_id)
+                        user_id=user_id)
 
     def unassign_ip_addr(self, org_id, user_id):
         if not self.network_lock:
             self.ip_pool.unassign_ip_addr(org_id, user_id)
         else:
             queue.start('unassign_ip_addr', server_id=self.id, org_id=org_id,
-                user_id=user_id)
+                        user_id=user_id)
 
     def get_sync_remotes(self):
         remotes = set()
@@ -1154,16 +1154,16 @@ class Server(mongo.MongoObject):
                 })
             else:
                 queue_ip_pool = queue.start('assign_ip_pool',
-                    transaction=tran,
-                    server_id=self.id,
-                    network=self.network,
-                    network_start=self.network_start,
-                    network_end=self.network_end,
-                    network_hash=self.network_hash,
-                    old_network=self._orig_network,
-                    old_network_start=self._orig_network_start,
-                    old_network_end=self._orig_network_end,
-                    old_network_hash=self._orig_network_hash,
+                                            transaction=tran,
+                                            server_id=self.id,
+                                            network=self.network,
+                                            network_start=self.network_start,
+                                            network_end=self.network_end,
+                                            network_hash=self.network_hash,
+                                            old_network=self._orig_network,
+                                            old_network_start=self._orig_network_start,
+                                            old_network_end=self._orig_network_end,
+                                            old_network_hash=self._orig_network_hash,
                                             )
                 self.network_lock = queue_ip_pool.id
                 self.network_lock_ttl = utils.now() + \
@@ -1179,7 +1179,7 @@ class Server(mongo.MongoObject):
 
         if tran:
             messenger.publish('queue', 'queue_updated',
-                transaction=tran)
+                              transaction=tran)
             tran.commit()
 
     def remove(self):
@@ -1235,12 +1235,12 @@ class Server(mongo.MongoObject):
         except StopIteration:
             self.stop()
             raise ServerMissingOrg('Primary user cannot be created ' + \
-                'without any organizations', {
-                    'server_id': self.id,
+                                   'without any organizations', {
+                                   'server_id': self.id,
                 })
 
         usr = org.new_user(name=SERVER_USER_PREFIX + str(self.id),
-            type=CERT_SERVER, resource_id=self.id)
+                           type=CERT_SERVER, resource_id=self.id)
         usr.audit_event('user_created', 'User created for server')
 
         journal.entry(
@@ -1365,9 +1365,9 @@ class Server(mongo.MongoObject):
     def remove_host(self, host_id):
         if host_id not in self.hosts:
             logger.warning('Attempted to remove host that does not exists',
-                'server',
-                server_id=self.id,
-                host_id=host_id,
+                           'server',
+                           server_id=self.id,
+                           host_id=host_id,
                            )
             return
 
@@ -1434,7 +1434,7 @@ class Server(mongo.MongoObject):
 
         if reserved:
             queue.start('dh_params', dh_param_bits=self.dh_param_bits,
-                priority=LOW)
+                        priority=LOW)
             return
 
         self.queue_dh_params()
@@ -1451,7 +1451,7 @@ class Server(mongo.MongoObject):
         ]
         try:
             self.tls_auth_process = subprocess.Popen(args,
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                                     stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except:
             utils.rmtree(self.tls_auth_temp_path)
             raise
@@ -1461,7 +1461,7 @@ class Server(mongo.MongoObject):
             return_code = self.tls_auth_process.wait()
             if return_code:
                 raise ValueError('Popen returned ' +
-                    'error exit code %r' % return_code)
+                                 'error exit code %r' % return_code)
             self.read_file('tls_auth_key', self.tls_auth_path)
         finally:
             utils.rmtree(self.tls_auth_temp_path)
@@ -1485,11 +1485,11 @@ class Server(mongo.MongoObject):
             'server_id': self.id,
         })
         messenger.publish('servers', message,
-            extra=extra, transaction=transaction)
+                          extra=extra, transaction=transaction)
 
     def subscribe(self, cursor_id=None, timeout=None):
         for msg in messenger.subscribe('servers', cursor_id=cursor_id,
-                timeout=timeout):
+                                       timeout=timeout):
             if msg.get('server_id') == self.id:
                 yield msg
 
@@ -1497,7 +1497,7 @@ class Server(mongo.MongoObject):
         event.Event(type=SERVER_LINKS_UPDATED, resource_id=self.id)
         for link in self.links:
             event.Event(type=SERVER_LINKS_UPDATED,
-                resource_id=link['server_id'])
+                        resource_id=link['server_id'])
 
     def pre_start_check(self):
         if not self.tls_auth_key:
@@ -1566,8 +1566,8 @@ class Server(mongo.MongoObject):
 
         if not self.organizations:
             raise ServerMissingOrg('Server cannot be started ' + \
-                'without any organizations', {
-                    'server_id': self.id,
+                                   'without any organizations', {
+                                   'server_id': self.id,
                 })
 
         self.pre_start_check()
@@ -1608,7 +1608,7 @@ class Server(mongo.MongoObject):
 
             for x_timeout in (4, timeout):
                 for msg in self.subscribe(cursor_id=cursor_id,
-                        timeout=x_timeout):
+                                          timeout=x_timeout):
                     message = msg['message']
                     if message == 'started':
                         started_count += 1

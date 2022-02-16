@@ -1,4 +1,4 @@
-# pylama:ignore=E125,E128,E131,E302,E303,E502,W0401
+# pylama:ignore=E125,E131,E302,E303,E502,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -42,12 +42,12 @@ class Host(mongo.MongoObject):
     }
 
     def __init__(self, link=None, location=None, name=None, link_id=None,
-            location_id=None, secret=None, status=None, active=None,
-            timestamp=None, hosts=None, hosts_hist=None, timeout=None,
-            priority=None, backoff=None, backoff_timestamp=None,
-            ping_timestamp_ttl=None, static=None, public_address=None,
-            local_address=None, address6=None, version=None,
-            tunnels=None, **kwargs):
+                 location_id=None, secret=None, status=None, active=None,
+                 timestamp=None, hosts=None, hosts_hist=None, timeout=None,
+                 priority=None, backoff=None, backoff_timestamp=None,
+                 ping_timestamp_ttl=None, static=None, public_address=None,
+                 local_address=None, address6=None, version=None,
+                 tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         self.link = link
@@ -282,7 +282,7 @@ class Host(mongo.MongoObject):
         self.ping_timestamp_ttl = None
         self.backoff_timestamp = utils.now()
         self.commit(('status', 'active', 'ping_timestamp_ttl',
-            'backoff_timestamp'))
+                     'backoff_timestamp'))
 
     def get_state_locations(self):
         loc_excludes = set()
@@ -312,8 +312,8 @@ class Host(mongo.MongoObject):
         self.ping_timestamp_ttl = utils.now() + datetime.timedelta(
             seconds=self.timeout or settings.vpn.link_timeout)
         self.commit(('public_address', 'address6', 'local_address',
-            'version', 'status', 'timestamp', 'hosts', 'hosts_hist',
-            'ping_timestamp_ttl'))
+                     'version', 'status', 'timestamp', 'hosts', 'hosts_hist',
+                     'ping_timestamp_ttl'))
 
         if not self.link.key:
             self.link.generate_key()
@@ -632,7 +632,7 @@ class Location(mongo.MongoObject):
     }
 
     def __init__(self, link=None, name=None, type=None, link_id=None,
-            routes=None, **kwargs):
+                 routes=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         self.link = link
@@ -1120,8 +1120,8 @@ class Link(mongo.MongoObject):
     }
 
     def __init__(self, name=None, type=None, status=None, timeout=None,
-            key=None, ipv6=None, host_check=None, action=None,
-            preferred_ike=None, preferred_esp=None, **kwargs):
+                 key=None, ipv6=None, host_check=None, action=None,
+                 preferred_ike=None, preferred_esp=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if name is not None:

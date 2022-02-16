@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E401,E722,W0401
+# pylama:ignore=E302,E401,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -41,7 +41,7 @@ def _sign(method, path, params):
 
 class Duo(object):
     def __init__(self, username, factor=None, remote_ip=None, auth_type=None,
-            info=None, passcode=None):
+                 info=None, passcode=None):
         self.username = username
         self.factor = factor
         self.remote_ip = remote_ip
@@ -89,9 +89,9 @@ class Duo(object):
 
         try:
             response = requests.post(url,
-                headers=headers,
-                params=params,
-                timeout=30,
+                                     headers=headers,
+                                     params=params,
+                                     timeout=30,
                                      )
         except:
             if factor == 'push' and self.factor == 'push_phone':
@@ -106,14 +106,14 @@ class Duo(object):
             if resp_data.get('status') == 'bypass':
                 if settings.app.sso == DUO_AUTH:
                     logger.error('Cannot use Duo bypass with Duo sso',
-                        'sso',
-                        data=resp_data,
+                                 'sso',
+                                 data=resp_data,
                                  )
                     return
                 else:
                     logger.info('Skipping Duo auth with bypass',
-                        'sso',
-                        username=self.username,
+                                'sso',
+                                username=self.username,
                                 )
             self._valid = True
         elif data.get('code') == 40002:
@@ -121,12 +121,12 @@ class Duo(object):
                 self._auth('phone')
             else:
                 logger.error('Invalid Duo username',
-                    'sso',
-                    username=self.username,
-                    data=data,
+                             'sso',
+                             username=self.username,
+                             data=data,
                              )
                 raise InvalidUser('Invalid username')
         else:
             logger.error('Duo authentication failure', 'sso',
-                data=data,
+                         data=data,
                          )

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -29,9 +29,9 @@ class QueueAssignIpPool(queue.Queue):
     type = 'assign_ip_pool'
 
     def __init__(self, server_id=None,
-            network=None, network_start=None, network_end=None,
-            network_hash=None, old_network=None, old_network_start=None,
-            old_network_end=None, old_network_hash=None, **kwargs):
+                 network=None, network_start=None, network_end=None,
+                 network_hash=None, old_network=None, old_network_start=None,
+                 old_network_end=None, old_network_hash=None, **kwargs):
         queue.Queue.__init__(self, **kwargs)
 
         if server_id is not None:
@@ -68,8 +68,8 @@ class QueueAssignIpPool(queue.Queue):
     def task(self):
         if not self.server:
             logger.warning('Tried to run assign_ip_pool task queue ' +
-                'but server is no longer available', 'queues',
-                server_id=self.server_id,
+                           'but server is no longer available', 'queues',
+                           server_id=self.server_id,
                            )
             return
 
@@ -94,7 +94,7 @@ class QueueAssignIpPool(queue.Queue):
             })
 
         self.server.ip_pool.assign_ip_pool(self.network,
-            self.network_start, self.network_end, self.network_hash)
+                                           self.network_start, self.network_end, self.network_hash)
 
     def post_task(self):
         try:
@@ -143,8 +143,8 @@ class QueueAssignIpPool(queue.Queue):
     def complete_task(self):
         if not self.server:
             logger.warning('Tried to run assign_ip_pool complete queue ' +
-                'but server is no longer available', 'queues',
-                server_id=self.server_id,
+                           'but server is no longer available', 'queues',
+                           server_id=self.server_id,
                            )
             return
 

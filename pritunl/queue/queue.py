@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E302,E502,E722,W0401
+# pylama:ignore=E131,E302,E502,E722,W0401
 from pritunl.queue.com import QueueCom
 
 from pritunl.constants import *
@@ -91,8 +91,8 @@ class Queue(mongo.MongoObject):
                     self.queue_com.state_lock.release()
 
                 logger.error('Lost reserve, queue stopped', 'queue',
-                    queue_id=self.id,
-                    queue_type=self.type,
+                             queue_id=self.id,
+                             queue_type=self.type,
                              )
 
     def keep_alive(self):
@@ -118,13 +118,13 @@ class Queue(mongo.MongoObject):
         }
 
         messenger.publish('queue', [PENDING, self.id], extra=extra,
-            transaction=transaction)
+                          transaction=transaction)
 
         if block:
             last_update = time.time()
             while True:
                 for msg in messenger.subscribe('queue', cursor_id=cursor_id,
-                        timeout=block_timeout):
+                                               timeout=block_timeout):
                     cursor_id = msg['_id']
                     try:
                         if msg['message'] == [COMPLETE, self.id]:
@@ -134,10 +134,10 @@ class Queue(mongo.MongoObject):
                             break
                         elif msg['message'] == [ERROR, self.id]:
                             raise QueueTaskError('Error occurred running ' +
-                                'queue task', {
-                                    'queue_id': self.id,
-                                    'queue_type': self.type,
-                                })
+                                                 'queue task', {
+                                                    'queue_id': self.id,
+                                                    'queue_type': self.type,
+                                                    })
                     except TypeError:
                         pass
 
@@ -188,16 +188,16 @@ class Queue(mongo.MongoObject):
 
         if block:
             for msg in messenger.subscribe('queue', cursor_id=cursor_id,
-                    timeout=block_timeout):
+                                           timeout=block_timeout):
                 try:
                     if msg['message'] == [COMPLETE, doc['_id']]:
                         return doc
                     elif msg['message'] == [ERROR, doc['_id']]:
                         raise QueueTaskError('Error occurred running ' +
-                            'queue task', {
-                                'queue_id': doc['_id'],
-                                'queue_type': doc['type'],
-                            })
+                                             'queue task', {
+                                                'queue_id': doc['_id'],
+                                                'queue_type': doc['type'],
+                                                })
                 except TypeError:
                     pass
             logger.error('Blocking queue reserve timed out', {
@@ -253,8 +253,8 @@ class Queue(mongo.MongoObject):
         except:
             if self.queue_com.state is not STOPPED:
                 logger.exception('Error running task in queue', 'queue',
-                    queue_id=self.id,
-                    queue_type=self.type,
+                                 queue_id=self.id,
+                                 queue_type=self.type,
                                  )
                 messenger.publish('queue', [ERROR, self.id])
         finally:

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.queues.init_user import QueueInitUser
 
 from pritunl.constants import *
@@ -47,10 +47,10 @@ class QueueInitUserPooled(QueueInitUser):
 
 @queue.add_reserve('queued_user')
 def reserve_queued_user(org, name=None, email=None, pin=None, type=None,
-        groups=None, auth_type=None, yubico_id=None, disabled=None,
-        bypass_secondary=None, client_to_client=None, mac_addresses=None,
-        dns_servers=None, dns_suffix=None, port_forwarding=None,
-        resource_id=None, block=False):
+                        groups=None, auth_type=None, yubico_id=None, disabled=None,
+                        bypass_secondary=None, client_to_client=None, mac_addresses=None,
+                        dns_servers=None, dns_suffix=None, port_forwarding=None,
+                        resource_id=None, block=False):
     reserve_id = str(org.id) + '-' + type
     reserve_data = {}
 

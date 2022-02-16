@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E251,E302,E306,E502,E722,W0401
+# pylama:ignore=E131,E251,E302,E306,E502,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -56,18 +56,18 @@ def update_server(delay=0):
                 _cur_port != settings.app.server_port or \
                 _cur_redirect_server != settings.app.redirect_server or \
                 _cur_reverse_proxy != (settings.app.reverse_proxy_header if
-                    settings.app.reverse_proxy else ''):
+                                       settings.app.reverse_proxy else ''):
             logger.info('Settings changed, restarting server...', 'app',
-                ssl_changed=_cur_ssl != settings.app.server_ssl,
-                cert_changed=_cur_cert != settings.app.server_cert,
-                key_changed=_cur_key != settings.app.server_key,
-                port_changed=_cur_port != settings.app.server_port,
-                redirect_server_changed=_cur_redirect_server !=
-                    settings.app.redirect_server,
-                reverse_proxy_changed= _cur_reverse_proxy != (
-                    settings.app.reverse_proxy_header if
-                    settings.app.reverse_proxy else ''),
-            )
+                        ssl_changed=_cur_ssl != settings.app.server_ssl,
+                        cert_changed=_cur_cert != settings.app.server_cert,
+                        key_changed=_cur_key != settings.app.server_key,
+                        port_changed=_cur_port != settings.app.server_port,
+                        redirect_server_changed=_cur_redirect_server !=
+                        settings.app.redirect_server,
+                        reverse_proxy_changed= _cur_reverse_proxy != (
+                            settings.app.reverse_proxy_header if
+                            settings.app.reverse_proxy else ''),
+                        )
 
             _cur_ssl = settings.app.server_ssl
             _cur_cert = settings.app.server_cert
@@ -168,8 +168,8 @@ def _run_server(restart):
     )
 
     logger.info('Starting server', 'app',
-        selinux_context=context,
-                 )
+                selinux_context=context,
+                )
 
     app_server = cheroot.wsgi.Server(
         ('localhost', settings.app.server_internal_port),

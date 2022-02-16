@@ -1,4 +1,4 @@
-# pylama:ignore=E117,E128
+# pylama:ignore=E117
 # Copyright 2002-2008 Wichert Akkerman. All rights reserved.
 # Copyright 2007-2008 Simplon. All rights reserved.
 #
@@ -90,7 +90,7 @@ class Packet(dict):
     """
 
     def __init__(self, code=0, id=None, secret=six.b(''), authenticator=None,
-            **attributes):
+                 **attributes):
         """Constructor
 
         :param dict:   RADIUS dictionary
@@ -273,7 +273,7 @@ class Packet(dict):
         header = struct.pack('!BBH', self.code, self.id, (20 + len(attr)))
 
         authenticator = md5_constructor(header[0:4] + self.authenticator
-                              + attr + self.secret).digest()
+                                        + attr + self.secret).digest()
         return header + authenticator + attr
 
     def VerifyReply(self, reply, rawreply=None):
@@ -284,7 +284,7 @@ class Packet(dict):
             rawreply = reply.ReplyPacket()
 
         hash = md5_constructor(rawreply[0:4] + self.authenticator +
-                     rawreply[20:] + self.secret).digest()
+                               rawreply[20:] + self.secret).digest()
 
         if hash != rawreply[4:20]:
             return False
@@ -359,7 +359,7 @@ class Packet(dict):
 
 class AuthPacket(Packet):
     def __init__(self, code=AccessRequest, id=None, secret=six.b(''),
-            authenticator=None, **attributes):
+                 authenticator=None, **attributes):
         """Constructor
 
         :param code:   packet type code
@@ -383,8 +383,8 @@ class AuthPacket(Packet):
         to the new instance.
         """
         return AuthPacket(AccessAccept, self.id,
-            self.secret, self.authenticator, dict=self.dict,
-            **attributes)
+                          self.secret, self.authenticator, dict=self.dict,
+                          **attributes)
 
     def RequestPacket(self):
         """Create a ready-to-transmit authentication request packet.
@@ -403,7 +403,7 @@ class AuthPacket(Packet):
             self.id = self.CreateID()
 
         header = struct.pack('!BBH16s', self.code, self.id,
-            (20 + len(attr)), self.authenticator)
+                             (20 + len(attr)), self.authenticator)
 
         return header + attr
 
@@ -486,7 +486,7 @@ class AcctPacket(Packet):
     """
 
     def __init__(self, code=AccountingRequest, id=None, secret=six.b(''),
-            authenticator=None, **attributes):
+                 authenticator=None, **attributes):
         """Constructor
 
         :param dict:   RADIUS dictionary
@@ -510,8 +510,8 @@ class AcctPacket(Packet):
         to the new instance.
         """
         return AcctPacket(AccountingResponse, self.id,
-            self.secret, self.authenticator, dict=self.dict,
-            **attributes)
+                          self.secret, self.authenticator, dict=self.dict,
+                          **attributes)
 
     def VerifyAcctRequest(self):
         """Verify request authenticator.
@@ -521,7 +521,7 @@ class AcctPacket(Packet):
         """
         assert(self.raw_packet)
         hash = md5_constructor(self.raw_packet[0:4] + 16 * six.b('\x00') +
-                self.raw_packet[20:] + self.secret).digest()
+                               self.raw_packet[20:] + self.secret).digest()
         return hash == self.authenticator
 
     def RequestPacket(self):
@@ -540,7 +540,7 @@ class AcctPacket(Packet):
 
         header = struct.pack('!BBH', self.code, self.id, (20 + len(attr)))
         self.authenticator = md5_constructor(header[0:4] + 16 * six.b('\x00') + attr
-            + self.secret).digest()
+                                             + self.secret).digest()
         return header + self.authenticator + attr
 
 

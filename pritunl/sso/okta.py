@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E401,E502
+# pylama:ignore=E302,E401,E502
 from pritunl import settings
 from pritunl import logger
 
@@ -23,15 +23,15 @@ def get_user_id(username):
         )
     except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
-            username=username,
+                         username=username,
                          )
         return None
 
     if response.status_code != 200:
         logger.error('Okta api error', 'sso',
-            username=username,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return None
 
@@ -40,15 +40,15 @@ def get_user_id(username):
     user_id = data.get('id')
     if not user_id:
         logger.error('Okta username not found', 'sso',
-            username=username,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return None
 
     if data['status'].lower() != 'active':
         logger.warning('Okta user is not active', 'sso',
-            username=username,
+                       username=username,
                        )
         return None
 
@@ -74,27 +74,27 @@ def auth_okta(username):
         )
     except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
-            username=username,
-            okta_app_id=okta_app_id,
-            user_id=user_id,
+                         username=username,
+                         okta_app_id=okta_app_id,
+                         user_id=user_id,
                          )
         return None
 
     if response.status_code == 404:
         logger.warning('Okta user is not assigned to application', 'sso',
-            username=username,
-            okta_app_id=okta_app_id,
-            user_id=user_id,
+                       username=username,
+                       okta_app_id=okta_app_id,
+                       user_id=user_id,
                        )
         return False
 
     if response.status_code != 200:
         logger.error('Okta api error', 'sso',
-            username=username,
-            okta_app_id=okta_app_id,
-            user_id=user_id,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     okta_app_id=okta_app_id,
+                     user_id=user_id,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return None
 
@@ -102,9 +102,9 @@ def auth_okta(username):
         return True
 
     logger.warning('Okta user is not assigned to application', 'sso',
-        username=username,
-        okta_app_id=okta_app_id,
-        user_id=user_id,
+                   username=username,
+                   okta_app_id=okta_app_id,
+                   user_id=user_id,
                    )
 
     return False
@@ -116,8 +116,8 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
 
     if 'passcode' in okta_mode and not passcode:
         logger.error('Okta passcode empty', 'sso',
-            username=username,
-            okta_user_id=user_id,
+                     username=username,
+                     okta_user_id=user_id,
                      )
         return False
 
@@ -131,17 +131,17 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
         )
     except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
-            username=username,
-            okta_user_id=user_id,
+                         username=username,
+                         okta_user_id=user_id,
                          )
         return False
 
     if response.status_code != 200:
         logger.error('Okta api error', 'sso',
-            username=username,
-            okta_user_id=user_id,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     okta_user_id=user_id,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False
 
@@ -172,20 +172,20 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
     if not factor_id:
         if 'none' in okta_mode:
             logger.info('Okta secondary not available, skipped', 'sso',
-                username=username,
-                okta_user_id=user_id,
+                        username=username,
+                        okta_user_id=user_id,
                         )
             return True
         elif not_active:
             logger.warning('Okta secondary not active', 'sso',
-                username=username,
-                okta_user_id=user_id,
+                           username=username,
+                           okta_user_id=user_id,
                            )
             return False
         else:
             logger.warning('Okta secondary not available', 'sso',
-                username=username,
-                okta_user_id=user_id,
+                           username=username,
+                           okta_user_id=user_id,
                            )
             return False
 
@@ -194,9 +194,9 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
         verify_data['passCode'] = passcode
 
     logger.info('Sending Okta verify', 'sso',
-        username=username,
-        okta_user_id=user_id,
-        okta_factor_id=factor_id,
+                username=username,
+                okta_user_id=user_id,
+                okta_factor_id=factor_id,
                 )
 
     try:
@@ -213,19 +213,19 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
         )
     except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
-            username=username,
-            user_id=user_id,
-            factor_id=factor_id,
+                         username=username,
+                         user_id=user_id,
+                         factor_id=factor_id,
                          )
         return False
 
     if response.status_code != 200 and response.status_code != 201:
         logger.error('Okta api error', 'sso',
-            username=username,
-            user_id=user_id,
-            factor_id=factor_id,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     user_id=user_id,
+                     factor_id=factor_id,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False
 
@@ -242,10 +242,10 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             pass
         else:
             logger.warning('Okta push rejected', 'sso',
-                username=username,
-                user_id=user_id,
-                factor_id=factor_id,
-                result=result,
+                           username=username,
+                           user_id=user_id,
+                           factor_id=factor_id,
+                           result=result,
                            )
             return False
 
@@ -253,30 +253,30 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             links = data.get('_links')
             if not links:
                 logger.error('Okta cant find links', 'sso',
-                    username=username,
-                    user_id=user_id,
-                    factor_id=factor_id,
-                    data=data,
+                             username=username,
+                             user_id=user_id,
+                             factor_id=factor_id,
+                             data=data,
                              )
                 return False
 
             poll = links.get('poll')
             if not poll:
                 logger.error('Okta cant find poll', 'sso',
-                    username=username,
-                    user_id=user_id,
-                    factor_id=factor_id,
-                    data=data,
+                             username=username,
+                             user_id=user_id,
+                             factor_id=factor_id,
+                             data=data,
                              )
                 return False
 
             poll_url = poll.get('href')
             if not poll_url:
                 logger.error('Okta cant find href', 'sso',
-                    username=username,
-                    user_id=user_id,
-                    factor_id=factor_id,
-                    data=data,
+                             username=username,
+                             user_id=user_id,
+                             factor_id=factor_id,
+                             data=data,
                              )
                 return False
 
@@ -292,18 +292,18 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             )
         except http.client.HTTPException:
             logger.exception('Okta poll api error', 'sso',
-                username=username,
-                user_id=user_id,
-                factor_id=factor_id,
+                             username=username,
+                             user_id=user_id,
+                             factor_id=factor_id,
                              )
             return False
 
         if response.status_code != 200:
             logger.error('Okta poll api error', 'sso',
-                username=username,
-                user_id=user_id,
-                factor_id=factor_id,
-                status_code=response.status_code,
-                response=response.content,
+                         username=username,
+                         user_id=user_id,
+                         factor_id=factor_id,
+                         status_code=response.status_code,
+                         response=response.content,
                          )
             return False

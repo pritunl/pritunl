@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.organization.organization import Organization
 
 from pritunl.constants import *
@@ -43,7 +43,7 @@ def new_org(type=ORG_DEFAULT, block=True, **kwargs):
 
         if not org:
             org = queue.reserve('queued_org', block=block, type=type,
-                **kwargs)
+                                **kwargs)
 
         if org:
             new_pooled()
@@ -117,7 +117,7 @@ def get_org_page_total():
     }).count()
 
     return int(math.floor(max(0, float(count - 1)) /
-        settings.app.org_page_count))
+               settings.app.org_page_count))
 
 def get_user_count(org_ids, type=CERT_CLIENT):
     user_collection = mongo.get_collection('users')

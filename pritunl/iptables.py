@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E221,E231,E302,E722,W0611
+# pylama:ignore=E131,E221,E231,E302,E722,W0611
 from pritunl import utils
 from pritunl import logger
 from pritunl import settings
@@ -126,7 +126,7 @@ class Iptables(object):
         except ValueError:
             if not silent:
                 logger.warning('Lost iptables rule', 'iptables',
-                    rule=rule,
+                               rule=rule,
                                )
         finally:
             self._lock.release()
@@ -144,7 +144,7 @@ class Iptables(object):
         except ValueError:
             if not silent:
                 logger.warning('Lost ip6tables rule', 'iptables',
-                    rule=rule,
+                               rule=rule,
                                )
         finally:
             self._lock.release()
@@ -1449,7 +1449,7 @@ class Iptables(object):
             if self.ipv6:
                 for rule in self._accept6:
                     if not self._exists_iptables_rule(rule, ipv6=True,
-                            tables=tables):
+                                                      tables=tables):
                         if log:
                             logger.error(
                                 'Unexpected loss of ip6tables rule, ' +
@@ -1458,7 +1458,7 @@ class Iptables(object):
                                 rule=rule,
                             )
                         self._insert_iptables_rule(rule, ipv6=True,
-                            tables=tables)
+                                                   tables=tables)
 
             if self.restrict_routes:
                 for rule in self._drop:
@@ -1475,7 +1475,7 @@ class Iptables(object):
                 if self.ipv6:
                     for rule in self._drop6:
                         if not self._exists_iptables_rule(rule, ipv6=True,
-                                tables=tables):
+                                                          tables=tables):
                             if log:
                                 logger.error(
                                     'Unexpected loss of ip6tables drop ' +
@@ -1484,7 +1484,7 @@ class Iptables(object):
                                     rule=rule,
                                 )
                             self._append_iptables_rule(rule, ipv6=True,
-                                tables=tables)
+                                                       tables=tables)
 
             # tables['nat'].commit()
             # tables['nat6'].commit()
@@ -1525,7 +1525,7 @@ class Iptables(object):
             if self.ipv6:
                 for rule in self._accept6 + self._other6:
                     self._remove_iptables_rule(rule, ipv6=True,
-                        tables=tables)
+                                               tables=tables)
 
             if self.restrict_routes:
                 for rule in self._drop:
@@ -1534,7 +1534,7 @@ class Iptables(object):
                 if self.ipv6:
                     for rule in self._drop6:
                         self._remove_iptables_rule(rule, ipv6=True,
-                            tables=tables)
+                                                   tables=tables)
 
             self._accept = None
             self._accept6 = None

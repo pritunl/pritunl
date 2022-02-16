@@ -1,4 +1,4 @@
-# pylama:ignore=E111,E128,E302,E502,E722,W0401
+# pylama:ignore=E111,E302,E502,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
@@ -67,7 +67,7 @@ class LogView(object):
         return line
 
     def get_log_lines(self, natural=False, limit=None, formatted=True,
-            reverse=False):
+                      reverse=False):
         limit = limit or 1024
 
         if natural:
@@ -124,8 +124,8 @@ class LogView(object):
         }
 
         cursor = self.collection.find(spec,
-            cursor_type=pymongo.cursor.CursorType.TAILABLE_AWAIT).sort(
-            '$natural', pymongo.ASCENDING)
+                                      cursor_type=pymongo.cursor.CursorType.TAILABLE_AWAIT).sort(
+                                      '$natural', pymongo.ASCENDING)
 
         while cursor.alive:
             for doc in cursor:

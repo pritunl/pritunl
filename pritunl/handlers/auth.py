@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -49,10 +49,10 @@ def _auth_radius(username, password, remote_addr):
 
         if not_found:
             logger.warning('Supplied org names do not exist',
-                'sso',
-                sso_type='radius',
-                user_name=username,
-                org_names=org_names,
+                           'sso',
+                           sso_type='radius',
+                           user_name=username,
+                           org_names=org_names,
                            )
 
     valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
@@ -72,7 +72,7 @@ def _auth_radius(username, password, remote_addr):
             reason_long='Radius plugin authentication failed',
         )
         logger.error('Radius plugin authentication not valid', 'sso',
-            username=username,
+                     username=username,
                      )
         return utils.jsonify({
             'error': AUTH_INVALID,
@@ -92,7 +92,7 @@ def _auth_radius(username, password, remote_addr):
             valid = duo_auth.authenticate()
         except InvalidUser:
             logger.error('Duo authentication username not valid', 'sso',
-                username=username,
+                         username=username,
                          )
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -123,7 +123,7 @@ def _auth_radius(username, password, remote_addr):
                     reason_long='Duo plugin authentication failed',
                 )
                 logger.error('Duo plugin authentication not valid', 'sso',
-                    username=username,
+                             username=username,
                              )
                 return utils.jsonify({
                     'error': AUTH_INVALID,
@@ -133,7 +133,7 @@ def _auth_radius(username, password, remote_addr):
             groups = ((groups or set()) | (groups2 or set())) or None
         else:
             logger.error('Duo authentication not valid', 'sso',
-                username=username,
+                         username=username,
                          )
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -152,14 +152,14 @@ def _auth_radius(username, password, remote_addr):
     org = organization.get_by_id(org_id)
     if not org:
         logger.error('Organization for sso does not exist', 'auth',
-            org_id=org_id,
+                     org_id=org_id,
                      )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=sso_mode, groups=list(groups) if groups else None)
+                           auth_type=sso_mode, groups=list(groups) if groups else None)
 
         usr.audit_event(
             'user_created',
@@ -203,8 +203,8 @@ def _auth_radius(username, password, remote_addr):
     )
 
     usr.audit_event('user_profile',
-        'User profile viewed from single sign-on',
-        remote_addr=utils.get_remote_addr(),
+                    'User profile viewed from single sign-on',
+                    remote_addr=utils.get_remote_addr(),
                     )
 
     journal.entry(
@@ -280,14 +280,14 @@ def _auth_plugin(username, password, remote_addr):
     org = organization.get_by_id(org_id)
     if not org:
         logger.error('Organization for sso does not exist', 'auth',
-            org_id=org_id,
+                     org_id=org_id,
                      )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
     if not usr:
         usr = org.new_user(name=username, type=CERT_CLIENT,
-            auth_type=PLUGIN_AUTH, groups=list(groups) if groups else None)
+                           auth_type=PLUGIN_AUTH, groups=list(groups) if groups else None)
         usr.audit_event(
             'user_created',
             'User created with plugin authentication',
@@ -323,8 +323,8 @@ def _auth_plugin(username, password, remote_addr):
     key_link = org.create_user_key_link(usr.id, one_time=True)
 
     usr.audit_event('user_profile',
-        'User profile viewed from plugin authentication',
-        remote_addr=utils.get_remote_addr(),
+                    'User profile viewed from plugin authentication',
+                    remote_addr=utils.get_remote_addr(),
                     )
 
     journal.entry(

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.helpers import *
 from pritunl import listener
 from pritunl import logger
@@ -35,7 +35,7 @@ def listener_thread():
                                 )
                     except:
                         logger.exception('Error in listener callback',
-                            'runners')
+                                         'runners')
         except GeneratorExit:
             raise
         except:

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E305,W0401
+# pylama:ignore=E302,E305,W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import task
@@ -20,4 +20,4 @@ class TaskCleanNetworkLock(task.Task):
         }})
 
 task.add_task(TaskCleanNetworkLock,
-    minutes=range(0, 60, 8), run_on_start=True)
+              minutes=range(0, 60, 8), run_on_start=True)

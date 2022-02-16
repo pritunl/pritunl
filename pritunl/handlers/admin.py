@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E712,W0401
+# pylama:ignore=E302,E712,W0401
 from pritunl.constants import *
 from pritunl import utils
 from pritunl import event
@@ -62,8 +62,8 @@ def admin_put(admin_id):
 
         if username != admin.username:
             admin.audit_event('admin_updated',
-                'Administrator username changed',
-                remote_addr=remote_addr,
+                              'Administrator username changed',
+                              remote_addr=remote_addr,
                               )
 
             journal.entry(
@@ -80,8 +80,8 @@ def admin_put(admin_id):
 
         if password != admin.password:
             admin.audit_event('admin_updated',
-                'Administrator password changed',
-                remote_addr=remote_addr,
+                              'Administrator password changed',
+                              remote_addr=remote_addr,
                               )
 
             journal.entry(
@@ -98,8 +98,8 @@ def admin_put(admin_id):
 
         if yubikey_id != admin.yubikey_id:
             admin.audit_event('admin_updated',
-                'Administrator YubiKey ID changed',
-                remote_addr=remote_addr,
+                              'Administrator YubiKey ID changed',
+                              remote_addr=remote_addr,
                               )
 
             journal.entry(
@@ -121,10 +121,10 @@ def admin_put(admin_id):
                 }, 400)
 
             admin.audit_event('admin_updated',
-                'Administrator super user %s' % (
-                    'disabled' if super_user else 'enabled'),
-                remote_addr=remote_addr,
-            )
+                              'Administrator super user %s' % (
+                                                               'disabled' if super_user else 'enabled'),
+                              remote_addr=remote_addr,
+                              )
 
             journal.entry(
                 journal.ADMIN_UPDATE,
@@ -147,10 +147,10 @@ def admin_put(admin_id):
                 admin.generate_secret()
 
             admin.audit_event('admin_updated',
-                'Administrator token authentication %s' % (
-                    'disabled' if auth_api else 'enabled'),
-                remote_addr=remote_addr,
-            )
+                              'Administrator token authentication %s' % (
+                                                                         'disabled' if auth_api else 'enabled'),
+                              remote_addr=remote_addr,
+                              )
 
             journal.entry(
                 journal.ADMIN_UPDATE,
@@ -165,8 +165,8 @@ def admin_put(admin_id):
     if 'token' in flask.request.json and flask.request.json['token']:
         admin.generate_token()
         admin.audit_event('admin_updated',
-            'Administrator api token changed',
-            remote_addr=remote_addr,
+                          'Administrator api token changed',
+                          remote_addr=remote_addr,
                           )
 
         journal.entry(
@@ -179,8 +179,8 @@ def admin_put(admin_id):
     if 'secret' in flask.request.json and flask.request.json['secret']:
         admin.generate_secret()
         admin.audit_event('admin_updated',
-            'Administrator api secret changed',
-            remote_addr=remote_addr,
+                          'Administrator api secret changed',
+                          remote_addr=remote_addr,
                           )
 
         journal.entry(
@@ -200,8 +200,8 @@ def admin_put(admin_id):
                 }, 400)
 
             admin.audit_event('admin_updated',
-                'Administrator %s' % ('disabled' if disabled else 'enabled'),
-                remote_addr=remote_addr,
+                              'Administrator %s' % ('disabled' if disabled else 'enabled'),
+                              remote_addr=remote_addr,
                               )
 
             journal.entry(
@@ -223,10 +223,10 @@ def admin_put(admin_id):
                 admin.generate_otp_secret()
 
             admin.audit_event('admin_updated',
-                'Administrator two-step authentication %s' % (
-                    'disabled' if otp_auth else 'enabled'),
-                remote_addr=remote_addr,
-            )
+                              'Administrator two-step authentication %s' % (
+                                                                            'disabled' if otp_auth else 'enabled'),
+                              remote_addr=remote_addr,
+                              )
 
             journal.entry(
                 journal.ADMIN_UPDATE,
@@ -241,8 +241,8 @@ def admin_put(admin_id):
     otp_secret = flask.request.json.get('otp_secret')
     if otp_secret == True:
         admin.audit_event('admin_updated',
-            'Administrator two-factor authentication secret reset',
-            remote_addr=remote_addr,
+                          'Administrator two-factor authentication secret reset',
+                          remote_addr=remote_addr,
                           )
 
         journal.entry(
@@ -305,8 +305,8 @@ def admin_post():
         }, 400)
 
     admin.audit_event('admin_created',
-        'Administrator created',
-        remote_addr=remote_addr,
+                      'Administrator created',
+                      remote_addr=remote_addr,
                       )
 
     journal.entry(

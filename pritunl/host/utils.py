@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.host.host import Host
 
 from pritunl.constants import *
@@ -51,7 +51,7 @@ def get_host_page_total():
     }).count()
 
     return int(math.floor(max(0, float(count - 1)) /
-        settings.app.host_page_count))
+               settings.app.host_page_count))
 
 def get_hosts_online():
     host_collection = mongo.get_collection('hosts')
@@ -154,7 +154,7 @@ def init():
                     str(settings.conf.local_address_interface))
         except:
             logger.exception('Failed to get auto_local_address', 'host',
-                interface=settings.conf.local_address_interface)
+                             interface=settings.conf.local_address_interface)
             settings.local.host.auto_local_address = None
 
         try:
@@ -163,7 +163,7 @@ def init():
                     str(settings.conf.local_address_interface))
         except:
             logger.exception('Failed to get auto_local_address6', 'host',
-                interface=settings.conf.local_address_interface)
+                             interface=settings.conf.local_address_interface)
             settings.local.host.auto_local_address6 = None
 
     settings.local.host.auto_instance_id = utils.get_instance_id()

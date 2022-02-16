@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E302,E502,E722,W0401
+# pylama:ignore=E131,E302,E502,E722,W0401
 from pritunl.transaction.collection import TransactionCollection
 
 from pritunl.constants import *
@@ -49,7 +49,7 @@ class Transaction(mongo.MongoObject):
         if self.actions:
             actions_json = zlib.decompress(self.actions)
             self.action_sets = json.loads(actions_json,
-                object_hook=utils.json_object_hook_handler)
+                                          object_hook=utils.json_object_hook_handler)
         else:
             self.action_sets = []
 
@@ -68,7 +68,7 @@ class Transaction(mongo.MongoObject):
                 tran_str += '%s_collection.bulk_execute()\n' % collection_name
             elif actions:
                 tran_str += '%s_collection%s\n' % (collection_name,
-                    '.bulk()' if bulk else '')
+                                                   '.bulk()' if bulk else '')
                 tran_str = self._str_actions(tran_str, actions)
 
             if rollback_actions:
@@ -83,7 +83,7 @@ class Transaction(mongo.MongoObject):
 
     def collection(self, name):
         return TransactionCollection(collection_name=name,
-            action_sets=self.action_sets)
+                                     action_sets=self.action_sets)
 
     def _str_actions(self, tran_str, actions):
         for action in actions:
@@ -97,7 +97,7 @@ class Transaction(mongo.MongoObject):
             if kwargs:
                 tran_str += ', '
                 tran_str += ', '.join(['%s=%s' % (x, y)
-                    for x, y in kwargs.items()])
+                                      for x, y in kwargs.items()])
 
             tran_str += ')\n'
         return tran_str
@@ -158,8 +158,8 @@ class Transaction(mongo.MongoObject):
             self._run_actions()
         except:
             logger.exception('Error occurred running ' +
-                'transaction actions', 'transaction',
-                transaction_id=self.id,
+                             'transaction actions', 'transaction',
+                             transaction_id=self.id,
                              )
             raise
 
@@ -184,7 +184,7 @@ class Transaction(mongo.MongoObject):
 
     def rollback_actions(self):
         logger.warning('Transaction failed rolling back...', 'transaction',
-            actions=self.action_sets,
+                       actions=self.action_sets,
                        )
 
         response = self.transaction_collection.update({
@@ -204,8 +204,8 @@ class Transaction(mongo.MongoObject):
             self._rollback_actions()
         except:
             logger.exception('Error occurred rolling back ' +
-                'transaction actions', 'transaction',
-                transaction_id=self.id,
+                             'transaction actions', 'transaction',
+                             transaction_id=self.id,
                              )
             raise
 
@@ -236,8 +236,8 @@ class Transaction(mongo.MongoObject):
             self._run_post_actions()
         except:
             logger.exception('Error occurred running ' +
-                'transaction post actions', 'transaction',
-                transaction_id=self.id,
+                             'transaction post actions', 'transaction',
+                             transaction_id=self.id,
                              )
             raise
 
@@ -253,7 +253,7 @@ class Transaction(mongo.MongoObject):
 
     def commit(self):
         actions_json = json.dumps(self.action_sets,
-            default=utils.json_default)
+                                  default=utils.json_default)
         actions_json_zlib = zlib.compress(actions_json.encode())
 
         self.transaction_collection.insert({

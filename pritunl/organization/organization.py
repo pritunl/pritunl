@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401,W0611
+# pylama:ignore=E302,W0401,W0611
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -87,7 +87,7 @@ class Organization(mongo.MongoObject):
     @property
     def page_total(self):
         return int(math.floor(max(0, float(self.user_count - 1)) /
-            settings.user.page_count))
+                   settings.user.page_count))
 
     @cached_static_property
     def collection(cls):
@@ -114,7 +114,7 @@ class Organization(mongo.MongoObject):
 
         if queue_user_init:
             ca_user.queue_initialize(block=True,
-                priority=HIGH if self.type == ORG_DEFAULT else None)
+                                     priority=HIGH if self.type == ORG_DEFAULT else None)
         else:
             ca_user.initialize()
             ca_user.commit()
@@ -133,7 +133,7 @@ class Organization(mongo.MongoObject):
             raise TypeError('Only pool orgs can be queued')
 
         queue.start('init_org_pooled', block=block,
-            org_doc=self.export(), priority=priority)
+                    org_doc=self.export(), priority=priority)
 
         if block:
             self.load()
@@ -158,7 +158,7 @@ class Organization(mongo.MongoObject):
 
     def find_user(self, name=None, type=None, resource_id=None):
         return user.find_user(org=self, name=name, type=type,
-            resource_id=resource_id)
+                              resource_id=resource_id)
 
     def _get_user_count(self, type=CERT_CLIENT):
         return user.User.collection.find({
@@ -169,7 +169,7 @@ class Organization(mongo.MongoObject):
         }).count()
 
     def iter_users(self, page=None, search=None, search_limit=None,
-            fields=None, include_pool=False):
+                   fields=None, include_pool=False):
         spec = {
             'org_id': self.id,
             'type': CERT_CLIENT,
@@ -279,7 +279,7 @@ class Organization(mongo.MongoObject):
 
         if include_pool:
             spec['type'] = {'$in': [CERT_SERVER, CERT_CLIENT_POOL,
-                CERT_SERVER_POOL]}
+                            CERT_SERVER_POOL]}
         else:
             spec['type'] = CERT_SERVER
 
@@ -353,7 +353,7 @@ class Organization(mongo.MongoObject):
 
             if not usr:
                 usr = queue.reserve('queued_user', org=self, type=type,
-                    block=block, **kwargs)
+                                    block=block, **kwargs)
 
             if usr:
                 user.new_pooled_user(org=self, type=type)
@@ -361,7 +361,7 @@ class Organization(mongo.MongoObject):
 
         usr = user.User(org=self, type=type, **kwargs)
         usr.queue_initialize(block=block,
-            priority=HIGH if type in (CERT_SERVER, CERT_CLIENT) else None)
+                             priority=HIGH if type in (CERT_SERVER, CERT_CLIENT) else None)
 
         return usr
 

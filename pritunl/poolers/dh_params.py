@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401,W0612
+# pylama:ignore=E302,W0401,W0612
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import pooler
@@ -39,4 +39,4 @@ def fill_dh_params():
 
     for dh_param_bits in utils.roundrobin(*new_dh_params):
         que = queue.start('dh_params', dh_param_bits=dh_param_bits,
-            priority=LOW)
+                          priority=LOW)

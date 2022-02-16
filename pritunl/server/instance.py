@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E125,E128,E131,E302,E502,E722,W0401
+# pylama:ignore=E122,E125,E131,E302,E502,E722,W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
@@ -92,11 +92,11 @@ class ServerInstance(object):
             'server_id': self.server.id,
         })
         messenger.publish('servers', message,
-            extra=extra, transaction=transaction)
+                          extra=extra, transaction=transaction)
 
     def subscribe(self, cursor_id=None, timeout=None):
         for msg in messenger.subscribe('servers', cursor_id=cursor_id,
-                timeout=timeout):
+                                       timeout=timeout):
             if msg.get('server_id') == self.server.id:
                 yield msg
 
@@ -448,7 +448,7 @@ class ServerInstance(object):
                 ['sysctl', '-w', 'net.ipv4.ip_forward=1'])
         except subprocess.CalledProcessError:
             logger.exception('Failed to enable IP forwarding', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -520,7 +520,7 @@ class ServerInstance(object):
             routes_output = utils.check_output_logged(['route', '-n'])
         except subprocess.CalledProcessError:
             logger.exception('Failed to get IP routes', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -538,7 +538,7 @@ class ServerInstance(object):
 
                 routes.append((
                     ipaddress.ip_network('%s/%s' % (line_split[0],
-                        utils.subnet_to_cidr(line_split[2])), strict=False),
+                                         utils.subnet_to_cidr(line_split[2])), strict=False),
                     line_split[7]
                 ))
         routes.reverse()
@@ -555,7 +555,7 @@ class ServerInstance(object):
                     ['route', '-n', '-A', 'inet6'])
             except subprocess.CalledProcessError:
                 logger.exception('Failed to get IPv6 routes', 'server',
-                    server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
                 raise
 
@@ -693,7 +693,7 @@ class ServerInstance(object):
             routes_output = utils.check_output_logged(['route', '-n'])
         except subprocess.CalledProcessError:
             logger.exception('Failed to get IP routes', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -711,7 +711,7 @@ class ServerInstance(object):
 
                 routes.append((
                     ipaddress.ip_network('%s/%s' % (line_split[0],
-                        utils.subnet_to_cidr(line_split[2])), strict=False),
+                                         utils.subnet_to_cidr(line_split[2])), strict=False),
                     line_split[7]
                 ))
         routes.reverse()
@@ -728,7 +728,7 @@ class ServerInstance(object):
                     ['route', '-n', '-A', 'inet6'])
             except subprocess.CalledProcessError:
                 logger.exception('Failed to get IPv6 routes', 'server',
-                    server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
                 raise
 
@@ -880,8 +880,8 @@ class ServerInstance(object):
 
         if not terminated:
             logger.error('Failed to stop server process', 'server',
-                server_id=self.server.id,
-                instance_id=self.id,
+                         server_id=self.server.id,
+                         instance_id=self.id,
                          )
             return False
 
@@ -890,10 +890,10 @@ class ServerInstance(object):
     def openvpn_start(self):
         try:
             return subprocess.Popen(['openvpn', self.ovpn_conf_path],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                    stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
             logger.exception('Failed to start ovpn process', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             self.server.output.push_output(traceback.format_exc())
             raise
@@ -926,7 +926,7 @@ class ServerInstance(object):
                 self.server.output.push_output(line.decode())
             except:
                 logger.exception('Failed to push vpn output', 'server',
-                    server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
 
             yield
@@ -947,7 +947,7 @@ class ServerInstance(object):
                 self.server.output.push_output(line.decode())
             except:
                 logger.exception('Failed to push vpn output', 'server',
-                    server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
 
             yield
@@ -994,7 +994,7 @@ class ServerInstance(object):
             self.stop_process()
         except:
             logger.exception('Exception in messaging thread', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             self.stop_process()
 
@@ -1052,8 +1052,8 @@ class ServerInstance(object):
                         break
 
                     logger.exception('Failed to update startup ping',
-                        'server',
-                        server_id=self.server.id,
+                                     'server',
+                                     server_id=self.server.id,
                                      )
                     time.sleep(1)
 
@@ -1131,8 +1131,8 @@ class ServerInstance(object):
                         break
 
                     logger.exception('Failed to update server ping',
-                        'server',
-                        server_id=self.server.id,
+                                     'server',
+                                     server_id=self.server.id,
                                      )
                     time.sleep(2)
 
@@ -1200,7 +1200,7 @@ class ServerInstance(object):
                     return
             except:
                 logger.exception('Error in iptables thread', 'server',
-                    server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
                 time.sleep(1)
 
@@ -1256,8 +1256,8 @@ class ServerInstance(object):
                 utils.oracle_add_route(network)
             else:
                 logger.error('Unknown cloud provider type', 'server',
-                    cloud_provider=settings.app.cloud_provider,
-                    network=network,
+                             cloud_provider=settings.app.cloud_provider,
+                             network=network,
                              )
 
             if self.vxlan:
@@ -1283,11 +1283,11 @@ class ServerInstance(object):
             return
         except:
             logger.exception('Failed to add vpc route', 'server',
-                server_id=self.server.id,
-                instance_id=self.id,
-                vpc_region=vpc_region,
-                vpc_id=vpc_id,
-                network=network,
+                             server_id=self.server.id,
+                             instance_id=self.id,
+                             vpc_region=vpc_region,
+                             vpc_id=vpc_id,
+                             network=network,
                              )
 
     def start_wg(self):
@@ -1308,7 +1308,7 @@ class ServerInstance(object):
             ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to generate wg private key', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -1318,7 +1318,7 @@ class ServerInstance(object):
             ], input=private_key)
         except subprocess.CalledProcessError:
             logger.exception('Failed to get wg public key', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -1345,7 +1345,7 @@ class ServerInstance(object):
             ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to add wg interface', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -1359,7 +1359,7 @@ class ServerInstance(object):
             ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to add wg ip', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -1375,7 +1375,7 @@ class ServerInstance(object):
                 ])
             except subprocess.CalledProcessError:
                 logger.exception('Failed to add wg ipv6', 'server',
-                    server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
                 raise
 
@@ -1387,7 +1387,7 @@ class ServerInstance(object):
             ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to configure wg', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -1398,7 +1398,7 @@ class ServerInstance(object):
             ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to start wg interface', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -1413,7 +1413,7 @@ class ServerInstance(object):
             ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to stop wg interface', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
 
         try:
@@ -1423,11 +1423,11 @@ class ServerInstance(object):
             ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to del wg interface', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
 
     def connect_wg(self, wg_public_key, virt_address, virt_address6,
-            network_links, network_links6):
+                   network_links, network_links6):
         allowed_ips = virt_address.split('/')[0] + '/32'
         if self.server.ipv6 and virt_address6:
             allowed_ips += ',' + virt_address6.split('/')[0] + '/128'
@@ -1447,7 +1447,7 @@ class ServerInstance(object):
             ])
         except subprocess.CalledProcessError:
             logger.exception('Failed to add wg peer', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -1499,27 +1499,27 @@ class ServerInstance(object):
         from pritunl.server.utils import get_by_id
 
         logger.info('Starting vpn server', 'server',
-            server_id=self.server.id,
-            instance_id=self.id,
-            instances=self.server.instances,
-            instances_count=self.server.instances_count,
-            route_count=len(self.server.routes),
-            network=self.server.network,
-            network6=self.server.network6,
-            host_id=settings.local.host.id,
-            host_address=settings.local.host.local_addr,
-            host_address6=settings.local.host.local_addr6,
-            host_networks=settings.local.host.local_networks,
-            cur_timestamp=utils.now(),
-            libipt=settings.vpn.lib_iptables,
+                    server_id=self.server.id,
+                    instance_id=self.id,
+                    instances=self.server.instances,
+                    instances_count=self.server.instances_count,
+                    route_count=len(self.server.routes),
+                    network=self.server.network,
+                    network6=self.server.network6,
+                    host_id=settings.local.host.id,
+                    host_address=settings.local.host.local_addr,
+                    host_address6=settings.local.host.local_addr6,
+                    host_networks=settings.local.host.local_networks,
+                    cur_timestamp=utils.now(),
+                    libipt=settings.vpn.lib_iptables,
                     )
 
         def timeout():
             logger.error('Server startup timed out, stopping server',
-                'server',
-                server_id=self.server.id,
-                instance_id=self.id,
-                state=self.state,
+                         'server',
+                         server_id=self.server.id,
+                         instance_id=self.id,
+                         state=self.state,
                          )
             self.stop_process()
 
@@ -1562,7 +1562,7 @@ class ServerInstance(object):
                 try:
                     self.state = 'get_vxlan'
                     self.vxlan = vxlan.get_vxlan(self.server.id, self.id,
-                        self.server.ipv6)
+                                                 self.server.ipv6)
 
                     if self.is_interrupted():
                         return
@@ -1574,8 +1574,8 @@ class ServerInstance(object):
                         return
                 except:
                     logger.exception('Failed to setup server vxlan', 'vxlan',
-                        server_id=self.server.id,
-                        instance_id=self.id,
+                                     server_id=self.server.id,
+                                     instance_id=self.id,
                                      )
 
             self.state = 'generate_ovpn_conf'
@@ -1640,7 +1640,7 @@ class ServerInstance(object):
                 self.state = 'events'
                 event.Event(type=SERVERS_UPDATED)
                 event.Event(type=SERVER_HOSTS_UPDATED,
-                    resource_id=self.server.id)
+                            resource_id=self.server.id)
                 for org_id in self.server.organizations:
                     event.Event(type=USERS_UPDATED, resource_id=org_id)
 
@@ -1777,13 +1777,13 @@ class ServerInstance(object):
                 self.stop_process()
             except:
                 logger.exception('Server stop error', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.id,
+                                 server_id=self.server.id,
+                                 instance_id=self.id,
                                  )
 
             logger.exception('Server error occurred while running', 'server',
-                server_id=self.server.id,
-                instance_id=self.id,
+                             server_id=self.server.id,
+                             instance_id=self.id,
                              )
         finally:
             timer.cancel()
@@ -1796,16 +1796,16 @@ class ServerInstance(object):
                 self.bridge_stop()
             except:
                 logger.exception('Failed to remove server bridge', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.id,
+                                 server_id=self.server.id,
+                                 instance_id=self.id,
                                  )
 
             try:
                 self.iptables.clear_rules()
             except:
                 logger.exception('Server iptables clean up error', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.id,
+                                 server_id=self.server.id,
+                                 instance_id=self.id,
                                  )
 
             try:
@@ -1813,8 +1813,8 @@ class ServerInstance(object):
                     self.iptables_wg.clear_rules()
             except:
                 logger.exception('Server iptables clean up error', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.id,
+                                 server_id=self.server.id,
+                                 instance_id=self.id,
                                  )
 
             if self.vxlan:
@@ -1822,8 +1822,8 @@ class ServerInstance(object):
                     self.vxlan.stop()
                 except:
                     logger.exception('Failed to stop server vxlan', 'server',
-                        server_id=self.server.id,
-                        instance_id=self.id,
+                                     server_id=self.server.id,
+                                     instance_id=self.id,
                                      )
 
             try:
@@ -1831,8 +1831,8 @@ class ServerInstance(object):
                     self.stop_wg()
             except:
                 logger.exception('Server wg clean up error', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.id,
+                                 server_id=self.server.id,
+                                 instance_id=self.id,
                                  )
 
             try:
@@ -1852,16 +1852,16 @@ class ServerInstance(object):
                 utils.rmtree(self._temp_path)
             except:
                 logger.exception('Server clean up error', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.id,
+                                 server_id=self.server.id,
+                                 instance_id=self.id,
                                  )
 
             try:
                 self.resources_release()
             except:
                 logger.exception('Failed to release resources', 'server',
-                    server_id=self.server.id,
-                    instance_id=self.id,
+                                 server_id=self.server.id,
+                                 instance_id=self.id,
                                  )
 
     def run(self, send_events=False):

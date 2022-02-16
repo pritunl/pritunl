@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E127,E128,E231,E302,E303,E722,W0401
+# pylama:ignore=E122,E127,E231,E302,E303,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import utils
@@ -99,7 +99,7 @@ class Clients(object):
         return org
 
     def generate_client_conf(self, platform, client_id, virt_address,
-            virt_address6, user, reauth):
+                             virt_address6, user, reauth):
         client_conf = ''
 
         network_gateway = utils.get_network_gateway(self.server.network)
@@ -107,9 +107,9 @@ class Clients(object):
 
         if user.link_server_id:
             link_usr_svr = self.server.get_link_server(user.link_server_id,
-                fields=('_id', 'wg', 'network', 'network_wg',
-                    'network_start', 'network_end', 'local_networks',
-                    'organizations', 'routes', 'links', 'ipv6'))
+                                                       fields=('_id', 'wg', 'network', 'network_wg',
+                                                               'network_start', 'network_end', 'local_networks',
+                                                               'organizations', 'routes', 'links', 'ipv6'))
 
             for route in link_usr_svr.get_routes(include_default=False):
                 network = route['network']
@@ -186,7 +186,7 @@ class Clients(object):
 
             if network_links and not reauth:
                 thread = threading.Thread(target=self.iroute_ping_thread,
-                    args=(client_id, virt_address.split('/')[0]))
+                                          args=(client_id, virt_address.split('/')[0]))
                 thread.daemon = True
                 thread.start()
 
@@ -248,7 +248,7 @@ class Clients(object):
         return client_conf
 
     def generate_client_conf_wg(self, platform, client_id, virt_address,
-            virt_address6, user):
+                                virt_address6, user):
         network_gateway = utils.get_network_gateway(self.server.network_wg)
         network_gateway6 = utils.get_network_gateway(self.server.network6_wg)
 
@@ -342,7 +342,7 @@ class Clients(object):
 
             if network_links:
                 thread = threading.Thread(target=self.iroute_ping_thread,
-                    args=(client_id, virt_address.split('/')[0]))
+                                          args=(client_id, virt_address.split('/')[0]))
                 thread.daemon = True
                 thread.start()
 
@@ -458,7 +458,7 @@ class Clients(object):
 
         if reconnect:
             self.instance_com.push_output('Primary link available ' +
-                'over secondary, relinking %s' % network)
+                                          'over secondary, relinking %s' % network)
             if len(reconnect) > 32:
                 self.instance.disconnect_wg(reconnect)
             else:
@@ -509,7 +509,7 @@ class Clients(object):
 
         if primary_reconnect or secondary_reconnect:
             self.instance_com.push_output('Gateway link ' +
-                'changed, relinking gateways')
+                                          'changed, relinking gateways')
 
     def has_failover_iroute(self, client_id):
         self.iroutes_lock.acquire()
@@ -536,13 +536,13 @@ class Clients(object):
         virt_address = self.server.get_ip_addr(org_id, user_id)
         if not virt_address:
             logger.error('User missing ip address',
-                'clients',
-                server_id=self.server.id,
-                instance_id=self.instance.id,
-                user_id=user_id,
-                multi_device=self.server.multi_device,
-                network=self.server.network,
-                user_count=self.server.user_count,
+                         'clients',
+                         server_id=self.server.id,
+                         instance_id=self.instance.id,
+                         user_id=user_id,
+                         multi_device=self.server.multi_device,
+                         network=self.server.network,
+                         user_count=self.server.user_count,
                          )
 
         if virt_address and self.server.multi_device:
@@ -699,14 +699,14 @@ class Clients(object):
 
         if not virt_address:
             logger.error('Unable to assign ip address, pool full',
-                'clients',
-                server_id=self.server.id,
-                instance_id=self.instance.id,
-                user_id=user_id,
-                multi_device=self.server.multi_device,
-                replica_count=self.server.replica_count,
-                network=self.server.network,
-                user_count=self.server.user_count,
+                         'clients',
+                         server_id=self.server.id,
+                         instance_id=self.instance.id,
+                         user_id=user_id,
+                         multi_device=self.server.multi_device,
+                         replica_count=self.server.replica_count,
+                         network=self.server.network,
+                         user_count=self.server.user_count,
                          )
 
         if self.server.multi_device and self.server.max_devices:
@@ -773,7 +773,7 @@ class Clients(object):
             doc = self.clients.find_id(client_id)
             if not doc:
                 self.instance_com.send_client_deny(client_id, key_id,
-                    'Client connection info timed out')
+                                                   'Client connection info timed out')
                 return
 
             virt_address = doc['virt_address']
@@ -800,7 +800,7 @@ class Clients(object):
 
             if device_limit:
                 self.instance_com.send_client_deny(client_id, key_id,
-                    'Too many devices')
+                                                   'Too many devices')
                 return
 
             if not self.server.multi_device:
@@ -837,7 +837,7 @@ class Clients(object):
 
             if not virt_address:
                 self.instance_com.send_client_deny(client_id, key_id,
-                    'Unable to assign ip address')
+                                                   'Unable to assign ip address')
                 return
 
             virt_address6 = self.server.ip4to6(virt_address) + '/64'
@@ -902,7 +902,7 @@ class Clients(object):
                 })
 
         client_conf = self.generate_client_conf(platform, client_id,
-            virt_address, virt_address6, user, reauth)
+                                                virt_address, virt_address6, user, reauth)
 
         client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
             virt_address)
@@ -919,7 +919,7 @@ class Clients(object):
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
     def allow_client_wg(self, user, org, wg_public_key, platform, device_id,
-            device_name, mac_addr, remote_ip):
+                        device_name, mac_addr, remote_ip):
         try:
             user_id = user.id
             org_id = org.id
@@ -1035,7 +1035,7 @@ class Clients(object):
                 })
 
             client_conf = self.generate_client_conf_wg(platform, client_id,
-                virt_address, virt_address6, user)
+                                                       virt_address, virt_address6, user)
 
             client_conf['address'] = virt_address
             if self.server.ipv6:
@@ -1047,13 +1047,13 @@ class Clients(object):
                 self.instance_com.push_output('  %s' % client_conf)
 
             self.instance.connect_wg(wg_public_key, virt_address,
-                virt_address6, client_conf['network_links'],
-                client_conf['network_links6'])
+                                     virt_address6, client_conf['network_links'],
+                                     client_conf['network_links6'])
 
             self.connected(client_id)
         except:
             logger.exception('Error allowing client wg connect', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             self.instance.disconnect_wg(wg_public_key)
             return False, 'Error allowing client wg connect'
@@ -1154,13 +1154,13 @@ class Clients(object):
             if not settings.vpn.stress_test and \
                     not _limiter.validate(remote_ip):
                 self.instance_com.send_client_deny(client_id, key_id,
-                    'Too many connect requests')
+                                                   'Too many connect requests')
                 return
 
             org = self.get_org(org_id)
             if not org:
                 self.instance_com.send_client_deny(client_id, key_id,
-                    'Organization is not valid')
+                                                   'Organization is not valid')
                 return
 
             user = org.get_user(user_id, fields=(
@@ -1171,7 +1171,7 @@ class Clients(object):
                 'port_forwarding'))
             if not user:
                 self.instance_com.send_client_deny(client_id, key_id,
-                    'User is not valid')
+                                                   'User is not valid')
                 return
 
             def callback(allow, reason=None):
@@ -1241,17 +1241,17 @@ class Clients(object):
             auth.authenticate()
         except:
             logger.exception('Error parsing client connect', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             self.instance_com.send_client_deny(client_id, key_id,
-                'Error parsing client connect')
+                                               'Error parsing client connect')
 
     def connect(self, client_data, reauth=False):
         self.call_queue.put(self._connect, client_data, reauth)
 
     def connect_wg(self, user, org, wg_public_key, auth_password,
-            auth_token, auth_nonce, auth_timestamp, platform, device_id,
-            device_name, mac_addr, mac_addrs, remote_ip, connect_callback):
+                   auth_token, auth_nonce, auth_timestamp, platform, device_id,
+                   device_name, mac_addr, mac_addrs, remote_ip, connect_callback):
         response = {
             'sent': False,
             'lock': threading.Lock(),
@@ -1363,7 +1363,7 @@ class Clients(object):
             auth.authenticate()
         except:
             logger.exception('Error parsing client connect', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             self.instance.disconnect_wg(wg_public_key)
             connect_callback_once(False, 'Error parsing client connect')
@@ -1812,11 +1812,11 @@ class Clients(object):
                 settings.local.sub_plan and \
                 'enterprise' in settings.local.sub_plan:
             domain = (str(client['user_name']).split('@')[0] +
-                '.' + str(client['org_name'])).lower()
+                      '.' + str(client['org_name'])).lower()
             domain_hash = hashlib.md5()
             domain_hash.update(domain.encode())
             domain_hash = bson.binary.Binary(domain_hash.digest(),
-                subtype=bson.binary.MD5_SUBTYPE)
+                                             subtype=bson.binary.MD5_SUBTYPE)
             doc['domain'] = domain_hash
             doc['domain_name'] = domain
             doc['virt_address_num'] = utils.ip_to_long(
@@ -1835,7 +1835,7 @@ class Clients(object):
                 })
         except:
             logger.exception('Error adding client', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             if client['type'] == 'wg':
                 self.instance.disconnect_wg(client_id)
@@ -1972,7 +1972,7 @@ class Clients(object):
                 })
             except:
                 logger.exception('Error removing client', 'server',
-                    server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
 
         if self.server.multi_device:
@@ -2093,7 +2093,7 @@ class Clients(object):
                 continue
 
             latency = utils.ping(virt_address,
-                timeout=self.server.link_ping_timeout)
+                                 timeout=self.server.link_ping_timeout)
             if latency is None and self.has_failover_iroute(client_id):
                 self.instance_com.push_output(
                     'Gateway link timeout on %s' % virt_address)
@@ -2124,10 +2124,10 @@ class Clients(object):
 
                     if diff > settings.vpn.client_ttl:
                         logger.error('Client ping time diff out of range',
-                            'server',
-                            time_diff=diff,
-                            server_id=self.server.id,
-                            instance_id=self.instance.id,
+                                     'server',
+                                     time_diff=diff,
+                                     server_id=self.server.id,
+                                     instance_id=self.instance.id,
                                      )
                         if self.interrupter_sleep(10):
                             return
@@ -2170,10 +2170,10 @@ class Clients(object):
                         }})
                         if not response['updatedExisting']:
                             logger.error('Client lost unexpectedly',
-                                'server',
-                                server_id=self.server.id,
-                                instance_id=self.instance.id,
-                                client_id=client['doc_id'],
+                                         'server',
+                                         server_id=self.server.id,
+                                         instance_id=self.instance.id,
+                                         client_id=client['doc_id'],
                                          )
                             if len(client_id) > 32:
                                 self.instance.disconnect_wg(client_id)
@@ -2190,10 +2190,10 @@ class Clients(object):
 
                             if not response['updatedExisting']:
                                 logger.error('Client pool lost unexpectedly',
-                                    'server',
-                                    server_id=self.server.id,
-                                    instance_id=self.instance.id,
-                                    client_id=client['doc_id'],
+                                             'server',
+                                             server_id=self.server.id,
+                                             instance_id=self.instance.id,
+                                             client_id=client['doc_id'],
                                              )
                                 if len(client_id) > 32:
                                     self.instance.disconnect_wg(client_id)
@@ -2203,9 +2203,9 @@ class Clients(object):
                     except:
                         self.clients_queue.append(client_id)
                         logger.exception('Failed to update client',
-                            'server',
-                            server_id=self.server.id,
-                            instance_id=self.instance.id,
+                                         'server',
+                                         server_id=self.server.id,
+                                         instance_id=self.instance.id,
                                          )
                         yield interrupter_sleep(1)
                         continue
@@ -2219,8 +2219,8 @@ class Clients(object):
                     raise
                 except:
                     logger.exception('Error in client thread', 'server',
-                        server_id=self.server.id,
-                        instance_id=self.instance.id,
+                                     server_id=self.server.id,
+                                     instance_id=self.instance.id,
                                      )
                     yield interrupter_sleep(3)
                     if self.instance.sock_interrupt:
@@ -2238,20 +2238,20 @@ class Clients(object):
                 })
             except:
                 logger.exception('Error removing client', 'server',
-                    server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
 
     def on_client(self, state, server_id, virt_address, virt_address6,
-            host_address, host_address6):
+                  host_address, host_address6):
         if server_id != self.server.id:
             return
 
         if state:
             self.clients_call_queue.put(self.add_route, virt_address,
-                virt_address6, host_address, host_address6)
+                                        virt_address6, host_address, host_address6)
         else:
             self.clients_call_queue.put(self.remove_route, virt_address,
-                virt_address6, host_address, host_address6)
+                                        virt_address6, host_address, host_address6)
 
     def init_routes(self):
         for doc in self.collection.find({
@@ -2273,7 +2273,7 @@ class Clients(object):
                 return
 
             self.add_route(virt_address, virt_address6,
-                host_address, host_address6)
+                           host_address, host_address6)
 
         self.clients_call_queue.start()
 
@@ -2285,7 +2285,7 @@ class Clients(object):
             self.remove_route(None, virt_address6, None, None)
 
     def add_route(self, virt_address, virt_address6,
-            host_address, host_address6):
+                  host_address, host_address6):
         if virt_address:
             virt_address = virt_address.split('/')[0]
 
@@ -2306,10 +2306,10 @@ class Clients(object):
                 utils.add_route(virt_address, host_address)
             except:
                 logger.exception('Failed to add route', 'clients',
-                    virt_address=virt_address,
-                    virt_address6=virt_address6,
-                    host_address=host_address,
-                    host_address6=host_address6,
+                                 virt_address=virt_address,
+                                 virt_address6=virt_address6,
+                                 host_address=host_address,
+                                 host_address6=host_address6,
                                  )
 
         if self.server.ipv6 and virt_address6:
@@ -2332,14 +2332,14 @@ class Clients(object):
                 utils.add_route6(virt_address6, host_address6)
             except:
                 logger.exception('Failed to add route6', 'clients',
-                    virt_address=virt_address,
-                    virt_address6=virt_address6,
-                    host_address=host_address,
-                    host_address6=host_address6,
+                                 virt_address=virt_address,
+                                 virt_address6=virt_address6,
+                                 host_address=host_address,
+                                 host_address6=host_address6,
                                  )
 
     def remove_route(self, virt_address, virt_address6,
-            host_address, host_address6):
+                     host_address, host_address6):
         if virt_address:
             virt_address = virt_address.split('/')[0]
 

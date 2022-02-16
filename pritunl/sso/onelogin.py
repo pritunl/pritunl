@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E401,W0401
+# pylama:ignore=E302,E401,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
@@ -30,8 +30,8 @@ def _get_access_token():
 
     if response.status_code != 200:
         logger.error('OneLogin api error', 'sso',
-            status_code=response.status_code,
-            response=response.content,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return None
 
@@ -48,7 +48,7 @@ def auth_onelogin(username):
                 )
         except http.client.HTTPException:
             logger.exception('OneLogin api error', 'sso',
-                username=username,
+                             username=username,
                              )
             return False
 
@@ -58,21 +58,21 @@ def auth_onelogin(username):
                 return True
 
             logger.warning('OneLogin user disabled', 'sso',
-                username=username,
+                           username=username,
                            )
         elif response.status_code == 404:
             logger.error('OneLogin user not found', 'sso',
-                username=username,
+                         username=username,
                          )
         elif response.status_code == 406:
             logger.warning('OneLogin user disabled', 'sso',
-                username=username,
+                           username=username,
                            )
         else:
             logger.error('OneLogin api error', 'sso',
-                username=username,
-                status_code=response.status_code,
-                response=response.content,
+                         username=username,
+                         status_code=response.status_code,
+                         response=response.content,
                          )
         return False
 
@@ -93,23 +93,23 @@ def auth_onelogin(username):
 
     if response.status_code != 200:
         logger.error('OneLogin api error', 'sso',
-            username=username,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False
 
     users = response.json()['data']
     if not users:
         logger.error('OneLogin user not found', 'sso',
-            username=username,
+                     username=username,
                      )
         return False
 
     user = users[0]
     if user['status'] != 1:
         logger.warning('OneLogin user disabled', 'sso',
-            username=username,
+                       username=username,
                        )
         return False
 
@@ -133,16 +133,16 @@ def auth_onelogin(username):
 
     if response.status_code != 200:
         logger.error('OneLogin api error', 'sso',
-            username=username,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False
 
     applications = response.json()['data']
     if not applications:
         logger.error('OneLogin user apps not found', 'sso',
-            username=username,
+                     username=username,
                      )
         return False
 
@@ -151,8 +151,8 @@ def auth_onelogin(username):
             return True
 
     logger.warning('OneLogin user is not assigned to application', 'sso',
-        username=username,
-        onelogin_app_id=onelogin_app_id,
+                   username=username,
+                   onelogin_app_id=onelogin_app_id,
                    )
 
     return False
@@ -164,7 +164,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
 
     if 'passcode' in onelogin_mode and not passcode:
         logger.error('OneLogin passcode empty', 'sso',
-            username=username,
+                     username=username,
                      )
         return False
 
@@ -180,23 +180,23 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
 
     if response.status_code != 200:
         logger.error('OneLogin api error', 'sso',
-            username=username,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False
 
     users = response.json()['data']
     if not users:
         logger.error('OneLogin user not found', 'sso',
-            username=username,
+                     username=username,
                      )
         return False
 
     user = users[0]
     if user['status'] != 1:
         logger.error('OneLogin user disabled', 'sso',
-            username=username,
+                     username=username,
                      )
         return False
 
@@ -211,10 +211,10 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
 
     if response.status_code != 200:
         logger.error('OneLogin api error', 'sso',
-            username=username,
-            onelogin_mode=onelogin_mode,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     onelogin_mode=onelogin_mode,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False
 
@@ -236,14 +236,14 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     if not device_id:
         if 'none' in onelogin_mode:
             logger.info('OneLogin secondary not available, skipped', 'sso',
-                username=username,
-                onelogin_mode=onelogin_mode,
+                        username=username,
+                        onelogin_mode=onelogin_mode,
                         )
             return True
 
         logger.error('OneLogin secondary not available', 'sso',
-            username=username,
-            onelogin_mode=onelogin_mode,
+                     username=username,
+                     onelogin_mode=onelogin_mode,
                      )
 
         return False
@@ -265,18 +265,18 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
 
         if response.status_code != 200:
             logger.error('OneLogin api error', 'sso',
-                username=username,
-                onelogin_mode=onelogin_mode,
-                status_code=response.status_code,
-                response=response.content,
+                         username=username,
+                         onelogin_mode=onelogin_mode,
+                         status_code=response.status_code,
+                         response=response.content,
                          )
             return False
 
         activate = response.json()['data']
         if not activate:
             logger.error('OneLogin activate empty', 'sso',
-                username=username,
-                onelogin_mode=onelogin_mode,
+                         username=username,
+                         onelogin_mode=onelogin_mode,
                          )
             return False
 
@@ -286,9 +286,9 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     while True:
         if utils.time_now() - start > 45:
             logger.error('OneLogin secondary timed out', 'sso',
-                username=username,
-                onelogin_mode=onelogin_mode,
-                user_id=user_id,
+                         username=username,
+                         onelogin_mode=onelogin_mode,
+                         user_id=user_id,
                          )
             return False
 
@@ -308,18 +308,18 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
 
         if response.status_code != 200 and response.status_code != 401:
             logger.error('OneLogin api error', 'sso',
-                username=username,
-                onelogin_mode=onelogin_mode,
-                status_code=response.status_code,
-                response=response.content,
+                         username=username,
+                         onelogin_mode=onelogin_mode,
+                         status_code=response.status_code,
+                         response=response.content,
                          )
             return False
 
         verify = response.json()['status']
         if not verify:
             logger.error('OneLogin verify empty', 'sso',
-                username=username,
-                onelogin_mode=onelogin_mode,
+                         username=username,
+                         onelogin_mode=onelogin_mode,
                          )
             return False
 
@@ -329,18 +329,18 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 continue
 
             logger.error('OneLogin secondary rejected', 'sso',
-                username=username,
-                onelogin_mode=onelogin_mode,
-                user_id=user_id,
+                         username=username,
+                         onelogin_mode=onelogin_mode,
+                         user_id=user_id,
                          )
             return False
 
         if response.status_code != 200 or verify['type'] != "success":
             logger.error('OneLogin verify bad data', 'sso',
-                username=username,
-                onelogin_mode=onelogin_mode,
-                status_code=response.status_code,
-                response=response.content,
+                         username=username,
+                         onelogin_mode=onelogin_mode,
+                         status_code=response.status_code,
+                         response=response.content,
                          )
             return False
 

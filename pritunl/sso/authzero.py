@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E302,E502,W0612
+# pylama:ignore=E131,E302,E502,W0612
 from pritunl import settings
 from pritunl import logger
 
@@ -23,10 +23,10 @@ def verify_authzero(user_name):
 
     if response.status_code != 200:
         logger.error('Bad status from Auth0 api',
-            'sso',
-            user_name=user_name,
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     user_name=user_name,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -50,10 +50,10 @@ def verify_authzero(user_name):
 
     if response.status_code != 200:
         logger.error('Bad status from Auth0 api',
-            'sso',
-            user_name=user_name,
-            status_code=response.status_code,
-            response=response.content,
+                     'sso',
+                     user_name=user_name,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False, []
 
@@ -79,8 +79,8 @@ def verify_authzero(user_name):
 
     if not user_id:
         logger.error('Failed to find Auth0 user',
-            'sso',
-            user_name=user_name,
+                     'sso',
+                     user_name=user_name,
                      )
         return False, []
 

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,,W0401,W0611
+# pylama:ignore=E302,E722,,W0401,W0611
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -52,8 +52,8 @@ def run_thread():
                         for second in ('all', cur_time.second):
                             for task_cls in task.tasks[hour][minute][second]:
                                 run_id = '%s_%s_%s_%s' % (task_cls.type,
-                                    cur_time.hour, cur_time.minute,
-                                    cur_time.second)
+                                                          cur_time.hour, cur_time.minute,
+                                                          cur_time.second)
                                 tsk = task_cls(id=run_id, upsert=True)
                                 if tsk.delay:
                                     if time.time() - start_time > tsk.delay:

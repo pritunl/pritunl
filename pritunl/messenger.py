@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import cache
@@ -88,11 +88,11 @@ def get_cursor_id(channels):
 
 @interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
-        yield_app_server=False):
+              yield_app_server=False):
     if cache.has_cache:
         for msg in cache.subscribe(channels, cursor_id=cursor_id,
-                timeout=timeout, yield_delay=yield_delay,
-                yield_app_server=yield_app_server):
+                                   timeout=timeout, yield_delay=yield_delay,
+                                   yield_app_server=yield_app_server):
             yield msg
         return
 

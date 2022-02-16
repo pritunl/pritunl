@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E711,E722,W0401,W0611
+# pylama:ignore=E302,E711,E722,W0401,W0611
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -105,7 +105,7 @@ def _runner_thread(cpu_priority, thread_limit, runner_queue):
             priority, queue_item = runner_queue.get()
 
             thread = threading.Thread(target=run_queue_item,
-                args=(queue_item, thread_limit))
+                                      args=(queue_item, thread_limit))
             thread.daemon = True
             thread.start()
         except:

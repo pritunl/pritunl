@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
@@ -131,7 +131,7 @@ def get_server_page_total():
     }).count()
 
     return int(math.floor(max(0, float(count - 1)) /
-        settings.app.server_page_count))
+               settings.app.server_page_count))
 
 def output_get(server_id):
     return ServerOutput(server_id).get_output()

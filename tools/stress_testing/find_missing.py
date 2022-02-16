@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E305,E402,E0100
+# pylama:ignore=E305,E402,E0100
 BASE_URL = 'https://sn.pritunl.net'
 API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
 API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'
@@ -25,7 +25,7 @@ def auth_request(method, path, headers=None, data=None):
     auth_timestamp = str(int(time.time()))
     auth_nonce = uuid.uuid4().hex
     auth_string = '&'.join([API_TOKEN, auth_timestamp, auth_nonce,
-        method.upper(), path])
+                           method.upper(), path])
     auth_signature = base64.b64encode(hmac.new(
         API_SECRET, auth_string, hashlib.sha256).digest())
     auth_headers = {
@@ -44,7 +44,7 @@ def auth_request(method, path, headers=None, data=None):
     )
 
 response = auth_request('GET',
-  '/user/%s' % ORG_ID,
+                        '/user/%s' % ORG_ID,
                         )
 assert(response.status_code == 200)
 

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E306,W0401
+# pylama:ignore=E302,E306,W0401
 from pritunl.host import usage_utils
 
 from pritunl.helpers import *
@@ -118,7 +118,7 @@ class HostUsage(object):
     def get_period_random(self, period):
         date = utils.now()
         date -= datetime.timedelta(microseconds=date.microsecond,
-            seconds=date.second)
+                                   seconds=date.second)
 
         if period == '1m':
             date_end = date
@@ -134,12 +134,12 @@ class HostUsage(object):
             date_step = datetime.timedelta(minutes=30)
         elif period == '2h':
             date_end = date - datetime.timedelta(minutes=date.minute,
-                hours=date.hour % 2)
+                                                 hours=date.hour % 2)
             date_cur = date_end - datetime.timedelta(days=30)
             date_step = datetime.timedelta(hours=2)
         elif period == '1d':
             date_end = date - datetime.timedelta(minutes=date.minute,
-                hours=date.hour)
+                                                 hours=date.hour)
             date_cur = date_end - datetime.timedelta(days=365)
             date_step = datetime.timedelta(days=1)
 

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E305,E502,E722
+# pylama:ignore=E302,E305,E502,E722
 import pritunl
 
 import optparse
@@ -35,22 +35,22 @@ def main(default_conf=None):
 
     if cmd == 'start':
         parser.add_option('-d', '--daemon', action='store_true',
-            help='Daemonize process')
+                          help='Daemonize process')
         parser.add_option('-p', '--pidfile', type='string',
-            help='Path to create pid file')
+                          help='Path to create pid file')
         parser.add_option('-c', '--conf', type='string',
-            help='Path to configuration file')
+                          help='Path to configuration file')
         parser.add_option('-q', '--quiet', action='store_true',
-            help='Suppress logging output')
+                          help='Suppress logging output')
     elif cmd == 'logs':
         parser.add_option('--archive', action='store_true',
-            help='Archive log file')
+                          help='Archive log file')
         parser.add_option('--tail', action='store_true',
-            help='Tail log file')
+                          help='Tail log file')
         parser.add_option('--limit', type='int',
-            help='Limit log lines')
+                          help='Limit log lines')
         parser.add_option('--natural', action='store_true',
-            help='Natural log sort')
+                          help='Natural log sort')
     elif cmd == 'set':
         parser.disable_interspersed_args()
 
@@ -93,7 +93,7 @@ def main(default_conf=None):
         username, password = auth.reset_password()
 
         print('Administrator password successfully reset:\n' + \
-            '  username: "%s"\n  password: "%s"' % (username, password))
+              '  username: "%s"\n  password: "%s"' % (username, password))
 
         sys.exit(0)
     elif cmd == 'default-password':
@@ -107,7 +107,7 @@ def main(default_conf=None):
             print('No default password available, use reset-password')
         else:
             print('Administrator default password:\n' + \
-                '  username: "%s"\n  password: "%s"' % (username, password))
+                  '  username: "%s"\n  password: "%s"' % (username, password))
 
         sys.exit(0)
     elif cmd == 'reconfigure':
@@ -144,13 +144,13 @@ def main(default_conf=None):
         if key_str:
             val = getattr(group, key_str)
             print('%s.%s = %s' % (group_str, key_str,
-                json.dumps(val, default=lambda x: str(x))))
+                  json.dumps(val, default=lambda x: str(x))))
 
         else:
             for field in group.fields:
                 val = getattr(group, field)
                 print('%s.%s = %s' % (group_str, field,
-                    json.dumps(val, default=lambda x: str(x))))
+                      json.dumps(val, default=lambda x: str(x))))
 
         sys.exit(0)
     elif cmd == 'set':
@@ -190,10 +190,10 @@ def main(default_conf=None):
         time.sleep(.2)
 
         print('%s.%s = %s' % (group_str, key_str,
-            json.dumps(getattr(group, key_str), default=lambda x: str(x))))
+              json.dumps(getattr(group, key_str), default=lambda x: str(x))))
         print('Successfully updated configuration. This change is ' \
-            'stored in the database and has been applied to all hosts ' \
-            'in the cluster.')
+              'stored in the database and has been applied to all hosts ' \
+              'in the cluster.')
 
         sys.exit(0)
     elif cmd == 'unset':
@@ -215,10 +215,10 @@ def main(default_conf=None):
         time.sleep(.2)
 
         print('%s.%s = %s' % (group_str, key_str,
-            json.dumps(getattr(group, key_str), default=lambda x: str(x))))
+              json.dumps(getattr(group, key_str), default=lambda x: str(x))))
         print('Successfully updated configuration. This change is ' \
-            'stored in the database and has been applied to all hosts ' \
-            'in the cluster.')
+              'stored in the database and has been applied to all hosts ' \
+              'in the cluster.')
 
         sys.exit(0)
     elif cmd == 'set-mongodb':
@@ -353,7 +353,7 @@ def main(default_conf=None):
                 svr.ip_pool.sync_ip_pool()
             except:
                 logger.exception('Failed to sync server IP pool', 'tasks',
-                    server_id=svr.id,
+                                 server_id=svr.id,
                                  )
 
         server_coll.update_many({}, {
@@ -384,7 +384,7 @@ def main(default_conf=None):
             else:
                 archive_path = './'
             print('Log archived to: ' + log_view.archive_log(archive_path,
-                options.natural, options.limit))
+                  options.natural, options.limit))
         elif options.tail:
             for msg in log_view.tail_log_lines():
                 print(msg)
@@ -423,11 +423,11 @@ def main(default_conf=None):
 
         log_limit = settings.app.log_limit
         mongo.database.create_collection(prefix + 'logs', capped=True,
-            size=log_limit * 1024, max=log_limit)
+                                         size=log_limit * 1024, max=log_limit)
 
         log_entry_limit = settings.app.log_entry_limit
         mongo.database.create_collection(prefix + 'log_entries', capped=True,
-            size=log_entry_limit * 512, max=log_entry_limit)
+                                         size=log_entry_limit * 512, max=log_entry_limit)
 
         print('Log entries cleared')
 

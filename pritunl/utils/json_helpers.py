@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.utils.misc import fnv32a
 
 from pritunl.constants import *
@@ -23,7 +23,7 @@ def json_object_hook_handler(obj):
             return database.ObjectId(obj_data)
         elif object_type == 'date':
             return datetime.datetime.fromtimestamp(obj_data / 1000.,
-                bson.tz_util.utc)
+                                                   bson.tz_util.utc)
     return obj
 
 def json_default(obj):
@@ -33,7 +33,7 @@ def json_default(obj):
         return {'$obj': ['oid', str(obj)]}
     elif isinstance(obj, datetime.datetime):
         return {'$obj': ['date', int(calendar.timegm(obj.timetuple()) * 1000 +
-            obj.microsecond / 1000)]}
+                                     obj.microsecond / 1000)]}
 
     raise TypeError(repr(obj) + ' is not JSON serializable')
 
@@ -42,7 +42,7 @@ def jsonify(data=None, status_code=None):
         data = json.dumps(data, default=lambda x: str(x))
     response = flask.Response(response=data, mimetype='application/json')
     response.headers.add('Cache-Control',
-        'no-cache, no-store, must-revalidate')
+                         'no-cache, no-store, must-revalidate')
     response.headers.add('Pragma', 'no-cache')
     response.headers.add('Expires', 0)
     if status_code is not None:

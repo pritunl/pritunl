@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -19,7 +19,7 @@ class ServerBandwidth(object):
 
     def _get_period_timestamp(self, period, timestamp):
         timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-                seconds=timestamp.second)
+                                        seconds=timestamp.second)
 
         if period == '1m':
             return timestamp
@@ -38,7 +38,7 @@ class ServerBandwidth(object):
 
     def _get_period_max_timestamp(self, period, timestamp):
         timestamp -= datetime.timedelta(microseconds=timestamp.microsecond,
-                seconds=timestamp.second)
+                                        seconds=timestamp.second)
 
         if period == '1m':
             return timestamp - datetime.timedelta(hours=6)
@@ -150,7 +150,7 @@ class ServerBandwidth(object):
     def get_period_random(self, period):
         date = utils.now()
         date -= datetime.timedelta(microseconds=date.microsecond,
-            seconds=date.second)
+                                   seconds=date.second)
 
         if period == '1m':
             date_end = date
@@ -181,7 +181,7 @@ class ServerBandwidth(object):
             bytes_max = 25000000
         elif period == '2h':
             date_end = date - datetime.timedelta(minutes=date.minute,
-                hours=date.hour % 2)
+                                                 hours=date.hour % 2)
             date_cur = date_end - datetime.timedelta(days=30)
             date_step = datetime.timedelta(hours=2)
             bytes_recv = 84000000
@@ -191,7 +191,7 @@ class ServerBandwidth(object):
             bytes_max = 90000000
         elif period == '1d':
             date_end = date - datetime.timedelta(minutes=date.minute,
-                hours=date.hour)
+                                                 hours=date.hour)
             date_cur = date_end - datetime.timedelta(days=365)
             date_step = datetime.timedelta(days=1)
             bytes_recv = 1008000000

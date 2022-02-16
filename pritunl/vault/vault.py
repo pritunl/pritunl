@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.vault.nonces import *
 
 from pritunl.constants import *
@@ -165,7 +165,7 @@ def init_master_key(cipher_data):
 
     prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
-        connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+                                 connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
     database = client.get_default_database()
     settings_db = getattr(database, prefix + 'settings')
     doc = settings_db.find_one({

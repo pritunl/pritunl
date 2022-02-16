@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E129,E302
+# pylama:ignore=E129,E302
 # Copyright 2007 Google Inc.
 #  Licensed to PSF under a Contributor Agreement.
 
@@ -1537,7 +1537,7 @@ class IPv4Network(_BaseV4, _BaseNetwork):
 
         """
         return (not (self.network_address in IPv4Network('100.64.0.0/10') and
-                    self.broadcast_address in IPv4Network('100.64.0.0/10')) and
+                     self.broadcast_address in IPv4Network('100.64.0.0/10')) and
                 not self.is_private)
 
 

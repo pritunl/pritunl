@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -22,13 +22,13 @@ import urllib.parse
 import requests
 
 def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
-        http_redirect=False, yubico_id=None):
+                   http_redirect=False, yubico_id=None):
     usr = user.find_user_auth(name=username, auth_type=sso_mode)
     if not usr:
         org = organization.get_by_id(org_id)
         if not org:
             logger.error('Organization for sso does not exist', 'sso',
-                org_id=org_id,
+                         org_id=org_id,
                          )
             return flask.abort(405)
 
@@ -36,17 +36,17 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
     else:
         if usr.org_id != org_id:
             logger.info('User organization changed, moving user', 'sso',
-                user_name=username,
-                user_email=email,
-                remote_ip=remote_addr,
-                cur_org_id=usr.org_id,
-                new_org_id=org_id,
+                        user_name=username,
+                        user_email=email,
+                        remote_ip=remote_addr,
+                        cur_org_id=usr.org_id,
+                        new_org_id=org_id,
                         )
 
             org = organization.get_by_id(org_id)
             if not org:
                 logger.error('Organization for sso does not exist', 'sso',
-                    org_id=org_id,
+                             org_id=org_id,
                              )
                 return flask.abort(405)
 
@@ -84,10 +84,10 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
 
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
-            auth_type=sso_mode, yubico_id=yubico_id,
-            groups=list(groups) if groups else None)
+                           auth_type=sso_mode, yubico_id=yubico_id,
+                           groups=list(groups) if groups else None)
         usr.audit_event('user_created', 'User created with single sign-on',
-            remote_addr=remote_addr)
+                        remote_addr=remote_addr)
 
         journal.entry(
             journal.USER_CREATE,
@@ -143,8 +143,8 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
     key_link = org.create_user_key_link(usr.id, one_time=True)
 
     usr.audit_event('user_profile',
-        'User profile viewed from single sign-on',
-        remote_addr=remote_addr,
+                    'User profile viewed from single sign-on',
+                    remote_addr=remote_addr,
                     )
 
     journal.entry(
@@ -197,7 +197,7 @@ def sso_authenticate_post():
         except InvalidUser:
             if i == len(usernames) - 1:
                 logger.warning('Invalid duo username', 'sso',
-                    username=username,
+                               username=username,
                                )
 
     if valid:
@@ -209,7 +209,7 @@ def sso_authenticate_post():
         )
         if not valid:
             logger.warning('Duo plugin authentication not valid', 'sso',
-                username=username,
+                           username=username,
                            )
 
             journal.entry(
@@ -224,7 +224,7 @@ def sso_authenticate_post():
         groups = set(groups or [])
     else:
         logger.warning('Duo authentication not valid', 'sso',
-            username=username,
+                       username=username,
                        )
 
         journal.entry(
@@ -241,7 +241,7 @@ def sso_authenticate_post():
         org_id = settings.app.sso_org
 
     return _validate_user(username, email, DUO_AUTH, org_id, groups,
-        remote_addr)
+                          remote_addr)
 
 @app.app.route('/sso/request', methods=['GET'])
 @auth.open_auth
@@ -249,14 +249,14 @@ def sso_request_get():
     sso_mode = settings.app.sso
 
     if sso_mode not in (AZURE_AUTH, AZURE_DUO_AUTH, AZURE_YUBICO_AUTH,
-            GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
-            AUTHZERO_AUTH, AUTHZERO_DUO_AUTH, AUTHZERO_YUBICO_AUTH,
-            SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
-            SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
-            SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
-            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
-            SAML_JUMPCLOUD_AUTH, SAML_JUMPCLOUD_DUO_AUTH,
-            SAML_JUMPCLOUD_YUBICO_AUTH):
+                        GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+                        AUTHZERO_AUTH, AUTHZERO_DUO_AUTH, AUTHZERO_YUBICO_AUTH,
+                        SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
+                        SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
+                        SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
+                        SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
+                        SAML_JUMPCLOUD_AUTH, SAML_JUMPCLOUD_DUO_AUTH,
+                        SAML_JUMPCLOUD_YUBICO_AUTH):
         return flask.abort(404)
 
     state = utils.rand_str(64)
@@ -272,24 +272,24 @@ def sso_request_get():
 
     if AZURE_AUTH in sso_mode:
         resp = requests.post(auth_server + '/v1/request/azure',
-            headers={
-                'Content-Type': 'application/json',
-            },
-            json={
-                'license': settings.app.license,
-                'callback': callback,
-                'state': state,
-                'secret': secret,
-                'directory_id': settings.app.sso_azure_directory_id,
-                'app_id': settings.app.sso_azure_app_id,
-                'app_secret': settings.app.sso_azure_app_secret,
-            },
-        )
+                             headers={
+                                'Content-Type': 'application/json',
+                                },
+                             json={
+                                'license': settings.app.license,
+                                'callback': callback,
+                                'state': state,
+                                'secret': secret,
+                                'directory_id': settings.app.sso_azure_directory_id,
+                                'app_id': settings.app.sso_azure_app_id,
+                                'app_secret': settings.app.sso_azure_app_secret,
+                                },
+                             )
 
         if resp.status_code != 200:
             logger.error('Azure auth server error', 'sso',
-                status_code=resp.status_code,
-                content=resp.content,
+                         status_code=resp.status_code,
+                         content=resp.content,
                          )
 
             if resp.status_code == 401:
@@ -311,21 +311,21 @@ def sso_request_get():
 
     elif GOOGLE_AUTH in sso_mode:
         resp = requests.post(auth_server + '/v1/request/google',
-            headers={
-                'Content-Type': 'application/json',
-            },
-            json={
-                'license': settings.app.license,
-                'callback': callback,
-                'state': state,
-                'secret': secret,
-            },
-        )
+                             headers={
+                                'Content-Type': 'application/json',
+                                },
+                             json={
+                                'license': settings.app.license,
+                                'callback': callback,
+                                'state': state,
+                                'secret': secret,
+                                },
+                             )
 
         if resp.status_code != 200:
             logger.error('Google auth server error', 'sso',
-                status_code=resp.status_code,
-                content=resp.content,
+                         status_code=resp.status_code,
+                         content=resp.content,
                          )
 
             if resp.status_code == 401:
@@ -347,24 +347,24 @@ def sso_request_get():
 
     elif AUTHZERO_AUTH in sso_mode:
         resp = requests.post(auth_server + '/v1/request/authzero',
-            headers={
-                'Content-Type': 'application/json',
-            },
-            json={
-                'license': settings.app.license,
-                'callback': callback,
-                'state': state,
-                'secret': secret,
-                'app_domain': settings.app.sso_authzero_domain,
-                'app_id': settings.app.sso_authzero_app_id,
-                'app_secret': settings.app.sso_authzero_app_secret,
-            },
-        )
+                             headers={
+                                'Content-Type': 'application/json',
+                                },
+                             json={
+                                'license': settings.app.license,
+                                'callback': callback,
+                                'state': state,
+                                'secret': secret,
+                                'app_domain': settings.app.sso_authzero_domain,
+                                'app_id': settings.app.sso_authzero_app_id,
+                                'app_secret': settings.app.sso_authzero_app_secret,
+                                },
+                             )
 
         if resp.status_code != 200:
             logger.error('Auth0 auth server error', 'sso',
-                status_code=resp.status_code,
-                content=resp.content,
+                         status_code=resp.status_code,
+                         content=resp.content,
                          )
 
             if resp.status_code == 401:
@@ -386,21 +386,21 @@ def sso_request_get():
 
     elif SLACK_AUTH in sso_mode:
         resp = requests.post(auth_server + '/v1/request/slack',
-            headers={
-                'Content-Type': 'application/json',
-            },
-            json={
-                'license': settings.app.license,
-                'callback': callback,
-                'state': state,
-                'secret': secret,
-            },
-        )
+                             headers={
+                                'Content-Type': 'application/json',
+                                },
+                             json={
+                                'license': settings.app.license,
+                                'callback': callback,
+                                'state': state,
+                                'secret': secret,
+                                },
+                             )
 
         if resp.status_code != 200:
             logger.error('Slack auth server error', 'sso',
-                status_code=resp.status_code,
-                content=resp.content,
+                         status_code=resp.status_code,
+                         content=resp.content,
                          )
 
             if resp.status_code == 401:
@@ -422,24 +422,24 @@ def sso_request_get():
 
     elif SAML_AUTH in sso_mode:
         resp = requests.post(auth_server + '/v1/request/saml',
-            headers={
-                'Content-Type': 'application/json',
-            },
-            json={
-                'license': settings.app.license,
-                'callback': callback,
-                'state': state,
-                'secret': secret,
-                'sso_url': settings.app.sso_saml_url,
-                'issuer_url': settings.app.sso_saml_issuer_url,
-                'cert': settings.app.sso_saml_cert,
-            },
-        )
+                             headers={
+                                'Content-Type': 'application/json',
+                                },
+                             json={
+                                'license': settings.app.license,
+                                'callback': callback,
+                                'state': state,
+                                'secret': secret,
+                                'sso_url': settings.app.sso_saml_url,
+                                'issuer_url': settings.app.sso_saml_issuer_url,
+                                'cert': settings.app.sso_saml_cert,
+                                },
+                             )
 
         if resp.status_code != 200:
             logger.error('Saml auth server error', 'sso',
-                status_code=resp.status_code,
-                content=resp.content,
+                         status_code=resp.status_code,
+                         content=resp.content,
                          )
 
             if resp.status_code == 401:
@@ -470,14 +470,14 @@ def sso_callback_get():
     sso_mode = settings.app.sso
 
     if sso_mode not in (AZURE_AUTH, AZURE_DUO_AUTH, AZURE_YUBICO_AUTH,
-            GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
-            AUTHZERO_AUTH, AUTHZERO_DUO_AUTH, AUTHZERO_YUBICO_AUTH,
-            SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
-            SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
-            SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
-            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
-            SAML_JUMPCLOUD_AUTH, SAML_JUMPCLOUD_DUO_AUTH,
-            SAML_JUMPCLOUD_YUBICO_AUTH):
+                        GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+                        AUTHZERO_AUTH, AUTHZERO_DUO_AUTH, AUTHZERO_YUBICO_AUTH,
+                        SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
+                        SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
+                        SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
+                        SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
+                        SAML_JUMPCLOUD_AUTH, SAML_JUMPCLOUD_DUO_AUTH,
+                        SAML_JUMPCLOUD_YUBICO_AUTH):
         return flask.abort(405)
 
     remote_addr = utils.get_remote_addr()
@@ -494,7 +494,7 @@ def sso_callback_get():
 
     query = flask.request.query_string.split('&sig='.encode())[0]
     test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']).encode(),
-        query, hashlib.sha512).digest()).decode()
+                                        query, hashlib.sha512).digest()).decode()
     if not utils.const_compare(sig, test_sig):
         journal.entry(
             journal.SSO_AUTH_FAILURE,
@@ -551,11 +551,11 @@ def sso_callback_get():
 
             if not_found:
                 logger.warning('Supplied org names do not exists',
-                    'sso',
-                    sso_type=doc.get('type'),
-                    user_name=username,
-                    user_email=email,
-                    org_names=org_names,
+                               'sso',
+                               sso_type=doc.get('type'),
+                               user_name=username,
+                               user_email=email,
+                               org_names=org_names,
                                )
 
         valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
@@ -569,7 +569,7 @@ def sso_callback_get():
             org_id = org_id_new or org_id
         else:
             logger.error('Saml plugin authentication not valid', 'sso',
-                username=username,
+                         username=username,
                          )
 
             journal.entry(
@@ -617,11 +617,11 @@ def sso_callback_get():
 
         if not_found:
             logger.warning('Supplied org names do not exists',
-                'sso',
-                sso_type=doc.get('type'),
-                user_name=username,
-                user_email=email,
-                org_names=org_names,
+                           'sso',
+                           sso_type=doc.get('type'),
+                           user_name=username,
+                           user_email=email,
+                           org_names=org_names,
                            )
 
         valid, org_id_new, groups = sso.plugin_sso_authenticate(
@@ -635,7 +635,7 @@ def sso_callback_get():
             org_id = org_id_new or org_id
         else:
             logger.error('Slack plugin authentication not valid', 'sso',
-                username=username,
+                         username=username,
                          )
 
             journal.entry(
@@ -676,7 +676,7 @@ def sso_callback_get():
             org_id = org_id_new or org_id
         else:
             logger.error('Google plugin authentication not valid', 'sso',
-                username=username,
+                         username=username,
                          )
 
             journal.entry(
@@ -709,11 +709,11 @@ def sso_callback_get():
 
             if not_found:
                 logger.warning('Supplied org names do not exists',
-                    'sso',
-                    sso_type=doc.get('type'),
-                    user_name=username,
-                    user_email=email,
-                    org_names=google_groups,
+                               'sso',
+                               sso_type=doc.get('type'),
+                               user_name=username,
+                               user_email=email,
+                               org_names=google_groups,
                                )
     elif doc.get('type') == AZURE_AUTH:
         username = params.get('username')[0]
@@ -722,7 +722,7 @@ def sso_callback_get():
         tenant, username = username.split('/', 2)
         if tenant != settings.app.sso_azure_directory_id:
             logger.error('Azure directory ID mismatch', 'sso',
-                username=username,
+                         username=username,
                          )
 
             journal.entry(
@@ -760,7 +760,7 @@ def sso_callback_get():
             org_id = org_id_new or org_id
         else:
             logger.error('Azure plugin authentication not valid', 'sso',
-                username=username,
+                         username=username,
                          )
 
             journal.entry(
@@ -793,11 +793,11 @@ def sso_callback_get():
 
             if not_found:
                 logger.warning('Supplied org names do not exists',
-                    'sso',
-                    sso_type=doc.get('type'),
-                    user_name=username,
-                    user_email=email,
-                    org_names=azure_groups,
+                               'sso',
+                               sso_type=doc.get('type'),
+                               user_name=username,
+                               user_email=email,
+                               org_names=azure_groups,
                                )
     elif doc.get('type') == AUTHZERO_AUTH:
         username = params.get('username')[0]
@@ -830,7 +830,7 @@ def sso_callback_get():
             org_id = org_id_new or org_id
         else:
             logger.error('Auth0 plugin authentication not valid', 'sso',
-                username=username,
+                         username=username,
                          )
 
             journal.entry(
@@ -863,15 +863,15 @@ def sso_callback_get():
 
             if not_found:
                 logger.warning('Supplied org names do not exists',
-                    'sso',
-                    sso_type=doc.get('type'),
-                    user_name=username,
-                    user_email=email,
-                    org_names=authzero_groups,
+                               'sso',
+                               sso_type=doc.get('type'),
+                               user_name=username,
+                               user_email=email,
+                               org_names=authzero_groups,
                                )
     else:
         logger.error('Unknown sso type', 'sso',
-            sso_type=doc.get('type'),
+                     sso_type=doc.get('type'),
                      )
         return flask.abort(401)
 
@@ -890,7 +890,7 @@ def sso_callback_get():
         })
 
         duo_page = static.StaticFile(settings.conf.www_path,
-            'duo.html', cache=False, gzip=False)
+                                     'duo.html', cache=False, gzip=False)
 
         sso_duo_mode = settings.app.sso_duo_mode
         if sso_duo_mode == 'passcode':
@@ -925,7 +925,7 @@ def sso_callback_get():
         })
 
         yubico_page = static.StaticFile(settings.conf.www_path,
-            'yubico.html', cache=False, gzip=False)
+                                        'yubico.html', cache=False, gzip=False)
 
         if settings.app.theme == 'dark':
             yubico_page.data = yubico_page.data.replace(
@@ -935,7 +935,7 @@ def sso_callback_get():
         return yubico_page.get_response()
 
     return _validate_user(username, email, sso_mode, org_id, groups,
-        remote_addr, http_redirect=True)
+                          remote_addr, http_redirect=True)
 
 @app.app.route('/sso/duo', methods=['POST'])
 @auth.open_auth
@@ -946,8 +946,8 @@ def sso_duo_post():
     passcode = utils.filter_str(flask.request.json.get('passcode')) or ''
 
     if sso_mode not in (DUO_AUTH, AZURE_DUO_AUTH, GOOGLE_DUO_AUTH,
-            SLACK_DUO_AUTH, SAML_DUO_AUTH, SAML_OKTA_DUO_AUTH,
-            SAML_ONELOGIN_DUO_AUTH, RADIUS_DUO_AUTH):
+                        SLACK_DUO_AUTH, SAML_DUO_AUTH, SAML_OKTA_DUO_AUTH,
+                        SAML_ONELOGIN_DUO_AUTH, RADIUS_DUO_AUTH):
         return flask.abort(404)
 
     if not token:
@@ -989,7 +989,7 @@ def sso_duo_post():
         valid = duo_auth.authenticate()
         if not valid:
             logger.warning('Duo authentication not valid', 'sso',
-                username=username,
+                           username=username,
                            )
 
             journal.entry(
@@ -1014,7 +1014,7 @@ def sso_duo_post():
         valid = duo_auth.authenticate()
         if not valid:
             logger.warning('Duo authentication not valid', 'sso',
-                username=username,
+                           username=username,
                            )
 
             journal.entry(
@@ -1039,7 +1039,7 @@ def sso_duo_post():
         org_id = org_id_new or org_id
     else:
         logger.warning('Duo plugin authentication not valid', 'sso',
-            username=username,
+                       username=username,
                        )
 
         journal.entry(
@@ -1055,7 +1055,7 @@ def sso_duo_post():
     groups = groups | set(groups2 or [])
 
     return _validate_user(username, email, sso_mode, org_id, groups,
-        remote_addr)
+                          remote_addr)
 
 @app.app.route('/sso/yubico', methods=['POST'])
 @auth.open_auth
@@ -1066,9 +1066,9 @@ def sso_yubico_post():
     key = utils.filter_str(flask.request.json.get('key')) or None
 
     if sso_mode not in (AZURE_YUBICO_AUTH, GOOGLE_YUBICO_AUTH,
-            AUTHZERO_YUBICO_AUTH, SLACK_YUBICO_AUTH, SAML_YUBICO_AUTH,
-            SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
-            SAML_JUMPCLOUD_YUBICO_AUTH):
+                        AUTHZERO_YUBICO_AUTH, SLACK_YUBICO_AUTH, SAML_YUBICO_AUTH,
+                        SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
+                        SAML_JUMPCLOUD_YUBICO_AUTH):
         return flask.abort(404)
 
     if not token or not key:
@@ -1115,4 +1115,4 @@ def sso_yubico_post():
         }, 401)
 
     return _validate_user(username, email, sso_mode, org_id, groups,
-        remote_addr, yubico_id=yubico_id)
+                          remote_addr, yubico_id=yubico_id)

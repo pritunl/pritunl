@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E713
+# pylama:ignore=E713
 # Copyright 2002-2008 Wichert Akkerman. All rights reserved.
 # Copyright 2007-2008 Simplon. All rights reserved.
 #
@@ -93,7 +93,7 @@ class Server(host.Host):
     MaxPacketSize = 8192
 
     def __init__(self, addresses=[], authport=1812, acctport=1813, hosts=None,
-            dict=None):
+                 dict=None):
         """Constructor.
 
         :param addresses: IP addresses to listen on
@@ -189,7 +189,7 @@ class Server(host.Host):
 
         pkt.secret = self.hosts[pkt.source[0]].secret
         if not pkt.code in [packet.AccountingRequest,
-                packet.AccountingResponse]:
+                            packet.AccountingResponse]:
             raise ServerPacketError(
                     'Received non-accounting packet on accounting port')
         self.HandleAcctPacket(pkt)
@@ -215,7 +215,7 @@ class Server(host.Host):
         for fd in self.authfds + self.acctfds:
             self._fdmap[fd.fileno()] = fd
             self._poll.register(fd.fileno(),
-                    select.POLLIN | select.POLLPRI | select.POLLERR)
+                                select.POLLIN | select.POLLPRI | select.POLLERR)
         self._realauthfds = list([x.fileno() for x in self.authfds])
         self._realacctfds = list([x.fileno() for x in self.acctfds])
 
@@ -246,11 +246,11 @@ class Server(host.Host):
         """
         if fd.fileno() in self._realauthfds:
             pkt = self._GrabPacket(lambda data, s=self:
-                    s.CreateAuthPacket(packet=data), fd)
+                                   s.CreateAuthPacket(packet=data), fd)
             self._HandleAuthPacket(pkt)
         else:
             pkt = self._GrabPacket(lambda data, s=self:
-                    s.CreateAcctPacket(packet=data), fd)
+                                   s.CreateAcctPacket(packet=data), fd)
             self._HandleAcctPacket(pkt)
 
     def Run(self):

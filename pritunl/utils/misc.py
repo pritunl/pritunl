@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E305,E401,E722,E741,W0401,W0404,W0611
+# pylama:ignore=E302,E305,E401,E722,E741,W0401,W0404,W0611
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -75,7 +75,7 @@ def _get_version_doc():
     if settings.conf.mongodb_uri:
         prefix = settings.conf.mongodb_collection_prefix or ''
         client = pymongo.MongoClient(settings.conf.mongodb_uri,
-            connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+                                     connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
         database = client.get_default_database()
         settings_db = getattr(database, prefix + 'settings')
         doc = settings_db.find_one({
@@ -110,10 +110,10 @@ def set_db_ver(version, version_min=None):
     if (version != db_version or MIN_DATABASE_VER != db_min_version) and \
             db_version:
         logger.info('Setting db version', 'utils',
-            cur_ver=db_version,
-            new_ver=version,
-            cur_min_ver=db_min_version,
-            new_min_ver=MIN_DATABASE_VER,
+                    cur_ver=db_version,
+                    new_ver=version,
+                    cur_min_ver=db_min_version,
+                    new_min_ver=MIN_DATABASE_VER,
                     )
 
     update_doc = {
@@ -124,7 +124,7 @@ def set_db_ver(version, version_min=None):
 
     prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
-        connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
+                                 connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
     database = client.get_default_database()
 
     db_collections = database.collection_names()
@@ -148,7 +148,7 @@ def check_output(*args, **kwargs):
         ignore_states = None
 
     process = subprocess.Popen(stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-        *args, **kwargs)
+                               *args, **kwargs)
 
     stdoutdata, stderrdata = process.communicate()
     return_code = process.poll()
@@ -210,10 +210,10 @@ def check_output_logged(*args, **kwargs):
                     return stdoutdata
 
         logger.error('Popen returned error exit code', 'utils',
-            cmd=cmd,
-            return_code=return_code,
-            stdout=stdoutdata,
-            stderr=stderrdata,
+                     cmd=cmd,
+                     return_code=return_code,
+                     stdout=stdoutdata,
+                     stderr=stderrdata,
                      )
 
         raise subprocess.CalledProcessError(
@@ -264,7 +264,7 @@ def rmtree(path):
             if i == 7:
                 from pritunl import logger
                 logger.exception('Failed to rm files', 'utils',
-                    path=path,
+                                 path=path,
                                  )
             time.sleep(0.01)
 
@@ -321,7 +321,7 @@ def check_openssl():
 def check_iptables_wait():
     try:
         subprocess.check_call(['iptables', '--wait', '-L', '-n'],
-            stdout=_null, stderr=_null)
+                              stdout=_null, stderr=_null)
         return True
     except:
         pass
@@ -387,9 +387,9 @@ def const_compare(x, y):
 
 def response(data=None, status_code=None):
     response = flask.Response(response=data,
-        mimetype='text/html; charset=utf-8')
+                              mimetype='text/html; charset=utf-8')
     response.headers.add('Cache-Control',
-        'no-cache, no-store, must-revalidate')
+                         'no-cache, no-store, must-revalidate')
     response.headers.add('Pragma', 'no-cache')
     response.headers.add('Expires', 0)
     if status_code is not None:
@@ -403,7 +403,7 @@ def styles_response(etag, last_modified, data):
         response.headers.add('ETag', '"%s"' % etag)
     else:
         response.headers.add('Cache-Control',
-            'no-cache, no-store, must-revalidate')
+                             'no-cache, no-store, must-revalidate')
         response.headers.add('Pragma', 'no-cache')
         response.headers.add('Expires', 0)
     response.headers.add('Last-Modified', last_modified)
@@ -478,8 +478,8 @@ def sync_public_ip(attempts=1, timeout=5):
 def ping(address, timeout=1):
     start = time.time()
     code = subprocess.call(['ping', '-c', '1', '-W',
-            str(math.ceil(timeout)), address],
-        stdout=_null, stderr=_null)
+                           str(math.ceil(timeout)), address],
+                           stdout=_null, stderr=_null)
     runtime = (time.time() - start)
     if code != 0:
         return None
@@ -505,7 +505,7 @@ def get_url_root():
 def check_openvpn_ver():
     try:
         process = subprocess.Popen(['openvpn', '--version'],
-            stdout=subprocess.PIPE)
+                                   stdout=subprocess.PIPE)
         output, _ = process.communicate()
         output = output.decode().split()[1].strip()
 

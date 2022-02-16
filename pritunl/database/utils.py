@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401,W0611
+# pylama:ignore=E302,E722,W0401,W0611
 from pritunl.constants import *
 from pritunl import logger
 
@@ -15,7 +15,7 @@ def ObjectId(oid=None):
             return bson.ObjectId(oid)
         except:
             logger.exception('Failed to convert object id', 'utils',
-                object_id=oid,
+                             object_id=oid,
                              )
     return oid
 

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.queue.queue import Queue
 
 from pritunl.constants import *
@@ -11,10 +11,10 @@ def get(doc):
     return queue_types[doc['type']](doc=doc)
 
 def start(queue_type, transaction=None, block=False, block_timeout=60,
-        *args, **kwargs):
+          *args, **kwargs):
     que = queue_types[queue_type](*args, **kwargs)
     que.start(transaction=transaction, block=block,
-        block_timeout=block_timeout)
+              block_timeout=block_timeout)
     return que
 
 def stop(queue_id=None, spec=None, transaction=None):

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E261,E302,W0401
+# pylama:ignore=E261,E302,W0401
 from pritunl.transaction.action import TransactionAction
 
 from pritunl.constants import *
@@ -42,4 +42,4 @@ class TransactionCollection(object):
             return TransactionAction([], name)
         else:
             raise AttributeError('TransactionCollection ' +
-                'instance has no attribute %r' % name)
+                                 'instance has no attribute %r' % name)

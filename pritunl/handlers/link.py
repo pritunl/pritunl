@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import app
@@ -275,7 +275,7 @@ def link_location_delete(link_id, location_id):
     return utils.jsonify({})
 
 @app.app.route('/link/<link_id>/location/<location_id>/route',
-    methods=['POST'])
+               methods=['POST'])
 @auth.session_auth
 def link_location_route_post(link_id, location_id):
     if not settings.local.sub_plan or \
@@ -310,7 +310,7 @@ def link_location_route_post(link_id, location_id):
     })
 
 @app.app.route('/link/<link_id>/location/<location_id>/route/<network>',
-    methods=['DELETE'])
+               methods=['DELETE'])
 @auth.session_auth
 def link_location_route_delete(link_id, location_id, network):
     if not settings.local.sub_plan or \
@@ -337,7 +337,7 @@ def link_location_route_delete(link_id, location_id, network):
     return utils.jsonify({})
 
 @app.app.route('/link/<link_id>/location/<location_id>/host',
-    methods=['POST'])
+               methods=['POST'])
 @auth.session_auth
 def link_location_host_post(link_id, location_id):
     if not settings.local.sub_plan or \
@@ -388,7 +388,7 @@ def link_location_host_post(link_id, location_id):
     return utils.jsonify(hst.dict())
 
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>/uri',
-    methods=['GET'])
+               methods=['GET'])
 @auth.session_auth
 def link_location_host_uri_get(link_id, location_id, host_id):
     if not settings.local.sub_plan or \
@@ -416,7 +416,7 @@ def link_location_host_uri_get(link_id, location_id, host_id):
     return utils.jsonify(data)
 
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>/conf',
-    methods=['GET'])
+               methods=['GET'])
 @auth.session_auth
 def link_location_host_conf_get(link_id, location_id, host_id):
     if not settings.local.sub_plan or \
@@ -445,7 +445,7 @@ def link_location_host_conf_get(link_id, location_id, host_id):
     return utils.jsonify(data)
 
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>',
-    methods=['PUT'])
+               methods=['PUT'])
 @auth.session_auth
 def link_location_host_put(link_id, location_id, host_id):
     if not settings.local.sub_plan or \
@@ -478,14 +478,14 @@ def link_location_host_put(link_id, location_id, host_id):
         flask.request.json.get('local_address'))
 
     hst.commit(('name', 'timeout', 'priority', 'backoff', 'static',
-        'public_address', 'local_address'))
+                'public_address', 'local_address'))
 
     event.Event(type=LINKS_UPDATED)
 
     return utils.jsonify(hst.dict())
 
 @app.app.route('/link/<link_id>/location/<location_id>/host/<host_id>',
-    methods=['DELETE'])
+               methods=['DELETE'])
 @auth.session_auth
 def link_location_host_delete(link_id, location_id, host_id):
     if not settings.local.sub_plan or \
@@ -514,7 +514,7 @@ def link_location_host_delete(link_id, location_id, host_id):
     return utils.jsonify({})
 
 @app.app.route('/link/<link_id>/location/<location_id>/peer',
-    methods=['POST'])
+               methods=['POST'])
 @auth.session_auth
 def link_location_peer_post(link_id, location_id):
     if not settings.local.sub_plan or \
@@ -543,7 +543,7 @@ def link_location_peer_post(link_id, location_id):
     return utils.jsonify({})
 
 @app.app.route('/link/<link_id>/location/<location_id>/peer/<peer_id>',
-    methods=['DELETE'])
+               methods=['DELETE'])
 @auth.session_auth
 def link_location_peer_delete(link_id, location_id, peer_id):
     if not settings.local.sub_plan or \
@@ -571,7 +571,7 @@ def link_location_peer_delete(link_id, location_id, peer_id):
     return utils.jsonify({})
 
 @app.app.route('/link/<link_id>/location/<location_id>/transit',
-    methods=['POST'])
+               methods=['POST'])
 @auth.session_auth
 def link_location_transit_post(link_id, location_id):
     if not settings.local.sub_plan or \
@@ -599,7 +599,7 @@ def link_location_transit_post(link_id, location_id):
     return utils.jsonify({})
 
 @app.app.route('/link/<link_id>/location/<location_id>/transit/<transit_id>',
-    methods=['DELETE'])
+               methods=['DELETE'])
 @auth.session_auth
 def link_location_transit_delete(link_id, location_id, transit_id):
     if not settings.local.sub_plan or \

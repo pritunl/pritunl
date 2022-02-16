@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.static.utils import *
 from pritunl.cachelocal import cache_db
 
@@ -47,16 +47,16 @@ class StaticFile(object):
     def set_cache(self):
         cache_db.dict_set(self.get_cache_key(), 'data', self.data or '')
         cache_db.dict_set(self.get_cache_key(), 'mime_type',
-            self.mime_type or '')
+                          self.mime_type or '')
         cache_db.dict_set(self.get_cache_key(), 'last_modified',
-            self.last_modified)
+                          self.last_modified)
         cache_db.dict_set(self.get_cache_key(), 'etag', self.etag or '')
 
     def get_cache(self):
         self.data = cache_db.dict_get(self.get_cache_key(), 'data')
         self.mime_type = cache_db.dict_get(self.get_cache_key(), 'mime_type')
         self.last_modified = cache_db.dict_get(self.get_cache_key(),
-            'last_modified')
+                                               'last_modified')
         self.etag = cache_db.dict_get(self.get_cache_key(), 'etag')
 
     def load_file(self):
@@ -102,11 +102,11 @@ class StaticFile(object):
 
         if settings.conf.static_cache and self.cache:
             response.headers.add('Cache-Control',
-                'max-age=%s, public' % settings.app.static_cache_time)
+                                 'max-age=%s, public' % settings.app.static_cache_time)
             response.headers.add('ETag', '"%s"' % self.etag)
         else:
             response.headers.add('Cache-Control',
-                'no-cache, no-store, must-revalidate')
+                                 'no-cache, no-store, must-revalidate')
             response.headers.add('Pragma', 'no-cache')
             response.headers.add('Expires', 0)
 

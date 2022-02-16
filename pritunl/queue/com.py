@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import logger
@@ -30,7 +30,7 @@ class QueueCom(object):
             self.wait_status()
 
             process = subprocess.Popen(args, stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
+                                       stderr=subprocess.PIPE)
             process_data = [process, False]
             self.processes.append(process_data)
 
@@ -43,14 +43,14 @@ class QueueCom(object):
                 if not process_data[1]:
                     stdoutdata, stderrdata = process.communicate()
                     logger.error('Popen returned error exit code',
-                        'queue',
-                        cmd=args,
-                        return_code=return_code,
-                        stdout=stdoutdata.decode(),
-                        stderr=stderrdata.decode(),
+                                 'queue',
+                                 cmd=args,
+                                 return_code=return_code,
+                                 stdout=stdoutdata.decode(),
+                                 stderr=stderrdata.decode(),
                                  )
                     raise ValueError('Popen returned ' +
-                        'error exit code %r' % return_code)
+                                     'error exit code %r' % return_code)
             else:
                 break
 

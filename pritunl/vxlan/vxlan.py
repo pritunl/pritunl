@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import settings
@@ -63,10 +63,10 @@ class Vxlan(object):
 
         if not local_iface:
             logger.error('Failed to find local interface for vxlan', 'vxlan',
-                vxlan_id=self.vxlan_id,
-                server_id=self.server_id,
-                host_id=settings.local.host_id,
-                local_addr=settings.local.host.local_addr,
+                         vxlan_id=self.vxlan_id,
+                         server_id=self.server_id,
+                         host_id=settings.local.host_id,
+                         local_addr=settings.local.host.local_addr,
                          )
             raise ValueError('Failed to find local interface for vxlan')
 
@@ -162,11 +162,11 @@ class Vxlan(object):
 
         if not self.host_vxlan_id:
             logger.error('Failed to get host vxlan id', 'vxlan',
-                vxlan_id=self.vxlan_id,
-                server_id=self.server_id,
-                host_id=settings.local.host_id,
-                local_addr=local_addr,
-                local_addr6=local_addr6,
+                         vxlan_id=self.vxlan_id,
+                         server_id=self.server_id,
+                         host_id=settings.local.host_id,
+                         local_addr=local_addr,
+                         local_addr6=local_addr6,
                          )
             raise ValueError('Failed to get host vxlan id')
 
@@ -193,8 +193,8 @@ class Vxlan(object):
 
         if not doc:
             logger.error('Lost vxlan doc', 'vxlan',
-                vxlan_id=self.vxlan_id,
-                server_id=self.server_id,
+                         vxlan_id=self.vxlan_id,
+                         server_id=self.server_id,
                          )
             return
 
@@ -355,8 +355,8 @@ class Vxlan(object):
                             raise
         except:
             logger.error('Failed to add vxlan host', 'vxlan',
-                vxlan_id=self.vxlan_id,
-                server_id=self.server_id,
+                         vxlan_id=self.vxlan_id,
+                         server_id=self.server_id,
                          )
             raise
         finally:

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.host.usage import HostUsage
 
 from pritunl.constants import *
@@ -168,11 +168,11 @@ class Host(mongo.MongoObject):
             usr = org.find_user(resource_id=self.id)
             if not usr:
                 logger.info('Creating host link user', 'host',
-                    host_id=self.id,
+                            host_id=self.id,
                             )
 
                 usr = org.new_user(name=HOST_USER_PREFIX + str(self.id),
-                    type=CERT_SERVER, resource_id=self.id)
+                                   type=CERT_SERVER, resource_id=self.id)
 
                 journal.entry(
                     journal.USER_CREATE,
@@ -181,7 +181,7 @@ class Host(mongo.MongoObject):
                 )
 
                 usr.audit_event('user_created',
-                    'User created for host linking')
+                                'User created for host linking')
 
             return usr
 

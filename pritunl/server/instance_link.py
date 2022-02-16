@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -83,7 +83,7 @@ class ServerInstanceLink(object):
                 self.linked_server.tls_auth_key)
 
         client_conf += ('<cert>\n%s\n' +
-            '</cert>\n') % utils.get_cert_block(self.user.certificate)
+                        '</cert>\n') % utils.get_cert_block(self.user.certificate)
         client_conf += '<key>\n%s\n</key>\n' % (
             self.user.private_key.strip())
 
@@ -112,7 +112,7 @@ class ServerInstanceLink(object):
 
         try:
             self.process = subprocess.Popen(['openvpn', ovpn_conf_path],
-                stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                                            stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         except OSError:
             self.server.output_link.push_output(
                 traceback.format_exc(),
@@ -120,7 +120,7 @@ class ServerInstanceLink(object):
                 link_server_id=self.linked_server.id,
             )
             logger.exception('Failed to start link ovpn process', 'server',
-                server_id=self.server.id,
+                             server_id=self.server.id,
                              )
             raise
 
@@ -147,8 +147,8 @@ class ServerInstanceLink(object):
                         )
                     except:
                         logger.exception('Failed to push link vpn ' +
-                            'output', 'server',
-                            server_id=self.server.id,
+                                         'output', 'server',
+                                         server_id=self.server.id,
                                          )
 
                     yield
@@ -157,9 +157,9 @@ class ServerInstanceLink(object):
                     break
                 else:
                     logger.error('Server instance link stopped ' +
-                        'unexpectedly, restarting link', 'server',
-                        server_id=self.server.id,
-                        link_server_id=self.linked_server.id,
+                                 'unexpectedly, restarting link', 'server',
+                                 server_id=self.server.id,
+                                 link_server_id=self.linked_server.id,
                                  )
                     self.openvpn_start()
                     yield interrupter_sleep(1)
@@ -169,7 +169,7 @@ class ServerInstanceLink(object):
         finally:
             if self.interface:
                 utils.interface_release(self.linked_server.adapter_type,
-                    self.interface)
+                                        self.interface)
                 self.interface = None
             utils.rmtree(self._temp_path)
 
@@ -184,13 +184,13 @@ class ServerInstanceLink(object):
             try:
                 if not utils.stop_process(self.process):
                     logger.error('Failed to stop openvpn link process',
-                        'server',
-                        server_id=self.server.id,
+                                 'server',
+                                 server_id=self.server.id,
                                  )
             finally:
                 if self.interface:
                     utils.interface_release(self.linked_server.adapter_type,
-                        self.interface)
+                                            self.interface)
                     self.interface = None
 
     def start(self):

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E131,E302,E502,E722,W0401
+# pylama:ignore=E131,E302,E502,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import logger
@@ -22,8 +22,8 @@ _states = tunldb.TunlDB()
 
 class Authorizer(object):
     def __init__(self, svr, usr, remote_ip, platform, device_id, device_name,
-            mac_addr, mac_addrs, password, auth_password, auth_token,
-            auth_nonce, auth_timestamp, reauth, callback):
+                 mac_addr, mac_addrs, password, auth_password, auth_token,
+                 auth_nonce, auth_timestamp, reauth, callback):
         self.server = svr
         self.user = usr
         self.remote_ip = remote_ip
@@ -188,7 +188,7 @@ class Authorizer(object):
                     network = ipaddress.ip_network(network_str)
                 except (ipaddress.AddressValueError, ValueError):
                     logger.warning('Invalid whitelist network', 'authorize',
-                        network=network_str,
+                                   network=network_str,
                                    )
                     continue
 

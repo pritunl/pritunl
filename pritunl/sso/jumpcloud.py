@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E401,W0401,W0611
+# pylama:ignore=E302,E401,W0401,W0611
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
@@ -21,15 +21,15 @@ def auth_jumpcloud(username):
         )
     except http.client.HTTPException:
         logger.exception('JumpCloud api error', 'sso',
-            username=username,
+                         username=username,
                          )
         return False
 
     if response.status_code != 200:
         logger.error('JumpCloud api error', 'sso',
-            username=username,
-            status_code=response.status_code,
-            response=response.content,
+                     username=username,
+                     status_code=response.status_code,
+                     response=response.content,
                      )
         return False
 
@@ -37,7 +37,7 @@ def auth_jumpcloud(username):
 
     if not data.get('totalCount') or data.get('totalCount') < 1:
         logger.warning('JumpCloud user not found', 'sso',
-            username=username,
+                       username=username,
                        )
         return False
 
@@ -48,13 +48,13 @@ def auth_jumpcloud(username):
         if user_data.get('account_locked') or user_data.get('suspended') or \
                 not user_data.get('activated'):
             logger.warning('JumpCloud user disabled', 'sso',
-                username=username,
+                           username=username,
                            )
             return False
 
         return True
 
     logger.warning('JumpCloud user not found', 'sso',
-        username=username,
+                   username=username,
                    )
     return False

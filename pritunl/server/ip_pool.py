@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import ipaddress
@@ -33,7 +33,7 @@ class ServerIpPool:
                     ip_addr = next(ip_pool)
                 except StopIteration:
                     logger.error('Failed to find network start', 'server',
-                        server_id=self.server.id,
+                                 server_id=self.server.id,
                                  )
                     return
 
@@ -197,8 +197,8 @@ class ServerIpPool:
 
         if pool_end:
             logger.warning('Failed to assign ip addresses ' +
-                'to org, ip pool empty', 'server',
-                org_id=org_id,
+                           'to org, ip pool empty', 'server',
+                           org_id=org_id,
                            )
 
     def unassign_ip_pool_org(self, org_id):
@@ -212,7 +212,7 @@ class ServerIpPool:
         }})
 
     def assign_ip_pool(self, network, network_start,
-            network_end, network_hash):
+                       network_end, network_hash):
         server_id = self.server.id
         pool_end = False
 
@@ -262,9 +262,9 @@ class ServerIpPool:
 
             if pool_end:
                 logger.warning('Failed to assign ip addresses ' +
-                    'to server, ip pool empty', 'server',
-                    server_id=server_id,
-                    org_id=org_id,
+                               'to server, ip pool empty', 'server',
+                               server_id=server_id,
+                               org_id=org_id,
                                )
                 break
 
@@ -376,7 +376,7 @@ def multi_get_ip_addr(org_id, user_ids):
         network = ipaddress.ip_network(doc['address'], strict=False)
         network = str(network.network_address) + '/' + str(network.prefixlen)
         addr6 = utils.ip4to6x64(settings.vpn.ipv6_prefix,
-            network, doc['address'])
+                                network, doc['address'])
 
         yield doc['user_id'], doc['server_id'], \
             doc['address'].split('/')[0], addr6.split('/')[0]

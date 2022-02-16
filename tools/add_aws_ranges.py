@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E305
+# pylama:ignore=E302,E305
 import requests
 import time
 import uuid
@@ -41,7 +41,7 @@ def auth_request(method, path, headers=None, data=None):
     auth_timestamp = str(int(time.time()))
     auth_nonce = uuid.uuid4().hex
     auth_string = '&'.join([API_TOKEN, auth_timestamp, auth_nonce,
-        method.upper(), path])
+                           method.upper(), path])
     if sys.version_info[0] < 3:
         auth_signature = base64.b64encode(hmac.new(
             API_SECRET, auth_string, hashlib.sha256).digest())

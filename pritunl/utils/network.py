@@ -1,4 +1,4 @@
-# pylama:ignore=E127,E128,E302,W0401
+# pylama:ignore=E127,E302,W0401
 from pritunl.utils.misc import check_output_logged
 
 from pritunl.constants import *
@@ -143,7 +143,7 @@ def subnet_to_cidr(subnet):
 
 def network_addr(ip, subnet):
     return '%s/%s' % (long_to_ip(ip_to_long(ip) & ip_to_long(subnet)),
-        subnet_to_cidr(subnet))
+                      subnet_to_cidr(subnet))
 
 def parse_network(network):
     address = ipaddress.ip_network(network, strict=False)

@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302
+# pylama:ignore=E302
 from pritunl.link.link import Link, Location, Host
 
 from pritunl import settings
@@ -56,4 +56,4 @@ def get_page_total():
     }).count()
 
     return int(math.floor(max(0, float(count - 1)) /
-        settings.app.link_page_count))
+               settings.app.link_page_count))

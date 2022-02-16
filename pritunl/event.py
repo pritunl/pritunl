@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.helpers import *
 from pritunl import messenger
 from pritunl import utils
@@ -24,7 +24,7 @@ def get_events(cursor=None, yield_app_server=False):
         return events
 
     for event in messenger.subscribe('events', cursor_id=cursor,
-            timeout=10, yield_delay=0.02, yield_app_server=yield_app_server):
+                                     timeout=10, yield_delay=0.02, yield_app_server=yield_app_server):
         event_type, resource_id = event.pop('message')
         if (event_type, resource_id) in events_dict:
             old_event = events_dict[(event_type, resource_id)]

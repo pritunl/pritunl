@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E302,E722,W0401
+# pylama:ignore=E302,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl.exceptions import *
@@ -53,7 +53,7 @@ def update():
 
                 if response.status_code == 473:
                     raise ValueError(('Version %r not recognized by ' +
-                        'subscription server') % settings.local.version_int)
+                                      'subscription server') % settings.local.version_int)
 
                 data = response.json()
 
@@ -72,11 +72,11 @@ def update():
             except:
                 if i < 1:
                     logger.exception('Failed to check subscription status',
-                        'subscription, retrying...')
+                                     'subscription, retrying...')
                     time.sleep(1)
                     continue
                 logger.exception('Failed to check subscription status',
-                    'subscription')
+                                 'subscription')
                 settings.local.sub_active = False
                 settings.local.sub_status = None
                 settings.local.sub_plan = None

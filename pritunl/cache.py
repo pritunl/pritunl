@@ -1,4 +1,4 @@
-# pylama:ignore=E128,E271,E302,W0401
+# pylama:ignore=E271,E302,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import utils
@@ -24,8 +24,8 @@ def init():
     has_cache = True
 
     logger.info('Connecting to Redis', 'cache',
-        redis_uri=redis_uri,
-    )
+                redis_uri=redis_uri,
+                )
 
     _client = redis.StrictRedis.from_url(
         redis_uri,
@@ -107,7 +107,7 @@ def get_cursor_id(channel):
 
 @interrupter_generator
 def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
-        yield_app_server=False):
+              yield_app_server=False):
     if timeout:
         get_timeout = 0.5
         start_time = time.time()
@@ -162,7 +162,7 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
                 yield
 
                 doc = json.loads(msg['data'],
-                    object_hook=utils.json_object_hook_handler)
+                                 object_hook=utils.json_object_hook_handler)
                 doc['channel'] = msg['channel']
                 if duplicates:
                     if doc['_id'] in duplicates:
@@ -181,8 +181,8 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
                     continue
 
             if yield_stop or (yield_app_server and
-                    check_app_server_interrupt()) or (timeout and
-                    time.time() - start_time >= timeout):
+                              check_app_server_interrupt()) or (timeout and
+                                                                time.time() - start_time >= timeout):
                 return
     finally:
         pubsub.close()
