@@ -1,4 +1,4 @@
-# pylama:ignore=E251,E306,E722,W0401
+# pylama:ignore=E306,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -65,7 +65,7 @@ def update_server(delay=0):
                         port_changed=_cur_port != settings.app.server_port,
                         redirect_server_changed=_cur_redirect_server !=
                         settings.app.redirect_server,
-                        reverse_proxy_changed= _cur_reverse_proxy != (
+                        reverse_proxy_changed=_cur_reverse_proxy != (
                             settings.app.reverse_proxy_header if
                             settings.app.reverse_proxy else ''),
                         )
