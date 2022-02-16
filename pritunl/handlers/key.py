@@ -1,4 +1,4 @@
-# pylama:ignore=W0401,W0404,W0611,W0621
+# pylama:ignore=W0401,W0611,W0621
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -623,7 +623,7 @@ def user_uri_key_page_get(short_code):
 
 @app.app.route('/key/<key_id>/<server_id>.key', methods=['GET'])
 @auth.open_auth
-def user_linked_key_conf_get(key_id, server_id):
+def user_linked_key_conf_get(key_id, server_id):  # FIXME W0404 redefinition of unused 'user_linked_key_conf_get' from line 207
     key_id = key_id[:128]
     server_id = server_id
     remote_addr = utils.get_remote_addr()

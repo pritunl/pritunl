@@ -1,4 +1,4 @@
-# pylama:ignore=W0401,W0404,W0611
+# pylama:ignore=W0401,W0611
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -26,7 +26,6 @@ import urllib.parse
 import json
 import math
 import psutil
-import urllib.parse
 
 _null = open(os.devnull, 'w')
 
