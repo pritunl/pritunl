@@ -1,4 +1,4 @@
-# pylama:ignore=E117,E203,W0401
+# pylama:ignore=E117,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -38,7 +38,7 @@ def subscription_styles_get(plan, ver):
         try:
                 styles = settings.local.sub_styles[plan]
         except KeyError:
-                styles = {'etag' : 0, 'last_modified' : 0, 'data' : ''}
+                styles = {'etag': 0, 'last_modified': 0, 'data': ''}
 
     return utils.styles_response(
         styles['etag'],
