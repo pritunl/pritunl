@@ -1,4 +1,4 @@
-# pylama:ignore=E101,W191,W0611
+# pylama:ignore=W191,W0611
 import string
 
 APP_NAME = 'pritunl'
@@ -1189,23 +1189,23 @@ IPSEC_SECRET = '%s %s : PSK "%s"'
 
 IPSEC_CONN = """\
 conn %s
-	ikelifetime=8h
-	keylife=1h
-	rekeymargin=9m
-	keyingtries=%%forever
-	authby=secret
-	keyexchange=ikev2
-	mobike=no
-	dpddelay=10s
-	dpdtimeout=30s
-	dpdaction=restart
-	left=%%defaultroute
-	leftid=%s
-	leftsubnet=%s
-	right=%s
-	rightid=%s
-	rightsubnet=%s
-	auto=start
+    ikelifetime=8h
+    keylife=1h
+    rekeymargin=9m
+    keyingtries=%%forever
+    authby=secret
+    keyexchange=ikev2
+    mobike=no
+    dpddelay=10s
+    dpdtimeout=30s
+    dpdaction=restart
+    left=%%defaultroute
+    leftid=%s
+    leftsubnet=%s
+    right=%s
+    rightid=%s
+    rightsubnet=%s
+    auto=start
 
 """
 
