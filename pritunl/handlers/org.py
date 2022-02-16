@@ -1,4 +1,4 @@
-# pylama:ignore=E712,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import logger
 from pritunl import utils
@@ -96,10 +96,10 @@ def org_put(org_id):
         org.auth_token = None
         org.auth_secret = None
 
-    if flask.request.json.get('auth_token') == True:
+    if flask.request.json.get('auth_token') is True:
         org.generate_auth_token()
 
-    if flask.request.json.get('auth_secret') == True:
+    if flask.request.json.get('auth_secret') is True:
         org.generate_auth_secret()
 
     org.commit()

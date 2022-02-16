@@ -1,4 +1,4 @@
-# pylama:ignore=E712,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import utils
 from pritunl import event
@@ -241,7 +241,7 @@ def admin_put(admin_id):
         admin.otp_auth = otp_auth
 
     otp_secret = flask.request.json.get('otp_secret')
-    if otp_secret == True:
+    if otp_secret is True:
         admin.audit_event('admin_updated',
                           'Administrator two-factor authentication secret reset',
                           remote_addr=remote_addr,
