@@ -1,4 +1,4 @@
-# pylama:ignore=E402,E0602
+# pylama:ignore=E402
 COUNT = 100000
 MONGO_URI = 'mongodb://sn.pritunl.net:27017/pritunl'
 ORG_ID = '573b2d405a3d9c0a455b6dbe'
@@ -10,7 +10,7 @@ client = pymongo.MongoClient(MONGO_URI)
 db = client.get_default_database()
 collection = db.users
 
-for i in xrange(COUNT):
+for i in xrange(COUNT):  # FIXME E0602 undefined name 'xrange' [pyflakes]
     # FIXME private_key flags E203 weirdly
     doc = {
         "_id" : bson.ObjectId(),

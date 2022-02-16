@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylama:ignore=E0602,W291,W0612
+# pylama:ignore=W291,W0612
 # The MIT License (MIT)
 # 
 # Copyright (c) 2013 InfluxDB
@@ -36,6 +36,6 @@ except ImportError as err:
     class DataFrameClient(InfluxDBClient):
         def __init__(self, *a, **kw):
             raise ImportError("DataFrameClient requires Pandas "
-                              "which couldn't be imported: %s" % err)
+                              "which couldn't be imported: %s" % err)  # FIXME E0602 undefined name 'err' [pyflakes]
 else:
     from ._dataframe_client import DataFrameClient

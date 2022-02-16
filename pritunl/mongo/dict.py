@@ -1,4 +1,4 @@
-# pylama:ignore=E0602
+# pylama:ignore=
 import abc
 
 
@@ -25,10 +25,10 @@ class MongoDict(object):
         return repr(self.data)
 
     def __cmp__(self, dict):
-        if isinstance(dict, UserDict):
-            return cmp(self.data, dict.data)
+        if isinstance(dict, UserDict):  # FIXME E0602 undefined name 'UserDict' [pyflakes]
+            return cmp(self.data, dict.data)  # FIXME E0602 undefined name 'cmp' [pyflakes]
         else:
-            return cmp(self.data, dict)
+            return cmp(self.data, dict)  # FIXME E0602 undefined name 'cmp' [pyflakes]
 
     __hash__ = None  # Avoid Py3k warning
 
@@ -55,8 +55,8 @@ class MongoDict(object):
         self.data.clear()
 
     def copy(self):
-        if self.__class__ is UserDict:
-            return UserDict(self.data.copy())
+        if self.__class__ is UserDict:  # FIXME E0602 undefined name 'UserDict' [pyflakes]
+            return UserDict(self.data.copy())  # FIXME E0602 undefined name 'UserDict' [pyflakes]
         import copy
         data = self.data
         try:
@@ -92,7 +92,7 @@ class MongoDict(object):
         self.changed = True
         if dict is None:
             pass
-        elif isinstance(dict, UserDict):
+        elif isinstance(dict, UserDict):  # FIXME E0602 undefined name 'UserDict' [pyflakes]
             self.data.update(dict.data)
         elif isinstance(dict, type({})) or not hasattr(dict, 'items'):
             self.data.update(dict)
