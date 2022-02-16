@@ -1,4 +1,4 @@
-# pylama:ignore=E111,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
@@ -64,7 +64,7 @@ class LogView(object):
                     log_msg,
                 )
             except:
-               pass
+                pass
         return line
 
     def get_log_lines(self, natural=False, limit=None, formatted=True,
