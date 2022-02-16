@@ -1,4 +1,4 @@
-# pylama:ignore=E401,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -8,7 +8,9 @@ import base64
 import email
 import hmac
 import hashlib
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.error
+import urllib.parse
 import requests
 
 

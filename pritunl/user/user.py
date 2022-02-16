@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E401,E722,W0401
+# pylama:ignore=E122,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -24,7 +24,9 @@ import hmac
 import json
 import uuid
 import pymongo
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.error
+import urllib.parse
 import requests
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes

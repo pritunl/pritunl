@@ -1,4 +1,4 @@
-# pylama:ignore=E401,E722,E741,W0401,W0404,W0611
+# pylama:ignore=E722,E741,W0401,W0404,W0611
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -20,7 +20,9 @@ import hashlib
 import base64
 import re
 import queue
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 import json
 import math
 import psutil

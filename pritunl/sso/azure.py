@@ -1,9 +1,11 @@
-# pylama:ignore=E401
+# pylama:ignore=
 from pritunl import settings
 from pritunl import logger
 
 import requests
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.error
+import urllib.parse
 
 
 def _verify_azure_1(user_name):

@@ -1,4 +1,4 @@
-# pylama:ignore=E401,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -6,7 +6,9 @@ from pritunl import logger
 from pritunl import utils
 
 import threading
-import urllib.request, urllib.error, urllib.parse
+import urllib.request
+import urllib.error
+import urllib.parse
 import json
 
 

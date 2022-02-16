@@ -1,8 +1,10 @@
-# pylama:ignore=E401
+# pylama:ignore=
 from pritunl import settings
 from pritunl import logger
 
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.error
+import urllib.parse
 import http.client
 import time
 import urllib.parse

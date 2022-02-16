@@ -1,11 +1,13 @@
-# pylama:ignore=E401,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
 from pritunl import utils
 
 import time
-import urllib.request, urllib.parse, urllib.error
+import urllib.request
+import urllib.error
+import urllib.parse
 import http.client
 import requests
 import xml.etree.ElementTree

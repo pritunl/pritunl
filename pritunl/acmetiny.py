@@ -1,7 +1,19 @@
 #!/usr/bin/env python
-# pylama:ignore=E261,E265,E401,W0611
+# pylama:ignore=E261,E265,W0611
 # Copyright Daniel Roesler, under MIT license, see LICENSE at github.com/diafygi/acme-tiny
-import argparse, subprocess, json, os, sys, base64, binascii, time, hashlib, re, copy, textwrap, logging
+import argparse
+import subprocess
+import json
+import os
+import sys
+import base64
+import binascii
+import time
+import hashlib
+import re
+import copy
+import textwrap
+import logging
 from pritunl import settings
 from pritunl import logger
 try:
