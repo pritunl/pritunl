@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E201,E223,E701,E701,E711,E722,W0611
+# pylama:ignore=E223,E701,E701,E711,E722,W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).
@@ -156,7 +156,7 @@ class RADIUS:
             for i in range(0, self.retries):
                 self._socket.send(msg)
 
-                t = select( [self._socket], [], [], self.timeout)
+                t = select([self._socket], [], [], self.timeout)
                 if len(t[0]) > 0:
                     response = self._socket.recv(4096)
                 else:
