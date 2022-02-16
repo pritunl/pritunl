@@ -1,4 +1,4 @@
-# pylama:ignore=E713
+# pylama:ignore=
 from pritunl import settings
 
 import json
@@ -13,7 +13,7 @@ def verify_google(user_email):
     if not isinstance(settings.app.sso_match, list):
         raise TypeError('Invalid sso match')
 
-    if not user_domain in settings.app.sso_match:
+    if user_domain not in settings.app.sso_match:
         return False, []
 
     google_key = settings.app.sso_google_key

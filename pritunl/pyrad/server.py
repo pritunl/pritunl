@@ -1,4 +1,4 @@
-# pylama:ignore=E713
+# pylama:ignore=
 # Copyright 2002-2008 Wichert Akkerman. All rights reserved.
 # Copyright 2007-2008 Simplon. All rights reserved.
 #
@@ -188,7 +188,7 @@ class Server(host.Host):
             raise ServerPacketError('Received packet from unknown host')
 
         pkt.secret = self.hosts[pkt.source[0]].secret
-        if not pkt.code in [packet.AccountingRequest,
+        if pkt.code not in [packet.AccountingRequest,
                             packet.AccountingResponse]:
             raise ServerPacketError(
                     'Received non-accounting packet on accounting port')
