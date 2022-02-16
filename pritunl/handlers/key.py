@@ -1,4 +1,4 @@
-# pylama:ignore=W0401,W0611,W0621
+# pylama:ignore=W0401,W0611
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -548,7 +548,7 @@ def user_linked_key_page_get(short_code):
                 doc['key_id'])
 
     has_servers = False
-    for server in usr.iter_servers():
+    for server in usr.iter_servers():  # FIXME W0621 import 'server' from line 8 shadowed by loop variable [pyflakes]
         has_servers = True
         conf_links += '<a class="btn btn-sm download-profile" ' + \
             'title="Download Profile" ' + \
@@ -614,7 +614,7 @@ def user_uri_key_page_get(short_code):
                     )
 
     keys = {}
-    for server in usr.iter_servers():
+    for server in usr.iter_servers():  # FIXME W0621 import 'server' from line 8 shadowed by loop variable [pyflakes]
         key = usr.build_key_conf(server.id)
         keys[key['name']] = key['conf']
 

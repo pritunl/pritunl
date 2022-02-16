@@ -1,4 +1,4 @@
-# pylama:ignore=W191,W0611
+# pylama:ignore=W0611
 import string
 
 APP_NAME = 'pritunl'
