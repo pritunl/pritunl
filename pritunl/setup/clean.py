@@ -1,4 +1,4 @@
-# pylama:ignore=W391
+# pylama:ignore=
 from pritunl import utils
 from pritunl import logger
 
@@ -138,4 +138,3 @@ def setup_clean():
                 pass
     except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Server clean failed', 'setup')
-
