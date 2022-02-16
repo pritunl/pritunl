@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -97,7 +97,7 @@ class Duo(object):
                                      params=params,
                                      timeout=30,
                                      )
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             if factor == 'push' and self.factor == 'push_phone':
                 self._auth('phone')
                 return

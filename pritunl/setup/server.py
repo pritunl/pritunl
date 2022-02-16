@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -41,7 +41,7 @@ def stop_server():
         web_process_state = False
         try:
             web_process.kill()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             pass
 
     setup_ready.set()
@@ -266,7 +266,7 @@ def upgrade_database():
             upgrade.upgrade_server()
             upgrade_done.set()
             stop_server()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Server upgrade failed')
             set_global_interrupt()
     threading.Thread(target=_upgrade_thread).start()
@@ -303,7 +303,7 @@ def setup_server():
         try:
             utils.get_db_ver_int()
             break
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             time.sleep(0.5)
             if time.time() - last_error > 30:
                 last_error = time.time()
@@ -338,7 +338,7 @@ def setup_server():
         try:
             utils.set_db_ver(__version__, MIN_DATABASE_VER)
             break
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             time.sleep(0.5)
             if time.time() - last_error > 30:
                 last_error = time.time()

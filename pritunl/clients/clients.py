@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import utils
@@ -1052,7 +1052,7 @@ class Clients(object):
                                      client_conf['network_links6'])
 
             self.connected(client_id)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error allowing client wg connect', 'server',
                              server_id=self.server.id,
                              )
@@ -1208,11 +1208,11 @@ class Clients(object):
                         allow=allow,
                         reason=reason,
                     )
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     try:
                         self.instance_com.send_client_deny(
                             client_id, key_id, 'exception', auth.challenge)
-                    except:
+                    except:  # FIXME E722 do not use bare 'except' [pep8]
                         pass
 
                     logger.exception(
@@ -1240,7 +1240,7 @@ class Clients(object):
             )
 
             auth.authenticate()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error parsing client connect', 'server',
                              server_id=self.server.id,
                              )
@@ -1329,12 +1329,12 @@ class Clients(object):
                         reason=reason,
                         wg_public_key=wg_public_key,
                     )
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     self.instance.disconnect_wg(wg_public_key)
 
                     try:
                         connect_callback_once(False, 'Server exception')
-                    except:
+                    except:  # FIXME E722 do not use bare 'except' [pep8]
                         pass
 
                     logger.exception(
@@ -1362,7 +1362,7 @@ class Clients(object):
             )
 
             auth.authenticate()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error parsing client connect', 'server',
                              server_id=self.server.id,
                              )
@@ -1830,7 +1830,7 @@ class Clients(object):
                     'host_address': self.route_addr,
                     'host_address6': self.route_addr6,
                 })
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error adding client', 'server',
                              server_id=self.server.id,
                              )
@@ -1967,7 +1967,7 @@ class Clients(object):
                 self.collection.remove({
                     '_id': doc_id,
                 })
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Error removing client', 'server',
                                  server_id=self.server.id,
                                  )
@@ -2197,7 +2197,7 @@ class Clients(object):
                                 else:
                                     self.instance_com.client_kill(client_id)
                                 continue
-                    except:
+                    except:  # FIXME E722 do not use bare 'except' [pep8]
                         self.clients_queue.append(client_id)
                         logger.exception('Failed to update client',
                                          'server',
@@ -2214,7 +2214,7 @@ class Clients(object):
                         return
                 except GeneratorExit:
                     raise
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     logger.exception('Error in client thread', 'server',
                                      server_id=self.server.id,
                                      instance_id=self.instance.id,
@@ -2233,7 +2233,7 @@ class Clients(object):
                 self.collection.remove({
                     '_id': {'$in': doc_ids},
                 })
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Error removing client', 'server',
                                  server_id=self.server.id,
                                  )
@@ -2301,7 +2301,7 @@ class Clients(object):
 
                 self.client_routes.add(virt_address)
                 utils.add_route(virt_address, host_address)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to add route', 'clients',
                                  virt_address=virt_address,
                                  virt_address6=virt_address6,
@@ -2327,7 +2327,7 @@ class Clients(object):
 
                 self.client_routes6.add(virt_address6)
                 utils.add_route6(virt_address6, host_address6)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to add route6', 'clients',
                                  virt_address=virt_address,
                                  virt_address6=virt_address6,

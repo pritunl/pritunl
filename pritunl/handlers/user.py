@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -354,7 +354,7 @@ def _create_users(org_id, users_data, remote_addr, background):
                 err = _create_user(users, org, user_data, remote_addr, True)
                 if err:
                     return err
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Error creating users', 'users')
         raise
     finally:

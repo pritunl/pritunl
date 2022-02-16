@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import listener
@@ -13,7 +13,7 @@ def _check():
 
     try:
         settings.reload_mongo()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Settings check failed', 'runners')
 
     _start_check_timer()

@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -66,7 +66,7 @@ class TaskRoute(task.Task):
                                   server_id, vpc_region, vpc_id, network])
         except GeneratorExit:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error checking route states', 'tasks')
 
 

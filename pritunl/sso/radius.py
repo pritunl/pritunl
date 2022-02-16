@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
@@ -40,7 +40,7 @@ def verify_radius(username, password):
 
         try:
             reply = conn.SendPacket(req)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             if i == len(hosts) - 1:
                 raise
             else:
@@ -61,19 +61,19 @@ def verify_radius(username, password):
     org_names = []
     try:
         org_names = reply.get((97, 0)) or []
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
 
     group_names = []
     try:
         group_names = reply.get((97, 1)) or []
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
 
     org_names2 = []
     try:
         org_names2 = reply.get(97) or []
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
 
     org_names = org_names or org_names2

@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -86,7 +86,7 @@ class Task(mongo.MongoObject):
                 self.task()
 
             self.complete()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error running task', 'task',
                              task_id=self.id,
                              task_type=self.type,

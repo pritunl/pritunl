@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import event
 from pritunl import logger
@@ -50,7 +50,7 @@ def _event_runner_thread():
                         events[evt_key] = evt[0]
         except GeneratorExit:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in event runner thread.', 'runners')
             time.sleep(0.5)
 

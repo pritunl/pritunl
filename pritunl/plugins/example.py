@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 # Available libraries included with a default Pritunl installation
 from pritunl import logger
 # import requests
@@ -22,7 +22,7 @@ def user_connection(host_id, server_id, org_id, user_id, host_name,
 
     try:
         raise Exception('example')
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Example exception log message', 'plugin',
                          key1='value1',
                          key2='value2',

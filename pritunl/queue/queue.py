@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.queue.com import QueueCom
 
 from pritunl.constants import *
@@ -251,7 +251,7 @@ class Queue(mongo.MongoObject):
 
             if self.claimed:
                 self.complete()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             if self.queue_com.state is not STOPPED:
                 logger.exception('Error running task in queue', 'queue',
                                  queue_id=self.id,

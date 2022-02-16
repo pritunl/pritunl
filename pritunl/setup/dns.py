@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import logger
@@ -59,7 +59,7 @@ def _dns_thread():
                 time.sleep(1)
                 process.kill()
             return
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in dns service', 'setup')
 
         yield interrupter_sleep(1)

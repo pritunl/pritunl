@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import logger
@@ -13,7 +13,7 @@ def _monitoring_thread():
         yield interrupter_sleep(settings.app.influxdb_interval)
         try:
             monitoring.connect()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('InfluxDB connection error',
                              'monitoring',
                              influxdb_uri=settings.app.influxdb_uri,
@@ -23,7 +23,7 @@ def _monitoring_thread():
 
         try:
             monitoring.write_queue()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('InfluxDB write queue error',
                              'monitoring',
                              influxdb_uri=settings.app.influxdb_uri,

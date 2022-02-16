@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 from pritunl import settings
 
 import logging
@@ -22,11 +22,11 @@ class LogFormatter(logging.Formatter):
 
         try:
             formatted_record += logging.Formatter.format(self, record)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             try:
                 record.msg = record.msg.encode('string_escape')
                 formatted_record += logging.Formatter.format(self, record)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 record.msg = 'Unreadable'
                 formatted_record += logging.Formatter.format(self, record)
 

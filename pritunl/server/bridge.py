@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.exceptions import *
 from pritunl import settings
 from pritunl import logger
@@ -256,10 +256,10 @@ def add_interface(network, interface):
             bridge = Bridge(network)
             try:
                 bridge.start()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 try:
                     bridge.stop()
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     pass
                 raise
         _bridges[network] = bridge

@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -84,7 +84,7 @@ def _check_thread():
             run_timeout_queues()
         except GeneratorExit:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in queue check thread', 'runners')
 
         yield interrupter_sleep(settings.mongo.queue_ttl)
@@ -114,7 +114,7 @@ def _runner_thread(cpu_priority, thread_limit, runner_queue):
                                       args=(queue_item, thread_limit))
             thread.daemon = True
             thread.start()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in runner thread', 'runners')
             time.sleep(0.5)
 

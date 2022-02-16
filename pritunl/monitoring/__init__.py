@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0611
+# pylama:ignore=W0611
 from pritunl.monitoring.utils import get_servers
 
 from pritunl import settings
@@ -56,7 +56,7 @@ def write_queue():
         try:
             write_api = client.write_api(write_options=_write_options)
             write_api.write(bucket=_cur_influxdb_bucket, record=queue)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             _queue_lock.acquire()
             try:
                 _queue = queue + _queue
@@ -115,7 +115,7 @@ def connect():
 def init():
     try:
         connect()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('InfluxDB initial connection error',
                          'monitoring',
                          influxdb_uri=settings.app.influxdb_uri,

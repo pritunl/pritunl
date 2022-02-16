@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import utils
@@ -38,7 +38,7 @@ def _logger_runner_thread():
 
         except GeneratorExit:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in log runner thread', 'runners')
             time.sleep(0.5)
 

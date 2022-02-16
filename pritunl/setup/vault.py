@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -49,7 +49,7 @@ def _vault_thread():
                 time.sleep(1)
                 process.kill()
             return
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in vault service', 'setup')
 
         yield interrupter_sleep(1)

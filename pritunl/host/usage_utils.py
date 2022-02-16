@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 from pritunl import utils
 from pritunl import logger
 
@@ -51,7 +51,7 @@ def get_proc_stat():
     try:
         with open('/proc/stat') as stat_file:
             return stat_file.readline().split()[1:]
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Failed to read proc stat', 'host')
 
 
@@ -61,7 +61,7 @@ def calc_cpu_usage(last_proc_stat, proc_stat):
             proc_stat, last_proc_stat)]
         total = sum(deltas)
         return float(total - deltas[3]) / total
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Failed to calculate cpu usage', 'host')
     return 0
 
@@ -70,6 +70,6 @@ def get_mem_usage():
     try:
         free = utils.check_output_logged(['free']).split()
         return float(free[8]) / float(free[7])
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Failed to get memory usage', 'host')
     return 0

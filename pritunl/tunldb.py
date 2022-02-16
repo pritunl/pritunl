@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 import queue
 import time
 import collections
@@ -486,7 +486,7 @@ class TunlDB(object):
                     'commit_log': commit_log,
                 }))
             os.rename(temp_path, self._path)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             try:
                 os.remove(temp_path)
             except OSError:

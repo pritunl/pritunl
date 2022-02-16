@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W391
+# pylama:ignore=W391
 from pritunl import utils
 from pritunl import logger
 
@@ -136,6 +136,6 @@ def setup_clean():
                 ], shell=True)
             except subprocess.CalledProcessError:
                 pass
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Server clean failed', 'setup')
 

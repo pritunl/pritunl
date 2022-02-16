@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import settings
@@ -348,12 +348,12 @@ class Vxlan(object):
                                         'dev',
                                         self.iface_name,
                                     ])
-                                except:
+                                except:  # FIXME E722 do not use bare 'except' [pep8]
                                     break
                                 time.sleep(0.5)
                         else:
                             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.error('Failed to add vxlan host', 'vxlan',
                          vxlan_id=self.vxlan_id,
                          server_id=self.server_id,

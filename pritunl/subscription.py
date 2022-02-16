@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl.exceptions import *
@@ -70,7 +70,7 @@ def update():
                 settings.local.sub_balance = data.get('balance')
                 settings.local.sub_url_key = data.get('url_key')
                 settings.local.sub_styles[data['plan']] = data['styles']
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 if i < 1:
                     logger.exception('Failed to check subscription status',
                                      'subscription, retrying...')

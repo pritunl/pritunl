@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -177,7 +177,7 @@ class User(mongo.MongoObject):
     def journal_data(self):
         try:
             data = self.org.journal_data
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             data = {}
 
         data.update({
@@ -318,7 +318,7 @@ class User(mongo.MongoObject):
         # If assign ip addr fails it will be corrected in ip sync task
         try:
             self.assign_ip_addr()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to assign users ip address', 'user',
                              org_id=self.org.id,
                              user_id=self.id,
@@ -410,7 +410,7 @@ class User(mongo.MongoObject):
                         self.commit('groups')
 
                 return True
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Google auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,
@@ -457,7 +457,7 @@ class User(mongo.MongoObject):
                         self.commit('groups')
 
                 return True
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Azure auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,
@@ -504,7 +504,7 @@ class User(mongo.MongoObject):
                         self.commit('groups')
 
                 return True
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Auth0 auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,
@@ -535,7 +535,7 @@ class User(mongo.MongoObject):
                     return False
 
                 return True
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Slack auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,
@@ -548,7 +548,7 @@ class User(mongo.MongoObject):
 
             try:
                 return sso.auth_onelogin(self.name)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('OneLogin auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,
@@ -561,7 +561,7 @@ class User(mongo.MongoObject):
 
             try:
                 return sso.auth_jumpcloud(self.name)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('JumpCloud auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,
@@ -574,7 +574,7 @@ class User(mongo.MongoObject):
 
             try:
                 return sso.auth_okta(self.name)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Okta auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,
@@ -583,7 +583,7 @@ class User(mongo.MongoObject):
         elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in sso_mode:
             try:
                 return sso.verify_radius(self.name, password)[0]
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Radius auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,
@@ -596,7 +596,7 @@ class User(mongo.MongoObject):
                     password=password,
                     remote_ip=remote_ip,
                 )[1]
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Plugin auth check error', 'user',
                                  user_id=self.id,
                                  user_name=self.name,

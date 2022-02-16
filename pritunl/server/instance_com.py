@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.server.listener import *
 
 from pritunl.constants import *
@@ -272,10 +272,10 @@ class ServerInstanceCom(object):
                     return
         except GeneratorExit:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             try:
                 self.push_output('ERROR Management rate thread error')
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 pass
             logger.exception('Error in management rate thread', 'server',
                              server_id=self.server.id,
@@ -310,14 +310,14 @@ class ServerInstanceCom(object):
                         continue
                     try:
                         self.parse_line(line)
-                    except:
+                    except:  # FIXME E722 do not use bare 'except' [pep8]
                         logger.exception('Failed to parse line from vpn com',
                                          'server',
                                          server_id=self.server.id,
                                          instance_id=self.instance.id,
                                          line=line,
                                          )
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             if not self.instance.sock_interrupt:
                 self.push_output('ERROR Management socket exception')
                 logger.exception('Error in management socket thread',
@@ -357,7 +357,7 @@ class ServerInstanceCom(object):
                     }
 
                     self.clients.connect(client)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in stress thread', 'server',
                              server_id=self.server.id,
                              instance_id=self.instance.id,

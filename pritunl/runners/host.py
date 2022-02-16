@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -63,7 +63,7 @@ def _keep_alive_thread():
 
             try:
                 open_file_count = len(os.listdir('/proc/self/fd'))
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 open_file_count = 0
 
             cpu_usage = None
@@ -73,7 +73,7 @@ def _keep_alive_thread():
             device_count = host.global_clients.count({})
             try:
                 cpu_usage, mem_usage = utils.get_process_cpu_mem()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to get process cpu and mem usage',
                                  'runners',
                                  host_id=settings.local.host_id,
@@ -157,7 +157,7 @@ def _keep_alive_thread():
         except GeneratorExit:
             host.deinit()
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in host keep alive update', 'runners',
                              host_id=settings.local.host_id,
                              host_name=settings.local.host.name,

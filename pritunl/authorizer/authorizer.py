@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import logger
@@ -107,7 +107,7 @@ class Authorizer(object):
             self._check_call(self._auth_plugins)
             self._check_call(self._check_push)
             self._callback(True)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             pass
 
     def has_challenge(self):
@@ -147,7 +147,7 @@ class Authorizer(object):
             raise
         except AuthForked:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Exception in user authorize', 'authorize')
             self._callback(False, 'Unknown error occurred')
             raise
@@ -163,7 +163,7 @@ class Authorizer(object):
             )
             try:
                 self._check_call(self._update_token)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 return
 
         self.callback(allow, reason)
@@ -1141,7 +1141,7 @@ class Authorizer(object):
             try:
                 self._check_call(self._auth_push_thread)
                 self._callback(True)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 pass
 
         thread = threading.Thread(target=thread_func)

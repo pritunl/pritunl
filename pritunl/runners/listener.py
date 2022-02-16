@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import listener
 from pritunl import logger
@@ -34,12 +34,12 @@ def listener_thread():
                                     'runners',
                                     size=size,
                                 )
-                    except:
+                    except:  # FIXME E722 do not use bare 'except' [pep8]
                         logger.exception('Error in listener callback',
                                          'runners')
         except GeneratorExit:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in listener thread', 'runners')
             time.sleep(0.3)
 

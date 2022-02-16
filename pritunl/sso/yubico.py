@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 from pritunl import settings
 from pritunl import logger
 from pritunl import mongo
@@ -31,7 +31,7 @@ def auth_yubico(yubikey):
     try:
         if client.verify(yubikey) is not True:
             return False, None
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Yubico authentication error', 'sso')
         return False, None
 

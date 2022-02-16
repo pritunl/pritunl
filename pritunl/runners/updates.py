@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -33,7 +33,7 @@ def _check_updates():
             settings.local.www_state = str(data.get('www', OK))
             settings.local.web_state = str(data.get('web', OK))
             settings.local.vpn_state = str(data.get('vpn', OK))
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to check notifications', 'runners')
 
         utils.sync_public_ip()

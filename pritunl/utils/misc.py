@@ -1,4 +1,4 @@
-# pylama:ignore=E722,E741,W0401,W0404,W0611
+# pylama:ignore=E741,W0401,W0404,W0611
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -253,7 +253,7 @@ def check_call_silent(*args, **kwargs):
 def find_caller():
     try:
         raise Exception
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         f = sys.exc_info()[2].tb_frame.f_back
 
     if f is not None:
@@ -352,7 +352,7 @@ def check_iptables_wait():
         subprocess.check_call(['iptables', '--wait', '-L', '-n'],
                               stdout=_null, stderr=_null)
         return True
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
     return False
 
@@ -500,7 +500,7 @@ def sync_public_ip(attempts=1, timeout=5):
             response = urllib.request.urlopen(request, timeout=timeout)
             settings.local.public_ip = str(json.load(response)['ip'])
             break
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             pass
 
     if not settings.app.dedicated:
@@ -510,7 +510,7 @@ def sync_public_ip(attempts=1, timeout=5):
             request.add_header('User-Agent', 'pritunl')
             response = urllib.request.urlopen(request, timeout=timeout)
             settings.local.public_ip6 = str(json.load(response)['ip'])
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             pass
 
         if not settings.local.public_ip:
@@ -566,7 +566,7 @@ def check_openvpn_ver():
 
         if version[0] == 2 and version[1] == 3 and version[2] > 2:
             return True
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         from pritunl import logger
         logger.exception('Failed to check openvpn version', 'utils')
 

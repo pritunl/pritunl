@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.plugins.utils import *
 from pritunl.plugins import example
 
@@ -69,7 +69,7 @@ def _event(event_type, **kwargs):
     for handler in _handlers[event_type]:
         try:
             handler(**kwargs)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in plugin handler', 'plugins',
                              handler=event_type,
                              )

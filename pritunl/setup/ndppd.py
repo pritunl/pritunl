@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import logger
@@ -98,7 +98,7 @@ def _ndppd_thread():
                     try:
                         output = process.stdout.readall()
                         output += process.stderr.readall()
-                    except:
+                    except:  # FIXME E722 do not use bare 'except' [pep8]
                         pass
 
                     if check_global_interrupt():
@@ -122,12 +122,12 @@ def _ndppd_thread():
                 time.sleep(1)
                 process.kill()
             return
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in ndppd service', 'setup')
         finally:
             try:
                 os.remove(conf_path)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 pass
 
         yield interrupter_sleep(1)

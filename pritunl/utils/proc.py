@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.constants import *
 
 import subprocess
@@ -45,7 +45,7 @@ class Process(object):
             self._return_code = return_code
 
             self._event.set()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Popen exception', 'utils',
                              cmd=cmd,
                              )
@@ -68,7 +68,7 @@ class Process(object):
                          )
             try:
                 self._process.kill()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 pass
 
             raise subprocess.CalledProcessError(-99, cmd, output='')

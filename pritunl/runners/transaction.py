@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -28,7 +28,7 @@ def _check_thread():
                 try:
                     tran = transaction.Transaction(doc=doc)
                     tran.run()
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     logger.exception('Failed to run transaction', 'runners',
                                      transaction_id=doc['_id'],
                                      )
@@ -36,7 +36,7 @@ def _check_thread():
             yield interrupter_sleep(settings.mongo.tran_ttl)
         except GeneratorExit:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in transaction runner thread', 'runners')
             time.sleep(0.5)
 

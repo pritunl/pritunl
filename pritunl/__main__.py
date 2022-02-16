@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 import pritunl
 
 import optparse
@@ -352,7 +352,7 @@ def main(default_conf=None):
         for svr in server.iter_servers():
             try:
                 svr.ip_pool.sync_ip_pool()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to sync server IP pool', 'tasks',
                                  server_id=svr.id,
                                  )

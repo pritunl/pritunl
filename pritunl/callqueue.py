@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import logger
 
@@ -28,7 +28,7 @@ class CallQueue(object):
             return True
         except queue.Empty:
             return False
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in queued called', 'callqueue')
 
     def _thread(self):

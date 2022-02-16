@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 from pritunl import settings
 from pritunl import logger
 from pritunl import server
@@ -26,7 +26,7 @@ def _on_msg(msg):
             time.sleep(0.1)
 
         svr.run(send_events=msg.get('send_events'))
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Failed to run server', 'runners')
 
 

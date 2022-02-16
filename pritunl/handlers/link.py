@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import app
@@ -101,7 +101,7 @@ def link_post():
                 link_id=lnk.id,
             )
             loc.commit()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             lnk.remove()
             raise
 

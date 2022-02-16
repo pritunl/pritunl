@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401,W0612
+# pylama:ignore=W0401,W0612
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -29,7 +29,7 @@ def get_instance_id():
             return
 
         return resp.content
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
 
 
@@ -146,12 +146,12 @@ def add_vpc_route(network):
                 response = ec2_conn.create_route(**params)
                 if not response['Return']:
                     raise ValueError('Invalid response')
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 ec2_conn.replace_route(**params)
         else:
             try:
                 ec2_conn.replace_route(**params)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 response = ec2_conn.create_route(**params)
                 if not response['Return']:
                     raise ValueError('Invalid response')

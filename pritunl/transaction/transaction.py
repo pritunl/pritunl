@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.transaction.collection import TransactionCollection
 
 from pritunl.constants import *
@@ -157,7 +157,7 @@ class Transaction(mongo.MongoObject):
 
         try:
             self._run_actions()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error occurred running ' +
                              'transaction actions', 'transaction',
                              transaction_id=self.id,
@@ -203,7 +203,7 @@ class Transaction(mongo.MongoObject):
 
         try:
             self._rollback_actions()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error occurred rolling back ' +
                              'transaction actions', 'transaction',
                              transaction_id=self.id,
@@ -235,7 +235,7 @@ class Transaction(mongo.MongoObject):
 
         try:
             self._run_post_actions()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error occurred running ' +
                              'transaction post actions', 'transaction',
                              transaction_id=self.id,
@@ -271,5 +271,5 @@ class Transaction(mongo.MongoObject):
 
         try:
             self.run_actions(False)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             pass

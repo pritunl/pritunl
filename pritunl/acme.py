@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 from pritunl import settings
 from pritunl import utils
 from pritunl import mongo
@@ -54,11 +54,11 @@ def get_acme_cert(account_key, csr):
 
     try:
         os.remove(account_key_path)
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
     try:
         os.remove(csr_path)
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
 
     return certificate

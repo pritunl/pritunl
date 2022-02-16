@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401,W0404,W0611,W0621
+# pylama:ignore=W0401,W0404,W0611,W0621
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -1066,7 +1066,7 @@ def key_wg_post(org_id, user_id, server_id):
             raise ValueError('Invalid length')
         client_wg_public_key = base64.b64encode(
             client_wg_public_key).decode()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         journal.entry(
             journal.USER_WG_FAILURE,
             usr.journal_data,
@@ -1365,7 +1365,7 @@ def key_wg_put(org_id, user_id, server_id):
             raise ValueError('Invalid length')
         client_wg_public_key = base64.b64encode(
             client_wg_public_key).decode()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         journal.entry(
             journal.USER_WG_FAILURE,
             usr.journal_data,

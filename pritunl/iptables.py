@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0611
+# pylama:ignore=W0611
 from pritunl import utils
 from pritunl import logger
 from pritunl import settings
@@ -11,7 +11,7 @@ import collections
 try:
     import iptc
     LIB_IPTABLES = True
-except:
+except:  # FIXME E722 do not use bare 'except' [pep8]
     LIB_IPTABLES = False
 
 _global_lock = threading.Lock()
@@ -1239,7 +1239,7 @@ class Iptables(object):
             chain = iptc.Chain(table, rule[0])
             try:
                 chain.delete_rule(rule[1])
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 pass
             return True
         finally:
@@ -1256,7 +1256,7 @@ class Iptables(object):
                         ['ip6tables' if ipv6 else 'iptables', '-I'] + rule,
                     ).run(15)
                     break
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     if i == 2:
                         raise
                     logger.error(
@@ -1301,7 +1301,7 @@ class Iptables(object):
                 try:
                     chain.insert_rule(rule[1])
                     break
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     if i == 2:
                         raise
                     logger.error(
@@ -1324,7 +1324,7 @@ class Iptables(object):
                         ['ip6tables' if ipv6 else 'iptables', '-A'] + rule,
                     ).run(15)
                     break
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     if i == 2:
                         raise
                     logger.error(
@@ -1369,7 +1369,7 @@ class Iptables(object):
                 try:
                     chain.append_rule(rule[1])
                     break
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     if i == 2:
                         raise
                     logger.error(

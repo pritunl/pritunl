@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.exceptions import *
 from pritunl import settings
 
@@ -53,7 +53,7 @@ def send_email(to_addr, subject, text_body, html_body):
         raise EmailAuthInvalid('Email auth is invalid')
     except smtplib.SMTPSenderRefused:
         raise EmailAuthInvalid('Email from address refused')
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Unknown smtp error', 'utils',
                          from_addr=email_from,
                          to_addr=to_addr,

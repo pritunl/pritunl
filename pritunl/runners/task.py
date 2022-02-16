@@ -1,4 +1,4 @@
-# pylama:ignore=E722,,W0401,W0611
+# pylama:ignore=,W0401,W0611
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -41,7 +41,7 @@ def run_thread():
     try:
         for task_cls in task.tasks_on_start:
             run_task(task_cls())
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Error running on start tasks', 'runners')
 
     while True:
@@ -64,7 +64,7 @@ def run_thread():
                                         run_task(tsk)
                                 else:
                                     run_task(tsk)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in tasks run thread', 'runners')
 
         time.sleep(0.5)
@@ -93,7 +93,7 @@ def check_thread():
                 }})
                 if response['updatedExisting']:
                     run_task(task_item)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in task check thread', 'runners')
 
         yield interrupter_sleep(settings.mongo.task_ttl)

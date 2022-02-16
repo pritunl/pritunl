@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.helpers import *
 from pritunl.setup.clean import setup_clean
 from pritunl.setup.local import setup_local
@@ -67,7 +67,7 @@ def setup_all():
                 'Open file ulimit is lower then recommended',
                 'setup',
             )
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Pritunl setup failed', 'setup')
         set_global_interrupt()
         raise
@@ -79,7 +79,7 @@ def setup_db():
     try:
         setup_logger()
         setup_mongo()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         from pritunl import logger
         logger.exception('Pritunl setup failed', 'setup')
         raise
@@ -92,7 +92,7 @@ def setup_db_host():
         setup_logger()
         setup_mongo()
         setup_host()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         from pritunl import logger
         logger.exception('Pritunl setup failed', 'setup')
         raise
@@ -103,7 +103,7 @@ def setup_loc():
 
     try:
         setup_logger()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         from pritunl import logger
         logger.exception('Pritunl setup failed', 'setup')
         raise

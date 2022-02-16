@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -146,7 +146,7 @@ class ServerInstanceLink(object):
                             label=self.output_label,
                             link_server_id=self.linked_server.id,
                         )
-                    except:
+                    except:  # FIXME E722 do not use bare 'except' [pep8]
                         logger.exception('Failed to push link vpn ' +
                                          'output', 'server',
                                          server_id=self.server.id,

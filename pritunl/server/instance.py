@@ -1,4 +1,4 @@
-# pylama:ignore=E125,E722,W0401
+# pylama:ignore=E125,W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
@@ -118,7 +118,7 @@ class ServerInstance(object):
 
                 try:
                     instance.stop_process()
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     logger.exception(
                         'Failed to stop duplicate instance', 'server',
                         server_id=self.server.id,
@@ -925,7 +925,7 @@ class ServerInstance(object):
 
             try:
                 self.server.output.push_output(line.decode())
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to push vpn output', 'server',
                                  server_id=self.server.id,
                                  )
@@ -946,7 +946,7 @@ class ServerInstance(object):
 
             try:
                 self.server.output.push_output(line.decode())
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to push vpn output', 'server',
                                  server_id=self.server.id,
                                  )
@@ -993,7 +993,7 @@ class ServerInstance(object):
                     pass
         except GeneratorExit:
             self.stop_process()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Exception in messaging thread', 'server',
                              server_id=self.server.id,
                              )
@@ -1042,7 +1042,7 @@ class ServerInstance(object):
                     yield
                 except GeneratorExit:
                     self.stop_process()
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     error_count += 1
                     if error_count >= 10 and self.stop_process():
                         logger.exception(
@@ -1121,7 +1121,7 @@ class ServerInstance(object):
                     yield
                 except GeneratorExit:
                     self.stop_process()
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     error_count += 1
                     if error_count >= 10 and self.stop_process():
                         logger.exception(
@@ -1172,7 +1172,7 @@ class ServerInstance(object):
                     yield
                 except GeneratorExit:
                     pass
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     logger.exception(
                         'Failed to update route advertisement',
                         'server',
@@ -1199,7 +1199,7 @@ class ServerInstance(object):
                 if self.interrupter_sleep(
                         settings.vpn.iptables_update_rate):
                     return
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Error in iptables thread', 'server',
                                  server_id=self.server.id,
                                  )
@@ -1282,7 +1282,7 @@ class ServerInstance(object):
             self.route_advertisements.add(ra_id)
         except pymongo.errors.DuplicateKeyError:
             return
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to add vpc route', 'server',
                              server_id=self.server.id,
                              instance_id=self.id,
@@ -1573,7 +1573,7 @@ class ServerInstance(object):
 
                     if self.is_interrupted():
                         return
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     logger.exception('Failed to setup server vxlan', 'vxlan',
                                      server_id=self.server.id,
                                      instance_id=self.id,
@@ -1773,10 +1773,10 @@ class ServerInstance(object):
                 logger.LogEntry(
                     message='Server stopped unexpectedly "%s".' % (
                         self.server.name))
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             try:
                 self.stop_process()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Server stop error', 'server',
                                  server_id=self.server.id,
                                  instance_id=self.id,
@@ -1795,7 +1795,7 @@ class ServerInstance(object):
 
             try:
                 self.bridge_stop()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to remove server bridge', 'server',
                                  server_id=self.server.id,
                                  instance_id=self.id,
@@ -1803,7 +1803,7 @@ class ServerInstance(object):
 
             try:
                 self.iptables.clear_rules()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Server iptables clean up error', 'server',
                                  server_id=self.server.id,
                                  instance_id=self.id,
@@ -1812,7 +1812,7 @@ class ServerInstance(object):
             try:
                 if self.server.wg:
                     self.iptables_wg.clear_rules()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Server iptables clean up error', 'server',
                                  server_id=self.server.id,
                                  instance_id=self.id,
@@ -1821,7 +1821,7 @@ class ServerInstance(object):
             if self.vxlan:
                 try:
                     self.vxlan.stop()
-                except:
+                except:  # FIXME E722 do not use bare 'except' [pep8]
                     logger.exception('Failed to stop server vxlan', 'server',
                                      server_id=self.server.id,
                                      instance_id=self.id,
@@ -1830,7 +1830,7 @@ class ServerInstance(object):
             try:
                 if self.server.wg:
                     self.stop_wg()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Server wg clean up error', 'server',
                                  server_id=self.server.id,
                                  instance_id=self.id,
@@ -1851,7 +1851,7 @@ class ServerInstance(object):
                     },
                 })
                 utils.rmtree(self._temp_path)
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Server clean up error', 'server',
                                  server_id=self.server.id,
                                  instance_id=self.id,
@@ -1859,7 +1859,7 @@ class ServerInstance(object):
 
             try:
                 self.resources_release()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to release resources', 'server',
                                  server_id=self.server.id,
                                  instance_id=self.id,

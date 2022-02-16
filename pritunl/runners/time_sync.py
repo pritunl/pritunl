@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import utils
 from pritunl import logger
@@ -11,7 +11,7 @@ def _time_sync_thread():
     while True:
         try:
             utils.sync_time()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to sync time', 'runners')
             yield interrupter_sleep(300)
             continue

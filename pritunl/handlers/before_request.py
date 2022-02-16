@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import app
@@ -22,5 +22,5 @@ def parse_object_id(_, values):
                 if len(val) > 10:
                     try:
                         values[key] = database.ObjectIdSilent(val)
-                    except:
+                    except:  # FIXME E722 do not use bare 'except' [pep8]
                         values[key] = None

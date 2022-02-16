@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import logger
 from pritunl import journal
@@ -57,7 +57,7 @@ def _journal_runner_thread():
 
         except GeneratorExit:
             raise
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Error in journal runner thread', 'runners')
             time.sleep(1)
 

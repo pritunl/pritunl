@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -170,7 +170,7 @@ def _run_server(restart):
             ['id', '-Z'],
             stderr=subprocess.PIPE,
         ).decode().strip()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         context = 'none'
 
     journal.entry(
@@ -257,14 +257,14 @@ def _run_server(restart):
         raise
     except ServerStop:
         return
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Server error occurred', 'app')
         raise
     finally:
         process_state = False
         try:
             process.kill()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             pass
 
 

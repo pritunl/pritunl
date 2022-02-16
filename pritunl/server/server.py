@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
@@ -1453,7 +1453,7 @@ class Server(mongo.MongoObject):
         try:
             self.tls_auth_process = subprocess.Popen(args,
                                                      stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             utils.rmtree(self.tls_auth_temp_path)
             raise
 
@@ -1632,7 +1632,7 @@ class Server(mongo.MongoObject):
                     raise ServerStartError('Server start timed out', {
                         'server_id': self.id,
                     })
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             self.publish('force_stop')
             self.collection.update({
                 '_id': self.id,

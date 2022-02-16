@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import utils
@@ -994,7 +994,7 @@ def settings_put():
         try:
             acme.update_acme_cert()
             app.update_server(0.5)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to get LetsEncrypt cert', 'handler',
                              acme_domain=settings.app.acme_domain,
                              )

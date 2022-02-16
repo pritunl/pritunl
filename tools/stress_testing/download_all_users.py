@@ -1,4 +1,4 @@
-# pylama:ignore=E402,E722
+# pylama:ignore=E402
 BASE_URL = 'https://sn0.pritunl.net'
 API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
 API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'
@@ -43,7 +43,7 @@ assert(response.status_code == 200)
 
 try:
     os.makedirs('test_client/confs')
-except:
+except:  # FIXME E722 do not use bare 'except' [pep8]
     pass
 
 for user in response.json():

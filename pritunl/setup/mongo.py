@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import app
 from pritunl import settings
@@ -40,12 +40,12 @@ def upsert_index(coll_name, index, **kwargs):
 
     try:
         coll.create_index(index, **kwargs)
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         try:
             keys = pymongo.helpers._index_list(index)
             name = pymongo.helpers._gen_index_name(keys)
             coll.drop_index(name)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             pass
         coll.create_index(index, **kwargs)
 
@@ -55,7 +55,7 @@ def drop_index(coll, index, **kwargs):
         keys = pymongo.helpers._index_list(index)
         name = pymongo.helpers._gen_index_name(keys)
         coll.drop_index(name)
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
 
 
@@ -305,7 +305,7 @@ def upsert_indexes():
 
     try:
         clean_indexes()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
 
         logger.exception('Failed to clean indexes', 'setup')
 
@@ -459,7 +459,7 @@ def setup_mongo():
         try:
             utils.sync_time()
             break
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to sync time', 'setup')
             time.sleep(30)
 

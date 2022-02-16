@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
@@ -63,7 +63,7 @@ class LogView(object):
                     self.log_colors.get(log_level), log_level,
                     log_msg,
                 )
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 pass
         return line
 

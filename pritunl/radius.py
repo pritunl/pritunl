@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E722,W0611
+# pylama:ignore=W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).
@@ -188,7 +188,7 @@ class RADIUS:
         except socket.error as x:  # SocketError
             try:
                 self.closesocket()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 pass
             raise SocketError(x)
 

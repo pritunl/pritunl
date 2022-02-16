@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.utils.misc import check_output_logged, get_temp_path
 from pritunl import settings
@@ -92,7 +92,7 @@ def generate_csr(private_key, domain):
 
     try:
         os.remove(private_key_path)
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         pass
 
     return csr

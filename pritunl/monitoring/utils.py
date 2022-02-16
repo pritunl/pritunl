@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 import urllib.parse
 
 def get_servers(uri):
@@ -19,7 +19,7 @@ def get_servers(uri):
         host, port = host.split(':', 1)
         try:
             port = int(port)
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             port = 0
 
         hosts.append((host, port))

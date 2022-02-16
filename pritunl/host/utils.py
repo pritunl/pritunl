@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.host.host import Host
 
 from pritunl.constants import *
@@ -136,21 +136,21 @@ def init():
 
     try:
         settings.local.host.hostname = socket.gethostname()
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         logger.exception('Failed to get hostname', 'host')
         settings.local.host.hostname = None
 
     if settings.conf.local_address_interface == 'auto':
         try:
             settings.local.host.auto_local_address = utils.get_local_address()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to get auto_local_address', 'host')
             settings.local.host.local_address = None
 
         try:
             settings.local.host.auto_local_address6 = \
                 utils.get_local_address6()
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to get auto_local_address6', 'host')
             settings.local.host.local_address6 = None
     else:
@@ -158,7 +158,7 @@ def init():
             settings.local.host.auto_local_address = \
                 utils.get_interface_address(
                     str(settings.conf.local_address_interface))
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to get auto_local_address', 'host',
                              interface=settings.conf.local_address_interface)
             settings.local.host.auto_local_address = None
@@ -167,7 +167,7 @@ def init():
             settings.local.host.auto_local_address6 = \
                 utils.get_interface_address6(
                     str(settings.conf.local_address_interface))
-        except:
+        except:  # FIXME E722 do not use bare 'except' [pep8]
             logger.exception('Failed to get auto_local_address6', 'host',
                              interface=settings.conf.local_address_interface)
             settings.local.host.auto_local_address6 = None

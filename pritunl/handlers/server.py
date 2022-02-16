@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -1351,7 +1351,7 @@ def server_operation_put(server_id, operation):
         elif operation == RESTART:
             svr.restart()
             logger.LogEntry(message='Restarted server "%s".' % svr.name)
-    except:
+    except:  # FIXME E722 do not use bare 'except' [pep8]
         event.Event(type=SERVERS_UPDATED)
         raise
 

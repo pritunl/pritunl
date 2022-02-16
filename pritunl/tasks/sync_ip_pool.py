@@ -1,4 +1,4 @@
-# pylama:ignore=E722
+# pylama:ignore
 from pritunl import task
 from pritunl import logger
 from pritunl import server
@@ -11,7 +11,7 @@ class TaskSyncIpPool(task.Task):
         for svr in server.iter_servers():
             try:
                 svr.ip_pool.sync_ip_pool()
-            except:
+            except:  # FIXME E722 do not use bare 'except' [pep8]
                 logger.exception('Failed to sync server IP pool', 'tasks',
                                  server_id=svr.id,
                                  task_id=self.id,
