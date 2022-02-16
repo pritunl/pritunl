@@ -1,4 +1,4 @@
-# pylama:ignore=E261,E0602
+# pylama:ignore=E0602
 import abc
 
 
@@ -30,7 +30,7 @@ class MongoDict(object):
         else:
             return cmp(self.data, dict)
 
-    __hash__ = None # Avoid Py3k warning
+    __hash__ = None  # Avoid Py3k warning
 
     def __len__(self):
         return len(self.data)

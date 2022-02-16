@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E261,E265,W0611
+# pylama:ignore=E265,W0611
 # Copyright Daniel Roesler, under MIT license, see LICENSE at github.com/diafygi/acme-tiny
 import argparse
 import subprocess
@@ -17,16 +17,16 @@ import logging
 from pritunl import settings
 from pritunl import logger
 try:
-    from urllib.request import urlopen, Request # Python 3
+    from urllib.request import urlopen, Request  # Python 3
 except ImportError:
-    from urllib.request import urlopen, Request # Python 2
+    from urllib.request import urlopen, Request  # Python 2
 
 #DEFAULT_CA = "https://acme-v02.api.letsencrypt.org" # DEPRECATED! USE DEFAULT_DIRECTORY_URL INSTEAD
 #DEFAULT_DIRECTORY_URL = "https://acme-v02.api.letsencrypt.org/directory"
 
 
 def get_crt(account_key, csr, set_acme, contact=None):
-    directory, acct_headers, alg, jwk = None, None, None, None # global variables
+    directory, acct_headers, alg, jwk = None, None, None, None  # global variables
 
     # helper functions - base64 encode for jose spec
     def _b64(b):
@@ -46,14 +46,14 @@ def get_crt(account_key, csr, set_acme, contact=None):
             resp = urlopen(Request(url, data=data, headers={"Content-Type": "application/jose+json", "User-Agent": "acme-tiny"}))
             resp_data, code, headers = resp.read().decode("utf8"), resp.getcode(), resp.headers
             try:
-                resp_data = json.loads(resp_data) # try to parse json results
+                resp_data = json.loads(resp_data)  # try to parse json results
             except ValueError:
-                pass # ignore json parsing errors
+                pass  # ignore json parsing errors
         except IOError as e:
             resp_data = e.read().decode("utf8") if hasattr(e, "read") else str(e)
             code, headers = getattr(e, "code", None), {}
         if depth < 100 and code == 400 and json.loads(resp_data)['type'] == "urn:ietf:params:acme:error:badNonce":
-            raise IndexError(resp_data) # allow 100 retrys for bad nonces
+            raise IndexError(resp_data)  # allow 100 retrys for bad nonces
         if code not in [200, 201, 204]:
             raise ValueError("{0}:\nUrl: {1}\nData: {2}\nResponse Code: {3}\nResponse: {4}".format(err_msg, url, data, code, resp_data))
         return resp_data, code, headers
@@ -70,7 +70,7 @@ def get_crt(account_key, csr, set_acme, contact=None):
         data = json.dumps({"protected": protected64, "payload": payload64, "signature": _b64(out)})
         try:
             return _do_request(url, data=data.encode('utf8'), err_msg=err_msg, depth=depth)
-        except IndexError: # retry bad nonces (they raise IndexError)
+        except IndexError:  # retry bad nonces (they raise IndexError)
             return _send_signed_request(url, payload, err_msg, depth=(depth + 1))
 
     # helper function - poll until complete
@@ -114,7 +114,7 @@ def get_crt(account_key, csr, set_acme, contact=None):
 
     # get the ACME directory of urls
     logger.info("Getting directory...")
-    directory_url = settings.app.acme_api_url # backwards compatibility with deprecated CA kwarg
+    directory_url = settings.app.acme_api_url  # backwards compatibility with deprecated CA kwarg
     directory, _, _ = _do_request(directory_url, err_msg="Error getting directory")
     logger.info("Directory found!")
 

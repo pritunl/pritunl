@@ -1,4 +1,4 @@
-# pylama:ignore=E261,W0401
+# pylama:ignore=W0401
 from pritunl.transaction.action import TransactionAction
 
 from pritunl.constants import *
@@ -12,11 +12,11 @@ class TransactionCollection(object):
 
     def append_action_set(self):
         data = [
-            self._collection_name, # collection_name
-            False, # bulk
-            [], # actions
-            [], # rollback_actions
-            [], # post_actions
+            self._collection_name,  # collection_name
+            False,  # bulk
+            [],  # actions
+            [],  # rollback_actions
+            [],  # post_actions
         ]
         self._action_sets.append(data)
         return data
