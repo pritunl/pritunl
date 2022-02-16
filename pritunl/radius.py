@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E701,E701,E711,E722,W0611
+# pylama:ignore=E711,E722,W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).
@@ -57,9 +57,16 @@ DEFAULT_RETRIES = 3
 DEFAULT_TIMEOUT = 5
 
 
-class Error(Exception): pass
-class NoResponse(Error): pass
-class SocketError(NoResponse): pass
+class Error(Exception):
+    pass
+
+
+class NoResponse(Error):
+    pass
+
+
+class SocketError(NoResponse):
+    pass
 
 
 def authenticate(username, password, secret, host='radius', port=1645):
@@ -179,8 +186,10 @@ class RADIUS:
                     return 0
 
         except socket.error as x:  # SocketError
-            try: self.closesocket()
-            except: pass
+            try:
+                self.closesocket()
+            except:
+                pass
             raise SocketError(x)
 
         raise NoResponse
@@ -197,20 +206,26 @@ if __name__ == '__main__':
     host = input("Host? (default = 'radius')")
     port = input('Port? (default = 1645) ')
 
-    if not host: host = 'radius'
+    if not host:
+        host = 'radius'
 
-    if port: port = int(port)
-    else: port = 1645
+    if port:
+        port = int(port)
+    else:
+        port = 1645
 
     secret = ''
-    while not secret: secret = getpass('RADIUS Secret? ')
+    while not secret:
+        secret = getpass('RADIUS Secret? ')
 
     r = RADIUS(secret, host, port)
 
     uname, passwd = None, None
 
-    while not uname:  uname = input("Username? ")
-    while not passwd: passwd = getpass("Password? ")
+    while not uname:
+        uname = input("Username? ")
+    while not passwd:
+        passwd = getpass("Password? ")
 
     if r.authenticate(uname, passwd):
         print("Authentication Succeeded")
