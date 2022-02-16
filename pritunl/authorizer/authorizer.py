@@ -328,10 +328,10 @@ class Authorizer(object):
 
         if self.user.disabled:
             self.user.audit_event('user_connection',
-                'User connection to "%s" denied. User is disabled' % (
-                    self.server.name),
-                remote_addr=self.remote_ip,
-            )
+                                  'User connection to "%s" denied. User is disabled' % (
+                                    self.server.name),
+                                  remote_addr=self.remote_ip,
+                                  )
             journal.entry(
                 journal.USER_CONNECT_FAILURE,
                 self.journal_data,
@@ -434,9 +434,9 @@ class Authorizer(object):
                 platforms = DESKTOP_PLATFORMS
             else:
                 logger.error('Unknown allowed devices option',
-                    'server',
-                    server_id=self.server.id,
-                    allowed_devices=self.server.allowed_devices,
+                             'server',
+                             server_id=self.server.id,
+                             allowed_devices=self.server.allowed_devices,
                              )
                 platforms = {}
 
@@ -575,11 +575,11 @@ class Authorizer(object):
                     event_long='Failed pin authentication',
                 )
                 self.user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'User failed pin authentication') % (
-                        self.server.name),
-                    remote_addr=self.remote_ip,
-                )
+                                      ('User connection to "%s" denied. ' +
+                                       'User failed pin authentication') % (
+                                       self.server.name),
+                                      remote_addr=self.remote_ip,
+                                      )
                 self.set_challenge(None, 'Enter Pin', False)
                 raise AuthError('Challenge pin')
 
@@ -676,11 +676,11 @@ class Authorizer(object):
 
                 if not allow:
                     self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed %s passcode authentication') % (
-                            self.server.name, label),
-                        remote_addr=self.remote_ip,
-                    )
+                                          ('User connection to "%s" denied. ' +
+                                           'User failed %s passcode authentication') % (
+                                           self.server.name, label),
+                                          remote_addr=self.remote_ip,
+                                          )
                     journal.entry(
                         journal.USER_CONNECT_FAILURE,
                         self.journal_data,
@@ -724,11 +724,11 @@ class Authorizer(object):
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
                 self.user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'User failed pin authentication') % (
-                        self.server.name),
-                    remote_addr=self.remote_ip,
-                )
+                                      ('User connection to "%s" denied. ' +
+                                       'User failed pin authentication') % (
+                                       self.server.name),
+                                      remote_addr=self.remote_ip,
+                                      )
                 journal.entry(
                     journal.USER_CONNECT_FAILURE,
                     self.journal_data,
@@ -809,11 +809,11 @@ class Authorizer(object):
 
                 if not valid:
                     self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed Yubico authentication') % (
-                            self.server.name),
-                        remote_addr=self.remote_ip,
-                    )
+                                          ('User connection to "%s" denied. ' +
+                                           'User failed Yubico authentication') % (
+                                           self.server.name),
+                                          remote_addr=self.remote_ip,
+                                          )
                     journal.entry(
                         journal.USER_CONNECT_FAILURE,
                         self.journal_data,
@@ -855,11 +855,11 @@ class Authorizer(object):
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
                 self.user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'User failed pin authentication') % (
-                        self.server.name),
-                    remote_addr=self.remote_ip,
-                )
+                                      ('User connection to "%s" denied. ' +
+                                       'User failed pin authentication') % (
+                                       self.server.name),
+                                      remote_addr=self.remote_ip,
+                                      )
                 journal.entry(
                     journal.USER_CONNECT_FAILURE,
                     self.journal_data,
@@ -932,11 +932,11 @@ class Authorizer(object):
             if not allow:
                 if not self.user.verify_otp_code(otp_code):
                     self.user.audit_event('user_connection',
-                        ('User connection to "%s" denied. ' +
-                         'User failed two-step authentication') % (
-                            self.server.name),
-                        remote_addr=self.remote_ip,
-                    )
+                                          ('User connection to "%s" denied. ' +
+                                           'User failed two-step authentication') % (
+                                           self.server.name),
+                                          remote_addr=self.remote_ip,
+                                          )
                     journal.entry(
                         journal.USER_CONNECT_FAILURE,
                         self.journal_data,
@@ -977,11 +977,11 @@ class Authorizer(object):
         if self.user.has_pin():
             if not self.user.check_pin(self.password):
                 self.user.audit_event('user_connection',
-                    ('User connection to "%s" denied. ' +
-                     'User failed pin authentication') % (
-                        self.server.name),
-                    remote_addr=self.remote_ip,
-                )
+                                      ('User connection to "%s" denied. ' +
+                                       'User failed pin authentication') % (
+                                       self.server.name),
+                                      remote_addr=self.remote_ip,
+                                      )
                 journal.entry(
                     journal.USER_CONNECT_FAILURE,
                     self.journal_data,
@@ -996,11 +996,11 @@ class Authorizer(object):
                 raise AuthError('Invalid pin')
         elif settings.user.pin_mode == PIN_REQUIRED:
             self.user.audit_event('user_connection',
-                ('User connection to "%s" denied. ' +
-                 'User does not have a pin set') % (
-                    self.server.name),
-                remote_addr=self.remote_ip,
-            )
+                                  ('User connection to "%s" denied. ' +
+                                   'User does not have a pin set') % (
+                                   self.server.name),
+                                  remote_addr=self.remote_ip,
+                                  )
             journal.entry(
                 journal.USER_CONNECT_FAILURE,
                 self.journal_data,
@@ -1016,11 +1016,11 @@ class Authorizer(object):
 
         if not self.user.sso_auth_check(self.password, self.remote_ip):
             self.user.audit_event('user_connection',
-                ('User connection to "%s" denied. ' +
-                 'Single sign-on authentication failed') % (
-                    self.server.name),
-                remote_addr=self.remote_ip,
-            )
+                                  ('User connection to "%s" denied. ' +
+                                   'Single sign-on authentication failed') % (
+                                   self.server.name),
+                                  remote_addr=self.remote_ip,
+                                  )
             journal.entry(
                 journal.USER_CONNECT_FAILURE,
                 self.journal_data,
@@ -1057,17 +1057,17 @@ class Authorizer(object):
 
         if self.user.bypass_secondary:
             logger.info('Bypass secondary enabled, skipping push', 'sso',
-                user_name=self.user.name,
-                org_name=self.user.org.name,
-                server_name=self.server.name,
+                        user_name=self.user.name,
+                        org_name=self.user.org.name,
+                        server_name=self.server.name,
                         )
             return
 
         if self.has_token:
             logger.info('Client authentication cached, skipping push', 'sso',
-                user_name=self.user.name,
-                org_name=self.user.org.name,
-                server_name=self.server.name,
+                        user_name=self.user.name,
+                        org_name=self.user.org.name,
+                        server_name=self.server.name,
                         )
             journal.entry(
                 journal.USER_CONNECT_CACHE,
@@ -1080,9 +1080,9 @@ class Authorizer(object):
 
         if self.whitelisted:
             logger.info('Client network whitelisted, skipping push', 'sso',
-                user_name=self.user.name,
-                org_name=self.user.org.name,
-                server_name=self.server.name,
+                        user_name=self.user.name,
+                        org_name=self.user.org.name,
+                        server_name=self.server.name,
                         )
             journal.entry(
                 journal.USER_CONNECT_WHITELIST,
@@ -1122,9 +1122,9 @@ class Authorizer(object):
                 })
 
                 logger.info('Authentication cached, skipping push', 'sso',
-                    user_name=self.user.name,
-                    org_name=self.user.org.name,
-                    server_name=self.server.name,
+                            user_name=self.user.name,
+                            org_name=self.user.org.name,
+                            server_name=self.server.name,
                             )
 
                 journal.entry(
@@ -1201,11 +1201,11 @@ class Authorizer(object):
 
         if not allow:
             self.user.audit_event('user_connection',
-                ('User connection to "%s" denied. ' +
-                 'Push authentication failed') % (
-                    self.server.name),
-                remote_addr=self.remote_ip,
-            )
+                                  ('User connection to "%s" denied. ' +
+                                   'Push authentication failed') % (
+                                   self.server.name),
+                                  remote_addr=self.remote_ip,
+                                  )
             journal.entry(
                 journal.USER_CONNECT_FAILURE,
                 self.journal_data,
