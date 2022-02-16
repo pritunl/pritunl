@@ -1,4 +1,4 @@
-# pylama:ignore=W0401,W0612
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import pooler
@@ -41,3 +41,4 @@ def fill_dh_params():
     for dh_param_bits in utils.roundrobin(*new_dh_params):
         que = queue.start('dh_params', dh_param_bits=dh_param_bits,
                           priority=LOW)
+        # FIXME W0612 local variable 'que' is assigned to but never used [pyflakes]

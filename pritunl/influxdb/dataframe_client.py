@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylama:ignore=W0612
+# pylama:ignore=
 # The MIT License (MIT)
 #
 # Copyright (c) 2013 InfluxDB
@@ -30,7 +30,7 @@ __all__ = ['DataFrameClient']
 try:
     import pandas
     del pandas
-except ImportError as err:
+except ImportError as err:  # FIXME W0612 local variable 'err' is assigned to but never used [pyflakes] - Possibly related to below FIXME
     from .client import InfluxDBClient
 
     class DataFrameClient(InfluxDBClient):

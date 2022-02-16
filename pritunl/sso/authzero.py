@@ -1,4 +1,4 @@
-# pylama:ignore=W0612
+# pylama:ignore=
 from pritunl import settings
 from pritunl import logger
 
@@ -73,7 +73,7 @@ def verify_authzero(user_name):
         if app_metadata:
             app_authorization = app_metadata.get('authorization')
             if app_authorization:
-                roles = app_authorization.get('roles')
+                roles = app_authorization.get('roles')  # FIXME W0612 local variable 'roles' is assigned to but never used [pyflakes]
                 groups = app_authorization.get('groups')
 
         break

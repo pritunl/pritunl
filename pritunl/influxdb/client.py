@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# pylama:ignore=W0612
+# pylama:ignore=
 # The MIT License (MIT)
 #
 # Copyright (c) 2013 InfluxDB
@@ -929,7 +929,7 @@ class InfluxDBClusterClient(object):
                 except InfluxDBClientError as e:
                     # Errors caused by user's requests, re-raise
                     raise e
-                except Exception as e:
+                except Exception:
                     # Errors that might caused by server failure, try another
                     bad_host = True
                     with self._hosts_lock:

@@ -1,4 +1,4 @@
-# pylama:ignore=W0401,W0612
+# pylama:ignore=W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -211,8 +211,8 @@ def get_zones():
             aws_secret_access_key=aws_secret,
         )
 
-        hosted_zone_id = None
-        hosted_zone_name = None
+        hosted_zone_id = None  # FIXME W0612 local variable 'hosted_zone_id' is assigned to but never used [pyflakes]
+        hosted_zone_name = None  # FIXME W0612 local variable 'hosted_zone_name' is assigned to but never used [pyflakes]
         hosted_zones = client.list_hosted_zones_by_name()
         for hosted_zone in hosted_zones['HostedZones']:
             zone_data.append(hosted_zone['Name'])

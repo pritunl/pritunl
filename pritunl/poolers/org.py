@@ -1,4 +1,4 @@
-# pylama:ignore=W0401,W0612
+# pylama:ignore=W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import pooler
@@ -25,3 +25,4 @@ def fill_org():
 
     for _ in range(settings.app.org_pool_size - org_pool_count):
         org = organization.new_org(type=ORG_POOL, block=False)
+        # FIXME W0612 local variable 'org' is assigned to but never used [pyflakes]
