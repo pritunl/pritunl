@@ -1,3 +1,4 @@
+# pylama:ignore=E0602
 import re
 import json
 import datetime

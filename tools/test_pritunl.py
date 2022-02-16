@@ -1,3 +1,4 @@
+# pylama:ignore=E0602
 import threading
 import unittest
 import requests

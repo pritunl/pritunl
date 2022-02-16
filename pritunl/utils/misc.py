@@ -1,4 +1,4 @@
-# pylama:ignore=E722,W0401,W0611,W0612
+# pylama:ignore=E722,E741,W0401,W0611,W0612
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -307,7 +307,7 @@ def generate_secret():
 
 
 def generate_secret_len(n):
-    # l = int(n*1.3)  # FIXME Flagged as E741 ambiguous variable name 'l', and upon changing, W0612 local variable is assigned to but never used
+    l = int(n*1.3)  # FIXME Flagged as E741 ambiguous variable name 'l', and upon changing, W0612 local variable is assigned to but never used
     for i in range(10):
         x = re.sub(r'[\W_]+', '', base64.b64encode(
             os.urandom(l)).decode())[:n]

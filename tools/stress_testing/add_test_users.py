@@ -1,4 +1,4 @@
-
+# pylama:ignore=E203,E0602
 import pymongo
 import bson
 
