@@ -1,4 +1,4 @@
-# pylama:ignore=E111,E502,E722,W0401
+# pylama:ignore=E111,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import mongo
@@ -56,7 +56,7 @@ class LogView(object):
                         '\033[1;91mTraceback (most recent call last):\033[0m',
                     )
 
-                return ('\033[1;%sm[%s]\033[0m\033[1m[%s]\033' + \
+                return ('\033[1;%sm[%s]\033[0m\033[1m[%s]\033' +
                         '[0m\033[1;%sm[%s]\033[0m%s') % (
                     self.host_colors[log_host], log_host,
                     log_time,

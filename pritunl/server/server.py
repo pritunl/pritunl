@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E502,E722,W0401
+# pylama:ignore=E122,E722,W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
@@ -1235,7 +1235,7 @@ class Server(mongo.MongoObject):
             org = next(self.iter_orgs())
         except StopIteration:
             self.stop()
-            raise ServerMissingOrg('Primary user cannot be created ' + \
+            raise ServerMissingOrg('Primary user cannot be created ' +
                                    'without any organizations', {
                                    'server_id': self.id,
                 })
@@ -1566,7 +1566,7 @@ class Server(mongo.MongoObject):
             return
 
         if not self.organizations:
-            raise ServerMissingOrg('Server cannot be started ' + \
+            raise ServerMissingOrg('Server cannot be started ' +
                                    'without any organizations', {
                                    'server_id': self.id,
                 })

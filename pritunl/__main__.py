@@ -1,4 +1,4 @@
-# pylama:ignore=E502,E722
+# pylama:ignore=E722
 import pritunl
 
 import optparse
@@ -93,7 +93,7 @@ def main(default_conf=None):
         setup.setup_db()
         username, password = auth.reset_password()
 
-        print('Administrator password successfully reset:\n' + \
+        print('Administrator password successfully reset:\n' +
               '  username: "%s"\n  password: "%s"' % (username, password))
 
         sys.exit(0)
@@ -107,7 +107,7 @@ def main(default_conf=None):
         if not password:
             print('No default password available, use reset-password')
         else:
-            print('Administrator default password:\n' + \
+            print('Administrator default password:\n' +
                   '  username: "%s"\n  password: "%s"' % (username, password))
 
         sys.exit(0)
@@ -192,8 +192,8 @@ def main(default_conf=None):
 
         print('%s.%s = %s' % (group_str, key_str,
               json.dumps(getattr(group, key_str), default=lambda x: str(x))))
-        print('Successfully updated configuration. This change is ' \
-              'stored in the database and has been applied to all hosts ' \
+        print('Successfully updated configuration. This change is '
+              'stored in the database and has been applied to all hosts '
               'in the cluster.')
 
         sys.exit(0)
@@ -217,8 +217,8 @@ def main(default_conf=None):
 
         print('%s.%s = %s' % (group_str, key_str,
               json.dumps(getattr(group, key_str), default=lambda x: str(x))))
-        print('Successfully updated configuration. This change is ' \
-              'stored in the database and has been applied to all hosts ' \
+        print('Successfully updated configuration. This change is '
+              'stored in the database and has been applied to all hosts '
               'in the cluster.')
 
         sys.exit(0)

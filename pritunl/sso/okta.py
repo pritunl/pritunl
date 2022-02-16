@@ -1,4 +1,4 @@
-# pylama:ignore=E401,E502
+# pylama:ignore=E401
 from pritunl import settings
 from pritunl import logger
 
@@ -68,7 +68,7 @@ def auth_okta(username):
 
     try:
         response = requests.get(
-            _getokta_url() + \
+            _getokta_url() +
             '/api/v1/apps/%s/users/%s' % (okta_app_id, user_id),
             headers={
                 'Accept': 'application/json',

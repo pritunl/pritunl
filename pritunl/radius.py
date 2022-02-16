@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E201,E221,E223,E231,E261,E502,E701,E701,E711,E722,W0611
+# pylama:ignore=E201,E221,E223,E231,E261,E701,E701,E711,E722,W0611
 '''
 Extremly basic RADIUS authentication. Bare minimum required to authenticate
 a user, yet remain RFC2138 compliant (I hope).
@@ -145,8 +145,8 @@ class RADIUS:
 
             encpass = self.radcrypt(authenticator,passwd)
 
-            msg = pack('!B B H 16s B B %ds B B %ds' \
-                       % (len(uname),len(encpass)),\
+            msg = pack('!B B H 16s B B %ds B B %ds'
+                       % (len(uname),len(encpass)),
                        1,id,
                        len(uname)+len(encpass) + 24, # Length of entire message
                        authenticator,

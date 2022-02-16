@@ -1,4 +1,4 @@
-# pylama:ignore=E251,E306,E502,E722,W0401
+# pylama:ignore=E251,E306,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -218,10 +218,10 @@ def _run_server(restart):
     process = subprocess.Popen(
         ['pritunl-web'],
         env=dict(os.environ, **{
-            'REVERSE_PROXY_HEADER': settings.app.reverse_proxy_header if \
+            'REVERSE_PROXY_HEADER': settings.app.reverse_proxy_header if
             settings.app.reverse_proxy else '',
-            'REVERSE_PROXY_PROTO_HEADER': \
-            settings.app.reverse_proxy_proto_header if \
+            'REVERSE_PROXY_PROTO_HEADER':
+            settings.app.reverse_proxy_proto_header if
             settings.app.reverse_proxy else '',
             'REDIRECT_SERVER': redirect_server,
             'BIND_HOST': settings.conf.bind_addr,

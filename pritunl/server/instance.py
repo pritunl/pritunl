@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E125,E502,E722,W0401
+# pylama:ignore=E122,E125,E722,W0401
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
@@ -617,7 +617,7 @@ class ServerInstance(object):
 
                     if not interface:
                         logger.info(
-                            'Failed to find interface for local ' + \
+                            'Failed to find interface for local ' +
                             'IPv6 network route, using default route',
                             'server',
                             server_id=self.server.id,
@@ -633,7 +633,7 @@ class ServerInstance(object):
 
                     if not interface:
                         logger.info(
-                            'Failed to find interface for local ' + \
+                            'Failed to find interface for local ' +
                             'network route, using default route',
                             'server',
                             server_id=self.server.id,
@@ -787,7 +787,7 @@ class ServerInstance(object):
 
                     if not interface:
                         logger.info(
-                            'Failed to find interface for local ' + \
+                            'Failed to find interface for local ' +
                             'IPv6 network route, using default route',
                             'server',
                             server_id=self.server.id,
@@ -803,7 +803,7 @@ class ServerInstance(object):
 
                     if not interface:
                         logger.info(
-                            'Failed to find interface for local ' + \
+                            'Failed to find interface for local ' +
                             'network route, using default route',
                             'server',
                             server_id=self.server.id,
@@ -1008,7 +1008,7 @@ class ServerInstance(object):
                 try:
                     doc = self.collection.find_and_modify({
                         '_id': self.server.id,
-                        'availability_group': \
+                        'availability_group':
                         settings.local.host.availability_group,
                         'instances.instance_id': self.id,
                     }, {'$set': {
@@ -1081,7 +1081,7 @@ class ServerInstance(object):
                 try:
                     doc = self.collection.find_and_modify({
                         '_id': self.server.id,
-                        'availability_group': \
+                        'availability_group':
                         settings.local.host.availability_group,
                         'instances.instance_id': self.id,
                     }, {'$set': {
@@ -1885,7 +1885,7 @@ class ServerInstance(object):
                 'instances': {
                     'instance_id': self.id,
                     'host_id': settings.local.host_id,
-                    'ping_timestamp': utils.now() + \
+                    'ping_timestamp': utils.now() +
                     datetime.timedelta(seconds=30),
                 },
             },

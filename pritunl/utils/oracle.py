@@ -1,4 +1,4 @@
-# pylama:ignore=E502,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -67,7 +67,7 @@ def oracle_add_route(dest_network):
 
     private_ips = vnet_client.list_private_ips(vnic_id=mdata['vnic_ocid'])
     if private_ips.status != 200:
-        raise RequestError('Oracle private ip bad status %s' % \
+        raise RequestError('Oracle private ip bad status %s' %
                            private_ips.status)
 
     private_ip_ocid = None

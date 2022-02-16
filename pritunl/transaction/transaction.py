@@ -1,4 +1,4 @@
-# pylama:ignore=E502,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.transaction.collection import TransactionCollection
 
 from pritunl.constants import *
@@ -132,7 +132,7 @@ class Transaction(mongo.MongoObject):
                 'state': PENDING,
             }, {
                 '$set': {
-                    'ttl_timestamp': utils.now() + \
+                    'ttl_timestamp': utils.now() +
                     datetime.timedelta(seconds=self.ttl),
                 },
                 '$inc': {
@@ -193,7 +193,7 @@ class Transaction(mongo.MongoObject):
             'state': ROLLBACK,
         }, {
             '$set': {
-                'ttl_timestamp': utils.now() + \
+                'ttl_timestamp': utils.now() +
                 datetime.timedelta(seconds=self.ttl),
             },
         })
@@ -225,7 +225,7 @@ class Transaction(mongo.MongoObject):
             'state': COMMITTED,
         }, {
             '$set': {
-                'ttl_timestamp': utils.now() + \
+                'ttl_timestamp': utils.now() +
                 datetime.timedelta(seconds=self.ttl),
             },
         })
@@ -263,7 +263,7 @@ class Transaction(mongo.MongoObject):
             'priority': self.priority,
             'lock_id': self.lock_id,
             'ttl': self.ttl,
-            'ttl_timestamp': utils.now() + \
+            'ttl_timestamp': utils.now() +
             datetime.timedelta(seconds=self.ttl),
             'attempts': 1,
             'actions': bson.Binary(actions_json_zlib),

@@ -1,4 +1,4 @@
-# pylama:ignore=E502,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import logger
@@ -222,7 +222,7 @@ class Authorizer(object):
         if not self.auth_nonce:
             self.user.audit_event(
                 'user_connection',
-                'User connection to "%s" denied. Auth data missing nonce' % \
+                'User connection to "%s" denied. Auth data missing nonce' %
                 self.server.name,
                 remote_addr=self.remote_ip,
             )
@@ -241,7 +241,7 @@ class Authorizer(object):
             self.user.audit_event(
                 'user_connection',
                 ('User connection to "%s" denied. ' +
-                    'Auth data missing timestamp') % \
+                    'Auth data missing timestamp') %
                 self.server.name,
                 remote_addr=self.remote_ip,
             )
@@ -260,7 +260,7 @@ class Authorizer(object):
                 settings.app.auth_time_window:
             self.user.audit_event(
                 'user_connection',
-                'User connection to "%s" denied. Auth timestamp expired' % \
+                'User connection to "%s" denied. Auth timestamp expired' %
                 self.server.name,
                 remote_addr=self.remote_ip,
             )
@@ -291,7 +291,7 @@ class Authorizer(object):
         except pymongo.errors.DuplicateKeyError:
             self.user.audit_event(
                 'user_connection',
-                'User connection to "%s" denied. Duplicate nonce' % \
+                'User connection to "%s" denied. Duplicate nonce' %
                 self.server.name,
                 remote_addr=self.remote_ip,
             )
@@ -640,7 +640,7 @@ class Authorizer(object):
                         self.journal_data,
                         self.user.journal_data,
                         self.server.journal_data,
-                        event_long='Authentication cached, ' + \
+                        event_long='Authentication cached, ' +
                         'skipping secondary passcode',
                     )
 
@@ -798,7 +798,7 @@ class Authorizer(object):
                         self.journal_data,
                         self.user.journal_data,
                         self.server.journal_data,
-                        event_long='Authentication cached, ' + \
+                        event_long='Authentication cached, ' +
                         'skipping Yubikey',
                     )
 
@@ -925,7 +925,7 @@ class Authorizer(object):
                         self.journal_data,
                         self.user.journal_data,
                         self.server.journal_data,
-                        event_long='Authentication cached, ' + \
+                        event_long='Authentication cached, ' +
                         'skipping OTP',
                     )
 

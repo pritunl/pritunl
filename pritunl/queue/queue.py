@@ -1,4 +1,4 @@
-# pylama:ignore=E502,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.queue.com import QueueCom
 
 from pritunl.constants import *
@@ -79,7 +79,7 @@ class Queue(mongo.MongoObject):
                 '_id': self.id,
                 'runner_id': self.runner_id,
             }, {'$set': {
-                'ttl_timestamp': utils.now() + \
+                'ttl_timestamp': utils.now() +
                 datetime.timedelta(seconds=self.ttl),
             }})
             if response['updatedExisting']:

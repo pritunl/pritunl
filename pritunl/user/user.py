@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E401,E502,E722,W0401
+# pylama:ignore=E122,E401,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -167,8 +167,8 @@ class User(mongo.MongoObject):
     @property
     def has_yubikey(self):
         return self.auth_type == YUBICO_AUTH or (
-            settings.app.sso and self.auth_type and \
-            YUBICO_AUTH in self.auth_type and \
+            settings.app.sso and self.auth_type and
+            YUBICO_AUTH in self.auth_type and
             YUBICO_AUTH in settings.app.sso)
 
     @property

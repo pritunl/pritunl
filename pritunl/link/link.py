@@ -1,4 +1,4 @@
-# pylama:ignore=E125,E502,W0401
+# pylama:ignore=E125,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -160,11 +160,11 @@ class Host(mongo.MongoObject):
             'backoff': self.backoff,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'static': bool(self.static),
-            'public_address': self.public_address if not \
+            'public_address': self.public_address if not
             settings.app.demo_mode else utils.random_ip_addr(),
-            'local_address': self.local_address if not \
+            'local_address': self.local_address if not
             settings.app.demo_mode else utils.random_ip_addr(),
-            'address6': self.address6 if not \
+            'address6': self.address6 if not
             settings.app.demo_mode else None,
             'version': self.version,
         }
@@ -180,11 +180,11 @@ class Host(mongo.MongoObject):
             'backoff': self.backoff,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'static': bool(self.static),
-            'public_address': self.public_address if not \
+            'public_address': self.public_address if not
             settings.app.demo_mode else utils.random_ip_addr(),
-            'local_address': self.local_address if not \
+            'local_address': self.local_address if not
             settings.app.demo_mode else utils.random_ip_addr(),
-            'address6': self.address6 if not \
+            'address6': self.address6 if not
             settings.app.demo_mode else None,
             'version': self.version,
             'uri': self.get_uri(),
@@ -363,8 +363,8 @@ class Host(mongo.MongoObject):
                         'id': other_location.id,
                         'static': active_host.static,
                         'pre_shared_key': self.link.key,
-                        'right': active_host.address6 \
-                        if self.link.ipv6 else \
+                        'right': active_host.address6
+                        if self.link.ipv6 else
                         active_host.public_address,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
@@ -425,8 +425,8 @@ class Host(mongo.MongoObject):
                         'id': location.id,
                         'static': active_host.static,
                         'pre_shared_key': self.link.key,
-                        'right': active_host.address6 \
-                        if self.link.ipv6 else \
+                        'right': active_host.address6
+                        if self.link.ipv6 else
                         active_host.public_address,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
@@ -496,7 +496,7 @@ class Host(mongo.MongoObject):
                 links.append({
                     'static': active_host.static,
                     'pre_shared_key': self.link.key,
-                    'right': active_host.address6 \
+                    'right': active_host.address6
                     if self.link.ipv6 else active_host.public_address,
                     'left_subnets': left_subnets,
                     'right_subnets': right_subnets,
@@ -553,7 +553,7 @@ class Host(mongo.MongoObject):
                     links.append({
                         'static': host.static,
                         'pre_shared_key': self.link.key,
-                        'right': host.address6 \
+                        'right': host.address6
                         if self.link.ipv6 else host.public_address,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,

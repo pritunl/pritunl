@@ -1,4 +1,4 @@
-# pylama:ignore=E401,E502
+# pylama:ignore=E401
 from pritunl import settings
 from pritunl import logger
 
@@ -8,7 +8,7 @@ import urllib.request, urllib.parse, urllib.error
 
 def _verify_azure_1(user_name):
     response = requests.post(
-        'https://login.microsoftonline.com/%s/oauth2/token' % \
+        'https://login.microsoftonline.com/%s/oauth2/token' %
         settings.app.sso_azure_directory_id,
         headers={
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -102,7 +102,7 @@ def _verify_azure_1(user_name):
 
 def _verify_azure_2(user_name):
     response = requests.post(
-        'https://login.microsoftonline.com/%s/oauth2/token' % \
+        'https://login.microsoftonline.com/%s/oauth2/token' %
         settings.app.sso_azure_directory_id,
         headers={
             'Content-Type': 'application/x-www-form-urlencoded',
