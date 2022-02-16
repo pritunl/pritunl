@@ -1,4 +1,4 @@
-# pylama:ignore=E127,E302,W0401
+# pylama:ignore=E302,W0401
 from pritunl.utils.misc import check_output_logged
 
 from pritunl.constants import *
@@ -340,7 +340,7 @@ def ip4to6x64(prefix, net, addr):
     net_hex = hex(net_num)
 
     addr6 = prefix + ':' + net_hex[2:6] + ':' + net_hex[6:10] + '::' + \
-            addrs[0] + ':' + addrs[1] + ':' + addrs[2] + ':' + addrs[3]
+        addrs[0] + ':' + addrs[1] + ':' + addrs[2] + ':' + addrs[3]
 
     return str(ipaddress.IPv6Address(addr6))
 

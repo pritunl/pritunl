@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E127,E231,E302,E303,E722,W0401
+# pylama:ignore=E122,E231,E302,E303,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import utils
@@ -2120,7 +2120,7 @@ class Clients(object):
                         continue
 
                     diff = settings.vpn.client_ttl - 150 - \
-                           (time.time() - client['timestamp'])
+                        (time.time() - client['timestamp'])
 
                     if diff > settings.vpn.client_ttl:
                         logger.error('Client ping time diff out of range',

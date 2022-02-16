@@ -1,4 +1,4 @@
-# pylama:ignore=E127,E302,E305
+# pylama:ignore=E302,E305
 from pritunl import task
 from pritunl import logger
 from pritunl import acme
@@ -18,7 +18,7 @@ class AcmeUpdate(task.Task):
         if settings.app.acme_timestamp and \
             settings.app.acme_key and \
                 utils.time_now() - settings.app.acme_timestamp < \
-                    settings.app.acme_renew:
+                settings.app.acme_renew:
             return
 
         logger.info(
