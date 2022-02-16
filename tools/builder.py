@@ -1,4 +1,4 @@
-# pylama:ignore=E305
+# pylama:ignore=
 import optparse
 import datetime
 import re
@@ -248,6 +248,7 @@ def aes_decrypt(passphrase, data):
     data = cipher.update(enc_data) + cipher.finalize()
 
     return data.decode('utf-8').replace('\x00', '')
+
 
 passphrase = getpass.getpass('Enter passphrase: ')
 

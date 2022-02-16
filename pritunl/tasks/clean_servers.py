@@ -1,4 +1,4 @@
-# pylama:ignore=E305,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import task
@@ -78,5 +78,6 @@ class TaskCleanServers(task.Task):
                         'server_id': {'$in': missing_links},
                     },
                 }})
+
 
 task.add_task(TaskCleanServers, hours=5, minutes=27)

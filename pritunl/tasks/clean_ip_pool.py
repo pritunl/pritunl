@@ -1,4 +1,4 @@
-# pylama:ignore=E305,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import task
@@ -80,5 +80,6 @@ class TaskCleanIpPool(task.Task):
                 'org_id': '',
                 'user_id': '',
             }})
+
 
 task.add_task(TaskCleanIpPool, hours=5, minutes=23)

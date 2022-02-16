@@ -1,4 +1,4 @@
-# pylama:ignore=E305
+# pylama:ignore=
 from pritunl import task
 from pritunl import logger
 from pritunl import acme
@@ -29,5 +29,6 @@ class AcmeUpdate(task.Task):
 
         acme.update_acme_cert()
         app.update_server()
+
 
 task.add_task(AcmeUpdate, hours=4, minutes=35, run_on_start=True)

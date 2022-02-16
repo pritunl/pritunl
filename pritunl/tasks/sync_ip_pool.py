@@ -1,4 +1,4 @@
-# pylama:ignore=E305,E722
+# pylama:ignore=E722
 from pritunl import task
 from pritunl import logger
 from pritunl import server
@@ -16,5 +16,6 @@ class TaskSyncIpPool(task.Task):
                                  server_id=svr.id,
                                  task_id=self.id,
                                  )
+
 
 task.add_task(TaskSyncIpPool, hours=4, minutes=7)

@@ -1,4 +1,4 @@
-# pylama:ignore=E305,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import task
@@ -28,5 +28,6 @@ class TaskCleanNetworkLinks(task.Task):
         self.user_net_link_collection.remove({
             'user_id': {'$in': list(user_ids_link - user_ids)},
         })
+
 
 task.add_task(TaskCleanNetworkLinks, hours=5, minutes=47)

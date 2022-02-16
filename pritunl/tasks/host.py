@@ -1,4 +1,4 @@
-# pylama:ignore=E305,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -71,5 +71,6 @@ class TaskHost(task.Task):
             raise
         except:
             logger.exception('Error checking host status', 'runners')
+
 
 task.add_task(TaskHost, seconds=range(0, 60, settings.app.host_ping))

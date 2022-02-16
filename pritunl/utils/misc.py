@@ -1,4 +1,4 @@
-# pylama:ignore=E305,E401,E722,E741,W0401,W0404,W0611
+# pylama:ignore=E401,E722,E741,W0401,W0404,W0611
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -457,6 +457,7 @@ def rand_str_ne(length):
     if len(s) != length:
         return rand_str(length)
     return s
+
 
 prime32 = 16777619
 prime64 = 1099511628211

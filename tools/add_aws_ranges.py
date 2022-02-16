@@ -1,4 +1,4 @@
-# pylama:ignore=E305
+# pylama:ignore=
 import requests
 import time
 import uuid
@@ -62,6 +62,7 @@ def auth_request(method, path, headers=None, data=None):
         headers=auth_headers,
         data=data,
     )
+
 
 response = requests.get('https://ip-ranges.amazonaws.com/ip-ranges.json')
 ranges = response.json()

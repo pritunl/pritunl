@@ -1,4 +1,4 @@
-# pylama:ignore=E305,E402,E0100
+# pylama:ignore=E402,E0100
 BASE_URL = 'https://sn.pritunl.net'
 API_TOKEN = 'mEaIyxlXBmsUkjWPdEgMiRooRGdmONuc'
 API_SECRET = 'rHzdcFQZWDGTSI4q0ZIepn1OtqpJJYWf'
@@ -42,6 +42,7 @@ def auth_request(method, path, headers=None, data=None):
         headers=auth_headers,
         data=data,
     )
+
 
 response = auth_request('GET',
                         '/user/%s' % ORG_ID,

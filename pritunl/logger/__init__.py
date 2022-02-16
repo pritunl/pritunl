@@ -1,4 +1,4 @@
-# pylama:ignore=E305,W0401,W0611
+# pylama:ignore=W0401,W0611
 from pritunl.logger.filter import LogFilter
 from pritunl.logger.formatter import LogFormatter
 from pritunl.logger.handler import LogHandler, log_queue
@@ -77,6 +77,7 @@ def critical(log_msg, log_type=None, **kwargs):
 def exception(log_msg, log_type=None, **kwargs):
     # Fix for python #15541
     _log('error', log_msg, log_type, exc_info=True, **kwargs)
+
 
 _thread = threading.Thread(target=_logger_thread)
 _thread.daemon = True

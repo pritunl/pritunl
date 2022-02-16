@@ -1,4 +1,4 @@
-# pylama:ignore=E305
+# pylama:ignore=
 from pritunl import settings
 from pritunl import task
 from pritunl import link
@@ -26,5 +26,6 @@ class TaskLink(task.Task):
 
         for hst in hosts:
             hst.update_available(location_available_hosts[hst.location_id])
+
 
 task.add_task(TaskLink, seconds=range(0, 60, 3))

@@ -1,4 +1,4 @@
-# pylama:ignore=E305,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import task
@@ -22,5 +22,6 @@ class TaskCleanVxlans(task.Task):
         self.vxlan_collection.remove({
             'server_id': {'$in': list(vxlan_ids - server_ids)}
         })
+
 
 task.add_task(TaskCleanVxlans, minutes=52)

@@ -1,4 +1,4 @@
-# pylama:ignore=E305,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -188,5 +188,6 @@ class TaskServer(task.Task):
             raise
         except:
             logger.exception('Error checking server states', 'tasks')
+
 
 task.add_task(TaskServer, seconds=range(0, 60, settings.vpn.server_ping))

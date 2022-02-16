@@ -1,4 +1,4 @@
-# pylama:ignore=E305,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -68,5 +68,6 @@ class TaskRoute(task.Task):
             raise
         except:
             logger.exception('Error checking route states', 'tasks')
+
 
 task.add_task(TaskRoute, seconds=range(0, 60, 30))

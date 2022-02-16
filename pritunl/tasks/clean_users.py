@@ -1,4 +1,4 @@
-# pylama:ignore=E305,W0401
+# pylama:ignore=W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import task
@@ -41,5 +41,6 @@ class TaskCleanUsers(task.Task):
         self.user_collection.remove({
             'org_id': {'$in': list(user_org_ids - org_ids)},
         })
+
 
 task.add_task(TaskCleanUsers, hours=5, minutes=17)

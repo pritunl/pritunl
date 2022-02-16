@@ -1,4 +1,4 @@
-# pylama:ignore=E305
+# pylama:ignore=
 from pritunl.settings.settings import Settings
 
 from pritunl.settings.app import SettingsApp
@@ -20,5 +20,6 @@ vpn = SettingsVpn
 
 def commit():
     pass
+
 
 sys.modules[__name__] = Settings()
