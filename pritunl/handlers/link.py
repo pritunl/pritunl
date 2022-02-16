@@ -67,6 +67,10 @@ def link_post():
     host_check = True if flask.request.json.get('host_check') else False
     action = RESTART if flask.request.json.get(
         'action') == RESTART else HOLD
+    preferred_ike = utils.filter_str(
+        flask.request.json.get('preferred_ike')) or None
+    preferred_esp = utils.filter_str(
+        flask.request.json.get('preferred_esp')) or None
 
     lnk = link.Link(
         name=name,
@@ -75,6 +79,8 @@ def link_post():
         ipv6=ipv6,
         host_check=host_check,
         action=action,
+        preferred_ike=preferred_ike,
+        preferred_esp=preferred_esp,
     )
 
     lnk.generate_key()
@@ -156,7 +162,13 @@ def link_put(link_id):
     lnk.action = RESTART if flask.request.json.get(
         'action') == RESTART else HOLD
 
-    lnk.commit(('name', 'status', 'key', 'ipv6', 'host_check', 'action'))
+    lnk.preferred_ike = utils.filter_str(
+        flask.request.json.get('preferred_ike')) or None
+    lnk.preferred_esp = utils.filter_str(
+        flask.request.json.get('preferred_esp')) or None
+
+    lnk.commit(('name', 'status', 'key', 'ipv6', 'host_check',
+        'action', 'preferred_ike', 'preferred_esp'))
 
     event.Event(type=LINKS_UPDATED)
 
