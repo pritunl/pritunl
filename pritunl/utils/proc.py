@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401,W0611
+# pylama:ignore=E128,E302,E722,W0401,W0611
 from pritunl.constants import *
 
 import subprocess
@@ -47,7 +47,7 @@ class Process(object):
         except:
             logger.exception('Popen exception', 'utils',
                 cmd=cmd,
-            )
+                             )
 
     def run(self, timeout=None):
         from pritunl import logger
@@ -64,7 +64,7 @@ class Process(object):
             logger.error('Popen process timeout', 'utils',
                 cmd=cmd,
                 timeout=timeout,
-            )
+                         )
             try:
                 self._process.kill()
             except:
@@ -84,7 +84,7 @@ class Process(object):
                 return_code=self._return_code,
                 stdout=self._stdoutdata,
                 stderr=self._stderrdata,
-            )
+                         )
 
             raise subprocess.CalledProcessError(
                 self._return_code, cmd, output=self._stdoutdata)

@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E124,E128,E302,E722,W0401
+# pylama:ignore=E122,E128,E302,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -35,7 +35,7 @@ def _keep_alive_thread():
                     'runners',
                     host=settings.local.host.id,
                     host_id=settings.local.host_id,
-                )
+                             )
 
             timestamp = utils.now()
             timestamp -= datetime.timedelta(
@@ -77,7 +77,7 @@ def _keep_alive_thread():
                     'runners',
                     host_id=settings.local.host_id,
                     host_name=settings.local.host.name,
-                )
+                                 )
 
             host_name = settings.local.host.name
             route53_region = settings.app.route53_region
@@ -160,7 +160,7 @@ def _keep_alive_thread():
             logger.exception('Error in host keep alive update', 'runners',
                 host_id=settings.local.host_id,
                 host_name=settings.local.host.name,
-            )
+                             )
             time.sleep(0.5)
 
 def start_host():

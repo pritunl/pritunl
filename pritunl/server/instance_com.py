@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl.server.listener import *
 
 from pritunl.constants import *
@@ -183,7 +183,7 @@ class ServerInstanceCom(object):
             server_id=self.server.id,
             instance_id=self.instance.id,
             socket_path=self.socket_path,
-        )
+                     )
 
     def on_msg(self, evt):
         msg = evt['message']
@@ -279,7 +279,7 @@ class ServerInstanceCom(object):
             logger.exception('Error in management rate thread', 'server',
                 server_id=self.server.id,
                 instance_id=self.instance.id,
-            )
+                             )
             self.instance.stop_process()
 
     def _socket_thread(self):
@@ -315,7 +315,7 @@ class ServerInstanceCom(object):
                             server_id=self.server.id,
                             instance_id=self.instance.id,
                             line=line,
-                        )
+                                         )
         except:
             if not self.instance.sock_interrupt:
                 self.push_output('ERROR Management socket exception')
@@ -324,7 +324,7 @@ class ServerInstanceCom(object):
                     server_id=self.server.id,
                     instance_id=self.instance.id,
                     socket_path=self.socket_path,
-                )
+                                 )
             self.instance.stop_process()
         finally:
             remove_listener(self.instance.id)
@@ -361,7 +361,7 @@ class ServerInstanceCom(object):
                 server_id=self.server.id,
                 instance_id=self.instance.id,
                 socket_path=self.socket_path,
-            )
+                             )
 
     def connect(self):
         self.wait_for_socket()

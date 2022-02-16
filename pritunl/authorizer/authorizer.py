@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E131,E302,E502,E722,W0401
+# pylama:ignore=E128,E131,E302,E502,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import logger
@@ -189,7 +189,7 @@ class Authorizer(object):
                 except (ipaddress.AddressValueError, ValueError):
                     logger.warning('Invalid whitelist network', 'authorize',
                         network=network_str,
-                    )
+                                   )
                     continue
 
                 if remote_ip in network:
@@ -436,7 +436,7 @@ class Authorizer(object):
                     'server',
                     server_id=self.server.id,
                     allowed_devices=self.server.allowed_devices,
-                )
+                             )
                 platforms = {}
 
             if self.platform not in platforms:
@@ -1059,7 +1059,7 @@ class Authorizer(object):
                 user_name=self.user.name,
                 org_name=self.user.org.name,
                 server_name=self.server.name,
-            )
+                        )
             return
 
         if self.has_token:
@@ -1067,7 +1067,7 @@ class Authorizer(object):
                 user_name=self.user.name,
                 org_name=self.user.org.name,
                 server_name=self.server.name,
-            )
+                        )
             journal.entry(
                 journal.USER_CONNECT_CACHE,
                 self.journal_data,
@@ -1082,7 +1082,7 @@ class Authorizer(object):
                 user_name=self.user.name,
                 org_name=self.user.org.name,
                 server_name=self.server.name,
-            )
+                        )
             journal.entry(
                 journal.USER_CONNECT_WHITELIST,
                 self.journal_data,
@@ -1124,7 +1124,7 @@ class Authorizer(object):
                     user_name=self.user.name,
                     org_name=self.user.org.name,
                     server_name=self.server.name,
-                )
+                            )
 
                 journal.entry(
                     journal.USER_CONNECT_CACHE,

@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E131,E302,E502,E722,W0401
+# pylama:ignore=E128,E131,E302,E502,E722,W0401
 from pritunl.transaction.collection import TransactionCollection
 
 from pritunl.constants import *
@@ -160,7 +160,7 @@ class Transaction(mongo.MongoObject):
             logger.exception('Error occurred running ' +
                 'transaction actions', 'transaction',
                 transaction_id=self.id,
-            )
+                             )
             raise
 
         response = self.transaction_collection.update({
@@ -185,7 +185,7 @@ class Transaction(mongo.MongoObject):
     def rollback_actions(self):
         logger.warning('Transaction failed rolling back...', 'transaction',
             actions=self.action_sets,
-        )
+                       )
 
         response = self.transaction_collection.update({
             '_id': self.id,
@@ -206,7 +206,7 @@ class Transaction(mongo.MongoObject):
             logger.exception('Error occurred rolling back ' +
                 'transaction actions', 'transaction',
                 transaction_id=self.id,
-            )
+                             )
             raise
 
         self.transaction_collection.remove(self.id)
@@ -238,7 +238,7 @@ class Transaction(mongo.MongoObject):
             logger.exception('Error occurred running ' +
                 'transaction post actions', 'transaction',
                 transaction_id=self.id,
-            )
+                             )
             raise
 
         self.transaction_collection.remove(self.id)

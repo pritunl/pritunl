@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E131,E302,E401,E502
+# pylama:ignore=E128,E131,E302,E401,E502
 from pritunl import settings
 from pritunl import logger
 
@@ -26,7 +26,7 @@ def _verify_azure_1(user_name):
             'sso',
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     data = response.json()
@@ -52,7 +52,7 @@ def _verify_azure_1(user_name):
             'sso',
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     data = response.json()
@@ -62,7 +62,7 @@ def _verify_azure_1(user_name):
             'sso',
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     response = requests.get(
@@ -84,7 +84,7 @@ def _verify_azure_1(user_name):
             'sso',
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     data = response.json()
@@ -120,7 +120,7 @@ def _verify_azure_2(user_name):
             username=user_name,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     data = response.json()
@@ -147,7 +147,7 @@ def _verify_azure_2(user_name):
             username=user_name,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     data = response.json()
@@ -157,7 +157,7 @@ def _verify_azure_2(user_name):
             'sso',
             username=user_name,
             azure_username=data['userPrincipalName'],
-        )
+                     )
         return False, []
 
     if not data.get('accountEnabled'):
@@ -165,7 +165,7 @@ def _verify_azure_2(user_name):
             'sso',
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     response = requests.get(
@@ -188,7 +188,7 @@ def _verify_azure_2(user_name):
             username=user_name,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     data = response.json()

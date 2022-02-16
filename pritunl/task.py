@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl.helpers import *
 from pritunl.constants import *
 from pritunl import settings
@@ -89,7 +89,7 @@ class Task(mongo.MongoObject):
             logger.exception('Error running task', 'task',
                 task_id=self.id,
                 task_type=self.type,
-            )
+                             )
 
     def complete(self):
         self.collection.update({

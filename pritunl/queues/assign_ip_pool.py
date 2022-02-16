@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,W0401
+# pylama:ignore=E128,E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -70,7 +70,7 @@ class QueueAssignIpPool(queue.Queue):
             logger.warning('Tried to run assign_ip_pool task queue ' +
                 'but server is no longer available', 'queues',
                 server_id=self.server_id,
-            )
+                           )
             return
 
         response = self.server_collection.update({
@@ -145,7 +145,7 @@ class QueueAssignIpPool(queue.Queue):
             logger.warning('Tried to run assign_ip_pool complete queue ' +
                 'but server is no longer available', 'queues',
                 server_id=self.server_id,
-            )
+                           )
             return
 
         for org_id in self.server.organizations:

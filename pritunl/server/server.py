@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E124,E128,E302,E502,E722,W0401
+# pylama:ignore=E122,E128,E302,E502,E722,W0401
 from pritunl.server.output import ServerOutput
 from pritunl.server.output_link import ServerOutputLink
 from pritunl.server.bandwidth import ServerBandwidth
@@ -1164,7 +1164,7 @@ class Server(mongo.MongoObject):
                     old_network_start=self._orig_network_start,
                     old_network_end=self._orig_network_end,
                     old_network_hash=self._orig_network_hash,
-                )
+                                            )
                 self.network_lock = queue_ip_pool.id
                 self.network_lock_ttl = utils.now() + \
                     datetime.timedelta(minutes=6)
@@ -1368,7 +1368,7 @@ class Server(mongo.MongoObject):
                 'server',
                 server_id=self.id,
                 host_id=host_id,
-            )
+                           )
             return
 
         self.hosts.remove(host_id)

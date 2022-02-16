@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -121,7 +121,7 @@ class ServerInstanceLink(object):
             )
             logger.exception('Failed to start link ovpn process', 'server',
                 server_id=self.server.id,
-            )
+                             )
             raise
 
     @interrupter
@@ -149,7 +149,7 @@ class ServerInstanceLink(object):
                         logger.exception('Failed to push link vpn ' +
                             'output', 'server',
                             server_id=self.server.id,
-                        )
+                                         )
 
                     yield
 
@@ -160,7 +160,7 @@ class ServerInstanceLink(object):
                         'unexpectedly, restarting link', 'server',
                         server_id=self.server.id,
                         link_server_id=self.linked_server.id,
-                    )
+                                 )
                     self.openvpn_start()
                     yield interrupter_sleep(1)
 
@@ -186,7 +186,7 @@ class ServerInstanceLink(object):
                     logger.error('Failed to stop openvpn link process',
                         'server',
                         server_id=self.server.id,
-                    )
+                                 )
             finally:
                 if self.interface:
                     utils.interface_release(self.linked_server.adapter_type,

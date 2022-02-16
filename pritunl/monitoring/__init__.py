@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0611
+# pylama:ignore=E128,E302,E722,W0611
 from pritunl.monitoring.utils import get_servers
 
 from pritunl import settings
@@ -95,7 +95,7 @@ def connect():
         influxdb_url=influxdb_url,
         influxdb_org=influxdb_org,
         influxdb_bucket=influxdb_bucket,
-    )
+                )
 
     _client = influxdb_client.InfluxDBClient(
         url=influxdb_url,
@@ -115,4 +115,4 @@ def init():
         logger.exception('InfluxDB initial connection error',
             'monitoring',
             influxdb_uri=settings.app.influxdb_uri,
-        )
+                         )

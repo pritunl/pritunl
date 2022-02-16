@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,W0401
+# pylama:ignore=E128,E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -53,7 +53,7 @@ def _auth_radius(username, password, remote_addr):
                 sso_type='radius',
                 user_name=username,
                 org_names=org_names,
-            )
+                           )
 
     valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
         sso_type='radius',
@@ -73,7 +73,7 @@ def _auth_radius(username, password, remote_addr):
         )
         logger.error('Radius plugin authentication not valid', 'sso',
             username=username,
-        )
+                     )
         return utils.jsonify({
             'error': AUTH_INVALID,
             'error_msg': AUTH_INVALID_MSG,
@@ -93,7 +93,7 @@ def _auth_radius(username, password, remote_addr):
         except InvalidUser:
             logger.error('Duo authentication username not valid', 'sso',
                 username=username,
-            )
+                         )
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
                 user_name=username,
@@ -124,7 +124,7 @@ def _auth_radius(username, password, remote_addr):
                 )
                 logger.error('Duo plugin authentication not valid', 'sso',
                     username=username,
-                )
+                             )
                 return utils.jsonify({
                     'error': AUTH_INVALID,
                     'error_msg': AUTH_INVALID_MSG,
@@ -134,7 +134,7 @@ def _auth_radius(username, password, remote_addr):
         else:
             logger.error('Duo authentication not valid', 'sso',
                 username=username,
-            )
+                         )
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
                 user_name=username,
@@ -153,7 +153,7 @@ def _auth_radius(username, password, remote_addr):
     if not org:
         logger.error('Organization for sso does not exist', 'auth',
             org_id=org_id,
-        )
+                     )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
@@ -205,7 +205,7 @@ def _auth_radius(username, password, remote_addr):
     usr.audit_event('user_profile',
         'User profile viewed from single sign-on',
         remote_addr=utils.get_remote_addr(),
-    )
+                    )
 
     journal.entry(
         journal.USER_PROFILE_SUCCESS,
@@ -281,7 +281,7 @@ def _auth_plugin(username, password, remote_addr):
     if not org:
         logger.error('Organization for sso does not exist', 'auth',
             org_id=org_id,
-        )
+                     )
         return flask.abort(405)
 
     usr = org.find_user(name=username)
@@ -325,7 +325,7 @@ def _auth_plugin(username, password, remote_addr):
     usr.audit_event('user_profile',
         'User profile viewed from plugin authentication',
         remote_addr=utils.get_remote_addr(),
-    )
+                    )
 
     journal.entry(
         journal.USER_PROFILE_SUCCESS,

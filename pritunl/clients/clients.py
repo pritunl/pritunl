@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E124,E127,E128,E231,E302,E303,E722,W0401
+# pylama:ignore=E122,E127,E128,E231,E302,E303,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import utils
@@ -543,7 +543,7 @@ class Clients(object):
                 multi_device=self.server.multi_device,
                 network=self.server.network,
                 user_count=self.server.user_count,
-            )
+                         )
 
         if virt_address and self.server.multi_device:
             device_found = False
@@ -707,7 +707,7 @@ class Clients(object):
                 replica_count=self.server.replica_count,
                 network=self.server.network,
                 user_count=self.server.user_count,
-            )
+                         )
 
         if self.server.multi_device and self.server.max_devices:
             if not virt_address:
@@ -1054,7 +1054,7 @@ class Clients(object):
         except:
             logger.exception('Error allowing client wg connect', 'server',
                 server_id=self.server.id,
-            )
+                             )
             self.instance.disconnect_wg(wg_public_key)
             return False, 'Error allowing client wg connect'
         return True, client_conf
@@ -1242,7 +1242,7 @@ class Clients(object):
         except:
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
-            )
+                             )
             self.instance_com.send_client_deny(client_id, key_id,
                 'Error parsing client connect')
 
@@ -1364,7 +1364,7 @@ class Clients(object):
         except:
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
-            )
+                             )
             self.instance.disconnect_wg(wg_public_key)
             connect_callback_once(False, 'Error parsing client connect')
 
@@ -1836,7 +1836,7 @@ class Clients(object):
         except:
             logger.exception('Error adding client', 'server',
                 server_id=self.server.id,
-            )
+                             )
             if client['type'] == 'wg':
                 self.instance.disconnect_wg(client_id)
             else:
@@ -1973,7 +1973,7 @@ class Clients(object):
             except:
                 logger.exception('Error removing client', 'server',
                     server_id=self.server.id,
-                )
+                                 )
 
         if self.server.multi_device:
             if client['address_dynamic']:
@@ -2128,7 +2128,7 @@ class Clients(object):
                             time_diff=diff,
                             server_id=self.server.id,
                             instance_id=self.instance.id,
-                        )
+                                     )
                         if self.interrupter_sleep(10):
                             return
                     elif diff > 1:
@@ -2174,7 +2174,7 @@ class Clients(object):
                                 server_id=self.server.id,
                                 instance_id=self.instance.id,
                                 client_id=client['doc_id'],
-                            )
+                                         )
                             if len(client_id) > 32:
                                 self.instance.disconnect_wg(client_id)
                             else:
@@ -2194,7 +2194,7 @@ class Clients(object):
                                     server_id=self.server.id,
                                     instance_id=self.instance.id,
                                     client_id=client['doc_id'],
-                                )
+                                             )
                                 if len(client_id) > 32:
                                     self.instance.disconnect_wg(client_id)
                                 else:
@@ -2206,7 +2206,7 @@ class Clients(object):
                             'server',
                             server_id=self.server.id,
                             instance_id=self.instance.id,
-                        )
+                                         )
                         yield interrupter_sleep(1)
                         continue
 
@@ -2221,7 +2221,7 @@ class Clients(object):
                     logger.exception('Error in client thread', 'server',
                         server_id=self.server.id,
                         instance_id=self.instance.id,
-                    )
+                                     )
                     yield interrupter_sleep(3)
                     if self.instance.sock_interrupt:
                         return
@@ -2239,7 +2239,7 @@ class Clients(object):
             except:
                 logger.exception('Error removing client', 'server',
                     server_id=self.server.id,
-                )
+                                 )
 
     def on_client(self, state, server_id, virt_address, virt_address6,
             host_address, host_address6):
@@ -2310,7 +2310,7 @@ class Clients(object):
                     virt_address6=virt_address6,
                     host_address=host_address,
                     host_address6=host_address6,
-                )
+                                 )
 
         if self.server.ipv6 and virt_address6:
             virt_address6 = virt_address6.split('/')[0]
@@ -2336,7 +2336,7 @@ class Clients(object):
                     virt_address6=virt_address6,
                     host_address=host_address,
                     host_address6=host_address6,
-                )
+                                 )
 
     def remove_route(self, virt_address, virt_address6,
             host_address, host_address6):

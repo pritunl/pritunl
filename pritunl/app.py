@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E131,E251,E302,E306,E502,E722,W0401
+# pylama:ignore=E128,E131,E251,E302,E306,E502,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -169,7 +169,7 @@ def _run_server(restart):
 
     logger.info('Starting server', 'app',
         selinux_context=context,
-    )
+                 )
 
     app_server = cheroot.wsgi.Server(
         ('localhost', settings.app.server_internal_port),

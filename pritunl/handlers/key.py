@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E306,E722,W0401,W0404,W0611,W0621
+# pylama:ignore=E128,E302,E306,E722,W0401,W0404,W0611,W0621
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -121,7 +121,7 @@ def user_key_tar_archive_get(org_id, user_id):
     usr.audit_event('user_profile',
         'User tar profile downloaded from web console',
         remote_addr=remote_addr,
-    )
+                    )
 
     journal.entry(
         journal.USER_PROFILE_SUCCESS,
@@ -141,7 +141,7 @@ def user_key_zip_archive_get(org_id, user_id):
     usr.audit_event('user_profile',
         'User zip profile downloaded from web console',
         remote_addr=remote_addr,
-    )
+                    )
 
     journal.entry(
         journal.USER_PROFILE_SUCCESS,
@@ -161,7 +161,7 @@ def user_key_onc_archive_get(org_id, user_id):
     usr.audit_event('user_profile',
         'User onc profile downloaded from web console',
         remote_addr=remote_addr,
-    )
+                    )
 
     journal.entry(
         journal.USER_PROFILE_SUCCESS,
@@ -182,7 +182,7 @@ def user_key_link_get(org_id, user_id):
     usr.audit_event('user_profile',
         'User temporary profile links created from web console',
         remote_addr=remote_addr,
-    )
+                    )
 
     journal.entry(
         journal.USER_PROFILE_SUCCESS,
@@ -204,7 +204,7 @@ def user_linked_key_conf_get(org_id, user_id, server_id):
     usr.audit_event('user_profile',
         'User key profile downloaded from web console',
         remote_addr=remote_addr,
-    )
+                    )
 
     journal.entry(
         journal.USER_PROFILE_SUCCESS,
@@ -259,7 +259,7 @@ def user_linked_key_tar_archive_get(key_id):
     usr.audit_event('user_profile',
         'User tar profile downloaded with temporary profile link',
         remote_addr=remote_addr,
-    )
+                    )
 
     return resp
 
@@ -302,7 +302,7 @@ def user_linked_key_zip_archive_get(key_id):
     usr.audit_event('user_profile',
         'User zip profile downloaded with temporary profile link',
         remote_addr=remote_addr,
-    )
+                    )
 
     return resp
 
@@ -345,7 +345,7 @@ def user_linked_key_onc_archive_get(key_id):
     usr.audit_event('user_profile',
         'User onc profile downloaded with temporary profile link',
         remote_addr=remote_addr,
-    )
+                    )
 
     return resp
 
@@ -427,7 +427,7 @@ def user_key_pin_put(key_id):
         usr.audit_event('user_updated',
             'User pin changed with temporary profile link',
             remote_addr=remote_addr,
-        )
+                        )
 
     usr.commit()
 
@@ -473,7 +473,7 @@ def user_linked_key_page_get(short_code):
     usr.audit_event('user_profile',
         'User temporary profile link viewed',
         remote_addr=remote_addr,
-    )
+                    )
 
     if settings.local.sub_active and settings.app.theme == 'dark':
         view_name = KEY_VIEW_DARK_NAME
@@ -595,7 +595,7 @@ def user_uri_key_page_get(short_code):
     usr.audit_event('user_profile',
         'User temporary profile downloaded from pritunl client',
         remote_addr=remote_addr,
-    )
+                    )
 
     keys = {}
     for server in usr.iter_servers():
@@ -664,7 +664,7 @@ def user_linked_key_conf_get(key_id, server_id):
     usr.audit_event('user_profile',
         'User profile downloaded with temporary profile link',
         remote_addr=remote_addr,
-    )
+                    )
 
     response = flask.Response(response=key_conf['conf'],
         mimetype='application/ovpn')
@@ -815,7 +815,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         usr.audit_event('user_profile',
             'User profile synced from pritunl client',
             remote_addr=remote_addr,
-        )
+                        )
 
         journal.entry(
             journal.USER_SYNC_SUCCESS,
@@ -1126,7 +1126,7 @@ def key_wg_post(org_id, user_id, server_id):
     usr.audit_event('user_profile',
         'User retrieved wg public key from pritunl client',
         remote_addr=remote_addr,
-    )
+                    )
 
     journal.entry(
         journal.USER_WG_SUCCESS,

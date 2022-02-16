@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E131,E302,E502,W0612
+# pylama:ignore=E128,E131,E302,E502,W0612
 from pritunl import settings
 from pritunl import logger
 
@@ -27,7 +27,7 @@ def verify_authzero(user_name):
             user_name=user_name,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     data = response.json()
@@ -54,7 +54,7 @@ def verify_authzero(user_name):
             user_name=user_name,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False, []
 
     data = response.json()
@@ -81,7 +81,7 @@ def verify_authzero(user_name):
         logger.error('Failed to find Auth0 user',
             'sso',
             user_name=user_name,
-        )
+                     )
         return False, []
 
     return True, groups

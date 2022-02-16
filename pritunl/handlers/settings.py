@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import utils
@@ -994,7 +994,7 @@ def settings_put():
         except:
             logger.exception('Failed to get LetsEncrypt cert', 'handler',
                 acme_domain=settings.app.acme_domain,
-            )
+                             )
             settings.app.acme_domain = None
             settings.app.acme_key = None
             settings.app.acme_timestamp = None

@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E401,W0401
+# pylama:ignore=E128,E302,E401,W0401
 from pritunl.constants import *
 from pritunl import settings
 from pritunl import logger
@@ -32,7 +32,7 @@ def _get_access_token():
         logger.error('OneLogin api error', 'sso',
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return None
 
     return response.json()['data'][0]['access_token']
@@ -49,7 +49,7 @@ def auth_onelogin(username):
         except http.client.HTTPException:
             logger.exception('OneLogin api error', 'sso',
                 username=username,
-            )
+                             )
             return False
 
         if response.status_code == 200:
@@ -59,21 +59,21 @@ def auth_onelogin(username):
 
             logger.warning('OneLogin user disabled', 'sso',
                 username=username,
-            )
+                           )
         elif response.status_code == 404:
             logger.error('OneLogin user not found', 'sso',
                 username=username,
-            )
+                         )
         elif response.status_code == 406:
             logger.warning('OneLogin user disabled', 'sso',
                 username=username,
-            )
+                           )
         else:
             logger.error('OneLogin api error', 'sso',
                 username=username,
                 status_code=response.status_code,
                 response=response.content,
-            )
+                         )
         return False
 
     access_token = _get_access_token()
@@ -96,21 +96,21 @@ def auth_onelogin(username):
             username=username,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False
 
     users = response.json()['data']
     if not users:
         logger.error('OneLogin user not found', 'sso',
             username=username,
-        )
+                     )
         return False
 
     user = users[0]
     if user['status'] != 1:
         logger.warning('OneLogin user disabled', 'sso',
             username=username,
-        )
+                       )
         return False
 
     onelogin_app_id = settings.app.sso_onelogin_app_id
@@ -136,14 +136,14 @@ def auth_onelogin(username):
             username=username,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False
 
     applications = response.json()['data']
     if not applications:
         logger.error('OneLogin user apps not found', 'sso',
             username=username,
-        )
+                     )
         return False
 
     for application in applications:
@@ -153,7 +153,7 @@ def auth_onelogin(username):
     logger.warning('OneLogin user is not assigned to application', 'sso',
         username=username,
         onelogin_app_id=onelogin_app_id,
-    )
+                   )
 
     return False
 
@@ -165,7 +165,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     if 'passcode' in onelogin_mode and not passcode:
         logger.error('OneLogin passcode empty', 'sso',
             username=username,
-        )
+                     )
         return False
 
     response = requests.get(
@@ -183,21 +183,21 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             username=username,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False
 
     users = response.json()['data']
     if not users:
         logger.error('OneLogin user not found', 'sso',
             username=username,
-        )
+                     )
         return False
 
     user = users[0]
     if user['status'] != 1:
         logger.error('OneLogin user disabled', 'sso',
             username=username,
-        )
+                     )
         return False
 
     user_id = user['id']
@@ -215,7 +215,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             onelogin_mode=onelogin_mode,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False
 
     device_id = None
@@ -238,13 +238,13 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             logger.info('OneLogin secondary not available, skipped', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
-            )
+                        )
             return True
 
         logger.error('OneLogin secondary not available', 'sso',
             username=username,
             onelogin_mode=onelogin_mode,
-        )
+                     )
 
         return False
 
@@ -269,7 +269,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 onelogin_mode=onelogin_mode,
                 status_code=response.status_code,
                 response=response.content,
-            )
+                         )
             return False
 
         activate = response.json()['data']
@@ -277,7 +277,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             logger.error('OneLogin activate empty', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
-            )
+                         )
             return False
 
         state_token = activate[0]['state_token']
@@ -289,7 +289,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 username=username,
                 onelogin_mode=onelogin_mode,
                 user_id=user_id,
-            )
+                         )
             return False
 
         response = requests.post(
@@ -312,7 +312,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 onelogin_mode=onelogin_mode,
                 status_code=response.status_code,
                 response=response.content,
-            )
+                         )
             return False
 
         verify = response.json()['status']
@@ -320,7 +320,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             logger.error('OneLogin verify empty', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
-            )
+                         )
             return False
 
         if response.status_code == 401:
@@ -332,7 +332,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 username=username,
                 onelogin_mode=onelogin_mode,
                 user_id=user_id,
-            )
+                         )
             return False
 
         if response.status_code != 200 or verify['type'] != "success":
@@ -341,7 +341,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 onelogin_mode=onelogin_mode,
                 status_code=response.status_code,
                 response=response.content,
-            )
+                         )
             return False
 
         return True

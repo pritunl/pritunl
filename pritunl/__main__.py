@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E305,E502,E722
+# pylama:ignore=E128,E302,E305,E502,E722
 import pritunl
 
 import optparse
@@ -354,7 +354,7 @@ def main(default_conf=None):
             except:
                 logger.exception('Failed to sync server IP pool', 'tasks',
                     server_id=svr.id,
-                )
+                                 )
 
         server_coll.update_many({}, {
             '$set': {

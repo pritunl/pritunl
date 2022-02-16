@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl.helpers import *
 from pritunl import settings
 from pritunl import mongo
@@ -22,7 +22,7 @@ def _check_thread():
             for doc in collection.find(spec).sort('priority'):
                 logger.info('Transaction timeout retrying...', 'runners',
                     doc=doc,
-                )
+                            )
 
                 try:
                     tran = transaction.Transaction(doc=doc)
@@ -30,7 +30,7 @@ def _check_thread():
                 except:
                     logger.exception('Failed to run transaction', 'runners',
                         transaction_id=doc['_id'],
-                    )
+                                     )
 
             yield interrupter_sleep(settings.mongo.tran_ttl)
         except GeneratorExit:

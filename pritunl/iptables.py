@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E131,E221,E231,E302,E722,W0611
+# pylama:ignore=E128,E131,E221,E231,E302,E722,W0611
 from pritunl import utils
 from pritunl import logger
 from pritunl import settings
@@ -127,7 +127,7 @@ class Iptables(object):
             if not silent:
                 logger.warning('Lost iptables rule', 'iptables',
                     rule=rule,
-                )
+                               )
         finally:
             self._lock.release()
 
@@ -145,7 +145,7 @@ class Iptables(object):
             if not silent:
                 logger.warning('Lost ip6tables rule', 'iptables',
                     rule=rule,
-                )
+                               )
         finally:
             self._lock.release()
 

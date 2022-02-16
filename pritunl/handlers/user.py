@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E231,E302,E722,W0401
+# pylama:ignore=E128,E231,E302,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import settings
@@ -301,7 +301,7 @@ def _create_user(users, org, user_data, remote_addr, pool):
     user.audit_event('user_created',
         'User created from web console',
         remote_addr=remote_addr,
-    )
+                     )
 
     journal.entry(
         journal.USER_CREATE,
@@ -425,7 +425,7 @@ def user_put(org_id, user_id):
             user.audit_event('user_updated',
                 'User name changed',
                 remote_addr=remote_addr,
-            )
+                             )
 
             journal.entry(
                 journal.USER_UPDATE,
@@ -443,7 +443,7 @@ def user_put(org_id, user_id):
             user.audit_event('user_updated',
                 'User email changed',
                 remote_addr=remote_addr,
-            )
+                             )
 
             journal.entry(
                 journal.USER_UPDATE,
@@ -481,7 +481,7 @@ def user_put(org_id, user_id):
             user.audit_event('user_updated',
                 'User groups changed',
                 remote_addr=remote_addr,
-            )
+                             )
 
             journal.entry(
                 journal.USER_UPDATE,
@@ -528,7 +528,7 @@ def user_put(org_id, user_id):
                 user.audit_event('user_updated',
                     'User pin changed',
                     remote_addr=remote_addr,
-                )
+                                 )
 
                 journal.entry(
                     journal.USER_UPDATE,
@@ -556,7 +556,7 @@ def user_put(org_id, user_id):
             user.audit_event('user_updated',
                 'User network links updated',
                 remote_addr=remote_addr,
-            )
+                             )
 
             journal.entry(
                 journal.USER_UPDATE,
@@ -591,7 +591,7 @@ def user_put(org_id, user_id):
             user.audit_event('user_updated',
                 'User port forwarding changed',
                 remote_addr=remote_addr,
-            )
+                             )
 
             journal.entry(
                 journal.USER_UPDATE,
@@ -607,7 +607,7 @@ def user_put(org_id, user_id):
         user.audit_event('user_updated',
             'User %s' % ('disabled' if disabled else 'enabled'),
             remote_addr=remote_addr,
-        )
+                         )
 
         journal.entry(
             journal.USER_UPDATE,
@@ -645,7 +645,7 @@ def user_put(org_id, user_id):
             user.audit_event('user_updated',
                 'User mac addresses changed',
                 remote_addr=remote_addr,
-            )
+                             )
 
             journal.entry(
                 journal.USER_UPDATE,
@@ -663,7 +663,7 @@ def user_put(org_id, user_id):
             user.audit_event('user_updated',
                 'User dns servers changed',
                 remote_addr=remote_addr,
-            )
+                             )
 
             journal.entry(
                 journal.USER_UPDATE,
@@ -682,7 +682,7 @@ def user_put(org_id, user_id):
             user.audit_event('user_updated',
                 'User dns suffix changed',
                 remote_addr=remote_addr,
-            )
+                             )
 
             journal.entry(
                 journal.USER_UPDATE,
@@ -712,7 +712,7 @@ def user_put(org_id, user_id):
         user.audit_event('user_emailed',
             'User key email sent to "%s"' % user.email,
             remote_addr=remote_addr,
-        )
+                         )
 
         journal.entry(
             journal.USER_PROFILE_EMAIL,
@@ -784,7 +784,7 @@ def user_otp_secret_put(org_id, user_id):
     user.audit_event('user_updated',
         'User two step secret reset',
         remote_addr=remote_addr,
-    )
+                     )
 
     journal.entry(
         journal.USER_UPDATE,

@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl.exceptions import *
 from pritunl import settings
 
@@ -56,5 +56,5 @@ def send_email(to_addr, subject, text_body, html_body):
         logger.exception('Unknown smtp error', 'utils',
             from_addr=email_from,
             to_addr=to_addr,
-        )
+                         )
         raise

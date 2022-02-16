@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E401,E722,W0401
+# pylama:ignore=E128,E302,E401,E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
@@ -92,7 +92,7 @@ class Duo(object):
                 headers=headers,
                 params=params,
                 timeout=30,
-            )
+                                     )
         except:
             if factor == 'push' and self.factor == 'push_phone':
                 self._auth('phone')
@@ -108,13 +108,13 @@ class Duo(object):
                     logger.error('Cannot use Duo bypass with Duo sso',
                         'sso',
                         data=resp_data,
-                    )
+                                 )
                     return
                 else:
                     logger.info('Skipping Duo auth with bypass',
                         'sso',
                         username=self.username,
-                    )
+                                )
             self._valid = True
         elif data.get('code') == 40002:
             if factor == 'push' and self.factor == 'push_phone':
@@ -124,9 +124,9 @@ class Duo(object):
                     'sso',
                     username=self.username,
                     data=data,
-                )
+                             )
                 raise InvalidUser('Invalid username')
         else:
             logger.error('Duo authentication failure', 'sso',
                 data=data,
-            )
+                         )

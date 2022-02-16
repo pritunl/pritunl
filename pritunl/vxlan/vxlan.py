@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import settings
@@ -67,7 +67,7 @@ class Vxlan(object):
                 server_id=self.server_id,
                 host_id=settings.local.host_id,
                 local_addr=settings.local.host.local_addr,
-            )
+                         )
             raise ValueError('Failed to find local interface for vxlan')
 
         utils.check_output_logged([
@@ -167,7 +167,7 @@ class Vxlan(object):
                 host_id=settings.local.host_id,
                 local_addr=local_addr,
                 local_addr6=local_addr6,
-            )
+                         )
             raise ValueError('Failed to get host vxlan id')
 
         messenger.publish('vxlan', {
@@ -195,7 +195,7 @@ class Vxlan(object):
             logger.error('Lost vxlan doc', 'vxlan',
                 vxlan_id=self.vxlan_id,
                 server_id=self.server_id,
-            )
+                         )
             return
 
         for host_vxlan_id, data in enumerate(doc['hosts']):
@@ -357,7 +357,7 @@ class Vxlan(object):
             logger.error('Failed to add vxlan host', 'vxlan',
                 vxlan_id=self.vxlan_id,
                 server_id=self.server_id,
-            )
+                         )
             raise
         finally:
             self.running_lock.release()

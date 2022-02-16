@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722,W0401
+# pylama:ignore=E128,E302,E722,W0401
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -275,7 +275,7 @@ def check_db_ver():
             db_version=db_ver,
             db_min_version=db_min_ver,
             server_version=settings.local.version,
-        )
+                     )
         exit(75)
 
     return utils.get_int_ver(MIN_DATABASE_VER) > db_min_ver_int

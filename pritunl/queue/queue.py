@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E131,E302,E502,E722,W0401
+# pylama:ignore=E128,E131,E302,E502,E722,W0401
 from pritunl.queue.com import QueueCom
 
 from pritunl.constants import *
@@ -93,7 +93,7 @@ class Queue(mongo.MongoObject):
                 logger.error('Lost reserve, queue stopped', 'queue',
                     queue_id=self.id,
                     queue_type=self.type,
-                )
+                             )
 
     def keep_alive(self):
         if self.keep_alive_thread:
@@ -255,7 +255,7 @@ class Queue(mongo.MongoObject):
                 logger.exception('Error running task in queue', 'queue',
                     queue_id=self.id,
                     queue_type=self.type,
-                )
+                                 )
                 messenger.publish('queue', [ERROR, self.id])
         finally:
             self.queue_com.state_lock.acquire()

@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E712,W0401
+# pylama:ignore=E128,E302,E712,W0401
 from pritunl.constants import *
 from pritunl import utils
 from pritunl import event
@@ -64,7 +64,7 @@ def admin_put(admin_id):
             admin.audit_event('admin_updated',
                 'Administrator username changed',
                 remote_addr=remote_addr,
-            )
+                              )
 
             journal.entry(
                 journal.ADMIN_UPDATE,
@@ -82,7 +82,7 @@ def admin_put(admin_id):
             admin.audit_event('admin_updated',
                 'Administrator password changed',
                 remote_addr=remote_addr,
-            )
+                              )
 
             journal.entry(
                 journal.ADMIN_UPDATE,
@@ -100,7 +100,7 @@ def admin_put(admin_id):
             admin.audit_event('admin_updated',
                 'Administrator YubiKey ID changed',
                 remote_addr=remote_addr,
-            )
+                              )
 
             journal.entry(
                 journal.ADMIN_UPDATE,
@@ -167,7 +167,7 @@ def admin_put(admin_id):
         admin.audit_event('admin_updated',
             'Administrator api token changed',
             remote_addr=remote_addr,
-        )
+                          )
 
         journal.entry(
             journal.ADMIN_UPDATE,
@@ -181,7 +181,7 @@ def admin_put(admin_id):
         admin.audit_event('admin_updated',
             'Administrator api secret changed',
             remote_addr=remote_addr,
-        )
+                          )
 
         journal.entry(
             journal.ADMIN_UPDATE,
@@ -202,7 +202,7 @@ def admin_put(admin_id):
             admin.audit_event('admin_updated',
                 'Administrator %s' % ('disabled' if disabled else 'enabled'),
                 remote_addr=remote_addr,
-            )
+                              )
 
             journal.entry(
                 journal.ADMIN_UPDATE,
@@ -243,7 +243,7 @@ def admin_put(admin_id):
         admin.audit_event('admin_updated',
             'Administrator two-factor authentication secret reset',
             remote_addr=remote_addr,
-        )
+                          )
 
         journal.entry(
             journal.ADMIN_UPDATE,
@@ -307,7 +307,7 @@ def admin_post():
     admin.audit_event('admin_created',
         'Administrator created',
         remote_addr=remote_addr,
-    )
+                      )
 
     journal.entry(
         journal.ADMIN_CREATE,

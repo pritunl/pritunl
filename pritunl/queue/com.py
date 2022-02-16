@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,W0401
+# pylama:ignore=E128,E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import logger
@@ -48,7 +48,7 @@ class QueueCom(object):
                         return_code=return_code,
                         stdout=stdoutdata.decode(),
                         stderr=stderrdata.decode(),
-                    )
+                                 )
                     raise ValueError('Popen returned ' +
                         'error exit code %r' % return_code)
             else:

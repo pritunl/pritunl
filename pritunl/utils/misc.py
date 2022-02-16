@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E305,E401,E722,E741,W0401,W0404,W0611
+# pylama:ignore=E128,E302,E305,E401,E722,E741,W0401,W0404,W0611
 from pritunl import __version__
 
 from pritunl.constants import *
@@ -114,7 +114,7 @@ def set_db_ver(version, version_min=None):
             new_ver=version,
             cur_min_ver=db_min_version,
             new_min_ver=MIN_DATABASE_VER,
-        )
+                    )
 
     update_doc = {
         'version': version,
@@ -214,7 +214,7 @@ def check_output_logged(*args, **kwargs):
             return_code=return_code,
             stdout=stdoutdata,
             stderr=stderrdata,
-        )
+                     )
 
         raise subprocess.CalledProcessError(
             return_code, cmd, output=stdoutdata)
@@ -265,7 +265,7 @@ def rmtree(path):
                 from pritunl import logger
                 logger.exception('Failed to rm files', 'utils',
                     path=path,
-                )
+                                 )
             time.sleep(0.01)
 
 def filter_str(in_str):

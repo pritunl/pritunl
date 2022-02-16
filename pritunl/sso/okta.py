@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E401,E502
+# pylama:ignore=E128,E302,E401,E502
 from pritunl import settings
 from pritunl import logger
 
@@ -24,7 +24,7 @@ def get_user_id(username):
     except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
             username=username,
-        )
+                         )
         return None
 
     if response.status_code != 200:
@@ -32,7 +32,7 @@ def get_user_id(username):
             username=username,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return None
 
     data = response.json()
@@ -43,13 +43,13 @@ def get_user_id(username):
             username=username,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return None
 
     if data['status'].lower() != 'active':
         logger.warning('Okta user is not active', 'sso',
             username=username,
-        )
+                       )
         return None
 
     return user_id
@@ -77,7 +77,7 @@ def auth_okta(username):
             username=username,
             okta_app_id=okta_app_id,
             user_id=user_id,
-        )
+                         )
         return None
 
     if response.status_code == 404:
@@ -85,7 +85,7 @@ def auth_okta(username):
             username=username,
             okta_app_id=okta_app_id,
             user_id=user_id,
-        )
+                       )
         return False
 
     if response.status_code != 200:
@@ -95,7 +95,7 @@ def auth_okta(username):
             user_id=user_id,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return None
 
     if response.json():
@@ -105,7 +105,7 @@ def auth_okta(username):
         username=username,
         okta_app_id=okta_app_id,
         user_id=user_id,
-    )
+                   )
 
     return False
 
@@ -118,7 +118,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
         logger.error('Okta passcode empty', 'sso',
             username=username,
             okta_user_id=user_id,
-        )
+                     )
         return False
 
     try:
@@ -133,7 +133,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
         logger.exception('Okta api error', 'sso',
             username=username,
             okta_user_id=user_id,
-        )
+                         )
         return False
 
     if response.status_code != 200:
@@ -142,7 +142,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             okta_user_id=user_id,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False
 
     not_active = False
@@ -174,19 +174,19 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             logger.info('Okta secondary not available, skipped', 'sso',
                 username=username,
                 okta_user_id=user_id,
-            )
+                        )
             return True
         elif not_active:
             logger.warning('Okta secondary not active', 'sso',
                 username=username,
                 okta_user_id=user_id,
-            )
+                           )
             return False
         else:
             logger.warning('Okta secondary not available', 'sso',
                 username=username,
                 okta_user_id=user_id,
-            )
+                           )
             return False
 
     verify_data = {}
@@ -197,7 +197,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
         username=username,
         okta_user_id=user_id,
         okta_factor_id=factor_id,
-    )
+                )
 
     try:
         response = requests.post(
@@ -216,7 +216,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             username=username,
             user_id=user_id,
             factor_id=factor_id,
-        )
+                         )
         return False
 
     if response.status_code != 200 and response.status_code != 201:
@@ -226,7 +226,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             factor_id=factor_id,
             status_code=response.status_code,
             response=response.content,
-        )
+                     )
         return False
 
     poll_url = None
@@ -246,7 +246,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 user_id=user_id,
                 factor_id=factor_id,
                 result=result,
-            )
+                           )
             return False
 
         if not poll_url:
@@ -257,7 +257,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                     user_id=user_id,
                     factor_id=factor_id,
                     data=data,
-                )
+                             )
                 return False
 
             poll = links.get('poll')
@@ -267,7 +267,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                     user_id=user_id,
                     factor_id=factor_id,
                     data=data,
-                )
+                             )
                 return False
 
             poll_url = poll.get('href')
@@ -277,7 +277,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                     user_id=user_id,
                     factor_id=factor_id,
                     data=data,
-                )
+                             )
                 return False
 
         time.sleep(settings.app.sso_okta_poll_rate)
@@ -295,7 +295,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 username=username,
                 user_id=user_id,
                 factor_id=factor_id,
-            )
+                             )
             return False
 
         if response.status_code != 200:
@@ -305,5 +305,5 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 factor_id=factor_id,
                 status_code=response.status_code,
                 response=response.content,
-            )
+                         )
             return False

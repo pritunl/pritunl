@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E722
+# pylama:ignore=E128,E302,E722
 # Available libraries included with a default Pritunl installation
 from pritunl import logger
 # import requests
@@ -16,7 +16,7 @@ def user_connection(host_id, server_id, org_id, user_id, host_name,
     logger.info('Example log message', 'plugin',
         key1='value1',
         key2='value2',
-    )
+                )
 
     try:
         raise Exception('example')
@@ -24,7 +24,7 @@ def user_connection(host_id, server_id, org_id, user_id, host_name,
         logger.exception('Example exception log message', 'plugin',
             key1='value1',
             key2='value2',
-        )
+                         )
 
 # Called after user has connected.
 def user_connected(host_id, server_id, org_id, user_id, host_name,

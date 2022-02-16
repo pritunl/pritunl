@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,E305,E722,W0401
+# pylama:ignore=E128,E302,E305,E722,W0401
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -51,7 +51,7 @@ class TaskServer(task.Task):
                             cur_timestamp=timestamp,
                             ttl_timestamp=timestamp_spec,
                             ping_timestamp=instance['ping_timestamp'],
-                        )
+                                       )
 
                         self.server_collection.update({
                             '_id': doc['_id'],
@@ -175,7 +175,7 @@ class TaskServer(task.Task):
                 logger.info('Recovering server state', 'server',
                     server_id=doc['_id'],
                     prefered_hosts=prefered_hosts,
-                )
+                            )
 
                 messenger.publish('servers', 'start', extra={
                     'server_id': doc['_id'],

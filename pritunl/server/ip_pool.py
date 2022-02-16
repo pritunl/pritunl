@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,W0401
+# pylama:ignore=E128,E302,W0401
 from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import ipaddress
@@ -34,7 +34,7 @@ class ServerIpPool:
                 except StopIteration:
                     logger.error('Failed to find network start', 'server',
                         server_id=self.server.id,
-                    )
+                                 )
                     return
 
                 if ip_addr == network_break:
@@ -199,7 +199,7 @@ class ServerIpPool:
             logger.warning('Failed to assign ip addresses ' +
                 'to org, ip pool empty', 'server',
                 org_id=org_id,
-            )
+                           )
 
     def unassign_ip_pool_org(self, org_id):
         self.collection.update({
@@ -265,7 +265,7 @@ class ServerIpPool:
                     'to server, ip pool empty', 'server',
                     server_id=server_id,
                     org_id=org_id,
-                )
+                               )
                 break
 
         if not bulk_empty:

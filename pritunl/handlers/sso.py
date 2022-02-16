@@ -1,4 +1,4 @@
-# pylama:ignore=E124,E128,E302,W0401
+# pylama:ignore=E128,E302,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -29,7 +29,7 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
         if not org:
             logger.error('Organization for sso does not exist', 'sso',
                 org_id=org_id,
-            )
+                         )
             return flask.abort(405)
 
         usr = org.find_user(name=username)
@@ -41,13 +41,13 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
                 remote_ip=remote_addr,
                 cur_org_id=usr.org_id,
                 new_org_id=org_id,
-            )
+                        )
 
             org = organization.get_by_id(org_id)
             if not org:
                 logger.error('Organization for sso does not exist', 'sso',
                     org_id=org_id,
-                )
+                             )
                 return flask.abort(405)
 
             usr.remove()
@@ -145,7 +145,7 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
     usr.audit_event('user_profile',
         'User profile viewed from single sign-on',
         remote_addr=remote_addr,
-    )
+                    )
 
     journal.entry(
         journal.SSO_AUTH_SUCCESS,
@@ -198,7 +198,7 @@ def sso_authenticate_post():
             if i == len(usernames) - 1:
                 logger.warning('Invalid duo username', 'sso',
                     username=username,
-                )
+                               )
 
     if valid:
         valid, org_id, groups = sso.plugin_sso_authenticate(
@@ -210,7 +210,7 @@ def sso_authenticate_post():
         if not valid:
             logger.warning('Duo plugin authentication not valid', 'sso',
                 username=username,
-            )
+                           )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -225,7 +225,7 @@ def sso_authenticate_post():
     else:
         logger.warning('Duo authentication not valid', 'sso',
             username=username,
-        )
+                       )
 
         journal.entry(
             journal.SSO_AUTH_FAILURE,
@@ -290,7 +290,7 @@ def sso_request_get():
             logger.error('Azure auth server error', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
-            )
+                         )
 
             if resp.status_code == 401:
                 return flask.abort(405)
@@ -326,7 +326,7 @@ def sso_request_get():
             logger.error('Google auth server error', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
-            )
+                         )
 
             if resp.status_code == 401:
                 return flask.abort(405)
@@ -365,7 +365,7 @@ def sso_request_get():
             logger.error('Auth0 auth server error', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
-            )
+                         )
 
             if resp.status_code == 401:
                 return flask.abort(405)
@@ -401,7 +401,7 @@ def sso_request_get():
             logger.error('Slack auth server error', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
-            )
+                         )
 
             if resp.status_code == 401:
                 return flask.abort(405)
@@ -440,7 +440,7 @@ def sso_request_get():
             logger.error('Saml auth server error', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
-            )
+                         )
 
             if resp.status_code == 401:
                 return flask.abort(405)
@@ -556,7 +556,7 @@ def sso_callback_get():
                     user_name=username,
                     user_email=email,
                     org_names=org_names,
-                )
+                               )
 
         valid, org_id_new, groups2 = sso.plugin_sso_authenticate(
             sso_type='saml',
@@ -570,7 +570,7 @@ def sso_callback_get():
         else:
             logger.error('Saml plugin authentication not valid', 'sso',
                 username=username,
-            )
+                         )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -622,7 +622,7 @@ def sso_callback_get():
                 user_name=username,
                 user_email=email,
                 org_names=org_names,
-            )
+                           )
 
         valid, org_id_new, groups = sso.plugin_sso_authenticate(
             sso_type='slack',
@@ -636,7 +636,7 @@ def sso_callback_get():
         else:
             logger.error('Slack plugin authentication not valid', 'sso',
                 username=username,
-            )
+                         )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -677,7 +677,7 @@ def sso_callback_get():
         else:
             logger.error('Google plugin authentication not valid', 'sso',
                 username=username,
-            )
+                         )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -714,7 +714,7 @@ def sso_callback_get():
                     user_name=username,
                     user_email=email,
                     org_names=google_groups,
-                )
+                               )
     elif doc.get('type') == AZURE_AUTH:
         username = params.get('username')[0]
         email = None
@@ -723,7 +723,7 @@ def sso_callback_get():
         if tenant != settings.app.sso_azure_directory_id:
             logger.error('Azure directory ID mismatch', 'sso',
                 username=username,
-            )
+                         )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -761,7 +761,7 @@ def sso_callback_get():
         else:
             logger.error('Azure plugin authentication not valid', 'sso',
                 username=username,
-            )
+                         )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -798,7 +798,7 @@ def sso_callback_get():
                     user_name=username,
                     user_email=email,
                     org_names=azure_groups,
-                )
+                               )
     elif doc.get('type') == AUTHZERO_AUTH:
         username = params.get('username')[0]
         if params.get('email'):
@@ -831,7 +831,7 @@ def sso_callback_get():
         else:
             logger.error('Auth0 plugin authentication not valid', 'sso',
                 username=username,
-            )
+                         )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -868,11 +868,11 @@ def sso_callback_get():
                     user_name=username,
                     user_email=email,
                     org_names=authzero_groups,
-                )
+                               )
     else:
         logger.error('Unknown sso type', 'sso',
             sso_type=doc.get('type'),
-        )
+                     )
         return flask.abort(401)
 
     if DUO_AUTH in sso_mode:
@@ -990,7 +990,7 @@ def sso_duo_post():
         if not valid:
             logger.warning('Duo authentication not valid', 'sso',
                 username=username,
-            )
+                           )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -1015,7 +1015,7 @@ def sso_duo_post():
         if not valid:
             logger.warning('Duo authentication not valid', 'sso',
                 username=username,
-            )
+                           )
 
             journal.entry(
                 journal.SSO_AUTH_FAILURE,
@@ -1040,7 +1040,7 @@ def sso_duo_post():
     else:
         logger.warning('Duo plugin authentication not valid', 'sso',
             username=username,
-        )
+                       )
 
         journal.entry(
             journal.SSO_AUTH_FAILURE,

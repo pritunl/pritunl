@@ -1,4 +1,4 @@
-# pylama:ignore=E122,E124,E128,E302,E401,E502,E722,W0401
+# pylama:ignore=E122,E128,E302,E401,E502,E722,W0401
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl.helpers import *
@@ -301,7 +301,7 @@ class User(mongo.MongoObject):
                 logger.exception('Failed to create user cert', 'user',
                     org_id=self.org.id,
                     user_id=self.id,
-                )
+                                 )
                 raise
             self.read_file('certificate', cert_path)
         finally:
@@ -319,7 +319,7 @@ class User(mongo.MongoObject):
             logger.exception('Failed to assign users ip address', 'user',
                 org_id=self.org.id,
                 user_id=self.id,
-            )
+                             )
 
     def queue_initialize(self, block, priority=LOW):
         if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
@@ -387,7 +387,7 @@ class User(mongo.MongoObject):
                         user_name=self.name,
                         status_code=resp.status_code,
                         content=resp.content,
-                    )
+                                 )
                     return False
 
                 valid, google_groups = sso.verify_google(self.email)
@@ -395,7 +395,7 @@ class User(mongo.MongoObject):
                     logger.error('Google auth check failed', 'user',
                         user_id=self.id,
                         user_name=self.name,
-                    )
+                                 )
                     return False
 
                 if settings.app.sso_google_mode == 'groups':
@@ -411,7 +411,7 @@ class User(mongo.MongoObject):
                 logger.exception('Google auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
         elif AZURE_AUTH in self.auth_type and AZURE_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
@@ -434,7 +434,7 @@ class User(mongo.MongoObject):
                         user_name=self.name,
                         status_code=resp.status_code,
                         content=resp.content,
-                    )
+                                 )
                     return False
 
                 valid, azure_groups = sso.verify_azure(self.name)
@@ -442,7 +442,7 @@ class User(mongo.MongoObject):
                     logger.error('Azure auth check failed', 'user',
                         user_id=self.id,
                         user_name=self.name,
-                    )
+                                 )
                     return False
 
                 if settings.app.sso_azure_mode == 'groups':
@@ -458,7 +458,7 @@ class User(mongo.MongoObject):
                 logger.exception('Azure auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
         elif AUTHZERO_AUTH in self.auth_type and AUTHZERO_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
@@ -481,7 +481,7 @@ class User(mongo.MongoObject):
                         user_name=self.name,
                         status_code=resp.status_code,
                         content=resp.content,
-                    )
+                                 )
                     return False
 
                 valid, authzero_groups = sso.verify_authzero(self.name)
@@ -489,7 +489,7 @@ class User(mongo.MongoObject):
                     logger.error('Auth0 auth check failed', 'user',
                         user_id=self.id,
                         user_name=self.name,
-                    )
+                                 )
                     return False
 
                 if settings.app.sso_authzero_mode == 'groups':
@@ -505,7 +505,7 @@ class User(mongo.MongoObject):
                 logger.exception('Auth0 auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
         elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
             if settings.user.skip_remote_sso_check:
@@ -528,7 +528,7 @@ class User(mongo.MongoObject):
                         user_name=self.name,
                         status_code=resp.status_code,
                         content=resp.content,
-                    )
+                                 )
                     return False
 
                 return True
@@ -536,7 +536,7 @@ class User(mongo.MongoObject):
                 logger.exception('Slack auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
         elif SAML_ONELOGIN_AUTH in self.auth_type and \
                 SAML_ONELOGIN_AUTH in sso_mode:
@@ -549,7 +549,7 @@ class User(mongo.MongoObject):
                 logger.exception('OneLogin auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
         elif SAML_JUMPCLOUD_AUTH in self.auth_type and \
                 SAML_JUMPCLOUD_AUTH in sso_mode:
@@ -562,7 +562,7 @@ class User(mongo.MongoObject):
                 logger.exception('JumpCloud auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
         elif SAML_OKTA_AUTH in self.auth_type and \
                 SAML_OKTA_AUTH in sso_mode:
@@ -575,7 +575,7 @@ class User(mongo.MongoObject):
                 logger.exception('Okta auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
         elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in sso_mode:
             try:
@@ -584,7 +584,7 @@ class User(mongo.MongoObject):
                 logger.exception('Radius auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
         elif PLUGIN_AUTH in self.auth_type:
             try:
@@ -597,7 +597,7 @@ class User(mongo.MongoObject):
                 logger.exception('Plugin auth check error', 'user',
                     user_id=self.id,
                     user_name=self.name,
-                )
+                                 )
             return False
 
         return True
