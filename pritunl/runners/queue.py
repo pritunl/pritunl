@@ -1,4 +1,4 @@
-# pylama:ignore=E711,E722,W0401,W0611
+# pylama:ignore=E722,W0401,W0611
 from pritunl.constants import *
 from pritunl.helpers import *
 from pritunl import settings
@@ -93,7 +93,7 @@ def _check_thread():
 def run_queue_item(queue_item, thread_limit):
     release = True
     try:
-        if queue_item.queue_com.state == None:
+        if queue_item.queue_com.state is None:
             queue_item.run()
         elif queue_item.queue_com.state == PAUSED:
             release = False

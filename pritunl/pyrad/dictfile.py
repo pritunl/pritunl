@@ -1,4 +1,4 @@
-# pylama:ignore=E711
+# pylama:ignore=
 # Copyright 2002-2008 Wichert Akkerman. All rights reserved.
 # Copyright 2007-2008 Simplon. All rights reserved.
 #
@@ -134,7 +134,7 @@ class DictFile(object):
     def __next__(self):
         while self.stack:
             line = self.stack[-1].Next()
-            if line == None:
+            if line is None:
                 self.stack.pop()
             else:
                 inc = self.__GetInclude(line)
