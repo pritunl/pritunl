@@ -1,4 +1,4 @@
-# pylama:ignore=E302
+# pylama:ignore=
 # Copyright 2007 Google Inc.
 #  Licensed to PSF under a Contributor Agreement.
 
@@ -16,6 +16,7 @@ import functools
 
 IPV4LENGTH = 32
 IPV6LENGTH = 128
+
 
 class AddressValueError(ValueError):
     """A Value Error related to the address."""
