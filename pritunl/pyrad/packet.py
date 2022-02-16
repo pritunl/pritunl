@@ -1,4 +1,4 @@
-# pylama:ignore=E117
+# pylama:ignore=
 # Copyright 2002-2008 Wichert Akkerman. All rights reserved.
 # Copyright 2007-2008 Simplon. All rights reserved.
 #
@@ -115,7 +115,7 @@ class Packet(dict):
         self.secret = secret
         if authenticator is not None and \
                 not isinstance(authenticator, six.binary_type):
-                    raise TypeError('authenticator must be a binary string')
+            raise TypeError('authenticator must be a binary string')
         self.authenticator = authenticator
 
         if 'dict' in attributes:
