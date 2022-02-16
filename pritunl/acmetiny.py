@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# pylama:ignore=E265,W0611
+# pylama:ignore=W0611
 # Copyright Daniel Roesler, under MIT license, see LICENSE at github.com/diafygi/acme-tiny
 import argparse
 import subprocess
@@ -21,8 +21,8 @@ try:
 except ImportError:
     from urllib.request import urlopen, Request  # Python 2
 
-#DEFAULT_CA = "https://acme-v02.api.letsencrypt.org" # DEPRECATED! USE DEFAULT_DIRECTORY_URL INSTEAD
-#DEFAULT_DIRECTORY_URL = "https://acme-v02.api.letsencrypt.org/directory"
+# DEFAULT_CA = "https://acme-v02.api.letsencrypt.org" # DEPRECATED! USE DEFAULT_DIRECTORY_URL INSTEAD
+# DEFAULT_DIRECTORY_URL = "https://acme-v02.api.letsencrypt.org/directory"
 
 
 def get_crt(account_key, csr, set_acme, contact=None):
