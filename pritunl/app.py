@@ -1,4 +1,4 @@
-# pylama:ignore=E306,E722,W0401
+# pylama:ignore=E722,W0401
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl.helpers import *
@@ -86,6 +86,7 @@ def update_server(delay=0):
 
 def stop_server(delay=0):
     _watch_event.clear()
+
     def thread_func():
         time.sleep(delay)
         set_app_server_interrupt()
@@ -100,6 +101,7 @@ def stop_server(delay=0):
 
 def restart_server(delay=0):
     _watch_event.clear()
+
     def thread_func():
         time.sleep(delay)
         set_app_server_interrupt()

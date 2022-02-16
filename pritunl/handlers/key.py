@@ -1,4 +1,4 @@
-# pylama:ignore=E306,E722,W0401,W0404,W0611,W0621
+# pylama:ignore=E722,W0401,W0404,W0611,W0621
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import utils
@@ -1106,6 +1106,7 @@ def key_wg_post(org_id, user_id, server_id):
         'configuration': None,
         'reason': None,
     }
+
     def callback(allow, data):
         send_data['allow'] = allow
         if allow:

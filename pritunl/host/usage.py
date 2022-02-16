@@ -1,4 +1,4 @@
-# pylama:ignore=E306,W0401
+# pylama:ignore=W0401
 from pritunl.host import usage_utils
 
 from pritunl.helpers import *
@@ -146,6 +146,7 @@ class HostUsage(object):
 
         cpu = 0.3
         mem = 0.3
+
         def usage_rand(x):
             x += random.uniform(-0.01, 0.01)
             x = max(x, 0.25)
