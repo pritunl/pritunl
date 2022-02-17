@@ -11,6 +11,10 @@
     <label>Priority</label>
     <input type="number" class="form-control" placeholder="Enter priority" data-toggle="tooltip" title="Priority of host, available host with highest priority will selected. Failover on network partitions will not function if priority is used" min="1" step="1" autocapitalize="off">
   </div>
+  <div class="backoff form-group">
+    <label>Backoff Timeout</label>
+    <input type="number" class="form-control" placeholder="Enter backoff" data-toggle="tooltip" title="Option, amount of time in seconds since host first entered unavailable state before attempting to use as active host for link" min="0" step="1" autocapitalize="off">
+  </div>
 </div>
 <div class="advanced form-group">
   <div class="static-toggle toggle-form form-group">
