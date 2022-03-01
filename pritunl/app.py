@@ -126,6 +126,8 @@ def after_request(response):
         raise ValueError('Request not authorized')
 
     response.headers.add('X-Frame-Options', 'DENY')
+    response.headers.add('X-XSS-Protection', '1; mode=block')
+    response.headers.add('X-Content-Type-Options', 'nosniff')
 
     if settings.app.server_ssl or settings.app.reverse_proxy:
         response.headers.add('Strict-Transport-Security', 'max-age=31536000')
