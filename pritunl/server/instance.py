@@ -443,11 +443,25 @@ class ServerInstance(object):
 
     def enable_ip_forwarding(self):
         try:
-            utils.check_output_logged(
-                ['sysctl', '-w', 'net.ipv4.ip_forward=1'])
+            ip_forward = ''
+            output = utils.check_output_logged(
+                ['sysctl', 'net.ipv4.ip_forward'])
+            for line in output.split('\n'):
+                if 'net.ipv4.ip_forward =' in line:
+                    ip_forward = line.split('=')[1].strip()
+            if ip_forward != '1':
+                try:
+                    logger.info('Attempting to enable IP forwarding')
+                    utils.check_output_logged(
+                        ['sysctl', '-w', 'net.ipv4.ip_forward=1'])
+                except subprocess.CalledProcessError:
+                    logger.exception('Failed to enable IP forwarding', 'server',
+                        server_id=self.server.id,
+                    )
+                    raise
         except subprocess.CalledProcessError:
-            logger.exception('Failed to enable IP forwarding', 'server',
-                server_id=self.server.id,
+            logger.exception('Failed to read value of sysctl \'net.ipv4.ip_forward\'',
+                'server', server_id=self.server.id,
             )
             raise
 
