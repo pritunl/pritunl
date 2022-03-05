@@ -19,6 +19,7 @@ Commands:
   reset-version         Reset database version to server version
   reset-ssl-cert        Reset the server ssl certificate
   reconfigure           Reconfigure database connection
+  get-mongodb           Get the current mongodb uri
   set-mongodb           Set the mongodb uri
   logs                  View server logs
   clear-auth-limit      Reset failed authentication attempt limiter
@@ -218,6 +219,14 @@ def main(default_conf=None):
         print('Successfully updated configuration. This change is ' \
             'stored in the database and has been applied to all hosts ' \
             'in the cluster.')
+
+        sys.exit(0)
+    elif cmd == 'get-mongodb':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_loc()
+
+        print(settings.conf.mongodb_uri)
 
         sys.exit(0)
     elif cmd == 'set-mongodb':
