@@ -21,6 +21,8 @@ Commands:
   reconfigure           Reconfigure database connection
   get-mongodb           Get the current mongodb uri
   set-mongodb           Set the mongodb uri
+  get-host-id           Get the current host id
+  set-host-id           Set the host id
   logs                  View server logs
   clear-auth-limit      Reset failed authentication attempt limiter
   clear-logs            Clear server logs"""
@@ -244,6 +246,31 @@ def main(default_conf=None):
 
         time.sleep(.2)
         print('Database configuration successfully set')
+
+        sys.exit(0)
+    elif cmd == 'get-host-id':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_loc()
+
+        print(settings.local.host_id)
+
+        sys.exit(0)
+    elif cmd == 'set-host-id':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_loc()
+
+        if len(args) > 1:
+            host_id = args[1]
+        else:
+            host_id = None
+
+        with open(settings.conf.uuid_path, 'w') as uuid_file:
+            uuid_file.write(host_id.strip())
+
+        time.sleep(.2)
+        print('Host ID successfully set')
 
         sys.exit(0)
     elif cmd == 'reset-ssl-cert':
