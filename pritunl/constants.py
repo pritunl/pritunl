@@ -107,6 +107,10 @@ NAME_SAFE_CHARS = {
     '?', '^', '`', '{', '|', '}', '~',
 }
 
+NAME_SAFE_CHARS2 = {
+    '-', '_',
+}
+
 VALID_CHARS = {
     'a', 'b', 'c', 'd', 'e', 'f', 'g',
     'h', 'i', 'j', 'k', 'l', 'm', 'n',

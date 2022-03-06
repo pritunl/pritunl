@@ -279,6 +279,13 @@ def filter_unicode(in_str):
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS)
 
+def filter_str2(in_str):
+    if in_str is not None:
+        in_str = str(in_str)
+    if not in_str:
+        return in_str
+    return ''.join(x for x in in_str if x.isalnum() or x in NAME_SAFE_CHARS2)
+
 def generate_secret():
     return generate_secret_len(32)
 
