@@ -23,3 +23,21 @@
     <option value="hold" <%= action === 'hold' ? 'selected' : '' %>>Hold</option>
   </select>
 </div>
+<div class="form-group">
+  <div class="form-group preferred-ike">
+    <label>Preferred IKE Cipher</label>
+    <input type="text" class="form-control" placeholder="Enter cipher" data-toggle="tooltip" title="Preferred IKE Cipher, refer to strongSwan IKEv2 Cipher Suites. Leave blank for default" value="<%- preferred_ike %>">
+  </div>
+</div>
+<div class="form-group">
+  <div class="form-group preferred-esp">
+    <label>Preferred ESP Cipher</label>
+    <input type="text" class="form-control" placeholder="Enter cipher" data-toggle="tooltip" title="Preferred ESP Cipher, refer to strongSwan IKEv2 Cipher Suites. Leave blank for default" value="<%- preferred_esp %>">
+  </div>
+</div>
+<div class="force-preferred-toggle toggle-form form-group">
+  <label>Force Preferred Cipher</label>
+  <div class="selector <%= force_preferred ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Force IPsec connections to use preferred cipher. Connections will not be allowed from other ciphers. Requires updated pritunl-link clients.">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
