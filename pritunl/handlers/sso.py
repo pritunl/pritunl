@@ -517,7 +517,7 @@ def sso_callback_get():
                 org_names = org_names_param.split(';')
             else:
                 org_names = org_names_param.split(',')
-            org_names = [x for x in org_names if x]
+            org_names = [utils.filter_unicode(x) for x in org_names if x]
         org_names = sorted(org_names)
 
         groups = []
@@ -527,7 +527,7 @@ def sso_callback_get():
                 groups = groups_param.split(';')
             else:
                 groups = groups_param.split(',')
-            groups = [x for x in groups if x]
+            groups = [utils.filter_unicode(x) for x in groups if x]
         groups = set(groups)
 
         if not username:
@@ -538,7 +538,7 @@ def sso_callback_get():
             not_found = False
             for org_name in org_names:
                 org = organization.get_by_name(
-                    utils.filter_unicode(org_name),
+                    org_name,
                     fields=('_id'),
                 )
                 if org:
@@ -588,6 +588,7 @@ def sso_callback_get():
         user_team = params.get('team')[0]
         org_names = params.get('orgs', [''])[0]
         org_names = sorted(org_names.split(','))
+        org_names = [utils.filter_unicode(x) for x in org_names]
 
         if user_team != settings.app.sso_match[0]:
             journal.entry(
@@ -604,7 +605,7 @@ def sso_callback_get():
         org_id = settings.app.sso_org
         for org_name in org_names:
             org = organization.get_by_name(
-                utils.filter_unicode(org_name),
+                org_name,
                 fields=('_id'),
             )
             if org:
@@ -696,7 +697,7 @@ def sso_callback_get():
             google_groups = sorted(google_groups)
             for org_name in google_groups:
                 org = organization.get_by_name(
-                    utils.filter_unicode(org_name),
+                    org_name,
                     fields=('_id'),
                 )
                 if org:
@@ -780,7 +781,7 @@ def sso_callback_get():
             azure_groups = sorted(azure_groups)
             for org_name in azure_groups:
                 org = organization.get_by_name(
-                    utils.filter_unicode(org_name),
+                    org_name,
                     fields=('_id'),
                 )
                 if org:
@@ -850,7 +851,7 @@ def sso_callback_get():
             authzero_groups = sorted(authzero_groups)
             for org_name in authzero_groups:
                 org = organization.get_by_name(
-                    utils.filter_unicode(org_name),
+                    org_name,
                     fields=('_id'),
                 )
                 if org:
