@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3098.52 2022-03-07
+-------------------------------
 
 Add custom IPsec ciphers to links
 Improve connection time with Azure users
