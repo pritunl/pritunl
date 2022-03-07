@@ -958,7 +958,7 @@ define([
       this.setIpv6Select(!this.getIpv6Select());
     },
     getSsoCacheSelect: function() {
-      return this.$('.ipv6 .selector').hasClass('selected');
+      return this.$('.sso-cache .selector').hasClass('selected');
     },
     setSsoCacheSelect: function(state) {
       if (state) {
