@@ -1,5 +1,6 @@
 from pritunl import settings
 from pritunl import logger
+from pritunl import utils
 
 import requests
 import urllib.request, urllib.parse, urllib.error
@@ -93,7 +94,7 @@ def _verify_azure_1(user_name):
     for membership in data['value']:
         if membership.get('objectType') != 'Group':
             continue
-        roles.append(membership.get('displayName'))
+        roles.append(utils.filter_unicode(membership.get('displayName')))
 
     return True, roles
 

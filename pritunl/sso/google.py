@@ -1,4 +1,5 @@
 from pritunl import settings
+from pritunl import utils
 
 import json
 import io
@@ -46,6 +47,6 @@ def verify_google(user_email):
 
     groups = []
     for group in results.get('groups') or []:
-        groups.append(group['name'].replace(' ', ''))
+        groups.append(utils.filter_unicode(group['name']))
 
     return True, groups

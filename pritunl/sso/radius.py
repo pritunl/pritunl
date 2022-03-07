@@ -4,6 +4,7 @@ from pritunl import logger
 from pritunl.pyrad import client
 from pritunl.pyrad import packet
 from pritunl.pyrad import dictionary
+from pritunl import utils
 
 import io
 
@@ -76,8 +77,8 @@ def verify_radius(username, password):
 
     org_names = org_names or org_names2
 
-    org_names = [x.decode() for x in org_names]
-    group_names = [x.decode() for x in group_names]
+    org_names = [utils.filter_str(x.decode()) for x in org_names]
+    group_names = [utils.filter_str(x.decode()) for x in group_names]
 
     groups = set()
     for group in group_names:

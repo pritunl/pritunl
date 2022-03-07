@@ -1,5 +1,6 @@
 from pritunl import settings
 from pritunl import logger
+from pritunl import utils
 
 import json
 import requests
@@ -75,6 +76,8 @@ def verify_authzero(user_name):
                 groups = app_authorization.get('groups')
 
         break
+
+    groups = [utils.filter_unicode(x) for x in groups]
 
     if not user_id:
         logger.error('Failed to find Auth0 user',
