@@ -699,17 +699,30 @@ def link_state_put():
 
     host.load_link()
 
+    req_timestamp = flask.request.json.get('timestamp') or int(auth_timestamp)
     host.version = flask.request.json.get('version')
     host.public_address = flask.request.json.get('public_address')
     host.local_address = flask.request.json.get('local_address')
     host.address6 = flask.request.json.get('address6')
     if flask.request.json.get('hosts'):
         host.hosts = flask.request.json.get('hosts')
-        if host.hosts_hist:
-            host.hosts_hist.insert(0, flask.request.json.get('hosts'))
-            host.hosts_hist = host.hosts_hist[:6]
+
+        processed = False
+        if host.hosts_hist_timestamp:
+            if req_timestamp in host.hosts_hist_timestamp:
+                processed = True
+            else:
+                host.hosts_hist_timestamp.insert(0, req_timestamp)
+                host.hosts_hist_timestamp = host.hosts_hist_timestamp[:6]
         else:
-            host.hosts_hist = [flask.request.json.get('hosts')]
+            host.hosts_hist_timestamp = [req_timestamp]
+
+        if not processed:
+            if host.hosts_hist:
+                host.hosts_hist.insert(0, flask.request.json.get('hosts'))
+                host.hosts_hist = host.hosts_hist[:6]
+            else:
+                host.hosts_hist = [flask.request.json.get('hosts')]
     else:
         host.hosts = None
         host.hosts_hist = None
