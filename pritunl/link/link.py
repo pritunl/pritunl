@@ -970,7 +970,6 @@ class Location(mongo.MongoObject):
             if doc['active']:
                 doc_active = doc
 
-            doc_hosts = 0
             if doc.get('hosts_hist'):
                 cur_doc_hosts = 0
                 cur_doc_hosts_best = 0
@@ -1073,7 +1072,7 @@ class Location(mongo.MongoObject):
             if best_doc:
                 return Host(link=self.link, location=self, doc=best_doc)
             return
-        elif best_active:
+        elif best_doc['active']:
             return Host(link=self.link, location=self, doc=best_doc)
 
         doc_id = best_doc['_id']
