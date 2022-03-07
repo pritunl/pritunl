@@ -331,7 +331,8 @@ class ServerInstance(object):
                     pass
 
         if drop_permissions:
-            server_conf += 'user %s\ngroup %s\n' % (unix_user, unix_group)
+            server_conf += 'user %s\ngroup %s\npersist-key\n' % (
+                unix_user, unix_group)
 
         if self.server.bind_address:
             server_conf += 'local %s\n' % self.server.bind_address
