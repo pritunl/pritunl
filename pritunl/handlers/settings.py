@@ -21,6 +21,7 @@ _changes_audit_text = {
     'pin_mode': 'User pin mode setting changed',
     'restrict_import': 'Restrict import setting changed',
     'sso': 'Single sign-on settings changed',
+    'drop_permissions': 'Drop openvpn permissions setting changed',
 }
 
 def _dict():
@@ -74,6 +75,7 @@ def _dict():
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'restrict_import': settings.user.restrict_import,
+            'drop_permissions': settings.vpn.drop_permissions,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
@@ -181,6 +183,7 @@ def _dict():
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'restrict_import': settings.user.restrict_import,
+            'drop_permissions': settings.vpn.drop_permissions,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
             'public_address6': settings.local.host.public_addr6,
@@ -720,6 +723,14 @@ def settings_put():
         client_reconnect = True if \
             flask.request.json['client_reconnect'] else False
         settings.user.reconnect = client_reconnect
+
+    if 'drop_permissions' in flask.request.json:
+        settings_commit = True
+        drop_permissions = True if \
+            flask.request.json['drop_permissions'] else False
+        if drop_permissions != settings.vpn.drop_permissions:
+            changes.add('drop_permissions')
+        settings.vpn.drop_permissions = drop_permissions
 
     if 'sso_yubico_client' in flask.request.json:
         settings_commit = True
