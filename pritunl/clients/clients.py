@@ -102,7 +102,8 @@ class Clients(object):
         client_conf = ''
 
         client_conf += 'push "ping %s"\n' % self.server.ping_interval
-        if user.has_password(self.server) or user.get_push_type():
+        if user.has_password(self.server) or user.get_push_type() or \
+                not settings.user.reconnect:
             client_conf += 'push "ping-exit %s"\n' % \
                 self.server.ping_timeout
         else:
