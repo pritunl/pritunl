@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Update libraries
+
 Version 1.30.3098.52 2022-03-07
 -------------------------------
 
