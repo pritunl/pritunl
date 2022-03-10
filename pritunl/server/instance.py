@@ -304,8 +304,6 @@ class ServerInstance(object):
             self.server.max_clients,
             self.server.ping_interval,
             self.server.ping_timeout + 20,
-            self.server.ping_interval,
-            self.server.ping_timeout,
             server_ciphers[self.server.cipher],
             HASHES[self.server.hash],
             4 if self.server.debug else 1,
