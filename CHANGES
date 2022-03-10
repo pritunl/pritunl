@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3101.90 2022-03-10
+-------------------------------
 
 Improve reconnections with two-factor authentication
 
