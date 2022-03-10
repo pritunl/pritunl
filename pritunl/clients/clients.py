@@ -101,6 +101,14 @@ class Clients(object):
             virt_address6, user, reauth):
         client_conf = ''
 
+        client_conf += 'push "ping %s"\n' % self.server.ping_interval
+        if user.has_password(self.server) or user.get_push_type():
+            client_conf += 'push "ping-exit %s"\n' % \
+                self.server.ping_timeout
+        else:
+            client_conf += 'push "ping-restart %s"\n' % \
+                self.server.ping_timeout
+
         network_gateway = utils.get_network_gateway(self.server.network)
         network_gateway6 = utils.get_network_gateway(self.server.network6)
 
