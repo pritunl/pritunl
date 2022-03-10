@@ -1018,8 +1018,6 @@ tls-version-min 1.2
 max-clients %s
 ping %s
 ping-restart %s
-push "ping %s"
-push "ping-restart %s"
 persist-tun
 %s
 auth %s
@@ -1048,8 +1046,6 @@ tls-version-min 1.2
 max-clients %s
 ping %s
 ping-restart %s
-push "ping %s"
-push "ping-restart %s"
 persist-tun
 %s
 auth %s
