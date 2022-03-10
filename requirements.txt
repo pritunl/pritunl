@@ -22,3 +22,4 @@ cryptography==3.4.7
 pynacl==1.5.0
 certifi==2021.10.8
 cffi==1.15.0
+itsdangerous==2.0.1
