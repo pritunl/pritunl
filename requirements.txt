@@ -1,7 +1,7 @@
 flask==2.0.3
 cheroot==8.6.0
 jinja2==3.0.3
-pymongo[srv,tls]==3.12.1
+pymongo[srv,tls]==4.0.2
 netifaces==0.11.0
 boto==2.49.0
 boto3==1.21.16
@@ -21,4 +21,4 @@ pyopenssl==19.1.0
 cryptography==3.4.7
 pynacl==1.5.0
 certifi==2021.10.8
-cffi==1.15.0
+cffi==1.14.6
