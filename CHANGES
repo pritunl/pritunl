@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix server restart when using drop permissions
+
 Version 1.30.3102.46 2022-03-11
 -------------------------------
 
