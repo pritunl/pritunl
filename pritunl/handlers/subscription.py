@@ -10,6 +10,7 @@ import flask
 import re
 import http.client
 import requests
+import base64
 
 @app.app.route('/subscription', methods=['GET'])
 @auth.session_auth
@@ -40,7 +41,7 @@ def subscription_styles_get(plan, ver):
     return utils.styles_response(
         styles['etag'],
         styles['last_modified'],
-        styles['data'],
+        base64.b64decode(styles['data']).decode(),
     )
 
 @app.app.route('/subscription', methods=['POST'])
