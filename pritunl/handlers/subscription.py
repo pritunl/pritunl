@@ -7,9 +7,9 @@ from pritunl import settings
 from pritunl import auth
 
 import flask
+import requests
 import re
 import http.client
-import requests
 import base64
 
 @app.app.route('/subscription', methods=['GET'])
