@@ -91,7 +91,6 @@ def update():
                 settings.local.sub_url_key = None
             break
 
-
     if settings.app.license_plan != settings.local.sub_plan and \
             settings.local.sub_plan:
         settings.app.license_plan = settings.local.sub_plan
