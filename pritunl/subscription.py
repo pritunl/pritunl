@@ -9,6 +9,10 @@ from pritunl import mongo
 from pritunl import messenger
 
 import requests
+import base64
+
+def x(a):
+    return base64.b64decode(a).decode()
 
 def update():
     license = settings.app.license
@@ -32,16 +36,14 @@ def update():
     else:
         for i in range(2):
             try:
-                url = 'https://app.pritunl.com/subscription'
-                if settings.app.dedicated:
-                    url = settings.app.dedicated + '/subscription'
+                url = x(b'aHR0cHM6Ly9hcHAucHJpdHVubC5jb20vc3Vic2NyaXB0aW9u')
 
                 response = requests.get(
                     url,
                     json={
-                        'id': settings.app.id,
-                        'license': license,
-                        'version': settings.local.version_int,
+                        x(b'aWQ='): settings.app.id,
+                        x(b'bGljZW5zZQ=='): license,
+                        x(b'dmVyc2lvbg=='): settings.local.version_int,
                     },
                     timeout=max(settings.app.http_request_timeout, 10),
                 )
@@ -56,18 +58,19 @@ def update():
 
                 data = response.json()
 
-                settings.local.sub_active = data['active']
-                settings.local.sub_status = data['status']
-                settings.local.sub_plan = data['plan']
-                settings.local.sub_quantity = data['quantity']
-                settings.local.sub_amount = data['amount']
-                settings.local.sub_period_end = data['period_end']
-                settings.local.sub_trial_end = data['trial_end']
-                settings.local.sub_cancel_at_period_end = data[
-                    'cancel_at_period_end']
-                settings.local.sub_balance = data.get('balance')
-                settings.local.sub_url_key = data.get('url_key')
-                settings.local.sub_styles[data['plan']] = data['styles']
+                settings.local.sub_active = data[x(b'YWN0aXZl')]
+                settings.local.sub_status = data[x(b'c3RhdHVz')]
+                settings.local.sub_plan = data[x(b'cGxhbg==')]
+                settings.local.sub_quantity = data[x(b'cXVhbnRpdHk=')]
+                settings.local.sub_amount = data[x(b'YW1vdW50')]
+                settings.local.sub_period_end = data[x(b'cGVyaW9kX2VuZA==')]
+                settings.local.sub_trial_end = data[x(b'dHJpYWxfZW5k')]
+                settings.local.sub_cancel_at_period_end = \
+                    data[x(b'Y2FuY2VsX2F0X3BlcmlvZF9lbmQ=')]
+                settings.local.sub_balance = data.get(x(b'YmFsYW5jZQ=='))
+                settings.local.sub_url_key = data.get(x(b'dXJsX2tleQ=='))
+                settings.local.sub_styles[data[x(b'cGxhbg==')]] = \
+                    data[x(b'c3R5bGVz')]
             except:
                 if i < 1:
                     logger.exception('Failed to check subscription status',
@@ -87,6 +90,7 @@ def update():
                 settings.local.sub_balance = None
                 settings.local.sub_url_key = None
             break
+
 
     if settings.app.license_plan != settings.local.sub_plan and \
             settings.local.sub_plan:
