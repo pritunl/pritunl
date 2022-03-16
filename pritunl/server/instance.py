@@ -1331,6 +1331,16 @@ class ServerInstance(object):
             )
             raise
 
+        if self.server.mss_fix:
+            try:
+                utils.check_call_silent([
+                    'ip', 'link',
+                    'set', 'dev', self.interface_wg,
+                    'mtu', '%s' % self.server.mss_fix,
+                ])
+            except subprocess.CalledProcessError:
+                pass
+
         server_addr = utils.get_network_gateway_cidr(
             self.server.network_wg)
         try:
