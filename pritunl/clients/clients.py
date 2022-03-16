@@ -857,12 +857,8 @@ class Clients(object):
                         dns_server = virt_address
                     dns_servers.append(dns_server)
 
-            if len(client_data['id']) > 32:
-                rules, rules6 = self.generate_iptables_rules_wg(
-                    user, virt_address, virt_address6)
-            else:
-                rules, rules6 = self.generate_iptables_rules(
-                    user, virt_address, virt_address6)
+            rules, rules6 = self.generate_iptables_rules(
+                user, virt_address, virt_address6)
 
             self.clients.insert({
                 'id': client_id,
