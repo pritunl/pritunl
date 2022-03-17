@@ -13,13 +13,13 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 
 ```bash
 # Install MongoDB if running single host configuration
-sudo tee /etc/yum.repos.d/mongodb-org-4.4.repo << EOF
-[mongodb-org-4.4]
+sudo tee /etc/yum.repos.d/mongodb-org-5.0.repo << EOF
+[mongodb-org-5.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/8/mongodb-org/4.4/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/8/mongodb-org/5.0/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-4.4.asc
+gpgkey=https://www.mongodb.org/static/pgp/server-5.0.asc
 EOF
 
 sudo yum -y install mongodb-org
@@ -37,14 +37,15 @@ sudo yum -y install oracle-epel-release-el8
 
 sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel python3-virtualenv wget tar
 
-wget https://golang.org/dl/go1.16.4.linux-amd64.tar.gz
-echo "7154e88f5a8047aad4b80ebace58a059e36e7e2e4eb3b383127a28c711b4ff59 go1.16.4.linux-amd64.tar.gz" | sha256sum -c -
+wget https://go.dev/dl/go1.18.linux-amd64.tar.gz
+echo "e85278e98f57cdb150fe8409e6e5df5343ecb13cebf03a5d5ff12bd55a80264f go1.18.linux-amd64.tar.gz" | sha256sum -c -
 
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xf go1.16.4.linux-amd64.tar.gz
-rm -f go1.16.4.linux-amd64.tar.gz
+sudo tar -C /usr/local -xf go1.18.linux-amd64.tar.gz
+rm -f go1.18.linux-amd64.tar.gz
+
 tee -a ~/.bashrc << EOF
-export GO111MODULE=off
+export GO111MODULE=on
 export GOPATH=\$HOME/go
 export PATH=/usr/local/go/bin:\$PATH
 EOF
