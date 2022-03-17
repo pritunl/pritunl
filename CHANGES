@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix wg port forwarding
+
 Version 1.30.3106.58 2022-03-15
 -------------------------------
 
