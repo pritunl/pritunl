@@ -98,11 +98,13 @@ class Clients(object):
         return org
 
     def generate_client_conf(self, platform, client_id, virt_address,
-            virt_address6, user, reauth):
+            virt_address6, user, reauth, has_token):
         client_conf = ''
 
         client_conf += 'push "ping %s"\n' % self.server.ping_interval
-        if user.has_password(self.server) or user.get_push_type() or \
+        if (user.has_password(self.server) and has_token) or \
+                user.has_passcode(self.server) or \
+                user.get_push_type() or \
                 not settings.user.reconnect:
             client_conf += 'push "ping-exit %s"\n' % \
                 self.server.ping_timeout
@@ -765,7 +767,8 @@ class Clients(object):
 
         return virt_address, address_dynamic, False
 
-    def allow_client(self, client_data, org, user, reauth=False):
+    def allow_client(self, client_data, org, user, reauth=False,
+            has_token=False):
         client_id = client_data['client_id']
         key_id = client_data['key_id']
         org_id = client_data['org_id']
@@ -910,7 +913,7 @@ class Clients(object):
                 })
 
         client_conf = self.generate_client_conf(platform, client_id,
-            virt_address, virt_address6, user, reauth)
+            virt_address, virt_address6, user, reauth, has_token)
 
         client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
             virt_address)
@@ -1140,14 +1143,17 @@ class Clients(object):
         auth_nonce = None
         auth_timestamp = None
         mac_addr = client_data.get('mac_addr')
+        has_token = False
 
         if password and password.startswith('$x$') and \
                 len(username) > 24 and len(password) > 24 and \
                 self.server_private_key:
+            has_token = True
             auth_password, auth_token, auth_nonce, auth_timestamp = \
                 self.decrypt_box(username, password[3:])
         elif password and '<%=RSA_ENCRYPTED=%>' in password and \
                 self.server_private_key:
+            has_token = True
             auth_password, auth_token, auth_nonce, auth_timestamp = \
                 self.decrypt_rsa(
                     password.split('<%=RSA_ENCRYPTED=%>', 1)[-1])
@@ -1185,7 +1191,8 @@ class Clients(object):
             def callback(allow, reason=None):
                 try:
                     if allow:
-                        self.allow_client(client_data, org, user, reauth)
+                        self.allow_client(client_data, org, user,
+                            reauth, has_token)
                         if settings.vpn.stress_test:
                             self._connected(client_id)
                     else:
