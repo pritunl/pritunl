@@ -443,8 +443,11 @@ class Host(mongo.MongoObject):
                     continue
 
                 for host in location.iter_hosts():
-                    hosts[str(host.id)] = host.address6 if \
+                    host_addr = host.address6 if \
                         host.link.ipv6 else host.public_address
+
+                    if host_addr:
+                        hosts[str(host.id)] = host_addr
 
         for lnk in links:
             link_hash = hashlib.md5(json.dumps(
