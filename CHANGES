@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve client connections
+
 Version 1.30.3108.50 2022-03-17
 -------------------------------
 
