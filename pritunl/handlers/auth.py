@@ -446,6 +446,7 @@ def auth_state_get():
         'super_user': flask.g.administrator.super_user,
         'csrf_token': auth.get_token(flask.g.administrator.id),
         'theme': settings.app.theme,
+        'user': settings.local.sub_url_key,
         'active': settings.local.sub_active,
         'plan': settings.local.sub_plan,
         'version': settings.local.version_int,
