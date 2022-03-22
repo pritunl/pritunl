@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix library issue
+
 Version 1.30.3112.0 2022-03-21
 ------------------------------
 
