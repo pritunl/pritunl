@@ -11,7 +11,7 @@ urllib3==1.26.8
 redis==4.1.4
 psutil==5.9.0
 python-iptables==1.0.0
-pyroute2==0.6.7
+pyroute2==0.6.9
 google-api-python-client==2.40.0
 google-auth==2.6.0
 oauth2client==4.1.3
