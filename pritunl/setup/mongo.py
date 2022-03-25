@@ -72,7 +72,7 @@ def upsert_indexes():
     prefix = settings.conf.mongodb_collection_prefix or ''
     mongo.prefix = prefix
 
-    cur_collections = mongo.database.collection_names()
+    cur_collections = mongo.database.list_collection_names()
     if prefix + 'logs' not in cur_collections:
         log_limit = settings.app.log_limit
         mongo.database.create_collection(prefix + 'logs', capped=True,
@@ -83,7 +83,7 @@ def upsert_indexes():
         mongo.database.create_collection(prefix + 'log_entries', capped=True,
             size=log_entry_limit * 512, max=log_entry_limit)
 
-    cur_collections = mongo.secondary_database.collection_names()
+    cur_collections = mongo.secondary_database.list_collection_names()
     if prefix + 'messages' not in cur_collections:
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
@@ -383,8 +383,8 @@ def setup_mongo():
     mongo.database = database
     mongo.secondary_database = secondary_database
 
-    cur_collections = database.collection_names()
-    cur_sec_collections = secondary_database.collection_names()
+    cur_collections = database.list_collection_names()
+    cur_sec_collections = secondary_database.list_collection_names()
     if 'authorities' in cur_collections or \
             'authorities' in cur_sec_collections:
         raise TypeError('Cannot connect to a Pritunl Zero database')
@@ -433,7 +433,7 @@ def setup_mongo():
         'log_entries': 1,
     }
 
-    cur_collections = mongo.secondary_database.collection_names()
+    cur_collections = mongo.secondary_database.list_collection_names()
     if prefix + 'messages' not in cur_collections:
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
