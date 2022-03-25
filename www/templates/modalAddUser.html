@@ -24,7 +24,7 @@
   <label>Pin</label>
   <input type="password" class="form-control" placeholder="Enter user pin" data-toggle="tooltip" title="User pin, required when user connects to vpn. When using with two-factor authentication the pin and two-factor authentication code should both be placed in the password field.">
 </div>
-<div class="form-group yubikey-id" style="display: none">
+<div class="form-group yubikey-id">
   <label>YubiKey ID</label>
   <input type="text" class="form-control" maxlength="12" placeholder="Insert YubiKey" data-toggle="tooltip" title="Insert and touch YubiKey to get ID. Requires Yubico API credentials in settings.">
 </div>
@@ -53,7 +53,6 @@
     <select class="form-control" data-toggle="tooltip" title="User authentication type. This will determine how the user authenticates. This should be set automatically when the user authenticates with single sign-on.">
       <option value="local" selected>Local</option>
       <option value="duo">Duo</option>
-      <option value="yubico">Yubico</option>
       <option value="azure">Azure</option>
       <option value="azure_duo">Azure + Duo</option>
       <option value="azure_yubico">Azure + Yubico</option>
