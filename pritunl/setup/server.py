@@ -323,7 +323,7 @@ def setup_server():
             utils.set_db_ver(__version__, MIN_DATABASE_VER)
             break
         except:
-            time.sleep(0.5)
+            time.sleep(1)
             if time.time() - last_error > 30:
                 last_error = time.time()
                 logger.exception('Error connecting to mongodb server')
