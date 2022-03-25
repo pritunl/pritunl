@@ -806,6 +806,9 @@ class Clients(object):
                 'remote_ip': remote_ip,
             })
 
+            user.last_active = utils.now()
+            user.commit('last_active')
+
             virt_address, address_dynamic, device_limit = \
                 self.get_virt_addr(org_id, user_id, mac_addr, doc_id)
 
@@ -952,6 +955,9 @@ class Clients(object):
                 'platform': platform,
                 'remote_ip': remote_ip,
             })
+
+            user.last_active = utils.now()
+            user.commit('last_active')
 
             virt_address, address_dynamic, device_limit = \
                 self.get_virt_addr(org_id, user_id, mac_addr, doc_id)
@@ -1179,10 +1185,10 @@ class Clients(object):
 
             user = org.get_user(user_id, fields=(
                 '_id', 'name', 'email', 'pin', 'type', 'auth_type',
-                'yubico_id', 'groups', 'disabled', 'otp_secret',
-                'link_server_id', 'bypass_secondary', 'client_to_client',
-                'mac_addresses', 'dns_servers', 'dns_suffix',
-                'port_forwarding'))
+                'yubico_id', 'groups', 'last_active', 'disabled',
+                'otp_secret', 'link_server_id', 'bypass_secondary',
+                'client_to_client', 'mac_addresses', 'dns_servers',
+                'dns_suffix', 'port_forwarding'))
             if not user:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'User is not valid')
