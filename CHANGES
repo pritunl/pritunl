@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add user last active
+
 Version 1.30.3113.65 2022-03-22
 -------------------------------
 
