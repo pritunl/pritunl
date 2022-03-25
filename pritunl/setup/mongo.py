@@ -129,6 +129,10 @@ def upsert_indexes():
         ('name', pymongo.ASCENDING),
         ('auth_type', pymongo.ASCENDING),
     ], background=True)
+    upsert_index('users', [
+        ('last_active', pymongo.ASCENDING),
+        ('name', pymongo.ASCENDING),
+    ], background=True)
     upsert_index('users_audit', [
         ('org_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
