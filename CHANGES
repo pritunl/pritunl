@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add user last active
+Add Yubikey support for all user types
 
 Version 1.30.3113.65 2022-03-22
 -------------------------------
