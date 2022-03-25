@@ -44,6 +44,7 @@ def user_get(org_id, user_id=None, page=None):
     page = flask.request.args.get('page', page)
     page = int(page) if page else page
     search = flask.request.args.get('search', None)
+    sort_last_active = flask.request.args.get('last_active', None)
     limit = int(flask.request.args.get('limit', settings.user.page_count))
     otp_auth = False
     dns_mapping = False
@@ -74,6 +75,7 @@ def user_get(org_id, user_id=None, page=None):
         'name',
         'email',
         'groups',
+        'last_active',
         'pin',
         'type',
         'auth_type',
@@ -96,7 +98,8 @@ def user_get(org_id, user_id=None, page=None):
         query = [usr]
     else:
         query = org.iter_users(page=page, search=search,
-            search_limit=limit, fields=fields)
+            search_limit=limit, fields=fields,
+            sort_last_active=sort_last_active == 'true')
 
     for usr in query:
         users_id.append(usr.id)
@@ -245,11 +248,8 @@ def _create_user(users, org, user_data, remote_addr, pool):
     if auth_type not in AUTH_TYPES:
         auth_type = LOCAL_AUTH
 
-    if YUBICO_AUTH in auth_type:
-        yubico_id = user_data.get('yubico_id')
-        yubico_id = yubico_id[:12] if yubico_id else None
-    else:
-        yubico_id = None
+    yubico_id = user_data.get('yubico_id')
+    yubico_id = yubico_id[:12] if yubico_id else None
 
     groups = user_data.get('groups') or []
     for i, group in enumerate(groups):
@@ -462,7 +462,7 @@ def user_put(org_id, user_id):
                 reset_user_cache = True
             user.auth_type = auth_type
 
-    if 'yubico_id' in flask.request.json and YUBICO_AUTH in user.auth_type:
+    if 'yubico_id' in flask.request.json:
         yubico_id = utils.filter_str(flask.request.json['yubico_id']) or None
         yubico_id = yubico_id[:12] if yubico_id else None
         if yubico_id != user.yubico_id:
