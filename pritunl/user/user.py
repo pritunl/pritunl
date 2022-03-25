@@ -37,6 +37,7 @@ class User(mongo.MongoObject):
         'name',
         'email',
         'groups',
+        'last_active',
         'pin',
         'otp_secret',
         'type',
@@ -187,6 +188,10 @@ class User(mongo.MongoObject):
         return data
 
     def dict(self):
+        last_active = None
+        if self.last_active:
+            last_active = int(self.last_active.strftime('%s'))
+
         return {
             'id': self.id,
             'organization': self.org.id,
@@ -194,6 +199,7 @@ class User(mongo.MongoObject):
             'name': self.name,
             'email': self.email,
             'groups': self.groups or [],
+            'last_active': last_active,
             'pin': bool(self.pin),
             'type': self.type,
             'auth_type': self.auth_type,
