@@ -168,7 +168,7 @@ class Organization(mongo.MongoObject):
         }).count()
 
     def iter_users(self, page=None, search=None, search_limit=None,
-            fields=None, include_pool=False):
+            fields=None, include_pool=False, sort_last_active=False):
         spec = {
             'org_id': self.id,
             'type': CERT_CLIENT,
@@ -251,8 +251,14 @@ class Organization(mongo.MongoObject):
             limit = page_count
             skip = page * page_count if page else 0
 
-        cursor = user.User.collection.find(spec, fields).sort(
-            'name', pymongo.ASCENDING)
+        cursor = user.User.collection.find(spec, fields)
+        if sort_last_active:
+            cursor.sort([
+                ('last_active', pymongo.ASCENDING),
+                ('name', pymongo.ASCENDING),
+            ])
+        else:
+            cursor.sort('name', pymongo.ASCENDING)
 
         if skip is not None:
             cursor = cursor.skip(page * page_count if page else 0)
@@ -282,8 +288,14 @@ class Organization(mongo.MongoObject):
         else:
             spec['type'] = CERT_SERVER
 
-        cursor = user.User.collection.find(spec, fields).sort(
-            'name', pymongo.ASCENDING)
+        cursor = user.User.collection.find(spec, fields)
+        if sort_last_active:
+            cursor.sort([
+                ('last_active', pymongo.ASCENDING),
+                ('name', pymongo.ASCENDING),
+            ])
+        else:
+            cursor.sort('name', pymongo.ASCENDING)
 
         for doc in cursor:
             yield user.User(self, doc=doc, fields=fields)
