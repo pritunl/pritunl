@@ -154,6 +154,14 @@ define([
         this.$('.audit-user').addClass('no-audit-user');
       }
 
+      var lastActive = this.model.get('last_active');
+      if (lastActive) {
+        this.$('.user-last-active .time').text(
+          window.formatTime(lastActive, 'date'));
+      } else {
+        this.$('.user-last-active .time').text('Never');
+      }
+
       var dnsMapping = this.model.get('dns_mapping');
       if (dnsMapping) {
         this.$('.user-dns-name .name').text(dnsMapping);
