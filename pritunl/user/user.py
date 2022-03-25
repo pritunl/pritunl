@@ -165,9 +165,9 @@ class User(mongo.MongoObject):
 
     @property
     def has_yubikey(self):
-        return self.auth_type == YUBICO_AUTH or (
-            settings.app.sso and self.auth_type and \
-            YUBICO_AUTH in self.auth_type and \
+        return self.yubico_id or (
+            settings.app.sso and self.auth_type and
+            YUBICO_AUTH in self.auth_type and
             YUBICO_AUTH in settings.app.sso)
 
     @property
