@@ -717,7 +717,7 @@ class Authorizer(object):
                         'timestamp': utils.now(),
                     }, upsert=True)
 
-        elif auth_type == YUBICO_AUTH or \
+        elif self.user.yubico_id or \
                 (YUBICO_AUTH in sso_mode and YUBICO_AUTH in auth_type):
             if not self.password and self.has_challenge() and \
                     self.user.has_pin():
