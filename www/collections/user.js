@@ -87,6 +87,12 @@ define([
     getSearchCount: function() {
       return this.searchCount;
     },
+    toggleSort: function() {
+      this.sortActive = !this.sortActive;
+    },
+    getSort: function() {
+      return !!this.sortActive;
+    },
     isLastPage: function() {
       return this.page === this.pageTotal;
     }
