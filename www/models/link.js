@@ -16,7 +16,8 @@ define([
       'locations': null,
       'timeout': null,
       'preferred_ike': null,
-      'preferred_esp': null
+      'preferred_esp': null,
+      'force_preferred': null
     },
     url: function() {
       var url = '/link';
