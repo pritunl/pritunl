@@ -49,6 +49,8 @@ define([
       'sso_jumpcloud_secret': null,
       'sso_radius_host': null,
       'sso_radius_secret': null,
+      'client_reconnect': null,
+      'drop_permissions': null,
       'ipv6': null,
       'sso_cache': null,
       'sso_client_cache': null,
