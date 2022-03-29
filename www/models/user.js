@@ -12,6 +12,7 @@ define([
       'name': null,
       'email': null,
       'groups': null,
+      'last_active': null,
       'gravatar': null,
       'audit': null,
       'type': null,
