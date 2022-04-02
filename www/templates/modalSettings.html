@@ -318,6 +318,12 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="drop-permissions toggle-form form-group" data-toggle="tooltip" title="Drop root privileges from OpenVPN process after startup. May not work on some Linux distributions">
+      <label>Drop OpenVPN Permissions</label>
+      <div class="selector <%= drop_permissions ? 'selected' : '' %> no-select">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
   </div>
 </div>
 <div class="aws-settings layout-horizontal" <%= cloud_provider === 'aws' ? '' : 'style="display: none;"' %>>
