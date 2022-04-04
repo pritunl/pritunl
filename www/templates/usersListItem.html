@@ -18,6 +18,11 @@ if (name.length > 40) {
     <a class="user-name title no-select" data-toggle="tooltip" title="Click to modify this user"><%- name %></a>
     <span class="user-id title">(<%- id %>)</span>
   </div>
+  <div class="user-last-active" data-toggle="tooltip"
+       title="User last connected">
+    <span class="glyphicon glyphicon-time"></span><span
+    class="title time"><%- last_active ? formatTime(last_active, 'date') : 'Never' %></span>
+  </div>
   <div class="user-dns-name" data-toggle="tooltip"
       title="User dns name" <%= dns_mapping ? '' : 'style="display: none"' %>>
     <span class="fa fa-globe"></span><span
