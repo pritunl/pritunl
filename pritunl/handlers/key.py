@@ -964,7 +964,7 @@ def key_wg_post(org_id, user_id, server_id):
             journal.USER_WG_FAILURE,
             usr.journal_data,
             remote_address=remote_addr,
-            event_long='Duplicate nonce',
+            event_long='Duplicate nonce from reconnection',
         )
         return flask.abort(409)
 
@@ -1275,7 +1275,7 @@ def key_wg_put(org_id, user_id, server_id):
             journal.USER_WG_FAILURE,
             usr.journal_data,
             remote_address=remote_addr,
-            event_long='Duplicate nonce',
+            event_long='Duplicate nonce from reconnection',
         )
         return flask.abort(409)
 
