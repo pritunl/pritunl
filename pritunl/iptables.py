@@ -967,8 +967,6 @@ class Iptables(object):
     def _generate_post_routing(self):
         all_interface = None
         all_interface6 = None
-        all_route = False
-        all_route6 = False
 
         cidrs = set()
         cidrs6 = set()
@@ -988,41 +986,16 @@ class Iptables(object):
             sorted_routes6[cidr].append(route)
 
         for route, interface in list(self._nat_routes.items()):
-            if route == '0.0.0.0/0':
-                all_interface = interface
-                all_route = True
-                continue
-
             cidr = int(route.split('/')[-1])
             cidrs.add(cidr)
             sorted_nat_routes[cidr].append((route, interface))
 
         for route, interface in list(self._nat_routes6.items()):
-            if route == '::/0':
-                all_interface6 = interface
-                all_route6 = True
-                continue
-
             cidr = int(route.split('/')[-1])
             cidrs6.add(cidr)
             sorted_nat_routes6[cidr].append((route, interface))
 
         if self._accept_all and all_interface:
-            if all_route:
-                if settings.vpn.lib_iptables and LIB_IPTABLES:
-                    rule = self._init_rule()
-                    rule.src = '0.0.0.0/0'
-                    rule.out_interface = all_interface
-                    rule.create_target('MASQUERADE')
-                    self._accept.append(('POSTROUTING', rule))
-                else:
-                    self._accept.append([
-                        'POSTROUTING',
-                        '-t', 'nat',
-                        '-s', '0.0.0.0/0',
-                        '-o', all_interface,
-                        '-j', 'MASQUERADE',
-                    ])
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule()
                 match = rule.create_match('set')
@@ -1041,21 +1014,6 @@ class Iptables(object):
                 ])
 
         if self._accept_all and all_interface6:
-            if all_route6:
-                if settings.vpn.lib_iptables and LIB_IPTABLES:
-                    rule = self._init_rule6()
-                    rule.src = '::/0'
-                    rule.out_interface = all_interface6
-                    rule.create_target('MASQUERADE')
-                    self._accept6.append(('POSTROUTING', rule))
-                else:
-                    self._accept6.append([
-                        'POSTROUTING',
-                        '-t', 'nat',
-                        '-s', '::/0',
-                        '-o', all_interface6,
-                        '-j', 'MASQUERADE',
-                    ])
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 rule = self._init_rule6()
                 match = rule.create_match('set')
