@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve server routing
+
 Version 1.30.3116.68 2022-03-25
 -------------------------------
 
