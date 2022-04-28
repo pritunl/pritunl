@@ -46,6 +46,7 @@ define([
       var name = this.$('.name input').val();
       var timeout = parseInt(this.$('.timeout input').val(), 10) || null;
       var priority = parseInt(this.$('.priority input').val(), 10) || 1;
+      var backoff = parseInt(this.$('.backoff input').val(), 10) || null;
       var staticHost = this.getStaticSelect();
       var publicAddress = this.$('.public-address input').val();
       var localAddress = this.$('.local-address input').val();
@@ -64,6 +65,7 @@ define([
         name: name,
         timeout: timeout,
         priority: priority,
+        backoff: backoff,
         static: staticHost,
         public_address: publicAddress,
         local_address: localAddress,
