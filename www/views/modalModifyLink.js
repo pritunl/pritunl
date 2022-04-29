@@ -15,7 +15,8 @@ define([
     events: function() {
       return _.extend({
         'click .ipv6-toggle': 'onIpv6Select',
-        'click .host-check-toggle': 'onHostCheckSelect'
+        'click .host-check-toggle': 'onHostCheckSelect',
+        'click .force-preferred-toggle': 'onForcePreferredSelect'
       }, ModalModifyLinkView.__super__.events);
     },
     body: function() {
@@ -53,11 +54,30 @@ define([
     onHostCheckSelect: function() {
       this.setHostCheckSelect(!this.getHostCheckSelect());
     },
+    getForcePreferredSelect: function() {
+      return this.$('.force-preferred-toggle .selector').hasClass('selected');
+    },
+    setForcePreferredSelect: function(state) {
+      if (state) {
+        this.$('.force-preferred-toggle .selector').addClass('selected');
+        this.$('.force-preferred-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.force-preferred-toggle .selector').removeClass('selected');
+        this.$('.force-preferred-toggle .selector-inner').hide();
+      }
+    },
+    onForcePreferredSelect: function() {
+      this.setForcePreferredSelect(!this.getForcePreferredSelect());
+    },
     onOk: function() {
       var name = this.$('.name input').val();
       var ipv6 = this.getIpv6Select();
       var hostCheck = this.getHostCheckSelect();
       var linkAction = this.$('.link-action select').val();
+      var preferredIke = this.$('.preferred-ike input').val();
+      var preferredEsp = this.$('.preferred-esp input').val();
+      var forcePreferred = this.getForcePreferredSelect();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -69,7 +89,10 @@ define([
         name: name,
         ipv6: ipv6,
         host_check: hostCheck,
-        action: linkAction
+        action: linkAction,
+        preferred_ike: preferredIke,
+        preferred_esp: preferredEsp,
+        force_preferred: forcePreferred
       }, {
         success: function() {
           this.close(true);
