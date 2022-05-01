@@ -223,6 +223,7 @@ allow pritunl_t chronyd_t:dir search;
 allow pritunl_t chronyd_t:file { getattr open read };
 allow pritunl_t chronyd_t:lnk_file { read read };
 allow pritunl_t cloud_init_t:dir search;
+allow pritunl_t cockpit_ws_t:dir search;
 allow pritunl_t configfs_t:dir { add_name search write };
 allow pritunl_t crond_t:dir search;
 allow pritunl_t crond_t:file { getattr open read };
