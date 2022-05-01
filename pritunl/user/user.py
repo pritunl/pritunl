@@ -1114,7 +1114,7 @@ class User(mongo.MongoObject):
             for cert_id, cert in list(onc_certs_store.items()):
                 onc_certs += OVPN_ONC_CA_CERT % (cert_id, cert) + ',\n'
             onc_certs += OVPN_ONC_CLIENT_CERT % (
-                user_cert_id, user_key_base64)
+                user_cert_id, user_key_base64.decode())
 
             onc_conf = OVPN_ONC_CLIENT_CONF % (onc_nets, onc_certs)
         finally:
