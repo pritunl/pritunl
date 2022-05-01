@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with Chrome OS profiles
+
 Version 1.30.3149.73 2022-04-27
 -------------------------------
 
