@@ -168,38 +168,40 @@ def _verify_azure_2(user_name):
         )
         return False, []
 
-    response = requests.get(
-        'https://graph.microsoft.com/v1.0/users/%s/memberOf' % (
-            data['id'],
-        ),
-        headers={
-            'Authorization': 'Bearer %s' % access_token,
-            'Content-Type': 'application/json',
-        },
-        json={
-            'securityEnabledOnly': 'false',
-        },
-        timeout=30,
-    )
-
-    if response.status_code != 200:
-        logger.error('Bad status from Azure api',
-            'sso',
-            username=user_name,
-            status_code=response.status_code,
-            response=response.content,
-        )
-        return False, []
-
-    data = response.json()
-
+    url = 'https://graph.microsoft.com/v1.0/users/%s/memberOf' % (data['id'],)
     roles = []
+    while True:
+        if not url:
+            break
+        response = requests.get(
+            url,
+            headers={
+                'Authorization': 'Bearer %s' % access_token,
+                'Content-Type': 'application/json',
+            },
+            json={
+                'securityEnabledOnly': 'false',
+            },
+            timeout=30,
+        )
+        if response.status_code == 200:
+            data = response.json()
+            url = data['@odata.nextLink']
 
-    for group_data in data['value']:
-        display_name = group_data.get('displayName')
-        if not display_name:
-            continue
-        roles.append(display_name)
+        if response.status_code != 200:
+            logger.error('Bad status from Azure api',
+                'sso',
+                username=user_name,
+                status_code=response.status_code,
+                response=response.content,
+            )
+            return False, []
+
+        for group_data in data['value']:
+            display_name = group_data.get('displayName')
+            if not display_name:
+                continue
+            roles.append(display_name)
 
     return True, roles
 
