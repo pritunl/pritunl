@@ -168,11 +168,12 @@ def _verify_azure_2(user_name):
         )
         return False, []
 
-    url = 'https://graph.microsoft.com/v1.0/users/%s/memberOf' % (data['id'],)
+    url = 'https://graph.microsoft.com/v1.0/users/%s/memberOf' % (
+        data['id'],
+    )
     roles = []
+
     while True:
-        if not url:
-            break
         response = requests.get(
             url,
             headers={
@@ -184,9 +185,6 @@ def _verify_azure_2(user_name):
             },
             timeout=30,
         )
-        if response.status_code == 200:
-            data = response.json()
-            url = data['@odata.nextLink']
 
         if response.status_code != 200:
             logger.error('Bad status from Azure api',
@@ -197,11 +195,19 @@ def _verify_azure_2(user_name):
             )
             return False, []
 
+        data = response.json()
+
         for group_data in data['value']:
             display_name = group_data.get('displayName')
             if not display_name:
                 continue
             roles.append(display_name)
+
+        next_url = data.get('@odata.nextLink')
+        if next_url:
+            url = next_url
+        else:
+            break
 
     return True, roles
 
