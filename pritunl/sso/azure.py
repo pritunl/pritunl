@@ -3,6 +3,7 @@ from pritunl import logger
 from pritunl import utils
 
 import requests
+import time
 import urllib.request, urllib.parse, urllib.error
 
 def _verify_azure_1(user_name):
@@ -172,6 +173,7 @@ def _verify_azure_2(user_name):
         data['id'],
     )
     roles = []
+    start = time.time()
 
     while True:
         response = requests.get(
@@ -183,7 +185,7 @@ def _verify_azure_2(user_name):
             json={
                 'securityEnabledOnly': 'false',
             },
-            timeout=30,
+            timeout=20,
         )
 
         if response.status_code != 200:
@@ -208,6 +210,14 @@ def _verify_azure_2(user_name):
             url = next_url
         else:
             break
+
+        if time.time() - start > 45:
+            logger.error('Azure group listing timed out',
+                'sso',
+                username=user_name,
+                azure_username=data['userPrincipalName'],
+            )
+            return False, []
 
     return True, roles
 
