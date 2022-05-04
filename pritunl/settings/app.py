@@ -54,7 +54,7 @@ class SettingsApp(SettingsGroupMongo):
         'license': None,
         'license_plan': None,
         'dedicated': None,
-        'http_request_timeout': 15,
+        'http_request_timeout': 20,
         'request_queue_size': 10,
         'request_thread_count': 50,
         'request_max_thread_count': 250,
