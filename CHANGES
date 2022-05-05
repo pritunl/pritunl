@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3157.70 2022-05-05
+-------------------------------
 
 Support Azure users with more then 50 groups
 Update web server cipher suite
