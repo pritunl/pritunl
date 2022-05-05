@@ -1,8 +1,7 @@
 Pritunl Changelog
 =================
 
-Version 1.30.3156.74 2022-05-04
--------------------------------
+<%= version %>
 
 Support Azure users with more then 50 groups
 
