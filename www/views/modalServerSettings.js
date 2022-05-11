@@ -440,7 +440,7 @@ define([
       var groups = this.getGroups();
       var preConnectMsg = this.$(
         '.pre-connect-msg textarea').val().trim() || null;
-      var mssFix = this.$('.mss-fix input').val() || null;
+      var mssFix =  parseInt(this.$('.mss-fix input').val(), 10) || null;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
