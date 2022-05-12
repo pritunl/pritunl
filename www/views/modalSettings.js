@@ -30,6 +30,7 @@ define([
         'click .sso-client-cache': 'onSsoClientCacheSelect',
         'click .restrict-import': 'onRestrictImportSelect',
         'click .client-reconnect': 'onClientReconnect',
+        'click .drop-permissions': 'onDropPermissions',
         'propertychange .pass input': 'onPassEvent',
         'change .cloud-provider select': 'onCloudProviderChange',
         'change .monitoring select': 'onMonitoringChange',
@@ -1021,6 +1022,22 @@ define([
     onClientReconnect: function() {
       this.setClientReconnect(!this.getClientReconnect());
     },
+    getDropPermissions: function() {
+      return this.$('.drop-permissions .selector').hasClass('selected');
+    },
+    setDropPermissions: function(state) {
+      if (state) {
+        this.$('.drop-permissions .selector').addClass('selected');
+        this.$('.drop-permissions .selector-inner').show();
+      }
+      else {
+        this.$('.drop-permissions .selector').removeClass('selected');
+        this.$('.drop-permissions .selector-inner').hide();
+      }
+    },
+    onDropPermissions: function() {
+      this.setDropPermissions(!this.getDropPermissions());
+    },
     onSsoMode: function() {
       this.setSsoMode(this.getSsoMode());
     },
@@ -1114,6 +1131,7 @@ define([
       var ssoYubicoClient = this.$('.sso-yubico-client input').val();
       var ssoYubicoSecret = this.$('.sso-yubico-secret input').val();
       var clientReconnect = this.getClientReconnect();
+      var dropPermissions = this.getDropPermissions();
       var ipv6 = this.getIpv6Select();
       var ssoCache = this.getSsoCacheSelect();
       var ssoClientCache = this.getSsoClientCacheSelect();
@@ -1415,6 +1433,7 @@ define([
         sso_client_cache: ssoClientCache,
         restrict_import: restrictImport,
         client_reconnect: clientReconnect,
+        drop_permissions: dropPermissions,
         public_address: publicAddress,
         public_address6: publicAddress6,
         routed_subnet6: routedSubnet6,
