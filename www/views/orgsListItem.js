@@ -16,6 +16,7 @@ define([
     events: {
       'click .org-title': 'onRename',
       'click .org-del': 'onDelete',
+      'click .org-sort': 'onSort',
       'click .toggle-hidden': 'onToggleHidden',
       'input .org-search': 'onSearch'
     },
@@ -31,7 +32,9 @@ define([
       this.$('.user-count').text(this.model.get('user_count') + ' users');
     },
     render: function() {
-      this.$el.html(this.template(this.model.toJSON()));
+      this.$el.html(this.template(_.extend({
+        sort_active: this.usersListView.collection.getSort()
+      }, this.model.toJSON())));
       this.$el.append(this.usersListView.render().el);
       this.$('.org-title').tooltip({
         container: this.el
@@ -96,6 +99,11 @@ define([
     },
     onSearch: function(evt) {
       this.usersListView.search($(evt.target).val() || null);
+    },
+    onSort: function() {
+      this.usersListView.toggleSort();
+      this.$('.org-sort').text('Sort by ' +
+        (this.usersListView.collection.getSort() ? 'Name' : 'Last Active'));
     }
   });
 
