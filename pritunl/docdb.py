@@ -67,8 +67,6 @@ class DocDb(object):
                 for doc_id, doc in list(self._docs.items()):
                     match = True
                     for key, val in list(query.items()):
-                        if key == 'id':
-                            raise ValueError('Invalid lookup')
                         if doc.get(key) != val:
                             match = False
                             break
@@ -86,8 +84,6 @@ class DocDb(object):
                     doc = self._docs[doc_id]
                     match = True
                     for key, val in list(query.items()):
-                        if key == 'id':
-                            raise ValueError('Invalid lookup')
                         if doc.get(key) != val:
                             match = False
                             break
