@@ -211,6 +211,10 @@ define([
     searchMore: function() {
       this.collection.setSearchLimit(this.collection.getSearchLimit() * 2);
       this.update();
+    },
+    toggleSort: function() {
+      this.collection.toggleSort();
+      this.update();
     }
   });
 
