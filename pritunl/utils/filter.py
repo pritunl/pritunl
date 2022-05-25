@@ -57,4 +57,6 @@ def session_str(key):
 
 def session_opt_str(key):
     val = flask.session.get(key)
+    if isinstance(val, bytes):
+        val = val.decode()
     return None if val is None else str(val)
