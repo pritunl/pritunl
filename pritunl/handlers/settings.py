@@ -296,7 +296,7 @@ def settings_put():
             flask.request.json['username']).lower()
         if username != admin.username:
             changes.add('username')
-        admin.username = username
+        admin.username = username.strip()
 
     if 'password' in flask.request.json and flask.request.json['password']:
         password = flask.request.json['password']
@@ -371,6 +371,8 @@ def settings_put():
                 update_cert = True
             else:
                 update_acme = True
+        if acme_domain:
+            acme_domain = acme_domain.strip()
         settings.app.acme_domain = acme_domain
 
     if 'auditing' in flask.request.json:
@@ -407,16 +409,22 @@ def settings_put():
     if 'influxdb_token' in flask.request.json:
         settings_commit = True
         influxdb_token = flask.request.json['influxdb_token'] or None
+        if influxdb_token:
+            influxdb_token = influxdb_token.strip()
         settings.app.influxdb_token = influxdb_token
 
     if 'influxdb_org' in flask.request.json:
         settings_commit = True
         influxdb_org = flask.request.json['influxdb_org'] or None
+        if influxdb_org:
+            influxdb_org = influxdb_org.strip()
         settings.app.influxdb_org = influxdb_org
 
     if 'influxdb_bucket' in flask.request.json:
         settings_commit = True
         influxdb_bucket = flask.request.json['influxdb_bucket'] or None
+        if influxdb_bucket:
+            influxdb_bucket = influxdb_bucket.strip()
         settings.app.influxdb_bucket = influxdb_bucket
 
     if 'email_from' in flask.request.json:
@@ -424,6 +432,8 @@ def settings_put():
         email_from = flask.request.json['email_from'] or None
         if email_from != settings.app.email_from:
             changes.add('smtp')
+        if email_from:
+            email_from = email_from.strip()
         settings.app.email_from = email_from
 
     if 'email_server' in flask.request.json:
@@ -480,6 +490,8 @@ def settings_put():
             'sso_azure_directory_id'] or None
         if sso_azure_directory_id != settings.app.sso_azure_directory_id:
             changes.add('sso')
+        if sso_azure_directory_id:
+            sso_azure_directory_id = sso_azure_directory_id.strip()
         settings.app.sso_azure_directory_id = sso_azure_directory_id
 
     if 'sso_azure_app_id' in flask.request.json:
@@ -487,6 +499,8 @@ def settings_put():
         sso_azure_app_id = flask.request.json['sso_azure_app_id'] or None
         if sso_azure_app_id != settings.app.sso_azure_app_id:
             changes.add('sso')
+        if sso_azure_app_id:
+            sso_azure_app_id = sso_azure_app_id.strip()
         settings.app.sso_azure_app_id = sso_azure_app_id
 
     if 'sso_azure_app_secret' in flask.request.json:
@@ -495,6 +509,8 @@ def settings_put():
             'sso_azure_app_secret'] or None
         if sso_azure_app_secret != settings.app.sso_azure_app_secret:
             changes.add('sso')
+        if sso_azure_app_secret:
+            sso_azure_app_secret = sso_azure_app_secret.strip()
         settings.app.sso_azure_app_secret = sso_azure_app_secret
 
     if 'sso_azure_version' in flask.request.json:
@@ -513,6 +529,8 @@ def settings_put():
             'sso_authzero_domain'] or None
         if sso_authzero_domain != settings.app.sso_authzero_domain:
             changes.add('sso')
+        if sso_authzero_domain:
+            sso_authzero_domain = sso_authzero_domain.strip()
         settings.app.sso_authzero_domain = sso_authzero_domain
 
     if 'sso_authzero_app_id' in flask.request.json:
@@ -521,6 +539,8 @@ def settings_put():
             'sso_authzero_app_id'] or None
         if sso_authzero_app_id != settings.app.sso_authzero_app_id:
             changes.add('sso')
+        if sso_authzero_app_id:
+            sso_authzero_app_id = sso_authzero_app_id.strip()
         settings.app.sso_authzero_app_id = sso_authzero_app_id
 
     if 'sso_authzero_app_secret' in flask.request.json:
@@ -529,6 +549,8 @@ def settings_put():
             'sso_authzero_app_secret'] or None
         if sso_authzero_app_secret != settings.app.sso_authzero_app_secret:
             changes.add('sso')
+        if sso_authzero_app_secret:
+            sso_authzero_app_secret = sso_authzero_app_secret.strip()
         settings.app.sso_authzero_app_secret = sso_authzero_app_secret
 
     if 'sso_google_key' in flask.request.json:
@@ -536,6 +558,8 @@ def settings_put():
         sso_google_key = flask.request.json['sso_google_key'] or None
         if sso_google_key != settings.app.sso_google_key:
             changes.add('sso')
+        if sso_google_key:
+            sso_google_key = sso_google_key.strip()
         settings.app.sso_google_key = sso_google_key
 
     if 'sso_google_email' in flask.request.json:
@@ -543,6 +567,8 @@ def settings_put():
         sso_google_email = flask.request.json['sso_google_email'] or None
         if sso_google_email != settings.app.sso_google_email:
             changes.add('sso')
+        if sso_google_email:
+            sso_google_email = sso_google_email.strip()
         settings.app.sso_google_email = sso_google_email
 
     if 'sso_duo_token' in flask.request.json:
@@ -550,6 +576,8 @@ def settings_put():
         sso_duo_token = flask.request.json['sso_duo_token'] or None
         if sso_duo_token != settings.app.sso_duo_token:
             changes.add('sso')
+        if sso_duo_token:
+            sso_duo_token = sso_duo_token.strip()
         settings.app.sso_duo_token = sso_duo_token
 
     if 'sso_duo_secret' in flask.request.json:
@@ -557,6 +585,8 @@ def settings_put():
         sso_duo_secret = flask.request.json['sso_duo_secret'] or None
         if sso_duo_secret != settings.app.sso_duo_secret:
             changes.add('sso')
+        if sso_duo_secret:
+            sso_duo_secret = sso_duo_secret.strip()
         settings.app.sso_duo_secret = sso_duo_secret
 
     if 'sso_duo_host' in flask.request.json:
@@ -564,6 +594,8 @@ def settings_put():
         sso_duo_host = flask.request.json['sso_duo_host'] or None
         if sso_duo_host != settings.app.sso_duo_host:
             changes.add('sso')
+        if sso_duo_host:
+            sso_duo_host = sso_duo_host.strip()
         settings.app.sso_duo_host = sso_duo_host
 
     if 'sso_duo_mode' in flask.request.json:
@@ -585,6 +617,8 @@ def settings_put():
         sso_radius_host = flask.request.json['sso_radius_host'] or None
         if sso_radius_host != settings.app.sso_radius_host:
             changes.add('sso')
+        if sso_radius_host:
+            sso_radius_host = sso_radius_host.strip()
         settings.app.sso_radius_host = sso_radius_host
 
     if 'sso_org' in flask.request.json:
@@ -612,6 +646,8 @@ def settings_put():
         sso_saml_url = flask.request.json['sso_saml_url'] or None
         if sso_saml_url != settings.app.sso_saml_url:
             changes.add('sso')
+        if sso_saml_url:
+            sso_saml_url = sso_saml_url.strip()
         settings.app.sso_saml_url = sso_saml_url
 
     if 'sso_saml_issuer_url' in flask.request.json:
@@ -620,6 +656,8 @@ def settings_put():
             None
         if sso_saml_issuer_url != settings.app.sso_saml_issuer_url:
             changes.add('sso')
+        if sso_saml_issuer_url:
+            sso_saml_issuer_url = sso_saml_issuer_url.strip()
         settings.app.sso_saml_issuer_url = sso_saml_issuer_url
 
     if 'sso_saml_cert' in flask.request.json:
@@ -627,6 +665,8 @@ def settings_put():
         sso_saml_cert = flask.request.json['sso_saml_cert'] or None
         if sso_saml_cert != settings.app.sso_saml_cert:
             changes.add('sso')
+        if sso_saml_cert:
+            sso_saml_cert = sso_saml_cert.strip()
         settings.app.sso_saml_cert = sso_saml_cert
 
     if 'sso_okta_app_id' in flask.request.json:
@@ -634,6 +674,8 @@ def settings_put():
         sso_okta_app_id = flask.request.json['sso_okta_app_id'] or None
         if sso_okta_app_id != settings.app.sso_okta_app_id:
             changes.add('sso')
+        if sso_okta_app_id:
+            sso_okta_app_id = sso_okta_app_id.strip()
         settings.app.sso_okta_app_id = sso_okta_app_id
 
     if 'sso_okta_token' in flask.request.json:
@@ -641,6 +683,8 @@ def settings_put():
         sso_okta_token = flask.request.json['sso_okta_token'] or None
         if sso_okta_token != settings.app.sso_okta_token:
             changes.add('sso')
+        if sso_okta_token:
+            sso_okta_token = sso_okta_token.strip()
         settings.app.sso_okta_token = sso_okta_token
 
     if 'sso_okta_mode' in flask.request.json:
@@ -656,6 +700,8 @@ def settings_put():
             None
         if sso_onelogin_app_id != settings.app.sso_onelogin_app_id:
             changes.add('sso')
+        if sso_onelogin_app_id:
+            sso_onelogin_app_id = sso_onelogin_app_id.strip()
         settings.app.sso_onelogin_app_id = sso_onelogin_app_id
 
     if 'sso_onelogin_id' in flask.request.json:
@@ -663,6 +709,8 @@ def settings_put():
         sso_onelogin_id = flask.request.json['sso_onelogin_id'] or None
         if sso_onelogin_id != settings.app.sso_onelogin_id:
             changes.add('sso')
+        if sso_onelogin_id:
+            sso_onelogin_id = sso_onelogin_id.strip()
         settings.app.sso_onelogin_id = sso_onelogin_id
 
     if 'sso_onelogin_secret' in flask.request.json:
@@ -671,6 +719,8 @@ def settings_put():
             flask.request.json['sso_onelogin_secret'] or None
         if sso_onelogin_secret != settings.app.sso_onelogin_secret:
             changes.add('sso')
+        if sso_onelogin_secret:
+            sso_onelogin_secret = sso_onelogin_secret.strip()
         settings.app.sso_onelogin_secret = sso_onelogin_secret
 
     if 'sso_onelogin_mode' in flask.request.json:
@@ -686,6 +736,8 @@ def settings_put():
             flask.request.json['sso_jumpcloud_secret'] or None
         if sso_jumpcloud_secret != settings.app.sso_jumpcloud_secret:
             changes.add('sso')
+        if sso_jumpcloud_secret:
+            sso_jumpcloud_secret = sso_jumpcloud_secret.strip()
         settings.app.sso_jumpcloud_secret = sso_jumpcloud_secret
 
     if 'ipv6' in flask.request.json:
@@ -738,6 +790,8 @@ def settings_put():
             flask.request.json['sso_yubico_client'] or None
         if sso_yubico_client != settings.app.sso_yubico_client:
             changes.add('sso')
+        if sso_yubico_client:
+            sso_yubico_client = sso_yubico_client.strip()
         settings.app.sso_yubico_client = sso_yubico_client
 
     if 'sso_yubico_secret' in flask.request.json:
@@ -746,6 +800,8 @@ def settings_put():
             flask.request.json['sso_yubico_secret'] or None
         if sso_yubico_secret != settings.app.sso_yubico_secret:
             changes.add('sso')
+        if sso_yubico_secret:
+            sso_yubico_secret = sso_yubico_secret.strip()
         settings.app.sso_yubico_secret = sso_yubico_secret
 
     if flask.request.json.get('theme'):
@@ -924,7 +980,8 @@ def settings_put():
             aws_value = flask.request.json[aws_key]
 
             if aws_value:
-                setattr(settings.app, aws_key, utils.filter_str(aws_value))
+                setattr(settings.app, aws_key,
+                    utils.filter_str(aws_value).strip())
             else:
                 setattr(settings.app, aws_key, None)
 
