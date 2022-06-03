@@ -1,5 +1,6 @@
 from pritunl.settings.group_mongo import SettingsGroupMongo
 
+
 class SettingsApp(SettingsGroupMongo):
     group = 'app'
     fields = {
@@ -89,6 +90,8 @@ class SettingsApp(SettingsGroupMongo):
         'sso_timeout': 60,
         'sso_org': None,
         'sso_azure_mode': 'org',
+        'sso_azure_allow_groups': [],
+        'sso_azure_security_groups_only': False,
         'sso_azure_directory_id': None,
         'sso_azure_app_id': None,
         'sso_azure_app_secret': None,

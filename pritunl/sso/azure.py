@@ -99,6 +99,7 @@ def _verify_azure_1(user_name):
 
     return True, roles
 
+
 def _verify_azure_2(user_name):
     response = requests.post(
         'https://login.microsoftonline.com/%s/oauth2/token' % \
@@ -183,7 +184,7 @@ def _verify_azure_2(user_name):
                 'Content-Type': 'application/json',
             },
             json={
-                'securityEnabledOnly': 'false',
+                'securityEnabledOnly': str(settings.app.sso_azure_security_groups_only).lower(),
             },
             timeout=20,
         )
@@ -203,6 +204,8 @@ def _verify_azure_2(user_name):
             display_name = group_data.get('displayName')
             if not display_name:
                 continue
+            if settings.app.sso_azure_allow_groups and display_name.replace(" ","_").replace("'","") not in settings.app.sso_azure_allow_groups:
+                continue
             roles.append(display_name)
 
         next_url = data.get('@odata.nextLink')
@@ -220,6 +223,7 @@ def _verify_azure_2(user_name):
             return False, []
 
     return True, roles
+
 
 def verify_azure(user_name):
     if settings.app.sso_azure_version == 1:
