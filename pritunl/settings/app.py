@@ -1,6 +1,5 @@
 from pritunl.settings.group_mongo import SettingsGroupMongo
 
-
 class SettingsApp(SettingsGroupMongo):
     group = 'app'
     fields = {
