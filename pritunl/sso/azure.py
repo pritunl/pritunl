@@ -99,7 +99,6 @@ def _verify_azure_1(user_name):
 
     return True, roles
 
-
 def _verify_azure_2(user_name):
     response = requests.post(
         'https://login.microsoftonline.com/%s/oauth2/token' % \
@@ -223,7 +222,6 @@ def _verify_azure_2(user_name):
             return False, []
 
     return True, roles
-
 
 def verify_azure(user_name):
     if settings.app.sso_azure_version == 1:
