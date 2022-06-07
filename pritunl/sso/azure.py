@@ -95,7 +95,13 @@ def _verify_azure_1(user_name):
     for membership in data['value']:
         if membership.get('objectType') != 'Group':
             continue
-        roles.append(utils.filter_unicode(membership.get('displayName')))
+        display_name = utils.filter_unicode(membership.get('displayName'))
+        if not display_name:
+            continue
+        if settings.app.sso_azure_allow_groups and \
+                display_name not in settings.app.sso_azure_allow_groups:
+            continue
+        roles.append(display_name)
 
     return True, roles
 
@@ -183,7 +189,8 @@ def _verify_azure_2(user_name):
                 'Content-Type': 'application/json',
             },
             json={
-                'securityEnabledOnly': str(settings.app.sso_azure_security_groups_only).lower(),
+                'securityEnabledOnly': str(
+                    settings.app.sso_azure_security_groups_only).lower(),
             },
             timeout=20,
         )
@@ -200,10 +207,11 @@ def _verify_azure_2(user_name):
         data = response.json()
 
         for group_data in data['value']:
-            display_name = group_data.get('displayName')
+            display_name = utils.filter_unicode(group_data.get('displayName'))
             if not display_name:
                 continue
-            if settings.app.sso_azure_allow_groups and display_name.replace(" ","_").replace("'","") not in settings.app.sso_azure_allow_groups:
+            if settings.app.sso_azure_allow_groups and \
+                    display_name not in settings.app.sso_azure_allow_groups:
                 continue
             roles.append(display_name)
 
