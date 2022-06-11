@@ -1366,6 +1366,13 @@ class Iptables(object):
                 )
             except subprocess.CalledProcessError:
                 return False
+        for (name, routes) in self._sets6.items():
+            try:
+                utils.check_call_silent(
+                    ['ipset', 'destroy', name],
+                )
+            except subprocess.CalledProcessError:
+                return False
 
     def upsert_rules(self, log=False):
         if self.cleared:
@@ -1456,8 +1463,6 @@ class Iptables(object):
 
         self._lock.acquire()
         try:
-            self._delete_sets()
-
             if settings.vpn.lib_iptables and LIB_IPTABLES:
                 tables = {
                     'nat': iptc.Table(iptc.Table.NAT),
@@ -1492,6 +1497,8 @@ class Iptables(object):
                     for rule in self._drop6:
                         self._remove_iptables_rule(rule, ipv6=True,
                             tables=tables)
+
+            self._delete_sets()
 
             self._accept = None
             self._accept6 = None
