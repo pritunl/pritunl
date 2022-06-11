@@ -57,6 +57,14 @@ class Authorizer(object):
                 self.state = challenge[2]
                 self.password = challenge[4]
 
+        self.modes = usr.get_auth_modes(svr)
+
+        logger.info(
+            'Authenticating user',
+            'authorizer',
+            factors=self.modes,
+        )
+
     @property
     def sso_passcode_cache_collection(cls):
         return mongo.get_collection('sso_passcode_cache')
@@ -91,6 +99,7 @@ class Authorizer(object):
             'mac_addr': self.mac_addr,
             'auth_nonce': self.auth_nonce,
             'auth_timestamp': self.auth_timestamp,
+            'auth_modes': self.modes,
             'reauth': self.reauth,
         }
 
@@ -132,7 +141,7 @@ class Authorizer(object):
 
         state, password = data.split(':', 1)
         if self.state == state:
-            if not password and self.user.has_pin():
+            if not password and PIN in self.modes:
                 self.state = None
             else:
                 return password
@@ -289,8 +298,8 @@ class Authorizer(object):
         except pymongo.errors.DuplicateKeyError:
             self.user.audit_event(
                 'user_connection',
-                'User connection to "%s" denied. Duplicate nonce' % \
-                self.server.name,
+                ('User connection to "%s" denied. Duplicate nonce '
+                    'from reconnection') % self.server.name,
                 remote_addr=self.remote_ip,
             )
 
@@ -299,7 +308,7 @@ class Authorizer(object):
                 self.journal_data,
                 self.user.journal_data,
                 self.server.journal_data,
-                event_long='Duplicate nonce',
+                event_long='Duplicate nonce from reconnection',
             )
 
             raise AuthError('Duplicate nonce')
@@ -485,7 +494,7 @@ class Authorizer(object):
         if settings.vpn.stress_test or self.user.link_server_id:
             return
 
-        if self.user.bypass_secondary:
+        if BYPASS_SECONDARY in self.modes:
             logger.info(
                 'Bypass secondary enabled, skipping password', 'sso',
                 user_name=self.user.name,
@@ -549,22 +558,13 @@ class Authorizer(object):
             )
             raise AuthError('Too many authentication attempts')
 
-        sso_mode = settings.app.sso or ''
-        duo_mode = settings.app.sso_duo_mode
-        onelogin_mode = utils.get_onelogin_mode()
-        okta_mode = utils.get_okta_mode()
-        auth_type = self.user.auth_type or ''
-
-        has_duo_passcode = DUO_AUTH in sso_mode and \
-            DUO_AUTH in auth_type and duo_mode == 'passcode'
-        has_onelogin_passcode = SAML_ONELOGIN_AUTH == sso_mode and \
-            SAML_ONELOGIN_AUTH in auth_type and onelogin_mode == 'passcode'
-        has_okta_passcode = SAML_OKTA_AUTH == sso_mode and \
-            SAML_OKTA_AUTH in auth_type and okta_mode == 'passcode'
+        has_duo_passcode = DUO_PASSCODE in self.modes
+        has_onelogin_passcode = ONELOGIN_PASSCODE in self.modes
+        has_okta_passcode = OKTA_PASSCODE in self.modes
+        has_pin = PIN in self.modes
 
         if has_duo_passcode or has_onelogin_passcode or has_okta_passcode:
-            if not self.password and self.has_challenge() and \
-                    self.user.has_pin():
+            if not self.password and self.has_challenge() and has_pin:
                 journal.entry(
                     journal.USER_CONNECT_FAILURE,
                     self.journal_data,
@@ -643,31 +643,31 @@ class Authorizer(object):
                     )
 
             if not allow:
-                if DUO_AUTH in sso_mode:
+                if DUO_PASSCODE in self.modes:
                     label = 'Duo'
                     duo_auth = sso.Duo(
                         username=self.user.name,
-                        factor=duo_mode,
+                        factor=settings.app.sso_duo_mode,
                         remote_ip=self.remote_ip,
                         auth_type='Connection',
                         passcode=passcode,
                     )
                     allow = duo_auth.authenticate()
-                elif SAML_ONELOGIN_AUTH == sso_mode:
+                elif ONELOGIN_PASSCODE in self.modes:
                     label = 'OneLogin'
                     allow = sso.auth_onelogin_secondary(
                         username=self.user.name,
                         passcode=passcode,
                         remote_ip=self.remote_ip,
-                        onelogin_mode=onelogin_mode,
+                        onelogin_mode=utils.get_onelogin_mode(),
                     )
-                elif SAML_OKTA_AUTH == sso_mode:
+                elif OKTA_PASSCODE in self.modes:
                     label = 'Okta'
                     allow = sso.auth_okta_secondary(
                         username=self.user.name,
                         passcode=passcode,
                         remote_ip=self.remote_ip,
-                        okta_mode=okta_mode,
+                        okta_mode=utils.get_okta_mode(),
                     )
                 else:
                     raise AuthError('Unknown secondary passcode challenge')
@@ -717,10 +717,8 @@ class Authorizer(object):
                         'timestamp': utils.now(),
                     }, upsert=True)
 
-        elif self.user.yubico_id or \
-                (YUBICO_AUTH in sso_mode and YUBICO_AUTH in auth_type):
-            if not self.password and self.has_challenge() and \
-                    self.user.has_pin():
+        elif YUBICO_PASSCODE in self.modes:
+            if not self.password and self.has_challenge() and has_pin:
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
                      'User failed pin authentication') % (
@@ -849,9 +847,8 @@ class Authorizer(object):
                         'timestamp': utils.now(),
                     }, upsert=True)
 
-        elif self.server.otp_auth and self.user.type == CERT_CLIENT:
-            if not self.password and self.has_challenge() and \
-                    self.user.has_pin():
+        elif OTP_PASSCODE in self.modes:
+            if not self.password and self.has_challenge() and has_pin:
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
                      'User failed pin authentication') % (
@@ -972,7 +969,23 @@ class Authorizer(object):
                         'timestamp': utils.now(),
                     }, upsert=True)
 
-        if self.user.has_pin():
+        if PIN in self.modes:
+            if not self.user.pin:
+                self.user.audit_event('user_connection',
+                    ('User connection to "%s" denied. ' +
+                     'User does not have a pin set') % (
+                        self.server.name),
+                    remote_addr=self.remote_ip,
+                )
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='User does not have a pin set',
+                )
+                raise AuthError('User does not have a pin set')
+
             if not self.user.check_pin(self.password):
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
@@ -992,27 +1005,13 @@ class Authorizer(object):
                     self.set_challenge(None, 'Enter Pin', False)
                     raise AuthError('Challenge pin')
                 raise AuthError('Invalid pin')
-        elif settings.user.pin_mode == PIN_REQUIRED:
-            self.user.audit_event('user_connection',
-                ('User connection to "%s" denied. ' +
-                 'User does not have a pin set') % (
-                    self.server.name),
-                remote_addr=self.remote_ip,
-            )
-            journal.entry(
-                journal.USER_CONNECT_FAILURE,
-                self.journal_data,
-                self.user.journal_data,
-                self.server.journal_data,
-                event_long='User does not have a pin set',
-            )
-            raise AuthError('User does not have a pin set')
 
     def _check_sso(self):
         if self.user.bypass_secondary or settings.vpn.stress_test:
             return
 
-        if not self.user.sso_auth_check(self.password, self.remote_ip):
+        if not self.user.sso_auth_check(
+                self.server, self.password, self.remote_ip):
             self.user.audit_event('user_connection',
                 ('User connection to "%s" denied. ' +
                  'Single sign-on authentication failed') % (
@@ -1046,7 +1045,7 @@ class Authorizer(object):
             raise AuthError('User not in servers groups')
 
     def _check_push(self):
-        self.push_type = self.user.get_push_type()
+        self.push_type = self.user.get_push_type(self.server)
         if not self.push_type:
             return
 
@@ -1168,10 +1167,7 @@ class Authorizer(object):
         if self.device_name:
             info['Device'] = '%s (%s)' % (self.device_name, platform_name)
 
-        onelogin_mode = utils.get_onelogin_mode()
-        okta_mode = utils.get_okta_mode()
-
-        if self.push_type == DUO_AUTH:
+        if self.push_type == DUO_PUSH:
             duo_auth = sso.Duo(
                 username=self.user.name,
                 factor=settings.app.sso_duo_mode,
@@ -1180,19 +1176,19 @@ class Authorizer(object):
                 info=info,
             )
             allow = duo_auth.authenticate()
-        elif self.push_type == SAML_ONELOGIN_AUTH:
+        elif self.push_type == ONELOGIN_PUSH:
             allow = sso.auth_onelogin_secondary(
                 username=self.user.name,
                 passcode=None,
                 remote_ip=self.remote_ip,
-                onelogin_mode=onelogin_mode,
+                onelogin_mode=utils.get_onelogin_mode(),
             )
-        elif self.push_type == SAML_OKTA_AUTH:
+        elif self.push_type == OKTA_PUSH:
             allow = sso.auth_okta_secondary(
                 username=self.user.name,
                 passcode=None,
                 remote_ip=self.remote_ip,
-                okta_mode=okta_mode,
+                okta_mode=utils.get_okta_mode(),
             )
         else:
             raise ValueError('Unkown push auth type')
