@@ -213,6 +213,13 @@ def server_put_post(server_id=None):
         network_end_def = True
         network_end = flask.request.json['network_end']
 
+    dynamic_firewall = None
+    dynamic_firewall_def = False
+    if 'dynamic_firewall' in flask.request.json:
+        dynamic_firewall_def = True
+        dynamic_firewall = True if flask.request.json['dynamic_firewall'] \
+            else False
+
     restrict_routes = None
     restrict_routes_def = False
     if 'restrict_routes' in flask.request.json:
@@ -589,6 +596,7 @@ def server_put_post(server_id=None):
             network_mode=network_mode,
             network_start=network_start,
             network_end=network_end,
+            dynamic_firewall=dynamic_firewall,
             restrict_routes=restrict_routes,
             wg=wg,
             ipv6=ipv6,
@@ -640,6 +648,8 @@ def server_put_post(server_id=None):
             svr.network_start = network_start
         if network_end_def:
             svr.network_end = network_end
+        if dynamic_firewall_def:
+            svr.dynamic_firewall = dynamic_firewall
         if restrict_routes_def:
             svr.restrict_routes = restrict_routes
         if wg_def:
