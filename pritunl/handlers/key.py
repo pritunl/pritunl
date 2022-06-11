@@ -27,6 +27,7 @@ import urllib.parse
 import requests
 import json
 import unicodedata
+import ipaddress
 import nacl.public
 from cryptography.exceptions import InvalidSignature
 
@@ -505,7 +506,9 @@ def user_linked_key_page_get(short_code):
     key_page = key_page.replace('<%= user_key_zip_url %>', '/key/%s.zip' % (
         doc['key_id']))
 
-    if org.otp_auth and not usr.has_duo_passcode and not usr.has_yubikey:
+    auth_modes = usr.get_auth_modes(org.otp_auth)
+
+    if OTP_PASSCODE in auth_modes:
         key_page = key_page.replace('<%= user_otp_key %>', usr.otp_secret)
         key_page = key_page.replace('<%= user_otp_url %>',
             'otpauth://totp/%s@%s?secret=%s' % (
@@ -1029,7 +1032,26 @@ def key_wg_post(org_id, user_id, server_id):
     client_auth_nonce = utils.filter_str(key_data['nonce'])
     client_auth_password = key_data['password']
     client_auth_timestamp = int(key_data['timestamp'])
+    client_public_address = utils.filter_str(key_data['public_address'])
+    client_public_address6 = utils.filter_str(key_data['public_address6'])
     client_wg_public_key = key_data['wg_public_key']
+
+    if client_public_address:
+        client_public_address = str(ipaddress.IPv4Address(
+            client_public_address))
+    else:
+        client_public_address = None
+
+    if client_public_address6:
+        client_public_address6 = str(ipaddress.IPv6Address(
+            client_public_address6))
+    else:
+        client_public_address6 = None
+
+    if ':' in remote_addr:
+        remote_addr = str(ipaddress.IPv6Address(remote_addr))
+    else:
+        remote_addr = str(ipaddress.IPv4Address(remote_addr))
 
     if len(client_wg_public_key) < 32:
         journal.entry(
@@ -1107,6 +1129,8 @@ def key_wg_post(org_id, user_id, server_id):
         device_name=client_device_name,
         mac_addr=client_mac_addr,
         mac_addrs=client_mac_addrs,
+        client_public_address=client_public_address,
+        client_public_address6=client_public_address6,
         remote_ip=remote_addr,
         connect_callback=callback,
     )
@@ -1399,6 +1423,298 @@ def key_wg_put(org_id, user_id, server_id):
         usr.journal_data,
         remote_address=remote_addr,
         event_long='User wg ping from pritunl client',
+    )
+
+    sync_signature = base64.b64encode(hmac.new(
+        usr.sync_secret.encode(),
+        (send_cipher_data64 + '&' + send_nonce64).encode(),
+        hashlib.sha512).digest()).decode()
+
+    return utils.jsonify({
+        'data': send_cipher_data64,
+        'nonce': send_nonce64,
+        'signature': sync_signature,
+    })
+
+@app.app.route('/key/ovpn/<org_id>/<user_id>/<server_id>',
+    methods=['POST'])
+@auth.open_auth
+def key_ovpn_post(org_id, user_id, server_id):
+    org_id = org_id
+    user_id = user_id
+    server_id = server_id
+    remote_addr = utils.get_remote_addr()
+
+    auth_token = flask.request.headers.get('Auth-Token', None)
+    auth_timestamp = flask.request.headers.get('Auth-Timestamp', None)
+    auth_nonce = flask.request.headers.get('Auth-Nonce', None)
+    auth_signature = flask.request.headers.get('Auth-Signature', None)
+    if not auth_token or not auth_timestamp or not auth_nonce or \
+        not auth_signature:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            remote_address=remote_addr,
+            event_long='Missing auth header',
+        )
+        return flask.abort(406)
+    auth_token = auth_token[:256]
+    auth_timestamp = auth_timestamp[:64]
+    auth_nonce = auth_nonce[:32]
+    auth_signature = auth_signature[:512]
+
+    try:
+        if abs(int(auth_timestamp) - int(utils.time_now())) > \
+            settings.app.auth_time_window:
+            journal.entry(
+                journal.USER_OVPN_FAILURE,
+                remote_address=remote_addr,
+                event_long='Expired auth timestamp',
+            )
+            return flask.abort(408)
+    except ValueError:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            remote_address=remote_addr,
+            event_long='Invalid auth timestamp',
+        )
+        return flask.abort(405)
+
+    org = organization.get_by_id(org_id)
+    if not org:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            remote_address=remote_addr,
+            event_long='Organization not found',
+        )
+        return flask.abort(404)
+
+    usr = org.get_user(id=user_id)
+    if not usr:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            remote_address=remote_addr,
+            event_long='User not found',
+        )
+        return flask.abort(404)
+    elif not usr.sync_secret:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User missing sync secret',
+        )
+        return flask.abort(410)
+
+    if auth_token != usr.sync_token:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Sync token mismatch',
+        )
+        return flask.abort(411)
+
+    if usr.disabled:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='User disabled',
+        )
+        return flask.abort(403)
+
+    cipher_data64 = flask.request.json.get('data')
+    box_nonce64 = flask.request.json.get('nonce')
+    public_key64 = flask.request.json.get('public_key')
+    signature64 = flask.request.json.get('signature')
+
+    auth_string = '&'.join([
+        usr.sync_token, auth_timestamp, auth_nonce, flask.request.method,
+        flask.request.path, cipher_data64, box_nonce64, public_key64,
+        signature64])
+
+    if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Auth string len limit exceeded',
+        )
+        return flask.abort(414)
+
+    auth_test_signature = base64.b64encode(hmac.new(
+        usr.sync_secret.encode(), auth_string.encode(),
+        hashlib.sha512).digest()).decode()
+    if not utils.const_compare(auth_signature, auth_test_signature):
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Auth signature mismatch',
+        )
+        return flask.abort(401)
+
+    nonces_collection = mongo.get_collection('auth_nonces')
+    try:
+        nonces_collection.insert({
+            'token': auth_token,
+            'nonce': auth_nonce,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Duplicate nonce from reconnection',
+        )
+        return flask.abort(409)
+
+    data_hash = hashlib.sha512(
+        '&'.join([cipher_data64, box_nonce64, public_key64]).encode(),
+    ).digest()
+    try:
+        usr.verify_sig(
+            data_hash,
+            base64.b64decode(signature64),
+        )
+    except InvalidSignature:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Invalid rsa signature',
+        )
+        return flask.abort(412)
+
+    svr = usr.get_server(server_id)
+
+    sender_pub_key = nacl.public.PublicKey(
+        base64.b64decode(public_key64))
+    box_nonce = base64.b64decode(box_nonce64)
+
+    priv_key = nacl.public.PrivateKey(
+        base64.b64decode(svr.auth_box_private_key))
+
+    cipher_data = base64.b64decode(cipher_data64)
+    nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+    plaintext = nacl_box.decrypt(cipher_data, box_nonce).decode()
+
+    try:
+        nonces_collection.insert({
+            'token': auth_token,
+            'nonce': box_nonce64,
+            'timestamp': utils.now(),
+        })
+    except pymongo.errors.DuplicateKeyError:
+        journal.entry(
+            journal.USER_OVPN_FAILURE,
+            usr.journal_data,
+            remote_address=remote_addr,
+            event_long='Duplicate secondary nonce',
+        )
+        return flask.abort(415)
+
+    key_data = json.loads(plaintext)
+
+    client_platform = utils.filter_str(key_data['platform'])
+    client_device_id = utils.filter_str(key_data['device_id'])
+    client_device_name = utils.filter_str(key_data['device_name'])
+    client_mac_addr = utils.filter_str(key_data['mac_addr'])
+    client_mac_addrs = key_data['mac_addrs']
+    if client_mac_addrs:
+        client_mac_addrs = [utils.filter_str(x)
+            for x in client_mac_addrs]
+    else:
+        client_mac_addrs = None
+    client_auth_token = key_data['token']
+    client_auth_nonce = utils.filter_str(key_data['nonce'])
+    client_auth_password = key_data['password']
+    client_auth_timestamp = int(key_data['timestamp'])
+    client_public_address = utils.filter_str(key_data['public_address'])
+    client_public_address6 = utils.filter_str(key_data['public_address6'])
+
+    if client_public_address:
+        client_public_address = str(ipaddress.IPv4Address(
+            client_public_address))
+    else:
+        client_public_address = None
+
+    if client_public_address6:
+        client_public_address6 = str(ipaddress.IPv6Address(
+            client_public_address6))
+    else:
+        client_public_address6 = None
+
+    if ':' in remote_addr:
+        remote_addr = str(ipaddress.IPv6Address(remote_addr))
+    else:
+        remote_addr = str(ipaddress.IPv4Address(remote_addr))
+
+    instance = server.get_instance(server_id)
+    if not instance or instance.state != 'running':
+        return flask.abort(429)
+
+    if not instance.server.dynamic_firewall:
+        return flask.abort(430)
+
+    clients = instance.instance_com.clients
+
+    event = threading.Event()
+    send_data = {
+        'allow': None,
+        'token': None,
+        'reason': None,
+        'remote': settings.local.host.public_addr,
+        'remote6': settings.local.host.public_addr6,
+    }
+    def callback(allow, data):
+        send_data['allow'] = allow
+        if allow:
+            send_data['token'] = data
+        else:
+            send_data['reason'] = data
+        event.set()
+
+    clients.open_ovpn(
+        user=usr,
+        org=org,
+        auth_password=client_auth_password,
+        auth_token=client_auth_token,
+        auth_nonce=client_auth_nonce,
+        auth_timestamp=client_auth_timestamp,
+        platform=client_platform,
+        device_id=client_device_id,
+        device_name=client_device_name,
+        mac_addr=client_mac_addr,
+        mac_addrs=client_mac_addrs,
+        client_public_address=client_public_address,
+        client_public_address6=client_public_address6,
+        remote_ip=remote_addr,
+        connect_callback=callback,
+    )
+
+    event.wait()
+
+    send_nonce = nacl.utils.random(nacl.public.Box.NONCE_SIZE)
+    nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+    send_cipher_data = nacl_box.encrypt(
+        json.dumps(send_data).encode(), send_nonce)
+    send_cipher_data = send_cipher_data[nacl.public.Box.NONCE_SIZE:]
+
+    send_nonce64 = base64.b64encode(send_nonce).decode()
+    send_cipher_data64 = base64.b64encode(send_cipher_data).decode()
+
+    usr.audit_event('user_profile',
+        'User opened ovpn connection from pritunl client',
+        remote_addr=remote_addr,
+    )
+
+    journal.entry(
+        journal.USER_OVPN_SUCCESS,
+        usr.journal_data,
+        remote_address=remote_addr,
+        event_long='User opened ovpn connection from pritunl client',
     )
 
     sync_signature = base64.b64encode(hmac.new(
