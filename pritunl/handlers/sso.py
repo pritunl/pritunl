@@ -947,7 +947,8 @@ def sso_duo_post():
 
     if sso_mode not in (DUO_AUTH, AZURE_DUO_AUTH, GOOGLE_DUO_AUTH,
             SLACK_DUO_AUTH, SAML_DUO_AUTH, SAML_OKTA_DUO_AUTH,
-            SAML_ONELOGIN_DUO_AUTH, RADIUS_DUO_AUTH):
+            SAML_ONELOGIN_DUO_AUTH, SAML_JUMPCLOUD_DUO_AUTH,
+            RADIUS_DUO_AUTH):
         return flask.abort(404)
 
     if not token:
