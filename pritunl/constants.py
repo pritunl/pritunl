@@ -485,6 +485,31 @@ RADIUS_AUTH = 'radius'
 RADIUS_DUO_AUTH = 'radius_duo'
 PLUGIN_AUTH = 'plugin'
 
+SAML_SSO = 'saml'
+GOOGLE_SSO = 'google'
+AZURE_SSO = 'azure'
+AUTHZERO_SSO = 'authzero'
+SLACK_SSO = 'slack'
+OKTA_SSO = 'okta'
+ONELOGIN_SSO = 'onelogin'
+JUMPCLOUD_SSO = 'jumpcloud'
+RADIUS_SSO = 'radius'
+PLUGIN_SSO = 'plugin'
+
+DUO_PASSCODE = 'duo_passcode'
+OKTA_PASSCODE = 'okta_passcode'
+ONELOGIN_PASSCODE = 'onelogin_passcode'
+YUBICO_PASSCODE = 'yubico'
+OTP_PASSCODE = 'otp'
+
+DUO_PUSH = 'duo_push'
+OKTA_PUSH = 'okta_push'
+ONELOGIN_PUSH = 'onelogin_push'
+
+PIN = 'pin'
+
+BYPASS_SECONDARY = 'bypass_secondary'
+
 AUTH_TYPES = {
     LOCAL_AUTH,
     DUO_AUTH,
