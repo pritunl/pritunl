@@ -18,6 +18,7 @@ from pritunl import plugins
 from pritunl import vxlan
 from pritunl import database
 from pritunl import system
+from pritunl import firewall
 
 import os
 import signal
@@ -387,6 +388,7 @@ class ServerInstance(object):
                 network_mode=self.server.network_mode,
                 network_start=self.server.network_start,
                 network_stop=self.server.network_end,
+                dynamic_firewall=self.server.dynamic_firewall,
                 restrict_routes=self.server.restrict_routes,
                 bind_address=self.server.bind_address,
                 onc_hostname=None,
@@ -1608,6 +1610,15 @@ class ServerInstance(object):
             if self.is_interrupted():
                 return
 
+            if self.server.dynamic_firewall:
+                self.state = 'dyanmic_firewall'
+                firewall.open_server(self.server.id, self.id,
+                    self.server.port, self.server.protocol,
+                    self.server.port_wg if self.server.wg else 0)
+
+                if self.is_interrupted():
+                    return
+
             self.state = 'init_route_advertisements'
             self.init_route_advertisements()
 
@@ -1675,12 +1686,15 @@ class ServerInstance(object):
                 host_name=settings.local.host.name,
                 server_id=self.server.id,
                 server_name=self.server.name,
+                wg=self.server.wg,
                 port=self.server.port,
                 protocol=self.server.protocol,
+                port_wg=self.server.port_wg,
                 ipv6=self.server.ipv6,
                 ipv6_firewall=self.server.ipv6_firewall,
                 network=self.server.network,
                 network6=self.server.network6,
+                network_wg=self.server.network_wg,
                 network_mode=self.server.network_mode,
                 network_start=self.server.network_start,
                 network_stop=self.server.network_end,
@@ -1805,6 +1819,17 @@ class ServerInstance(object):
                     self.iptables_wg.clear_rules()
             except:
                 logger.exception('Server iptables clean up error', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.id,
+                )
+
+            try:
+                if self.server.dynamic_firewall:
+                    firewall.close_server(self.server.id, self.id,
+                        self.server.port, self.server.protocol,
+                        self.server.port_wg if self.server.wg else 0)
+            except:
+                logger.exception('Server firewall clean up error', 'server',
                     server_id=self.server.id,
                     instance_id=self.id,
                 )
