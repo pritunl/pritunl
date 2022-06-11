@@ -18,6 +18,8 @@ from pritunl import plugins
 from pritunl import vxlan
 from pritunl import journal
 from pritunl import database
+from pritunl import firewall
+from pritunl import callbacks
 
 import time
 import collections
@@ -29,13 +31,12 @@ import threading
 import uuid
 import pymongo
 import json
+import datetime
 import nacl.public
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
 
 _limiter = limiter.Limiter('vpn', 'peer_limit', 'peer_limit_timeout')
-_port_listeners = {}
-_client_listeners = {}
 
 class Clients(object):
     def __init__(self, svr, instance, instance_com):
@@ -56,11 +57,18 @@ class Clients(object):
 
         self.clients = docdb.DocDb(
             'user_id',
+            'doc_id',
             'mac_addr',
             'virt_address',
         )
         self.clients_queue = collections.deque()
         self.ip_network = ipaddress.IPv4Network(self.server.network)
+
+        self.firewall_clients = docdb.DocDb(
+            'doc_id',
+            'user_id',
+            'token',
+        )
 
         self.server.generate_auth_key_commit()
         self.server_private_key = self.server.get_auth_private_key()
@@ -104,7 +112,7 @@ class Clients(object):
         client_conf += 'push "ping %s"\n' % self.server.ping_interval
         if (user.has_password(self.server) and has_token) or \
                 user.has_passcode(self.server) or \
-                user.get_push_type() or \
+                user.get_push_type(self.server) or \
                 not settings.user.reconnect:
             client_conf += 'push "ping-exit %s"\n' % \
                 self.server.ping_timeout
@@ -768,7 +776,7 @@ class Clients(object):
         return virt_address, address_dynamic, False
 
     def allow_client(self, client_data, org, user, reauth=False,
-            has_token=False):
+            has_token=False, doc_id=None):
         client_id = client_data['client_id']
         key_id = client_data['key_id']
         org_id = client_data['org_id']
@@ -778,7 +786,9 @@ class Clients(object):
         platform = client_data.get('platform')
         mac_addr = client_data.get('mac_addr')
         remote_ip = client_data.get('remote_ip')
-        doc_id = database.ObjectId()
+
+        if not doc_id:
+            doc_id = database.ObjectId()
 
         if reauth:
             doc = self.clients.find_id(client_id)
@@ -933,7 +943,8 @@ class Clients(object):
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
     def allow_client_wg(self, user, org, wg_public_key, platform, device_id,
-            device_name, mac_addr, remote_ip):
+            device_name, mac_addr, client_public_address,
+            client_public_address6, remote_ip):
         try:
             user_id = user.id
             org_id = org.id
@@ -1074,6 +1085,16 @@ class Clients(object):
             )
             self.instance.disconnect_wg(wg_public_key)
             return False, 'Error allowing client wg connect'
+
+        addresses = set()
+        if client_public_address:
+            addresses.add(client_public_address)
+        if client_public_address6:
+            addresses.add(client_public_address6)
+        addresses.add(remote_ip)
+
+        firewall.open_client(self.instance.id, doc_id, list(addresses))
+
         return True, client_conf
 
     def decrypt_rsa(self, cipher_data):
@@ -1133,6 +1154,33 @@ class Clients(object):
 
         return auth_password, auth_token, auth_nonce, auth_timestamp
 
+    def decrypt_box_fw(self, sender_pub_key64, cipher_data64):
+        if len(sender_pub_key64) > 128:
+            raise ValueError('Sender pub key too long')
+
+        if len(cipher_data64) > 256:
+            raise ValueError('Sender cipher data too long')
+
+        sender_pub_key64 += '=' * (-len(sender_pub_key64) % 4)
+        cipher_data64 += '=' * (-len(cipher_data64) % 4)
+
+        sender_pub_key = nacl.public.PublicKey(
+            base64.b64decode(sender_pub_key64))
+
+        pub_key_hash = hashlib.sha256(bytes(sender_pub_key)).digest()
+        nonce = pub_key_hash[:24]
+
+        priv_key = nacl.public.PrivateKey(
+            base64.b64decode(self.server.auth_box_private_key))
+
+        cipher_data = base64.b64decode(cipher_data64)
+
+        nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+
+        plaintext = nacl_box.decrypt(cipher_data, nonce).decode()
+
+        return plaintext
+
     def _connect(self, client_data, reauth):
         client_id = client_data['client_id']
         key_id = client_data['key_id']
@@ -1150,6 +1198,9 @@ class Clients(object):
         auth_timestamp = None
         mac_addr = client_data.get('mac_addr')
         has_token = False
+        fw_token = None
+        doc_id = None
+        auth = None
 
         if password and password.startswith('$x$') and \
                 len(username) > 24 and len(password) > 24 and \
@@ -1157,6 +1208,11 @@ class Clients(object):
             has_token = True
             auth_password, auth_token, auth_nonce, auth_timestamp = \
                 self.decrypt_box(username, password[3:])
+        elif password and password.startswith('$f$') and \
+                len(username) > 24 and len(password) > 24 and \
+                self.server_private_key:
+            has_token = True
+            fw_token = self.decrypt_box_fw(username, password[3:])
         elif password and '<%=RSA_ENCRYPTED=%>' in password and \
                 self.server_private_key:
             has_token = True
@@ -1195,15 +1251,19 @@ class Clients(object):
                 return
 
             def callback(allow, reason=None):
+                challenge = None
+                if auth:
+                    challenge = auth.challenge
+
                 try:
                     if allow:
                         self.allow_client(client_data, org, user,
-                            reauth, has_token)
+                            reauth, has_token, doc_id)
                         if settings.vpn.stress_test:
                             self._connected(client_id)
                     else:
                         self.instance_com.send_client_deny(
-                            client_id, key_id, reason, auth.challenge)
+                            client_id, key_id, reason, challenge)
 
                     plugins.event(
                         'user_connection',
@@ -1231,7 +1291,7 @@ class Clients(object):
                 except:
                     try:
                         self.instance_com.send_client_deny(
-                            client_id, key_id, 'exception', auth.challenge)
+                            client_id, key_id, 'exception', challenge)
                     except:
                         pass
 
@@ -1240,6 +1300,32 @@ class Clients(object):
                         server_id=self.server.id,
                         instance_id=self.instance.id,
                     )
+
+            if fw_token and self.server.dynamic_firewall:
+                firewall_clients = self.firewall_clients.find({
+                    'token': fw_token,
+                })
+                if firewall_clients:
+                    firewall_client = firewall_clients[0]
+                    updated = self.firewall_clients.update({
+                        'token': fw_token,
+                        'valid': True,
+                    }, {
+                        'valid': False,
+                    })
+                    if updated:
+                        logger.info(
+                            'Client authentication with firewall token'
+                            'clients',
+                            user_name=user.name,
+                            org_name=user.org.name,
+                            server_name=self.server.name,
+                        )
+                        doc_id = firewall_client['doc_id']
+                        callback(True)
+                        return
+                callback(False, reason='Invalid firewall token')
+                return
 
             auth = authorizer.Authorizer(
                 svr=self.server,
@@ -1272,7 +1358,8 @@ class Clients(object):
 
     def connect_wg(self, user, org, wg_public_key, auth_password,
             auth_token, auth_nonce, auth_timestamp, platform, device_id,
-            device_name, mac_addr, mac_addrs, remote_ip, connect_callback):
+            device_name, mac_addr, mac_addrs, client_public_address,
+            client_public_address6, remote_ip, connect_callback):
         response = {
             'sent': False,
             'lock': threading.Lock(),
@@ -1316,6 +1403,8 @@ class Clients(object):
                             device_name=device_name,
                             mac_addr=mac_addr,
                             remote_ip=remote_ip,
+                            client_public_address=client_public_address,
+                            client_public_address6=client_public_address6,
                         )
                         if allow:
                             connect_callback_once(True, data)
@@ -1387,6 +1476,139 @@ class Clients(object):
                 server_id=self.server.id,
             )
             self.instance.disconnect_wg(wg_public_key)
+            connect_callback_once(False, 'Error parsing client connect')
+
+    def open_firewall(self, user, client_public_address,
+            client_public_address6, remote_ip):
+        token = utils.generate_secret()
+        doc_id = database.ObjectId()
+        timestamp = utils.now()
+
+        addresses = set()
+        if client_public_address:
+            addresses.add(client_public_address)
+        if client_public_address6:
+            addresses.add(client_public_address6)
+        addresses.add(remote_ip)
+
+        self.firewall_clients.insert({
+            'doc_id': doc_id,
+            'user_id': user.id,
+            'token': token,
+            'timestamp': timestamp,
+            'addresses': list(addresses),
+            'valid': True,
+        })
+
+        firewall.open_client(self.instance.id, doc_id, list(addresses))
+
+        return token
+
+    def open_ovpn(self, user, org, auth_password,
+            auth_token, auth_nonce, auth_timestamp, platform, device_id,
+            device_name, mac_addr, mac_addrs, client_public_address,
+            client_public_address6, remote_ip, connect_callback):
+        response = {
+            'sent': False,
+            'lock': threading.Lock(),
+        }
+
+        def connect_callback_once(allow, data):
+            respond = False
+            response['lock'].acquire()
+            if not response['sent']:
+                respond = True
+            response['sent'] = True
+            response['lock'].release()
+            thread.cancel()
+
+            if respond:
+                connect_callback(allow, data)
+                return True
+            return False
+
+        def timeout_callback():
+            connect_callback_once(False, 'Authorization timed out')
+
+        thread = threading.Timer(30, timeout_callback)
+        thread.daemon = True
+        thread.start()
+
+        try:
+            def callback(allow, reason=None):
+                try:
+                    if allow:
+                        token = self.open_firewall(
+                            user,
+                            client_public_address,
+                            client_public_address6,
+                            remote_ip,
+                        )
+                        connect_callback_once(True, token)
+
+                    if not allow:
+                        self.instance_com.push_output(
+                            'ERROR User open ovpn failed "%s"' % reason)
+                        connect_callback_once(False, reason)
+
+                    plugins.event(
+                        'user_connection',
+                        host_id=settings.local.host_id,
+                        server_id=self.server.id,
+                        org_id=org.id,
+                        user_id=user.id,
+                        host_name=settings.local.host.name,
+                        server_name=self.server.name,
+                        org_name=org.name,
+                        user_name=user.name,
+                        platform=platform,
+                        device_id=device_id,
+                        device_name=device_name,
+                        remote_ip=remote_ip,
+                        mac_addr=mac_addr,
+                        password=None,
+                        auth_password=auth_password,
+                        auth_token=auth_token,
+                        auth_nonce=auth_nonce,
+                        auth_timestamp=auth_timestamp,
+                        allow=allow,
+                        reason=reason,
+                    )
+                except:
+                    try:
+                        connect_callback_once(False, 'Server exception')
+                    except:
+                        pass
+
+                    logger.exception(
+                        'Error in authorizer callback', 'server',
+                        server_id=self.server.id,
+                        instance_id=self.instance.id,
+                    )
+
+            auth = authorizer.Authorizer(
+                svr=self.server,
+                usr=user,
+                remote_ip=remote_ip,
+                platform=platform,
+                device_id=device_id,
+                device_name=device_name,
+                mac_addr=mac_addr,
+                mac_addrs=mac_addrs,
+                password=None,
+                auth_password=auth_password,
+                auth_token=auth_token,
+                auth_nonce=auth_nonce,
+                auth_timestamp=auth_timestamp,
+                reauth=False,
+                callback=callback,
+            )
+
+            auth.authenticate()
+        except:
+            logger.exception('Error parsing client connect', 'server',
+                server_id=self.server.id,
+            )
             connect_callback_once(False, 'Error parsing client connect')
 
     def ping_wg(self, user, org, wg_public_key):
