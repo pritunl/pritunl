@@ -49,6 +49,7 @@ dict_fields = [
     'network_mode',
     'network_start',
     'network_end',
+    'dynamic_firewall',
     'restrict_routes',
     'bind_address',
     'port',
@@ -113,6 +114,7 @@ class Server(mongo.MongoObject):
         'network_mode',
         'network_start',
         'network_end',
+        'dynamic_firewall',
         'restrict_routes',
         'multi_device',
         'routes',
@@ -177,6 +179,7 @@ class Server(mongo.MongoObject):
         'otp_auth': False,
         'tls_auth': True,
         'lzo_compression': False,
+        'dynamic_firewall': False,
         'restrict_routes': True,
         'inter_client': True,
         'ping_interval': 10,
@@ -203,9 +206,9 @@ class Server(mongo.MongoObject):
 
     def __init__(self, name=None, groups=None, network_wg=None,
             network=None, network_mode=None, network_start=None,
-            network_end=None, restrict_routes=None, wg=None, ipv6=None,
-            ipv6_firewall=None, bind_address=None, port=None,
-            protocol=None, port_wg=None, dh_param_bits=None,
+            network_end=None, dynamic_firewall=None, restrict_routes=None,
+            wg=None, ipv6=None, ipv6_firewall=None, bind_address=None,
+            port=None, protocol=None, port_wg=None, dh_param_bits=None,
             multi_device=None, dns_servers=None, search_domain=None,
             otp_auth=None, cipher=None, hash=None, block_outside_dns=None,
             jumbo_frames=None, lzo_compression=None, inter_client=None,
@@ -239,6 +242,8 @@ class Server(mongo.MongoObject):
             self.network_start = network_start
         if network_end is not None:
             self.network_end = network_end
+        if dynamic_firewall is not None:
+            self.dynamic_firewall = dynamic_firewall
         if restrict_routes is not None:
             self.restrict_routes = restrict_routes
         if wg is not None:
@@ -374,6 +379,7 @@ class Server(mongo.MongoObject):
             'network_mode': self.network_mode,
             'network_start': self.network_start,
             'network_end': self.network_end,
+            'dynamic_firewall': self.dynamic_firewall,
             'restrict_routes': self.restrict_routes,
             'multi_device': self.multi_device,
             'dns_servers': self.dns_servers,
