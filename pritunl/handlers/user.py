@@ -109,11 +109,7 @@ def user_get(org_id, user_id=None, page=None):
         user_dict['audit'] = settings.app.auditing == ALL
         user_dict['status'] = False
         user_dict['sso'] = settings.app.sso
-
-        if otp_auth and not usr.has_duo_passcode and not usr.has_yubikey:
-            user_dict['otp_auth'] = True
-        else:
-            user_dict['otp_auth'] = False
+        user_dict['auth_modes'] = usr.get_auth_modes(otp_auth)
 
         if dns_mapping:
             user_dict['dns_mapping'] = ('%s.%s.vpn' % (
