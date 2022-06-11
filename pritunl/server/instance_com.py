@@ -111,11 +111,11 @@ class ServerInstanceCom(object):
                     self.client['org_id'] = database.ParseObjectId(org_id)
                     self.client['user_id'] = database.ParseObjectId(user_id)
                 elif env_key == 'IV_HWADDR':
-                    self.client['mac_addr'] = env_val
+                    self.client['mac_addr'] = utils.filter_str(env_val)
                 elif env_key == 'untrusted_ip':
-                    self.client['remote_ip'] = env_val
+                    self.client['remote_ip'] = utils.filter_str(env_val)
                 elif env_key == 'untrusted_ip6':
-                    remote_ip = env_val
+                    remote_ip = utils.filter_str(env_val)
                     if remote_ip.startswith('::ffff:'):
                         remote_ip = remote_ip.split(':')[-1]
                     self.client['remote_ip'] = remote_ip
@@ -124,15 +124,15 @@ class ServerInstanceCom(object):
                         env_val = 'chrome'
                         self.client['device_id'] = uuid.uuid4().hex
                         self.client['device_name'] = 'chrome-os'
-                    self.client['platform'] = env_val
+                    self.client['platform'] = utils.filter_str(env_val)
                 elif env_key == 'UV_ID':
-                    self.client['device_id'] = env_val
+                    self.client['device_id'] = utils.filter_str(env_val)
                 elif env_key == 'UV_NAME':
-                    self.client['device_name'] = env_val
+                    self.client['device_name'] = utils.filter_str(env_val)
                 elif env_key == 'UV_PLATFORM':
-                    self.client['platform'] = env_val
+                    self.client['platform'] = utils.filter_str(env_val)
                 elif env_key == 'username':
-                    self.client['username'] = env_val
+                    self.client['username'] = utils.filter_str(env_val)[:128]
                 elif env_key == 'password':
                     self.client['password'] = env_val
             else:
