@@ -2610,9 +2610,31 @@ class Clients(object):
 
             utils.del_route6(virt_address6)
 
+    def on_firewall(self, client_id):
+        clients = self.clients.find({
+            'doc_id': client_id,
+        })
+        if clients:
+            return True
+        clients = self.firewall_clients.find({
+            'doc_id': client_id,
+        })
+        if clients:
+            client = clients[0]
+            if utils.now() - client['timestamp'] < datetime.timedelta(
+                    seconds=settings.vpn.firewall_connect_timeout):
+                return True
+            else:
+                self.firewall_clients.remove_id(client['id'])
+        return False
+
     def start(self):
-        _port_listeners[self.instance.id] = self.on_port_forwarding
-        _client_listeners[self.instance.id] = self.on_client
+        callbacks.add_port_listener(
+            self.instance.id, self.on_port_forwarding)
+        callbacks.add_client_listener(
+            self.instance.id, self.on_client)
+        callbacks.add_firewall_listener(
+            self.instance.id, self.on_firewall)
         host.global_servers.add(self.instance.id)
 
         if self.server.dns_mapping:
@@ -2625,8 +2647,9 @@ class Clients(object):
             thread.start()
 
     def stop(self):
-        _port_listeners.pop(self.instance.id, None)
-        _client_listeners.pop(self.instance.id, None)
+        callbacks.remove_port_listener(self.instance.id)
+        callbacks.remove_client_listener(self.instance.id)
+        callbacks.remove_firewall_listener(self.instance.id)
 
         try:
             host.global_servers.remove(self.instance.id)
