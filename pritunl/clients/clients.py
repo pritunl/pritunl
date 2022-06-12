@@ -2667,21 +2667,3 @@ class Clients(object):
 
         if self.server.route_clients:
             self.clear_routes()
-
-def on_port_forwarding(msg):
-    for listener in list(_port_listeners.values()):
-        listener(
-            msg['message']['org_id'],
-            msg['message']['user_id'],
-        )
-
-def on_client(msg):
-    for listener in list(_client_listeners.values()):
-        listener(
-            msg['message']['state'],
-            msg['message'].get('server_id'),
-            msg['message']['virt_address'],
-            msg['message']['virt_address6'],
-            msg['message']['host_address'],
-            msg['message']['host_address6'],
-        )
