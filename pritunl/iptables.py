@@ -1513,3 +1513,9 @@ class Iptables(object):
             # tables['filter6'].commit()
         finally:
             self._lock.release()
+
+def lock_acquire():
+    _global_lock.acquire()
+
+def lock_release():
+    _global_lock.release()
