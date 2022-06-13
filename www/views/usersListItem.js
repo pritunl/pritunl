@@ -66,7 +66,8 @@ define([
         {
           'download_tooltip': this._getDownloadTooltip(),
           'key_link': this._getKeyLink(),
-          'key_link_tooltip': this._getKeyLinkTooltip()
+          'key_link_tooltip': this._getKeyLinkTooltip(),
+          'auth_modes': this.model.get('auth_modes') || []
         }, this.model.toJSON())));
       this.$('[data-toggle="tooltip"]').tooltip();
       this.$el.append(this.serverList.render().el);
@@ -138,7 +139,9 @@ define([
         this._getKeyLinkTooltip());
       this.$('.get-key-link').tooltip();
 
-      if (!this.model.get('bypass_secondary') && this.model.get('otp_auth')) {
+      var authModes = this.model.get('auth_modes') || [];
+
+      if (authModes.indexOf('otp') !== -1) {
         this.$('.right-container').removeClass('no-otp-auth');
         this.$('.get-otp-auth').removeClass('no-otp-auth');
       }
@@ -191,99 +194,77 @@ define([
         }
       }
 
-      if (this.model.get('bypass_secondary')) {
-        this.$('.saml-logo').hide();
-        this.$('.azure-logo').hide();
-        this.$('.authzero-logo').hide();
-        this.$('.google-logo').hide();
-        this.$('.slack-logo').hide();
-        this.$('.duo-logo').hide();
-        this.$('.radius-logo').hide();
-        this.$('.plugin-logo').hide();
+      if (authModes.indexOf('saml') !== -1) {
+        this.$('.saml-logo').show();
       } else {
-        var sso = this.model.get('sso') || '';
-        var auth_type = this.model.get('auth_type');
-        if (sso.indexOf('saml') !== -1 &&
-            auth_type.indexOf('saml') !== -1) {
-          this.$('.saml-logo').show();
-        } else {
-          this.$('.saml-logo').hide();
-        }
+        this.$('.saml-logo').hide();
+      }
 
-        if (sso.indexOf('azure') !== -1 &&
-          auth_type.indexOf('azure') !== -1) {
-          this.$('.azure-logo').show();
-        } else {
-          this.$('.azure-logo').hide();
-        }
+      if (authModes.indexOf('azure') !== -1) {
+        this.$('.azure-logo').show();
+      } else {
+        this.$('.azure-logo').hide();
+      }
 
-        if (sso.indexOf('authzero') !== -1 &&
-          auth_type.indexOf('authzero') !== -1) {
-          this.$('.authzero-logo').show();
-        } else {
-          this.$('.authzero-logo').hide();
-        }
+      if (authModes.indexOf('authzero') !== -1) {
+        this.$('.authzero-logo').show();
+      } else {
+        this.$('.authzero-logo').hide();
+      }
 
-        if (sso.indexOf('google') !== -1 &&
-          auth_type.indexOf('google') !== -1) {
-          this.$('.google-logo').show();
-        } else {
-          this.$('.google-logo').hide();
-        }
+      if (authModes.indexOf('google') !== -1) {
+        this.$('.google-logo').show();
+      } else {
+        this.$('.google-logo').hide();
+      }
 
-        if (sso.indexOf('slack') !== -1 &&
-          auth_type.indexOf('slack') !== -1) {
-          this.$('.slack-logo').show();
-        } else {
-          this.$('.slack-logo').hide();
-        }
+      if (authModes.indexOf('slack') !== -1) {
+        this.$('.slack-logo').show();
+      } else {
+        this.$('.slack-logo').hide();
+      }
 
-        if (sso.indexOf('duo') !== -1 &&
-          auth_type.indexOf('duo') !== -1) {
-          this.$('.duo-logo').show();
-        } else {
-          this.$('.duo-logo').hide();
-        }
+      if (authModes.indexOf('okta') !== -1) {
+        this.$('.okta-logo').show();
+      } else {
+        this.$('.okta-logo').hide();
+      }
 
-        if ((sso.indexOf('yubico') !== -1 &&
-          auth_type.indexOf('yubico') !== -1) || auth_type === 'yubico') {
-          this.$('.yubico-logo').show();
-        } else {
-          this.$('.yubico-logo').hide();
-        }
+      if (authModes.indexOf('onelogin') !== -1) {
+        this.$('.onelogin-logo').show();
+      } else {
+        this.$('.onelogin-logo').hide();
+      }
 
-        if (sso.indexOf('okta') !== -1 &&
-          auth_type.indexOf('okta') !== -1) {
-          this.$('.okta-logo').show();
-        } else {
-          this.$('.okta-logo').hide();
-        }
+      if (authModes.indexOf('jumpcloud') !== -1) {
+        this.$('.jumpcloud-logo').show();
+      } else {
+        this.$('.jumpcloud-logo').hide();
+      }
 
-        if (sso.indexOf('onelogin') !== -1 &&
-          auth_type.indexOf('onelogin') !== -1) {
-          this.$('.onelogin-logo').show();
-        } else {
-          this.$('.onelogin-logo').hide();
-        }
+      if (authModes.indexOf('radius') !== -1) {
+        this.$('.radius-logo').show();
+      } else {
+        this.$('.radius-logo').hide();
+      }
 
-        if (sso.indexOf('jumpcloud') !== -1 &&
-          auth_type.indexOf('jumpcloud') !== -1) {
-          this.$('.jumpcloud-logo').show();
-        } else {
-          this.$('.jumpcloud-logo').hide();
-        }
+      if (authModes.indexOf('plugin') !== -1) {
+        this.$('.plugin-logo').show();
+      } else {
+        this.$('.plugin-logo').hide();
+      }
 
-        if (sso === 'radius' && auth_type === 'radius') {
-          this.$('.radius-logo').show();
-        } else {
-          this.$('.radius-logo').hide();
-        }
+      if (authModes.indexOf('duo_passcode') !== -1 ||
+          authModes.indexOf('duo_push') !== -1) {
+        this.$('.duo-logo').show();
+      } else {
+        this.$('.duo-logo').hide();
+      }
 
-        if (auth_type === 'plugin') {
-          this.$('.plugin-logo').show();
-        } else {
-          this.$('.plugin-logo').hide();
-        }
+      if (authModes.indexOf('yubico') !== -1) {
+        this.$('.yubico-logo').show();
+      } else {
+        this.$('.yubico-logo').hide();
       }
 
       this.serverList.update(this.model.get('servers'));
@@ -322,8 +303,7 @@ define([
       var modal = new ModalKeyLinkView({
         model: new KeyModel({
           'organization': this.model.get('organization'),
-          'user': this.model.get('id'),
-          'otp_auth': this.model.get('otp_auth')
+          'user': this.model.get('id')
         })
       });
       this.addView(modal);
