@@ -837,7 +837,8 @@ class ServerInstance(object):
                 '-j', 'MASQUERADE',
             ]
             self.iptables.add_rule(rule)
-            self.iptables.add_rule6(rule)
+            if self.server.ipv6:
+                self.iptables.add_rule6(rule)
 
             if self.server.wg:
                 rule = [
@@ -847,7 +848,8 @@ class ServerInstance(object):
                     '-j', 'MASQUERADE',
                 ]
                 self.iptables_wg.add_rule(rule)
-                self.iptables_wg.add_rule6(rule)
+                if self.server.ipv6:
+                    self.iptables_wg.add_rule6(rule)
         finally:
             self.iptables_lock.release()
 
