@@ -26,8 +26,6 @@ class SettingsVpn(SettingsGroupMongo):
         'link_timeout': 10,
         'firewall_connect_timeout': 180,
         'drop_permissions': False,
-        'iptables_update': False,
-        'iptables_update_rate': 900,
         'bandwidth_update_rate': 15,
         'nat_routes': True,
         'ipv6_prefix': 'fd00',
