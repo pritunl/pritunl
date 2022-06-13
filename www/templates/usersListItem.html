@@ -42,27 +42,25 @@ if (name.length > 40) {
     <% } %>
   </div>
   <div class="sso-logos">
-    <div class="saml-logo" data-toggle="tooltip" title="User authenticated with SAML" <%= bypass_secondary !== true && sso && sso.indexOf('saml') !== -1 && auth_type.indexOf('saml') !== -1 && ((sso.indexOf('okta') !== -1 && auth_type.indexOf('okta') !== -1) ||
-    (sso.indexOf('onelogin') !== -1 && auth_type.indexOf('onelogin') !== -1) ||
-    (sso.indexOf('jumpcloud') !== -1 && auth_type.indexOf('jumpcloud') !== -1) || (sso.indexOf('okta') === -1 && auth_type.indexOf('okta') === -1 && sso.indexOf('onelogin') === -1 && auth_type.indexOf('onelogin') === -1 && sso.indexOf('jumpcloud') === -1 && auth_type.indexOf('jumpcloud') === -1)) ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
-    <div class="azure-logo" data-toggle="tooltip" title="User is authenticating with Azure" <%= bypass_secondary !== true && sso && sso.indexOf('azure') !== -1 && auth_type.indexOf('azure') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="authzero-logo" data-toggle="tooltip" title="User is authenticating with Auth0" <%= bypass_secondary !== true && sso && sso.indexOf('authzero') !== -1 && auth_type.indexOf('authzero') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="google-logo" data-toggle="tooltip" title="User is authenticating with Google Apps" <%= bypass_secondary !== true && sso && sso.indexOf('google') !== -1 && auth_type.indexOf('google') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="slack-logo" data-toggle="tooltip" title="User is authenticating with Slack" <%= bypass_secondary !== true && sso && sso.indexOf('slack') !== -1 && auth_type.indexOf('slack') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="okta-logo" data-toggle="tooltip" title="User is authenticating with Okta" <%= bypass_secondary !== true && sso && sso.indexOf('okta') !== -1 && auth_type.indexOf('okta') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="onelogin-logo" data-toggle="tooltip" title="User is authenticating with OneLogin" <%= bypass_secondary !== true && sso && sso.indexOf('onelogin') !== -1 && auth_type.indexOf('onelogin') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="jumpcloud-logo" data-toggle="tooltip" title="User is authenticating with JumpCloud" <%= bypass_secondary !== true && sso && sso.indexOf('jumpcloud') !== -1 && auth_type.indexOf('jumpcloud') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="radius-logo" data-toggle="tooltip" title="User is authenticating with Radius" <%= bypass_secondary !== true && sso === 'radius' && auth_type === 'radius' ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
-    <div class="plugin-logo" data-toggle="tooltip" title="User is authenticating with plugin" <%= bypass_secondary !== true && auth_type === 'plugin' ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
-    <div class="duo-logo" data-toggle="tooltip" title="User is authenticating with Duo Security" <%= bypass_secondary !== true && sso && sso.indexOf('duo') !== -1 && auth_type.indexOf('duo') !== -1 ? '' : 'style="display: none"' %>></div>
-    <div class="yubico-logo" data-toggle="tooltip" title="User is authenticating with Yubikey" <%= bypass_secondary !== true && ((sso && sso.indexOf('yubico') !== -1 && auth_type.indexOf('yubico') !== -1) || yubico_id) ? '' : 'style="display: none"' %>></div>
+    <div class="saml-logo" data-toggle="tooltip" title="User authenticated with SAML" <%= auth_modes.indexOf('saml') !== -1 ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
+    <div class="azure-logo" data-toggle="tooltip" title="User is authenticating with Azure" <%= auth_modes.indexOf('azure') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="authzero-logo" data-toggle="tooltip" title="User is authenticating with Auth0" <%= auth_modes.indexOf('authzero') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="google-logo" data-toggle="tooltip" title="User is authenticating with Google Workspace" <%= auth_modes.indexOf('google') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="slack-logo" data-toggle="tooltip" title="User is authenticating with Slack" <%= auth_modes.indexOf('slack') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="okta-logo" data-toggle="tooltip" title="User is authenticating with Okta" <%= auth_modes.indexOf('okta') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="onelogin-logo" data-toggle="tooltip" title="User is authenticating with OneLogin" <%= auth_modes.indexOf('onelogin') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="jumpcloud-logo" data-toggle="tooltip" title="User is authenticating with JumpCloud" <%= auth_modes.indexOf('jumpcloud') !== -1 ? '' : 'style="display: none"' %>></div>
+    <div class="radius-logo" data-toggle="tooltip" title="User is authenticating with Radius" <%= auth_modes.indexOf('radius') !== -1 ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
+    <div class="plugin-logo" data-toggle="tooltip" title="User is authenticating with plugin" <%= auth_modes.indexOf('plugin') !== -1 ? '' : 'style="display: none"' %>><i class="fa fa-lock"></i></div>
+    <div class="duo-logo" data-toggle="tooltip" title="User is authenticating with Duo Security" <%= (auth_modes.indexOf('duo_passcode') !== -1 || auth_modes.indexOf('duo_push') !== -1) ? '' : 'style="display: none"' %>></div>
+    <div class="yubico-logo" data-toggle="tooltip" title="User is authenticating with Yubikey" <%= auth_modes.indexOf('yubico') !== -1 ? '' : 'style="display: none"' %>></div>
   </div>
   <div class="right-container <%- otp_auth ? '' : 'no-otp-auth' %>">
     <div class="status-container">
       <div class="status-icon <%- disabled ? 'disabled' : (status ? 'online' : 'offline') %>"></div>
       <span class="status-text title"><%- disabled ? 'Disabled' : (status ? 'Online' : 'Offline') %></span>
     </div>
-    <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%- !bypass_secondary && otp_auth ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Get two-step authentication key"></a>
+    <a class="get-otp-auth glyphicon glyphicon-qrcode no-select <%- auth_modes.indexOf('otp') !== -1 ? '' : 'no-otp-auth' %>" data-toggle="tooltip" title="Get two-step authentication key"></a>
     <a class="audit-user glyphicon glyphicon-list-alt no-select <%- audit ? '' : 'no-audit-user' %>" data-toggle="tooltip" title="User audit"></a>
     <a class="get-key-link glyphicon glyphicon-link no-select" data-toggle="tooltip" title="<%- key_link_tooltip %>"></a>
     <a class="download-key glyphicon glyphicon-download no-select" data-toggle="tooltip" title="<%- download_tooltip %>" <%= key_link ? 'href="' : '' %><%- key_link ? key_link : '' %><%= key_link ? '"' : '' %>></a>
