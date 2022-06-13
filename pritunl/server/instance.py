@@ -1169,27 +1169,6 @@ class ServerInstance(object):
         except GeneratorExit:
             pass
 
-    def _iptables_thread(self):
-        if not settings.vpn.iptables_update:
-            return
-
-        if self.interrupter_sleep(settings.vpn.iptables_update_rate):
-            return
-
-        while not self.interrupt:
-            try:
-                self.iptables.upsert_rules(log=True)
-                if self.server.wg:
-                    self.iptables_wg.upsert_rules(log=True)
-                if self.interrupter_sleep(
-                        settings.vpn.iptables_update_rate):
-                    return
-            except:
-                logger.exception('Error in iptables thread', 'server',
-                    server_id=self.server.id,
-                )
-                time.sleep(1)
-
     def init_route_advertisements(self):
         for route in self.server.get_routes(include_server_links=True):
             advertise = route['advertise']
@@ -1484,10 +1463,6 @@ class ServerInstance(object):
         thread.start()
 
         thread = threading.Thread(target=self._route_ad_keep_alive_thread)
-        thread.daemon = True
-        thread.start()
-
-        thread = threading.Thread(target=self._iptables_thread)
         thread.daemon = True
         thread.start()
 
