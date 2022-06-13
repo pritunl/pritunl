@@ -1656,7 +1656,7 @@ def key_ovpn_post(org_id, user_id, server_id):
         return flask.abort(429)
 
     if not instance.server.dynamic_firewall:
-        return flask.abort(430)
+        return flask.abort(431)
 
     clients = instance.instance_com.clients
 
