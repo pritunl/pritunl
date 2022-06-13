@@ -143,34 +143,6 @@ class User(mongo.MongoObject):
         return mongo.get_collection('sso_client_cache')
 
     @property
-    def has_duo_passcode(self):
-        return settings.app.sso and self.auth_type and \
-           DUO_AUTH in self.auth_type and \
-           DUO_AUTH in settings.app.sso and \
-           settings.app.sso_duo_mode == 'passcode'
-
-    @property
-    def has_onelogin_passcode(self):
-        return settings.app.sso and self.auth_type and \
-           SAML_ONELOGIN_AUTH in self.auth_type and \
-           SAML_ONELOGIN_AUTH == settings.app.sso and \
-           'passcode' in utils.get_onelogin_mode()
-
-    @property
-    def has_okta_passcode(self):
-        return settings.app.sso and self.auth_type and \
-           SAML_OKTA_AUTH in self.auth_type and \
-           SAML_OKTA_AUTH == settings.app.sso and \
-           'passcode' in utils.get_okta_mode()
-
-    @property
-    def has_yubikey(self):
-        return self.yubico_id or (
-            settings.app.sso and self.auth_type and
-            YUBICO_AUTH in self.auth_type and
-            YUBICO_AUTH in settings.app.sso)
-
-    @property
     def journal_data(self):
         try:
             data = self.org.journal_data
@@ -369,13 +341,13 @@ class User(mongo.MongoObject):
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
 
-    def sso_auth_check(self, password, remote_ip):
-        sso_mode = settings.app.sso or ''
+    def sso_auth_check(self, svr, password, remote_ip):
+        modes = self.get_auth_modes(svr)
         auth_server = AUTH_SERVER
         if settings.app.dedicated:
             auth_server = settings.app.dedicated
 
-        if GOOGLE_AUTH in self.auth_type and GOOGLE_AUTH in sso_mode:
+        if GOOGLE_SSO in modes:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -418,7 +390,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
-        elif AZURE_AUTH in self.auth_type and AZURE_AUTH in sso_mode:
+        elif AZURE_SSO in modes:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -465,7 +437,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
-        elif AUTHZERO_AUTH in self.auth_type and AUTHZERO_AUTH in sso_mode:
+        elif AUTHZERO_SSO in modes:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -512,7 +484,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
-        elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
+        elif SLACK_SSO in modes:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -543,8 +515,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
-        elif SAML_ONELOGIN_AUTH in self.auth_type and \
-                SAML_ONELOGIN_AUTH in sso_mode:
+        elif ONELOGIN_SSO in modes:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -556,8 +527,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
-        elif SAML_JUMPCLOUD_AUTH in self.auth_type and \
-                SAML_JUMPCLOUD_AUTH in sso_mode:
+        elif JUMPCLOUD_SSO in modes:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -569,8 +539,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
-        elif SAML_OKTA_AUTH in self.auth_type and \
-                SAML_OKTA_AUTH in sso_mode:
+        elif OKTA_SSO in modes:
             if settings.user.skip_remote_sso_check:
                 return True
 
@@ -582,7 +551,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
-        elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in sso_mode:
+        elif RADIUS_SSO in modes:
             try:
                 return sso.verify_radius(self.name, password)[0]
             except:
@@ -591,7 +560,7 @@ class User(mongo.MongoObject):
                     user_name=self.name,
                 )
             return False
-        elif PLUGIN_AUTH in self.auth_type:
+        elif PLUGIN_SSO in modes:
             try:
                 return sso.plugin_login_authenticate(
                     user_name=self.name,
@@ -668,33 +637,26 @@ class User(mongo.MongoObject):
         return True
 
     def _get_password_mode(self, svr):
+        modes = self.get_auth_modes(svr)
         password_mode = None
 
-        if self.bypass_secondary:
-            return
-
-        if settings.user.force_password_mode:
-            return settings.user.force_password_mode
-
-        if self.has_duo_passcode:
+        if DUO_PASSCODE in modes:
             password_mode = 'duo_otp'
-        elif self.has_onelogin_passcode:
+        elif ONELOGIN_PASSCODE in modes:
             password_mode = 'onelogin_otp'
-        elif self.has_okta_passcode:
+        elif OKTA_PASSCODE in modes:
             password_mode = 'okta_otp'
-        elif self.has_yubikey:
+        elif YUBICO_PASSCODE in modes:
             password_mode = 'yubikey'
-        elif svr.otp_auth:
+        elif OTP_PASSCODE in modes:
             password_mode = 'otp'
 
-        if (RADIUS_AUTH in self.auth_type and
-                RADIUS_AUTH in settings.app.sso) or \
-                PLUGIN_AUTH in self.auth_type:
+        if RADIUS_SSO in modes or PLUGIN_SSO in modes:
             if password_mode:
                 password_mode += '_password'
             else:
                 password_mode = 'password'
-        elif self.pin or settings.user.pin_mode == PIN_REQUIRED:
+        elif PIN in modes:
             if password_mode:
                 password_mode += '_pin'
             else:
@@ -706,35 +668,96 @@ class User(mongo.MongoObject):
         return bool(settings.app.sso_client_cache)
 
     def has_passcode(self, svr):
-        return bool(self.has_yubikey or self.has_duo_passcode or
-            self.has_onelogin_passcode or self.has_okta_passcode or
-            svr.otp_auth)
+        modes = self.get_auth_modes(svr)
+        return DUO_PASSCODE in modes or OKTA_PASSCODE in modes or \
+            ONELOGIN_PASSCODE in modes or YUBICO_PASSCODE in modes or \
+            OTP_PASSCODE in modes
 
     def has_password(self, svr):
         return bool(self._get_password_mode(svr))
 
-    def has_pin(self):
-        return self.pin and settings.user.pin_mode != PIN_DISABLED
+    def get_auth_modes(self, svr):
+        # TODO Test radius yubico
 
-    def get_push_type(self):
+        sso_mode = settings.app.sso or ''
         onelogin_mode = utils.get_onelogin_mode()
         okta_mode = utils.get_okta_mode()
 
-        if settings.app.sso and DUO_AUTH in self.auth_type and \
-                DUO_AUTH in settings.app.sso:
-            if settings.app.sso_duo_mode != 'passcode':
-                return DUO_AUTH
-            return
+        modes = []
+
+        if GOOGLE_AUTH in self.auth_type and GOOGLE_AUTH in sso_mode:
+            modes.append(GOOGLE_SSO)
+        elif AZURE_AUTH in self.auth_type and AZURE_AUTH in sso_mode:
+            modes.append(AZURE_SSO)
+        elif AUTHZERO_AUTH in self.auth_type and AUTHZERO_AUTH in sso_mode:
+            modes.append(AUTHZERO_SSO)
+        elif SLACK_AUTH in self.auth_type and SLACK_AUTH in sso_mode:
+            modes.append(SLACK_SSO)
+        elif SAML_ONELOGIN_AUTH in self.auth_type and \
+                SAML_ONELOGIN_AUTH in sso_mode:
+            modes.append(ONELOGIN_SSO)
+        elif SAML_OKTA_AUTH in self.auth_type and \
+                SAML_OKTA_AUTH in sso_mode:
+            modes.append(OKTA_SSO)
+        elif SAML_JUMPCLOUD_AUTH in self.auth_type and \
+                SAML_JUMPCLOUD_AUTH in sso_mode:
+            modes.append(JUMPCLOUD_SSO)
+        elif RADIUS_AUTH in self.auth_type and RADIUS_AUTH in sso_mode:
+            modes.append(RADIUS_SSO)
+        elif PLUGIN_AUTH in self.auth_type and PLUGIN_AUTH in sso_mode:
+            modes.append(PLUGIN_SSO)
+
+        if self.bypass_secondary:
+            modes.append(BYPASS_SECONDARY)
+            return modes
+
+        if settings.app.sso and DUO_AUTH in settings.app.sso and \
+                self.auth_type != LOCAL_AUTH and \
+                self.auth_type != PLUGIN_AUTH and self.auth_type and \
+                settings.app.sso_duo_mode == 'passcode':
+            modes.append(DUO_PASSCODE)
+        elif SAML_ONELOGIN_AUTH == sso_mode and \
+                SAML_ONELOGIN_AUTH in self.auth_type and \
+                onelogin_mode == 'passcode':
+            modes.append(ONELOGIN_PASSCODE)
+        elif SAML_OKTA_AUTH == sso_mode and \
+                SAML_OKTA_AUTH in self.auth_type and \
+                okta_mode == 'passcode':
+            modes.append(OKTA_PASSCODE)
+        elif self.yubico_id or (YUBICO_AUTH in sso_mode and
+                YUBICO_AUTH in self.auth_type):
+            modes.append(YUBICO_PASSCODE)
+        elif svr is True or (svr is not False and svr.otp_auth and
+                self.type == CERT_CLIENT):
+            modes.append(OTP_PASSCODE)
+
+        if settings.app.sso and DUO_AUTH in settings.app.sso and \
+                self.auth_type != LOCAL_AUTH and \
+                self.auth_type != PLUGIN_AUTH and self.auth_type and \
+                settings.app.sso_duo_mode != 'passcode':
+            modes.append(DUO_PUSH)
         elif settings.app.sso and \
                 SAML_ONELOGIN_AUTH in self.auth_type and \
                 SAML_ONELOGIN_AUTH in settings.app.sso and \
                 'push' in onelogin_mode:
-            return SAML_ONELOGIN_AUTH
+            modes.append(ONELOGIN_PUSH)
         elif settings.app.sso and \
                 SAML_OKTA_AUTH in self.auth_type and \
                 SAML_OKTA_AUTH in settings.app.sso and \
                 'push' in okta_mode:
-            return SAML_OKTA_AUTH
+            modes.append(OKTA_PUSH)
+
+        if RADIUS_SSO not in modes and PLUGIN_SSO not in modes and \
+                (settings.user.pin_mode == PIN_REQUIRED or
+                (self.pin and settings.user.pin_mode != PIN_DISABLED)):
+            modes.append(PIN)
+
+        return modes
+
+    def get_push_type(self, svr):
+        for mode in self.get_auth_modes(svr):
+            if 'push' in mode:
+                return mode
 
     def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
         svr.generate_auth_key_commit()
@@ -753,7 +776,7 @@ class User(mongo.MongoObject):
             'sync_hosts': svr.get_sync_remotes(),
             'sync_hash': conf_hash,
             'password_mode': self._get_password_mode(svr),
-            'push_auth': True if self.get_push_type() else False,
+            'push_auth': True if self.get_push_type(svr) else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
             'disable_reconnect': not settings.user.reconnect,
             'token_ttl': settings.app.sso_client_cache_timeout,
