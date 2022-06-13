@@ -681,6 +681,9 @@ def link_state_put():
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
         return flask.abort(413)
 
+    if not host.secret:
+        raise ValueError('Host secret undefined')
+
     auth_test_signature = base64.b64encode(hmac.new(
         host.secret.encode(), auth_string.encode(),
         hashlib.sha512).digest()).decode()
