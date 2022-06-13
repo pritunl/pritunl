@@ -151,7 +151,7 @@ class MongoObject(object):
                 update_doc['$unset'] = unset
 
             response = collection.update(
-                spec, update_doc, upsert=True)
+                spec, update_doc, upsert=not fields)
 
             if transaction:
                 response = True
