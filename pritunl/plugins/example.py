@@ -127,21 +127,23 @@ def server_config(host_id, host_name, server_id, server_name, port, protocol,
 
 # [SYNCHRONOUS] Called when a server is started. Call occurs after OpenVPN
 # process has been configured and started.
-def server_start(host_id, host_name, server_id, server_name, port, protocol,
-        ipv6, ipv6_firewall, network, network6, network_mode, network_start,
-        network_stop, restrict_routes, bind_address, onc_hostname,
-        dh_param_bits, multi_device, dns_servers, search_domain, otp_auth,
-        cipher, hash, inter_client, ping_interval, ping_timeout,
-        link_ping_interval, link_ping_timeout, max_clients, replica_count,
-        dns_mapping, debug, interface, bridge_interface, vxlan, interface_wg, **kwargs):
+def server_start(host_id, host_name, server_id, server_name, wg, port,
+        protocol, port_wg, ipv6, ipv6_firewall, network, network6,
+        network_wg, network6_wg, network_mode, network_start, network_stop,
+        restrict_routes, bind_address, onc_hostname, dh_param_bits,
+        multi_device, dns_servers, search_domain, otp_auth, cipher, hash,
+        inter_client, ping_interval, ping_timeout, link_ping_interval,
+        link_ping_timeout, max_clients, replica_count, dns_mapping, debug,
+        interface, bridge_interface, interface_wg, vxlan, **kwargs):
     pass
 
 # [SYNCHRONOUS] Called when a server is stopped.
-def server_stop(host_id, host_name, server_id, server_name, port, protocol,
-        ipv6, ipv6_firewall, network, network6, network_mode, network_start,
-        network_stop, restrict_routes, bind_address, onc_hostname,
-        dh_param_bits, multi_device, dns_servers, search_domain, otp_auth,
-        cipher, hash, inter_client, ping_interval, ping_timeout,
-        link_ping_interval, link_ping_timeout, max_clients, replica_count,
-        dns_mapping, debug, interface, bridge_interface, vxlan, interface_wg, **kwargs):
+def server_stop(host_id, host_name, server_id, server_name, wg, port,
+        protocol, port_wg, ipv6, ipv6_firewall, network, network6,
+        network_wg, network6_wg, network_mode, network_start, network_stop,
+        restrict_routes, bind_address, onc_hostname, dh_param_bits,
+        multi_device, dns_servers, search_domain, otp_auth, cipher, hash,
+        inter_client, ping_interval, ping_timeout, link_ping_interval,
+        link_ping_timeout, max_clients, replica_count, dns_mapping, debug,
+        interface, bridge_interface, interface_wg, vxlan, **kwargs):
     pass
