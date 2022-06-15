@@ -1672,6 +1672,7 @@ class ServerInstance(object):
                 network=self.server.network,
                 network6=self.server.network6,
                 network_wg=self.server.network_wg,
+                network6_wg=self.server.network6_wg,
                 network_mode=self.server.network_mode,
                 network_start=self.server.network_start,
                 network_stop=self.server.network_end,
@@ -1697,8 +1698,8 @@ class ServerInstance(object):
                 debug=self.server.debug,
                 interface=self.interface,
                 bridge_interface=self.bridge_interface,
-                vxlan=self.vxlan,
                 interface_wg=self.interface_wg,
+                vxlan=self.vxlan,
             )
             try:
                 while True:
@@ -1714,12 +1715,16 @@ class ServerInstance(object):
                     host_name=settings.local.host.name,
                     server_id=self.server.id,
                     server_name=self.server.name,
+                    wg=self.server.wg,
                     port=self.server.port,
                     protocol=self.server.protocol,
+                    port_wg=self.server.port_wg,
                     ipv6=self.server.ipv6,
                     ipv6_firewall=self.server.ipv6_firewall,
                     network=self.server.network,
                     network6=self.server.network6,
+                    network_wg=self.server.network_wg,
+                    network6_wg=self.server.network6_wg,
                     network_mode=self.server.network_mode,
                     network_start=self.server.network_start,
                     network_stop=self.server.network_end,
@@ -1745,8 +1750,8 @@ class ServerInstance(object):
                     debug=self.server.debug,
                     interface=self.interface,
                     bridge_interface=self.bridge_interface,
-                    vxlan=self.vxlan,
                     interface_wg=self.interface_wg,
+                    vxlan=self.vxlan,
                 )
 
             if not self.clean_exit:
