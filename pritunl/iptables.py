@@ -1217,7 +1217,7 @@ class Iptables(object):
                         raise
                     logger.error(
                         'Failed to insert iptables rule, retrying...',
-                        'instance',
+                        'iptables',
                         rule=rule,
                     )
                 time.sleep(0.5)
@@ -1262,7 +1262,7 @@ class Iptables(object):
                         raise
                     logger.error(
                         'Failed to insert iptables rule, retrying...',
-                        'instance',
+                        'iptables',
                         rule=rule,
                     )
                 time.sleep(0.5)
@@ -1285,7 +1285,7 @@ class Iptables(object):
                         raise
                     logger.error(
                         'Failed to append iptables rule, retrying...',
-                        'instance',
+                        'iptables',
                         rule=rule,
                     )
                 time.sleep(0.5)
@@ -1330,7 +1330,7 @@ class Iptables(object):
                         raise
                     logger.error(
                         'Failed to append iptables rule, retrying...',
-                        'instance',
+                        'iptables',
                         rule=rule,
                     )
                 time.sleep(0.5)
@@ -1405,7 +1405,7 @@ class Iptables(object):
                         logger.error(
                             'Unexpected loss of iptables rule, ' +
                                 'adding again...',
-                            'instance',
+                            'iptables',
                             rule=rule,
                         )
                     self._insert_iptables_rule(rule, tables=tables)
@@ -1418,7 +1418,7 @@ class Iptables(object):
                             logger.error(
                                 'Unexpected loss of ip6tables rule, ' +
                                     'adding again...',
-                                'instance',
+                                'iptables',
                                 rule=rule,
                             )
                         self._insert_iptables_rule(rule, ipv6=True,
@@ -1431,7 +1431,7 @@ class Iptables(object):
                             logger.error(
                                 'Unexpected loss of iptables drop rule, ' +
                                     'adding again...',
-                                'instance',
+                                'iptables',
                                 rule=rule,
                             )
                         self._append_iptables_rule(rule, tables=tables)
@@ -1444,7 +1444,7 @@ class Iptables(object):
                                 logger.error(
                                     'Unexpected loss of ip6tables drop ' +
                                         'rule, adding again...',
-                                    'instance',
+                                    'iptables',
                                     rule=rule,
                                 )
                             self._append_iptables_rule(rule, ipv6=True,
