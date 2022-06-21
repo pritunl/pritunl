@@ -58,7 +58,6 @@ def post_git_asset(release_id, file_name, file_path):
         response = requests.post(
             'https://uploads.github.com/repos/%s/%s/releases/%s/assets' % (
                 github_owner, pkg_name, release_id),
-            verify=False,
             headers={
                 'Authorization': 'token %s' % github_token,
                 'Content-Type': 'application/octet-stream',
