@@ -376,7 +376,7 @@ class User(mongo.MongoObject):
                     return False
 
                 if settings.app.sso_google_mode == 'groups':
-                    cur_groups = set(self.groups)
+                    cur_groups = set(self.groups or [])
                     new_groups = set(google_groups)
 
                     if cur_groups != new_groups:
@@ -423,7 +423,7 @@ class User(mongo.MongoObject):
                     return False
 
                 if settings.app.sso_azure_mode == 'groups':
-                    cur_groups = set(self.groups)
+                    cur_groups = set(self.groups or [])
                     new_groups = set(azure_groups)
 
                     if cur_groups != new_groups:
@@ -470,7 +470,7 @@ class User(mongo.MongoObject):
                     return False
 
                 if settings.app.sso_authzero_mode == 'groups':
-                    cur_groups = set(self.groups)
+                    cur_groups = set(self.groups or [])
                     new_groups = set(authzero_groups)
 
                     if cur_groups != new_groups:
