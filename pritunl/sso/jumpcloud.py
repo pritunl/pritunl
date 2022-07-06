@@ -40,6 +40,7 @@ def auth_jumpcloud(username):
         )
         return False
 
+    user_id = None
     for user_data in data.get('results') or []:
         if user_data.get('email') != username:
             continue
@@ -51,9 +52,47 @@ def auth_jumpcloud(username):
             )
             return False
 
+        user_id = user_data.get('_id') or user_data.get('id')
+        break
+
+    if not user_id:
+        logger.warning('JumpCloud user not found', 'sso',
+            username=username,
+        )
+        return False
+
+    if not settings.app.sso_jumpcloud_app_id:
         return True
 
-    logger.warning('JumpCloud user not found', 'sso',
+    try:
+        response = requests.get(
+            JUMPCLOUD_URL +
+            '/api/v2/users/%s/applications' % user_id,
+            headers={
+                'Accept': 'application/json',
+                'X-Api-Key': settings.app.sso_jumpcloud_secret,
+            },
+        )
+    except http.client.HTTPException:
+        logger.exception('JumpCloud api error', 'sso',
+            username=username,
+        )
+        return False
+
+    if response.status_code != 200:
+        logger.error('JumpCloud api error', 'sso',
+            username=username,
+            status_code=response.status_code,
+            response=response.content,
+        )
+        return False
+
+    data = response.json()
+    for app_data in data or []:
+        if app_data.get('id') == '61c44c96b87e5f50453473cf':
+            return True
+
+    logger.warning('JumpCloud user not bound to application', 'sso',
         username=username,
     )
     return False
