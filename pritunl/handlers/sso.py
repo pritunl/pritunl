@@ -84,7 +84,7 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
     if not usr:
         usr = org.new_user(name=username, email=email, type=CERT_CLIENT,
             auth_type=sso_mode, yubico_id=yubico_id,
-            groups=list(groups) if groups else None)
+            groups=list(groups) if groups else [])
         usr.audit_event('user_created', 'User created with single sign-on',
             remote_addr=remote_addr)
 
