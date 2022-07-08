@@ -1305,7 +1305,10 @@ class Clients(object):
                 firewall_clients = self.firewall_clients.find({
                     'token': fw_token,
                 })
-                if firewall_clients:
+                if firewall_clients and utils.now() - \
+                        firewall_clients[0]['timestamp'] < \
+                        datetime.timedelta(
+                        seconds=settings.vpn.firewall_connect_timeout):
                     firewall_client = firewall_clients[0]
                     updated = self.firewall_clients.update({
                         'token': fw_token,
