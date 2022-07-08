@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add dynamic firewall
 Improve single sign-on
 
 Version 1.30.3157.70 2022-05-05
