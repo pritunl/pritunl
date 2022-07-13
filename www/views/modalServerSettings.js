@@ -28,6 +28,7 @@ define([
         'click .ipv6-toggle': 'onIpv6Select',
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
+        'click .dynamic-firewall-toggle': 'onDynamicFirewallSelect',
         'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect',
         'click .wg-toggle': 'onWgSelect',
         'click .restrict-routes-toggle': 'onRestrictRoutesSelect',
@@ -266,6 +267,23 @@ define([
     onVxlanSelect: function() {
       this.setVxlanSelect(!this.getVxlanSelect());
     },
+    getDynamicFirewallSelect: function() {
+      return this.$('.dynamic-firewall-toggle .selector').hasClass(
+        'selected');
+    },
+    setDynamicFirewallSelect: function(state) {
+      if (state) {
+        this.$('.dynamic-firewall-toggle .selector').addClass('selected');
+        this.$('.dynamic-firewall-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.dynamic-firewall-toggle .selector').removeClass('selected');
+        this.$('.dynamic-firewall-toggle .selector-inner').hide();
+      }
+    },
+    onDynamicFirewallSelect: function() {
+      this.setDynamicFirewallSelect(!this.getDynamicFirewallSelect());
+    },
     getIpv6FirewallSelect: function() {
       return this.$('.ipv6-firewall-toggle .selector').hasClass('selected');
     },
@@ -401,6 +419,7 @@ define([
       var portWg = parseInt(this.$('.port-wg input').val(), 10);
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
+      var dynamicFirewall = this.getDynamicFirewallSelect();
       var ipv6 = this.getIpv6Select();
       var ipv6Firewall = this.getIpv6FirewallSelect();
       var multiDevice = this.getMultiDeviceSelect();
@@ -494,6 +513,7 @@ define([
         'network_end': networkEnd,
         'restrict_routes': restrictRoutes,
         'wg': wg,
+        'dynamic_firewall': dynamicFirewall,
         'ipv6': ipv6,
         'ipv6_firewall': ipv6Firewall,
         'multi_device': multiDevice,
