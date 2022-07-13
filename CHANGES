@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix web interface display issues
+
 Version 1.30.3221.67 2022-07-08
 -------------------------------
 
