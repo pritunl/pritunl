@@ -1477,6 +1477,7 @@ class ServerInstance(object):
             route_count=len(self.server.routes),
             network=self.server.network,
             network6=self.server.network6,
+            dynamic_firewall=self.server.dynamic_firewall,
             host_id=settings.local.host.id,
             host_address=settings.local.host.local_addr,
             host_address6=settings.local.host.local_addr6,
