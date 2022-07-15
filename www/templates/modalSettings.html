@@ -304,6 +304,10 @@
         <option value="push_none" <%= sso_okta_mode === 'push_none' ? 'selected' : '' %>>Push when available</option>
       </select>
     </div>
+    <div class="sso-jumpcloud-app-id form-group" <%= !sso || sso.indexOf('jumpcloud') === -1 ? 'style="display: none;"' : '' %>>
+      <label>JumpCloud App ID</label>
+      <input type="text" class="form-control" placeholder="Enter JumpCloud app ID" value="<%- sso_jumpcloud_app_id || '' %>" data-toggle="tooltip" title="Optional, ID of JumpCloud Pritunl app. This can be found in the URL of the app settings page. Required to verify user is attached to JumpCloud application on each VPN connection.">
+    </div>
     <div class="sso-jumpcloud-secret form-group" <%= !sso || sso.indexOf('jumpcloud') === -1 ? 'style="display: none;"' : '' %>>
       <label>JumpCloud API Key</label>
       <input type="text" class="form-control" placeholder="Enter JumpCloud API key" value="<%- sso_jumpcloud_secret || '' %>" data-toggle="tooltip" title="JumpCloud API key">
