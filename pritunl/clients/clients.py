@@ -1093,7 +1093,8 @@ class Clients(object):
             addresses.add(client_public_address6)
         addresses.add(remote_ip)
 
-        firewall.open_client(self.instance.id, doc_id, list(addresses))
+        if self.server.dynamic_firewall:
+            firewall.open_client(self.instance.id, doc_id, list(addresses))
 
         return True, client_conf
 
@@ -1503,7 +1504,8 @@ class Clients(object):
             'valid': True,
         })
 
-        firewall.open_client(self.instance.id, doc_id, list(addresses))
+        if self.server.dynamic_firewall:
+            firewall.open_client(self.instance.id, doc_id, list(addresses))
 
         return token
 
