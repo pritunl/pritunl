@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix server issues
+
 Version 1.30.3226.71 2022-07-13
 -------------------------------
 
