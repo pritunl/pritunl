@@ -1032,8 +1032,10 @@ def key_wg_post(org_id, user_id, server_id):
     client_auth_nonce = utils.filter_str(key_data['nonce'])
     client_auth_password = key_data['password']
     client_auth_timestamp = int(key_data['timestamp'])
-    client_public_address = utils.filter_str(key_data['public_address'])
-    client_public_address6 = utils.filter_str(key_data['public_address6'])
+    client_public_address = utils.filter_str(
+        key_data.get('public_address'))
+    client_public_address6 = utils.filter_str(
+        key_data.get('public_address6'))
     client_wg_public_key = key_data['wg_public_key']
 
     if client_public_address:
