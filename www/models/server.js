@@ -17,6 +17,7 @@ define([
       'network_wg': null,
       'groups': null,
       'bind_address': null,
+      'dynamic_firewall': null,
       'port': null,
       'port_wg': null,
       'protocol': null,
