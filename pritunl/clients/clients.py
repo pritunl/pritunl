@@ -1319,7 +1319,7 @@ class Clients(object):
                     })
                     if updated:
                         logger.info(
-                            'Client authentication with firewall token'
+                            'Client authentication with firewall token',
                             'clients',
                             user_name=user.name,
                             org_name=user.org.name,
