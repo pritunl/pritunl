@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve dynamic firewall support
+
 Version 1.30.3235.85 2022-07-22
 -------------------------------
 
