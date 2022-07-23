@@ -274,6 +274,7 @@ def open_client(instance_id, client_id, addresses):
             })
 
             count = _clients.count({
+                'instance_id': instance_id,
                 'address': address,
             })
         finally:
@@ -302,6 +303,7 @@ def open_client(instance_id, client_id, addresses):
 
 def close_client(instance_id, client_id):
     docs = _clients.find({
+        'instance_id': instance_id,
         'client_id': client_id,
     })
 
@@ -317,6 +319,7 @@ def close_client(instance_id, client_id):
             _clients.remove_id(doc['id'])
 
             count = _clients.count({
+                'instance_id': instance_id,
                 'address': address,
             })
         finally:
