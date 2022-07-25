@@ -9,6 +9,7 @@ import pritunl.handlers.log
 import pritunl.handlers.logs
 import pritunl.handlers.org
 import pritunl.handlers.ping
+import pritunl.handlers.robots
 import pritunl.handlers.server
 import pritunl.handlers.settings
 import pritunl.handlers.static
