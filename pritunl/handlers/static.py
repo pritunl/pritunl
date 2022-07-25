@@ -58,13 +58,6 @@ def logo_static_get():
         'logo.png', cache=True)
     return static_file.get_response()
 
-@app.app.route('/robots.txt', methods=['GET'])
-@auth.open_auth
-def robots_static_get():
-    static_file = static.StaticFile(settings.conf.www_path,
-        'robots.txt', cache=True)
-    return static_file.get_response()
-
 @app.app.route('/', methods=['GET'])
 @auth.open_auth
 def index_static_get():
