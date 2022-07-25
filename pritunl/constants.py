@@ -1294,3 +1294,7 @@ URI Profile Link: <a href="{uri_link}">{uri_link}</a></p>
   </div>
   <meta itemprop="description" content="View Pritunl profile and configuration information"></meta>
 </div>"""
+
+ROBOTS = """User-agent: *
+Disallow: /
+"""
