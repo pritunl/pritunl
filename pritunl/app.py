@@ -128,6 +128,7 @@ def after_request(response):
     response.headers.add('X-Frame-Options', 'DENY')
     response.headers.add('X-XSS-Protection', '1; mode=block')
     response.headers.add('X-Content-Type-Options', 'nosniff')
+    response.headers.add('X-Robots-Tag', 'noindex')
 
     if settings.app.server_ssl or settings.app.reverse_proxy:
         response.headers.add('Strict-Transport-Security', 'max-age=31536000')
