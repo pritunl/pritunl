@@ -542,6 +542,11 @@ if cmd == 'set-version':
         subprocess.check_call(['git', 'push', '-u', 'origin', new_version])
     time.sleep(6)
 
+    # Create tag
+    subprocess.check_call(['git', 'tag', new_version])
+    subprocess.check_call(['git', 'push', '--tags'])
+    time.sleep(1)
+
 
     # Create release
     response = requests.post(
