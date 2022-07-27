@@ -46,6 +46,7 @@ define([
       'sso_onelogin_id': null,
       'sso_onelogin_secret': null,
       'sso_onelogin_mode': null,
+      'sso_jumpcloud_app_id': null,
       'sso_jumpcloud_secret': null,
       'sso_radius_host': null,
       'sso_radius_secret': null,
