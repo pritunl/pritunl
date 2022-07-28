@@ -15,8 +15,6 @@ define([
     hasAdvanced: true,
     events: function() {
       return _.extend({
-        'click .auth-type select': 'onAuthType',
-        'change .auth-type select': 'onAuthType',
         'click .bypass-secondary-toggle': 'onBypassSecondarySelect',
         'click .client-to-client-toggle': 'onClientToClientSelect'
       }, ModalRenameUserView.__super__.events);
@@ -105,15 +103,6 @@ define([
     },
     onClientToClientSelect: function() {
       this.setClientToClientSelect(!this.getClientToClientSelect());
-    },
-    onAuthType: function() {
-      var authType = this.$('.auth-type select').val();
-
-      if (authType.indexOf('yubico') !== -1) {
-        this.$('.yubikey-id').slideDown(window.slideTime);
-      } else {
-        this.$('.yubikey-id').slideUp(window.slideTime);
-      }
     },
     getGroups: function() {
       var groups = [];
