@@ -14,6 +14,7 @@ import flask
 import time
 import subprocess
 import os
+import base64
 import cheroot.wsgi
 
 app = flask.Flask(__name__)
@@ -184,8 +185,8 @@ def _run_server(restart):
     )
     app_server.server_name = ''
 
-    server_cert_path = None
-    server_key_path = None
+    server_cert = None
+    server_key = None
     redirect_server = 'true' if settings.app.redirect_server else 'false'
     internal_addr = 'localhost:%s' % settings.app.server_internal_port
 
@@ -197,11 +198,10 @@ def _run_server(restart):
     if settings.app.server_ssl:
         setup_server_cert()
 
-        server_cert_path, server_key_path = utils.write_server_cert(
-            settings.app.server_cert,
-            settings.app.server_key,
-            settings.app.acme_domain,
-        )
+        server_cert = base64.b64encode(
+            settings.app.server_cert.encode()).decode()
+        server_key = base64.b64encode(
+            settings.app.server_key.encode()).decode()
 
     if not restart:
         settings.local.server_ready.set()
@@ -220,8 +220,8 @@ def _run_server(restart):
             'BIND_HOST': settings.conf.bind_addr,
             'BIND_PORT': str(settings.app.server_port),
             'INTERNAL_ADDRESS': internal_addr,
-            'CERT_PATH': server_cert_path or '',
-            'KEY_PATH': server_key_path or '',
+            'SSL_CERT': server_cert or '',
+            'SSL_KEY': server_key or '',
         }),
     )
 
