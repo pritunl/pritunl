@@ -197,10 +197,10 @@ def server_thread():
     server.server_name = ''
 
     if settings.conf.ssl:
-        server_cert_path, server_key_path = upgrade.setup_cert()
+        server_cert, server_key = upgrade.setup_cert()
     else:
-        server_cert_path = None
-        server_key_path = None
+        server_cert = None
+        server_key = None
 
     web_process_state = True
     web_process = subprocess.Popen(
@@ -214,8 +214,8 @@ def server_thread():
             'BIND_HOST': settings.conf.bind_addr,
             'BIND_PORT': str(upgrade.get_server_port()),
             'INTERNAL_ADDRESS': 'localhost:%s' % settings.conf.internal_port,
-            'CERT_PATH': server_cert_path or '',
-            'KEY_PATH': server_key_path or '',
+            'SSL_CERT': server_cert or '',
+            'SSL_KEY': server_key or '',
         }),
     )
 
