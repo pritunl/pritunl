@@ -4,6 +4,7 @@ from pritunl import utils
 from pritunl import logger
 
 import pymongo
+import base64
 
 _prefix = None
 _database = None
@@ -29,7 +30,6 @@ def get_collection(collection):
 def setup_cert():
     server_cert = None
     server_key = None
-    acme_domain = None
 
     if _database:
         settings_collection = get_collection('settings')
@@ -37,17 +37,15 @@ def setup_cert():
         if doc:
             server_cert = doc.get('server_cert')
             server_key = doc.get('server_key')
-            acme_domain = doc.get('acme_domain')
 
     if not server_cert or not server_key:
         logger.info('Generating setup server ssl cert', 'setup')
         return utils.generate_server_cert()
 
-    return utils.write_server_cert(
-        server_cert,
-        server_key,
-        acme_domain,
-    )
+    server_cert = base64.b64encode(server_cert.encode()).decode()
+    server_key = base64.b64encode(server_key.encode()).decode()
+
+    return server_cert, server_key
 
 def get_server_port():
     port = settings.conf.port
