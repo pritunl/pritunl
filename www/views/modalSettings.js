@@ -180,6 +180,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -205,6 +206,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -238,6 +240,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -264,6 +267,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -289,6 +293,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -322,6 +327,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -350,6 +356,7 @@ define([
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
         this.$('.sso-okta-token').slideUp(window.slideTime);
         this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -375,6 +382,7 @@ define([
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
         this.$('.sso-okta-token').slideUp(window.slideTime);
         this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -408,6 +416,7 @@ define([
         this.$('.sso-okta-app-id').slideUp(window.slideTime);
         this.$('.sso-okta-token').slideUp(window.slideTime);
         this.$('.sso-okta-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -446,6 +455,7 @@ define([
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideDown(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideDown(window.slideTime);
       } else if (mode === 'saml_jumpcloud_duo') {
         this.$('.sso-match-slack').slideUp(window.slideTime);
@@ -475,6 +485,7 @@ define([
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideDown(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideDown(window.slideTime);
       } else if (mode === 'saml_jumpcloud_yubico') {
         this.$('.sso-token').slideUp(window.slideTime);
@@ -504,6 +515,7 @@ define([
         this.$('.sso-saml-url').slideDown(window.slideTime);
         this.$('.sso-saml-issuer-url').slideDown(window.slideTime);
         this.$('.sso-saml-cert').slideDown(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideDown(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideDown(window.slideTime);
       } else if (mode === 'slack') {
         this.$('.sso-azure-directory-id').slideUp(window.slideTime);
@@ -527,6 +539,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -552,6 +565,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -582,6 +596,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -614,6 +629,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -639,6 +655,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -664,6 +681,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -694,6 +712,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -726,6 +745,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -759,6 +779,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -784,6 +805,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -814,6 +836,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -846,6 +869,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-radius-host').slideUp(window.slideTime);
         this.$('.sso-radius-secret').slideUp(window.slideTime);
@@ -871,6 +895,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
@@ -904,6 +929,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
@@ -929,6 +955,7 @@ define([
         this.$('.sso-onelogin-id').slideUp(window.slideTime);
         this.$('.sso-onelogin-secret').slideUp(window.slideTime);
         this.$('.sso-onelogin-mode').slideUp(window.slideTime);
+        this.$('.sso-jumpcloudapp-id').slideUp(window.slideTime);
         this.$('.sso-jumpcloud-secret').slideUp(window.slideTime);
         this.$('.sso-match-slack').slideUp(window.slideTime);
         this.$('.sso-match-google').slideUp(window.slideTime);
@@ -1270,6 +1297,7 @@ define([
       var ssoOneLoginId = null;
       var ssoOneLoginSecret = null;
       var ssoOneLoginMode = null;
+      var ssoJumpCloudAppId = null;
       var ssoJumpCloudSecret = null;
       var ssoRadiusHost = null;
       var ssoRadiusSecret = null;
@@ -1327,6 +1355,7 @@ define([
         }
 
         if (sso.indexOf('jumpcloud') !== -1) {
+          ssoJumpCloudAppId = this.$('.sso-jumpcloud-app-id input').val();
           ssoJumpCloudSecret = this.$('.sso-jumpcloud-secret input').val();
         }
 
@@ -1425,6 +1454,7 @@ define([
         sso_onelogin_id: ssoOneLoginId,
         sso_onelogin_secret: ssoOneLoginSecret,
         sso_onelogin_mode: ssoOneLoginMode,
+        sso_jumpcloud_app_id: ssoJumpCloudAppId,
         sso_jumpcloud_secret: ssoJumpCloudSecret,
         sso_radius_host: ssoRadiusHost,
         sso_radius_secret: ssoRadiusSecret,
