@@ -15,12 +15,9 @@ def create_server_cert():
         acme.update_acme_cert()
         return
 
-    server_cert_path, server_key_path = generate_server_cert()
-
-    with open(server_cert_path, 'r') as server_cert_file:
-        settings.app.server_cert = server_cert_file.read().strip()
-    with open(server_key_path, 'r') as server_key_file:
-        settings.app.server_key = server_key_file.read().strip()
+    server_cert, server_key = generate_server_cert()
+    settings.app.server_cert = server_cert
+    settings.app.server_key = server_key
 
 def generate_server_cert():
     server_cert_path = os.path.join(settings.conf.temp_path, SERVER_CERT_NAME)
@@ -37,7 +34,15 @@ def generate_server_cert():
     ])
     os.chmod(server_key_path, 0o600)
 
-    return server_cert_path, server_key_path
+    with open(server_cert_path, 'r') as server_cert_file:
+        server_cert = server_cert_file.read().strip()
+    with open(server_key_path, 'r') as server_key_file:
+        server_key = server_key_file.read().strip()
+
+    os.remove(server_cert_path)
+    os.remove(server_key_file)
+
+    return server_cert, server_key
 
 def generate_private_key():
     return check_output_logged([
