@@ -140,9 +140,6 @@ INVALID_NAMES = {
     'error',
 }
 
-LETS_ENCRYPT_INTER = """
-"""
-
 RADIUS_DICTONARY = """ATTRIBUTE	User-Name					1	string
 ATTRIBUTE	User-Password				2	string
 ATTRIBUTE	CHAP-Password				3	octets
