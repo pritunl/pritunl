@@ -1295,3 +1295,26 @@ URI Profile Link: <a href="{uri_link}">{uri_link}</a></p>
 ROBOTS = """User-agent: *
 Disallow: /
 """
+
+WEB_SYSTEMD_TEMPLATE = """[Service]
+Type=notify
+User=nobody
+Group=nobody
+Environment="REVERSE_PROXY_HEADER=%s"
+Environment="REVERSE_PROXY_PROTO_HEADER=%s"
+Environment="REDIRECT_SERVER=true"
+Environment="BIND_HOST=%s"
+Environment="BIND_PORT=%s"
+Environment="INTERNAL_ADDRESS=%s"
+Environment="CERT_PATH=%s"
+Environment="KEY_PATH=%s"
+ExecStart=%s
+TimeoutStopSec=5s
+LimitNOFILE=500000
+LimitNPROC=512
+PrivateTmp=true
+ProtectSystem=full
+ProtectHostname=true
+ProtectKernelTunables=true
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+"""
