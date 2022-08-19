@@ -116,26 +116,28 @@ def set_db_ver(version, version_min=None):
         )
 
     update_doc = {
-        'version': version,
+        '$set': {
+            'version': version,
+        },
     }
     if version_min:
-        update_doc['version_min'] = version_min
+        update_doc['$set']['version_min'] = version_min
 
     prefix = settings.conf.mongodb_collection_prefix or ''
     client = pymongo.MongoClient(settings.conf.mongodb_uri,
         connectTimeoutMS=MONGO_CONNECT_TIMEOUT)
     database = client.get_default_database()
 
-    db_collections = database.collection_names()
+    db_collections = database.list_collection_names()
     if 'authorities' in db_collections:
         raise TypeError('Cannot connect to a Pritunl Zero database')
 
     settings_db = getattr(database, prefix + 'settings')
-    doc = settings_db.update({
+    settings_db.update_one({
         '_id': 'version',
     }, update_doc, upsert=True)
 
-    return doc.get('version')
+    return version
 
 def check_output(*args, **kwargs):
     if 'stdout' in kwargs or 'stderr' in kwargs:
