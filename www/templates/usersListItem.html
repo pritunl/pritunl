@@ -24,7 +24,7 @@ if (name.length > 40) {
     class="title time"><%- last_active ? formatTime(last_active, 'date') : 'Never' %></span>
   </div>
   <div class="user-dns-name" data-toggle="tooltip"
-      title="User dns name" <%= dns_mapping ? '' : 'style="display: none"' %>>
+      title="User dns name: <%- dns_mapping %>" <%= dns_mapping ? '' : 'style="display: none"' %>>
     <span class="fa fa-globe"></span><span
       class="title name"><%- dns_mapping %></span>
   </div>
@@ -35,7 +35,7 @@ if (name.length > 40) {
         class="title link"><%- network_links[i] %></span>
     <% } %>
   </div>
-  <div class="user-groups" data-toggle="tooltip" title="User groups">
+  <div class="user-groups" data-toggle="tooltip" title="User groups: <%- groups.join(' ') %>">
     <% for (var i in groups) { %>
     <span class="fa fa-compass"></span><span
       class="title group"><%- groups[i] %></span>
