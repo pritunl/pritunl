@@ -483,22 +483,23 @@ pyOpenSSL==19.1.0 \
 pyparsing==2.4.7 \
     --hash=sha256:c203ec8783bf771a155b207279b9bccb8dea02d8f0c9e5f8ead507bc3246ecc1 \
     --hash=sha256:ef9d7589ef3c200abe66653d3f1ab1033c3c419ae9b9bdb1240a85b024efc88b
-pyroute2==0.6.7 \
-    --hash=sha256:a81bfd8ec8728344bd21385dad71d315c6f69de40f0e65119ad49ba9808a956a
-pyroute2.core==0.6.7 \
-    --hash=sha256:37be1c41c5b1e7b95820f8904cbfbf11ce4a7f5ae074cad192460877268b8cde
-pyroute2.ethtool==0.6.7 \
-    --hash=sha256:8f03e0ef1726414dc5e1c56bb3619553105757ac1a324ae79b26641e8da42d1d
-pyroute2.ipdb==0.6.7 \
-    --hash=sha256:b8c10f5257840486885786c27a34e678762129e68df5235c50ccc100e0cd0445
-pyroute2.ipset==0.6.7 \
-    --hash=sha256:ae834b3579a75b6edaf93831b4c8bc1cee611786a0c5d8d0d0332c616e8ee387
-pyroute2.ndb==0.6.7 \
-    --hash=sha256:a3fae66cec1f4543f0fe0d4273fe68b6a2af19edc1af7cb88925da77f3df4cfc
-pyroute2.nftables==0.6.7 \
-    --hash=sha256:77d2dd5f105019ae343261ae2b670538e108ed7e18d693efd0e6d6f67ed9523a
-pyroute2.nslink==0.6.7 \
-    --hash=sha256:a7e537639bca0b1baf325ff234a95acb9eed954e062adb4226b03072d29ae536
+pyroute2==0.7.3 \
+    --hash=sha256:05050623a8155f28d7b19ccc2c38ae74b1e1aa22b64d9743851b3f125458b2f0 \
+    --hash=sha256:7041040db1c2d187fbccd151485b1244c41d758be821785847946370eb6bb706
+pyroute2.core==0.6.13 \
+    --hash=sha256:227dfd9f19888ddd1341966822ffd5880db9e3c89375096418c660ff4d1a11d0
+pyroute2.ethtool==0.6.13 \
+    --hash=sha256:0a687fea0fcd77d9074c7c18ba35d9b9f70e4217ebe68a687e200408473a3bd4
+pyroute2.ipdb==0.6.13 \
+    --hash=sha256:bbbbb75d13be96e4549cf70eb94fd70b2e1736ea301ac6b683f56aa1acd84d5a
+pyroute2.ipset==0.6.13 \
+    --hash=sha256:28a254f622a18976d0683603d5aefda5ab7c8528fa9e36beb85bce52026f7866
+pyroute2.ndb==0.6.13 \
+    --hash=sha256:09b1f55f26043ce64c933e8224fd08444a498f381e5dc483bc9f428cbaf0901a
+pyroute2.nftables==0.6.13 \
+    --hash=sha256:c94bd740d50b03a1a8d9654f769e77afc77a75e05fc5887dd0551e3970f86592
+pyroute2.nslink==0.6.13 \
+    --hash=sha256:86ed506cadccb154cd27aebb3dbf73ebb723c391104e7f0f3bc2c4a39c62366c
 python-dateutil==2.8.2 \
     --hash=sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86 \
     --hash=sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9
