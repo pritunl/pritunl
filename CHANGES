@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Improve web console layout
 Fix JumpCloud single sign-on
 
 Version 1.30.3236.80 2022-07-23
