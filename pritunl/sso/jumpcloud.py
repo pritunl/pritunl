@@ -89,7 +89,7 @@ def auth_jumpcloud(username):
 
     data = response.json()
     for app_data in data or []:
-        if app_data.get('id') == '61c44c96b87e5f50453473cf':
+        if app_data.get('id') == settings.app.sso_jumpcloud_app_id:
             return True
 
     logger.warning('JumpCloud user not bound to application', 'sso',
