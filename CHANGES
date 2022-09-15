@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix JumpCloud single sign-on
+
 Version 1.30.3236.80 2022-07-23
 -------------------------------
 
