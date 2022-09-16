@@ -40,7 +40,7 @@ def generate_server_cert():
         server_key = server_key_file.read().strip()
 
     os.remove(server_cert_path)
-    os.remove(server_key_file)
+    os.remove(server_key_path)
 
     return server_cert, server_key
 
