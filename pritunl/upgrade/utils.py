@@ -40,7 +40,7 @@ def setup_cert():
 
     if not server_cert or not server_key:
         logger.info('Generating setup server ssl cert', 'setup')
-        return utils.generate_server_cert()
+        server_cert, server_key = utils.generate_server_cert()
 
     server_cert = base64.b64encode(server_cert.encode()).decode()
     server_key = base64.b64encode(server_key.encode()).decode()
