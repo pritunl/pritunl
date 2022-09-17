@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix initialization issues
+
 Version 1.30.3291.77 2022-09-16
 -------------------------------
 
