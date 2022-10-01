@@ -783,6 +783,14 @@ YUBIKEY_BYPASS_SECONDARY = 'yubikey_bypass_secondary'
 YUBIKEY_BYPASS_SECONDARY_MSG = 'Cannot set YubiKey with secondary ' + \
     'authentication bypass enabled.'
 
+SSO_USERNAME_MISMATCH = 'username_mismatch'
+SSO_USERNAME_MISMATCH_MSG = 'Single sign-on username changed, profile ' \
+    'must be deleted and imported again.'
+
+SSO_ORGANIZATION_MISMATCH = 'organization_mismatch'
+SSO_ORGANIZATION_MISMATCH_MSG = 'Single sign-on organization changed, ' \
+    'profile must be deleted and imported again.'
+
 NETWORK_IN_USE = 'network_in_use'
 NETWORK_IN_USE_MSG = 'Network address is already in use.'
 
