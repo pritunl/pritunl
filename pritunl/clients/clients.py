@@ -1200,7 +1200,7 @@ class Clients(object):
         mac_addr = client_data.get('mac_addr')
         has_token = False
         fw_token = None
-        doc_id = None
+        sso_token = None
         auth = None
 
         if password and password.startswith('$x$') and \
@@ -1214,6 +1214,10 @@ class Clients(object):
                 self.server_private_key:
             has_token = True
             fw_token = self.decrypt_box_fw(username, password[3:])
+            if ':' in fw_token:
+                tokens = fw_token.split(':')
+                fw_token = tokens[0]
+                sso_token = tokens[1]
         elif password and '<%=RSA_ENCRYPTED=%>' in password and \
                 self.server_private_key:
             has_token = True
@@ -1228,8 +1232,7 @@ class Clients(object):
             password = password or None
 
         try:
-            if not settings.vpn.stress_test and \
-                    not _limiter.validate(remote_ip):
+            if not _limiter.validate(remote_ip):
                 self.instance_com.send_client_deny(client_id, key_id,
                     'Too many connect requests')
                 return
@@ -1251,7 +1254,7 @@ class Clients(object):
                     'User is not valid')
                 return
 
-            def callback(allow, reason=None):
+            def callback(allow, reason=None, doc_id=None):
                 challenge = None
                 if auth:
                     challenge = auth.challenge
@@ -1260,8 +1263,6 @@ class Clients(object):
                     if allow:
                         self.allow_client(client_data, org, user,
                             reauth, has_token, doc_id)
-                        if settings.vpn.stress_test:
-                            self._connected(client_id)
                     else:
                         self.instance_com.send_client_deny(
                             client_id, key_id, reason, challenge)
@@ -1302,38 +1303,12 @@ class Clients(object):
                         instance_id=self.instance.id,
                     )
 
-            if fw_token and self.server.dynamic_firewall:
-                firewall_clients = self.firewall_clients.find({
-                    'token': fw_token,
-                })
-                if firewall_clients and utils.now() - \
-                        firewall_clients[0]['timestamp'] < \
-                        datetime.timedelta(
-                        seconds=settings.vpn.firewall_connect_timeout):
-                    firewall_client = firewall_clients[0]
-                    updated = self.firewall_clients.update({
-                        'token': fw_token,
-                        'valid': True,
-                    }, {
-                        'valid': False,
-                    })
-                    if updated:
-                        logger.info(
-                            'Client authentication with firewall token',
-                            'clients',
-                            user_name=user.name,
-                            org_name=user.org.name,
-                            server_name=self.server.name,
-                        )
-                        doc_id = firewall_client['doc_id']
-                        callback(True)
-                        return
-                callback(False, reason='Invalid firewall token')
-                return
-
             auth = authorizer.Authorizer(
                 svr=self.server,
                 usr=user,
+                clients=self,
+                mode='ovpn',
+                stage='connect',
                 remote_ip=remote_ip,
                 platform=platform,
                 device_id=device_id,
@@ -1345,6 +1320,8 @@ class Clients(object):
                 auth_token=auth_token,
                 auth_nonce=auth_nonce,
                 auth_timestamp=auth_timestamp,
+                fw_token=fw_token,
+                sso_token=sso_token,
                 reauth=reauth,
                 callback=callback,
             )
@@ -1361,9 +1338,10 @@ class Clients(object):
         self.call_queue.put(self._connect, client_data, reauth)
 
     def connect_wg(self, user, org, wg_public_key, auth_password,
-            auth_token, auth_nonce, auth_timestamp, platform, device_id,
-            device_name, mac_addr, mac_addrs, client_public_address,
-            client_public_address6, remote_ip, connect_callback):
+            auth_token, auth_nonce, auth_timestamp, sso_token,
+            platform, device_id, device_name, mac_addr, mac_addrs,
+            client_public_address, client_public_address6, remote_ip,
+            connect_callback):
         response = {
             'sent': False,
             'lock': threading.Lock(),
@@ -1395,7 +1373,7 @@ class Clients(object):
         thread.start()
 
         try:
-            def callback(allow, reason=None):
+            def callback(allow, reason=None, doc_id=None):
                 try:
                     if allow:
                         allow, data = self.allow_client_wg(
@@ -1459,6 +1437,9 @@ class Clients(object):
             auth = authorizer.Authorizer(
                 svr=self.server,
                 usr=user,
+                clients=self,
+                mode='wg',
+                stage='open',
                 remote_ip=remote_ip,
                 platform=platform,
                 device_id=device_id,
@@ -1470,6 +1451,8 @@ class Clients(object):
                 auth_token=auth_token,
                 auth_nonce=auth_nonce,
                 auth_timestamp=auth_timestamp,
+                fw_token=None,
+                sso_token=sso_token,
                 reauth=False,
                 callback=callback,
             )
@@ -1510,9 +1493,10 @@ class Clients(object):
         return token
 
     def open_ovpn(self, user, org, auth_password,
-            auth_token, auth_nonce, auth_timestamp, platform, device_id,
-            device_name, mac_addr, mac_addrs, client_public_address,
-            client_public_address6, remote_ip, connect_callback):
+            auth_token, auth_nonce, auth_timestamp, sso_token, platform,
+            device_id, device_name, mac_addr, mac_addrs,
+            client_public_address, client_public_address6, remote_ip,
+            connect_callback):
         response = {
             'sent': False,
             'lock': threading.Lock(),
@@ -1540,7 +1524,7 @@ class Clients(object):
         thread.start()
 
         try:
-            def callback(allow, reason=None):
+            def callback(allow, reason=None, doc_id=None):
                 try:
                     if allow:
                         token = self.open_firewall(
@@ -1549,7 +1533,24 @@ class Clients(object):
                             client_public_address6,
                             remote_ip,
                         )
-                        connect_callback_once(True, token)
+
+                        if self.server.sso_auth:
+                            conn_sso_token = utils.rand_str(32)
+
+                            tokens_collection = mongo.get_collection(
+                                'server_sso_tokens')
+                            tokens_collection.insert({
+                                '_id': conn_sso_token,
+                                'user_id': user.id,
+                                'server_id': self.server.id,
+                                'stage': 'connect',
+                                'timestamp': utils.now(),
+                            })
+
+                            connect_callback_once(True,
+                                token + ":" + conn_sso_token)
+                        else:
+                            connect_callback_once(True, token)
 
                     if not allow:
                         self.instance_com.push_output(
@@ -1594,6 +1595,9 @@ class Clients(object):
             auth = authorizer.Authorizer(
                 svr=self.server,
                 usr=user,
+                clients=self,
+                mode='ovpn',
+                stage='open',
                 remote_ip=remote_ip,
                 platform=platform,
                 device_id=device_id,
@@ -1605,6 +1609,8 @@ class Clients(object):
                 auth_token=auth_token,
                 auth_nonce=auth_nonce,
                 auth_timestamp=auth_timestamp,
+                fw_token=None,
+                sso_token=sso_token,
                 reauth=False,
                 callback=callback,
             )
