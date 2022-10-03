@@ -20,11 +20,15 @@ import pymongo
 _states = tunldb.TunlDB()
 
 class Authorizer(object):
-    def __init__(self, svr, usr, remote_ip, platform, device_id, device_name,
-            mac_addr, mac_addrs, password, auth_password, auth_token,
-            auth_nonce, auth_timestamp, reauth, callback):
+    def __init__(self, svr, usr, clients, mode, stage, remote_ip, platform,
+            device_id, device_name, mac_addr, mac_addrs, password,
+            auth_password, auth_token, auth_nonce, auth_timestamp, fw_token,
+            sso_token, reauth, callback):
         self.server = svr
         self.user = usr
+        self.clients = clients
+        self.mode = mode
+        self.stage = stage
         self.remote_ip = remote_ip
         self.platform = platform
         self.device_id = device_id
@@ -34,6 +38,8 @@ class Authorizer(object):
         self.password = password
         self.auth_password = auth_password
         self.auth_token = auth_token
+        self.fw_token = fw_token
+        self.sso_token = sso_token
         self.auth_nonce = auth_nonce
         self.auth_timestamp = auth_timestamp
         self.server_auth_token = None
@@ -43,7 +49,10 @@ class Authorizer(object):
         self.push_type = None
         self.challenge = None
         self.has_token = False
+        self.has_sso_token = False
+        self.has_fw_token = False
         self.whitelisted = False
+        self.doc_id = None
 
         if self.mac_addr:
             self.mac_addr = self.mac_addr.lower()
@@ -108,6 +117,8 @@ class Authorizer(object):
             self._check_call(self._check_auth_data)
             self._check_call(self._check_primary)
             self._check_call(self._check_token)
+            self._check_call(self._check_fw_token)
+            self._check_call(self._check_sso_token)
             self._check_call(self._check_whitelist)
             self._check_call(self._check_password)
             self._check_call(self._check_sso)
@@ -173,7 +184,11 @@ class Authorizer(object):
             except:
                 return
 
-        self.callback(allow, reason)
+        try:
+            self.callback(allow, reason=reason, doc_id=self.doc_id)
+        except:
+            logger.exception('Exception in callback', 'authorize')
+            raise
 
     def _check_token(self):
         if settings.app.sso_client_cache and self.server_auth_token:
@@ -186,6 +201,73 @@ class Authorizer(object):
             })
             if doc:
                 self.has_token = True
+
+    def _check_fw_token(self):
+        if not self.server.dynamic_firewall or self.stage == 'open':
+            return
+
+        if self.fw_token:
+            firewall_clients = self.clients.firewall_clients.find({
+                'token': self.fw_token,
+            })
+            if firewall_clients and \
+                    utils.time_diff(firewall_clients[0]['timestamp'],
+                    settings.vpn.firewall_connect_timeout):
+                firewall_client = firewall_clients[0]
+                updated = self.clients.firewall_clients.update({
+                    'token': self.fw_token,
+                    'valid': True,
+                }, {
+                    'valid': False,
+                })
+                if updated:
+                    logger.info(
+                        'Client authentication with firewall token',
+                        'clients',
+                        user_name=self.user.name,
+                        org_name=self.user.org.name,
+                        server_name=self.server.name,
+                    )
+                    self.doc_id = firewall_client['doc_id']
+                    self.has_fw_token = True
+                    return
+
+        raise AuthError('Invalid firewall token')
+
+    def _check_sso_token(self):
+        if self.server.sso_auth:
+            if self.has_token:
+                logger.info(
+                    'Client authentication cached, skipping sso token',
+                    'sso',
+                    user_name=self.user.name,
+                    org_name=self.user.org.name,
+                    server_name=self.server.name,
+                )
+                return
+
+            if self.sso_token:
+                tokens_collection = mongo.get_collection(
+                    'server_sso_tokens')
+                doc = tokens_collection.find_and_modify(query={
+                    '_id': self.sso_token,
+                }, remove=True)
+                if doc and doc['user_id'] == self.user.id and \
+                        doc['server_id'] == self.server.id and \
+                        doc['stage'] == self.stage and \
+                        utils.time_diff(doc['timestamp'],
+                        settings.vpn.sso_token_ttl):
+                    logger.info(
+                        'Client authentication with sso token',
+                        'clients',
+                        user_name=self.user.name,
+                        org_name=self.user.org.name,
+                        server_name=self.server.name,
+                    )
+                    self.has_sso_token = True
+                    return
+
+        raise AuthError('Invalid sso token')
 
     def _check_whitelist(self):
         if settings.app.sso_whitelist:
@@ -523,6 +605,22 @@ class Authorizer(object):
                 self.user.journal_data,
                 self.server.journal_data,
                 event_long='Client authentication cached, skipping password',
+            )
+            return
+
+        if self.has_sso_token:
+            logger.info(
+                'Client sso authentication, skipping password', 'sso',
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
+            )
+            journal.entry(
+                journal.USER_CONNECT_SSO,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Client sso authentication, skipping password',
             )
             return
 
@@ -1072,6 +1170,22 @@ class Authorizer(object):
                 self.user.journal_data,
                 self.server.journal_data,
                 event_long='Client authentication cached, skipping push',
+            )
+            return
+
+        if self.has_sso_token:
+            logger.info(
+                'Client sso authentication, skipping push', 'sso',
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
+            )
+            journal.entry(
+                journal.USER_CONNECT_SSO,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Client sso authentication, skipping push',
             )
             return
 
