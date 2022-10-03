@@ -25,6 +25,7 @@ class SettingsVpn(SettingsGroupMongo):
         'startup_timeout': 300,
         'link_timeout': 10,
         'firewall_connect_timeout': 180,
+        'sso_token_ttl': 300,
         'drop_permissions': False,
         'bandwidth_update_rate': 15,
         'nat_routes': True,
