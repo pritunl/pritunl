@@ -7,4 +7,5 @@ from pritunl.sso.jumpcloud import auth_jumpcloud
 from pritunl.sso.radius import verify_radius
 from pritunl.sso.okta import auth_okta, auth_okta_secondary
 from pritunl.sso.onelogin import auth_onelogin, auth_onelogin_secondary
+from pritunl.sso.token import *
 from pritunl.sso.utils import *
