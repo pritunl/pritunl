@@ -91,6 +91,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_azure_mode': 'org',
         'sso_azure_allow_groups': [],
         'sso_azure_security_groups_only': False,
+        'sso_azure_region': None,
         'sso_azure_directory_id': None,
         'sso_azure_app_id': None,
         'sso_azure_app_secret': None,
