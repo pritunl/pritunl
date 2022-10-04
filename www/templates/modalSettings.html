@@ -230,6 +230,15 @@
       <label>Okta API Token</label>
       <input type="text" class="form-control" placeholder="Enter Okta API token" value="<%- sso_okta_token || '' %>" data-toggle="tooltip" title="Okta API token">
     </div>
+    <div class="sso-azure-region form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
+      <label>Azure Region</label>
+      <select class="form-control" data-toggle="tooltip" title="Duo authentication mode">
+        <option value="" <%= !sso_azure_region ? 'selected' : '' %>>Global (Old)</option>
+        <option value="global" <%= sso_azure_region === 'global' ? 'selected' : '' %>>Global</option>
+        <option value="us-gov" <%= sso_azure_region === 'us-gov' ? 'selected' : '' %>>US Government</option>
+        <option value="china" <%= sso_azure_region === 'china' ? 'selected' : '' %>>China</option>
+      </select>
+    </div>
     <div class="sso-azure-version form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
       <label>Azure API Version</label>
       <select class="form-control" data-toggle="tooltip" title="Duo authentication mode">
