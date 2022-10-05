@@ -452,6 +452,12 @@ def server_put_post(server_id=None):
         otp_auth_def = True
         otp_auth = True if flask.request.json['otp_auth'] else False
 
+    sso_auth = False
+    sso_auth_def = False
+    if 'sso_auth' in flask.request.json:
+        sso_auth_def = True
+        sso_auth = True if flask.request.json['sso_auth'] else False
+
     mss_fix = None
     mss_fix_def = False
     if 'mss_fix' in flask.request.json:
@@ -610,6 +616,7 @@ def server_put_post(server_id=None):
             dns_servers=dns_servers,
             search_domain=search_domain,
             otp_auth=otp_auth,
+            sso_auth=sso_auth,
             cipher=cipher,
             hash=hash,
             block_outside_dns=block_outside_dns,
@@ -679,6 +686,8 @@ def server_put_post(server_id=None):
             svr.search_domain = search_domain
         if otp_auth_def:
             svr.otp_auth = otp_auth
+        if sso_auth_def:
+            svr.sso_auth = sso_auth
         if cipher_def:
             svr.cipher = cipher
         if hash_def:
