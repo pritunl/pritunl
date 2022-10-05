@@ -503,6 +503,8 @@ DUO_PUSH = 'duo_push'
 OKTA_PUSH = 'okta_push'
 ONELOGIN_PUSH = 'onelogin_push'
 
+KEY_REQUEST_AUTH = 'key_request'
+
 PIN = 'pin'
 
 BYPASS_SECONDARY = 'bypass_secondary'
