@@ -48,6 +48,9 @@ def now():
 def time_now():
     return time.time()
 
+def time_diff(timestamp, ttl):
+    return abs(now().timestamp() - timestamp.timestamp()) < ttl
+
 def sync_time():
     pass
 
