@@ -2072,8 +2072,10 @@ class Clients(object):
         if settings.local.sub_active and \
                 settings.local.sub_plan and \
                 'enterprise' in settings.local.sub_plan:
-            domain = (str(client['user_name']).split('@')[0] +
-                '.' + str(client['org_name'])).lower()
+            domain_user = str(client['user_name']).split(
+                '@')[0].lower().replace('.', '-')
+            domain_org = str(client['org_name']).lower().replace('.', '-')
+            domain = domain_user + '.' + domain_org
             domain_hash = hashlib.md5()
             domain_hash.update(domain.encode())
             domain_hash = bson.binary.Binary(domain_hash.digest(),
