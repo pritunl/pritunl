@@ -51,6 +51,7 @@ class Authorizer(object):
         self.has_token = False
         self.has_sso_token = False
         self.has_fw_token = False
+        self.has_link = False
         self.whitelisted = False
         self.doc_id = None
 
@@ -203,7 +204,8 @@ class Authorizer(object):
                 self.has_token = True
 
     def _check_fw_token(self):
-        if not self.server.dynamic_firewall or self.stage == 'open':
+        if not self.server.dynamic_firewall or self.stage == 'open' or \
+                self.has_link:
             return
 
         if self.fw_token:
@@ -235,37 +237,39 @@ class Authorizer(object):
         raise AuthError('Invalid firewall token')
 
     def _check_sso_token(self):
-        if self.server.sso_auth:
-            if self.has_token:
+        if not self.server.sso_auth or self.has_link:
+            return
+
+        if self.has_token:
+            logger.info(
+                'Client authentication cached, skipping sso token',
+                'sso',
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
+            )
+            return
+
+        if self.sso_token:
+            tokens_collection = mongo.get_collection(
+                'server_sso_tokens')
+            doc = tokens_collection.find_and_modify(query={
+                '_id': self.sso_token,
+            }, remove=True)
+            if doc and doc['user_id'] == self.user.id and \
+                    doc['server_id'] == self.server.id and \
+                    doc['stage'] == self.stage and \
+                    utils.time_diff(doc['timestamp'],
+                    settings.vpn.sso_token_ttl):
                 logger.info(
-                    'Client authentication cached, skipping sso token',
-                    'sso',
+                    'Client authentication with sso token',
+                    'clients',
                     user_name=self.user.name,
                     org_name=self.user.org.name,
                     server_name=self.server.name,
                 )
+                self.has_sso_token = True
                 return
-
-            if self.sso_token:
-                tokens_collection = mongo.get_collection(
-                    'server_sso_tokens')
-                doc = tokens_collection.find_and_modify(query={
-                    '_id': self.sso_token,
-                }, remove=True)
-                if doc and doc['user_id'] == self.user.id and \
-                        doc['server_id'] == self.server.id and \
-                        doc['stage'] == self.stage and \
-                        utils.time_diff(doc['timestamp'],
-                        settings.vpn.sso_token_ttl):
-                    logger.info(
-                        'Client authentication with sso token',
-                        'clients',
-                        user_name=self.user.name,
-                        org_name=self.user.org.name,
-                        server_name=self.server.name,
-                    )
-                    self.has_sso_token = True
-                    return
 
         raise AuthError('Invalid sso token')
 
@@ -487,6 +491,8 @@ class Authorizer(object):
                     event_long='Unknown link user',
                 )
                 raise AuthError('Unknown link user')
+
+            self.has_link = True
 
             return
         else:
