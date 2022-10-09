@@ -1316,8 +1316,8 @@ Environment="REDIRECT_SERVER=true"
 Environment="BIND_HOST=%s"
 Environment="BIND_PORT=%s"
 Environment="INTERNAL_ADDRESS=%s"
-Environment="CERT_PATH=%s"
-Environment="KEY_PATH=%s"
+Environment="SSL_CERT=%s"
+Environment="SSL_KEY=%s"
 ExecStart=%s
 TimeoutStopSec=5s
 LimitNOFILE=500000
