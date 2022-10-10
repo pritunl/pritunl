@@ -29,6 +29,7 @@ define([
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
         'click .dynamic-firewall-toggle': 'onDynamicFirewallSelect',
+        'click .sso-auth-toggle': 'onSsoAuthSelect',
         'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect',
         'click .wg-toggle': 'onWgSelect',
         'click .restrict-routes-toggle': 'onRestrictRoutesSelect',
@@ -284,6 +285,23 @@ define([
     onDynamicFirewallSelect: function() {
       this.setDynamicFirewallSelect(!this.getDynamicFirewallSelect());
     },
+    getSsoAuthSelect: function() {
+      return this.$('.sso-auth-toggle .selector').hasClass(
+        'selected');
+    },
+    setSsoAuthSelect: function(state) {
+      if (state) {
+        this.$('.sso-auth-toggle .selector').addClass('selected');
+        this.$('.sso-auth-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.sso-auth-toggle .selector').removeClass('selected');
+        this.$('.sso-auth-toggle .selector-inner').hide();
+      }
+    },
+    onSsoAuthSelect: function() {
+      this.setSsoAuthSelect(!this.getSsoAuthSelect());
+    },
     getIpv6FirewallSelect: function() {
       return this.$('.ipv6-firewall-toggle .selector').hasClass('selected');
     },
@@ -443,6 +461,7 @@ define([
       var dnsMapping = this.getDnsMappingSelect();
       var debug = this.getDebugSelect();
       var otpAuth = this.getOtpAuthSelect();
+      var ssoAuth = this.getSsoAuthSelect();
       var restrictRoutes = this.getRestrictRoutesSelect();
       var wg = this.getWgSelect();
       var vxlan = this.getVxlanSelect();
@@ -520,6 +539,7 @@ define([
         'dns_servers': dnsServers,
         'search_domain': searchDomain,
         'otp_auth': otpAuth,
+        'sso_auth': ssoAuth,
         'cipher': cipher,
         'hash': hash,
         'block_outside_dns': blockOutsideDns,
