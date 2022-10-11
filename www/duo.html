@@ -410,7 +410,7 @@
           }
         };
 
-        xmlhttp.open('POST', '/sso/duo', true);
+        xmlhttp.open('POST', '<%= post_path %>', true);
         xmlhttp.setRequestHeader('Content-Type', 'application/json');
         xmlhttp.send(JSON.stringify({
           'token': token,
