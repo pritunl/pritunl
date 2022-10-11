@@ -24,6 +24,7 @@ define([
       'sso': null,
       'sso_match': null,
       'sso_azure_directory_id': null,
+      'sso_azure_region': null,
       'sso_azure_app_id': null,
       'sso_azure_app_secret': null,
       'sso_authzero_domain': null,
