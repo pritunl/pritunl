@@ -33,6 +33,7 @@ define([
       'dns_servers': null,
       'search_domain': null,
       'otp_auth': null,
+      'sso_auth': null,
       'cipher': null,
       'hash': null,
       'block_outside_dns': null,
