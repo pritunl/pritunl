@@ -105,7 +105,7 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
                 user_name=username,
                 remote_address=remote_addr,
                 reason=journal.SSO_AUTH_REASON_INVALID_YUBIKEY,
-                reason_long='Invalid username',
+                reason_long='Invalid yubikey id',
             )
 
             return utils.jsonify({
