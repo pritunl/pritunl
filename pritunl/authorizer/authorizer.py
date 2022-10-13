@@ -630,6 +630,22 @@ class Authorizer(object):
             )
             return
 
+        if self.has_fw_token:
+            logger.info(
+                'Client firewall authentication, skipping password', 'sso',
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
+            )
+            journal.entry(
+                journal.USER_CONNECT_SSO,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Client sso authentication, skipping password',
+            )
+            return
+
         if self.whitelisted:
             logger.info(
                 'Client network whitelisted, skipping password', 'sso',
