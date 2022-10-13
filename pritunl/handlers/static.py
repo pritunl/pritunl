@@ -123,6 +123,18 @@ def login_static_get():
 
     return static_file.get_response()
 
+@app.app.route('/success', methods=['GET'])
+@auth.open_auth
+def success_get():
+    static_file = static.StaticFile(settings.conf.www_path,
+        'success.html', cache=False, gzip=False)
+
+    if settings.app.theme == 'dark':
+        static_file.data = static_file.data.replace(
+            '<body>', '<body class="dark">')
+
+    return static_file.get_response()
+
 @app.app.route('/setup', methods=['GET'])
 @auth.open_auth
 def setup_get():
