@@ -61,6 +61,7 @@ dict_fields = [
     'dns_servers',
     'search_domain',
     'otp_auth',
+    'sso_auth',
     'cipher',
     'hash',
     'block_outside_dns',
@@ -121,6 +122,7 @@ class Server(mongo.MongoObject):
         'dns_servers',
         'search_domain',
         'otp_auth',
+        'sso_auth',
         'tls_auth',
         'tls_auth_key',
         'lzo_compression',
@@ -177,6 +179,7 @@ class Server(mongo.MongoObject):
         ],
         'dns_servers': [],
         'otp_auth': False,
+        'sso_auth': False,
         'tls_auth': True,
         'lzo_compression': False,
         'dynamic_firewall': False,
@@ -210,14 +213,15 @@ class Server(mongo.MongoObject):
             wg=None, ipv6=None, ipv6_firewall=None, bind_address=None,
             port=None, protocol=None, port_wg=None, dh_param_bits=None,
             multi_device=None, dns_servers=None, search_domain=None,
-            otp_auth=None, cipher=None, hash=None, block_outside_dns=None,
-            jumbo_frames=None, lzo_compression=None, inter_client=None,
-            ping_interval=None, ping_timeout=None, ping_timeout_wg=None,
-            link_ping_interval=None, link_ping_timeout=None,
-            inactive_timeout=None, session_timeout=None,
-            allowed_devices=None, max_clients=None, max_devices=None,
-            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
-            pre_connect_msg=None, mss_fix=None, **kwargs):
+            otp_auth=None, sso_auth=None, cipher=None, hash=None,
+            block_outside_dns=None, jumbo_frames=None, lzo_compression=None,
+            inter_client=None, ping_interval=None, ping_timeout=None,
+            ping_timeout_wg=None, link_ping_interval=None,
+            link_ping_timeout=None, inactive_timeout=None,
+            session_timeout=None, allowed_devices=None, max_clients=None,
+            max_devices=None, replica_count=None, vxlan=None,
+            dns_mapping=None, debug=None, pre_connect_msg=None,
+            mss_fix=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if 'network' in self.loaded_fields:
@@ -270,6 +274,8 @@ class Server(mongo.MongoObject):
             self.search_domain = search_domain
         if otp_auth is not None:
             self.otp_auth = otp_auth
+        if sso_auth is not None:
+            self.sso_auth = sso_auth
         if cipher is not None:
             self.cipher = cipher
         if hash is not None:
@@ -385,6 +391,7 @@ class Server(mongo.MongoObject):
             'dns_servers': self.dns_servers,
             'search_domain': self.search_domain,
             'otp_auth': True if self.otp_auth else False,
+            'sso_auth': True if self.sso_auth else False,
             'cipher': self.cipher,
             'hash': self.hash,
             'block_outside_dns': self.block_outside_dns,
