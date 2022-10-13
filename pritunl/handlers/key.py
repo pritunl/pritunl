@@ -1693,6 +1693,7 @@ def key_ovpn_post(org_id, user_id, server_id):
         auth_token=client_auth_token,
         auth_nonce=client_auth_nonce,
         auth_timestamp=client_auth_timestamp,
+        sso_token=None,
         platform=client_platform,
         device_id=client_device_id,
         device_name=client_device_name,
@@ -3021,6 +3022,7 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
     client_auth_nonce = utils.filter_str(key_data['nonce'])
     client_auth_password = key_data['password']
     client_auth_timestamp = int(key_data['timestamp'])
+    client_sso_token = key_data.get('sso_token')
     client_public_address = utils.filter_str(key_data['public_address'])
     client_public_address6 = utils.filter_str(key_data['public_address6'])
 
@@ -3051,18 +3053,18 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
     clients = instance.instance_com.clients
 
     sso_token = None
-    if key_data["sso_token"]:
+    if client_sso_token:
         authorized = False
 
         for i in range(100):
-            if sso.check_token(key_data["sso_token"], usr.id, svr.id):
+            if sso.check_token(client_sso_token, usr.id, svr.id):
                 authorized = True
                 break
             time.sleep(0.1)
 
         if not authorized:
             return flask.abort(428)
-        sso_token = key_data["sso_token"]
+        sso_token = client_sso_token
 
     event = threading.Event()
     send_data = {
@@ -3327,8 +3329,8 @@ def key_wg_wait_post(org_id, user_id, server_id):
     client_auth_token = key_data['token']
     client_auth_nonce = utils.filter_str(key_data['nonce'])
     client_auth_password = key_data['password']
-    client_sso_token = key_data.get('sso_token')
     client_auth_timestamp = int(key_data['timestamp'])
+    client_sso_token = key_data.get('sso_token')
     client_public_address = utils.filter_str(
         key_data.get('public_address'))
     client_public_address6 = utils.filter_str(
@@ -3386,16 +3388,19 @@ def key_wg_wait_post(org_id, user_id, server_id):
     if not instance.server.wg:
         return flask.abort(429)
 
-    authorized = False
+    sso_token = None
+    if client_sso_token:
+        authorized = False
 
-    for i in range(100):
-        if sso.check_token(key_data["sso_token"], usr.id, svr.id):
-            authorized = True
-            break
-        time.sleep(0.1)
+        for i in range(100):
+            if sso.check_token(client_sso_token, usr.id, svr.id):
+                authorized = True
+                break
+            time.sleep(0.1)
 
-    if not authorized:
-        return flask.abort(428)
+        if not authorized:
+            return flask.abort(428)
+        sso_token = client_sso_token
 
     wg_keys_collection = mongo.get_collection('wg_keys')
     try:
@@ -3437,7 +3442,7 @@ def key_wg_wait_post(org_id, user_id, server_id):
         auth_token=client_auth_token,
         auth_nonce=client_auth_nonce,
         auth_timestamp=client_auth_timestamp,
-        sso_token=client_sso_token,
+        sso_token=sso_token,
         platform=client_platform,
         device_id=client_device_id,
         device_name=client_device_name,
