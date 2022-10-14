@@ -907,6 +907,8 @@ def sso_callback_get():
         duo_page.data = duo_page.data.replace('<%= body_class %>', body_class)
         duo_page.data = duo_page.data.replace('<%= token %>', token)
         duo_page.data = duo_page.data.replace('<%= duo_mode %>', duo_mode)
+        duo_page.data = duo_page.data.replace(
+            '<%= post_path %>', '/sso/duo')
 
         return duo_page.get_response()
 
@@ -931,6 +933,8 @@ def sso_callback_get():
             yubico_page.data = yubico_page.data.replace(
                 '<body>', '<body class="dark">')
         yubico_page.data = yubico_page.data.replace('<%= token %>', token)
+        yubico_page.data = yubico_page.data.replace(
+            '<%= post_path %>', '/sso/yubico')
 
         return yubico_page.get_response()
 
