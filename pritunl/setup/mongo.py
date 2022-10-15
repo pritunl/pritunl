@@ -289,7 +289,11 @@ def upsert_indexes():
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
     upsert_index('yubikey', 'timestamp',
         background=True, expireAfterSeconds=86400)
+    upsert_index('key_tokens', 'timestamp',
+        background=True, expireAfterSeconds=600)
     upsert_index('sso_tokens', 'timestamp',
+        background=True, expireAfterSeconds=600)
+    upsert_index('server_sso_tokens', 'timestamp',
         background=True, expireAfterSeconds=600)
     upsert_index('sso_push_cache', 'timestamp',
         background=True, expireAfterSeconds=settings.app.sso_cache_timeout)
@@ -428,6 +432,8 @@ def setup_mongo():
         'otp': 2,
         'otp_cache': 2,
         'yubikey': 2,
+        'key_tokens': 2,
+        'server_sso_tokens': 2,
         'sso_tokens': 2,
         'sso_push_cache': 2,
         'sso_client_cache': 2,
