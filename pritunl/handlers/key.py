@@ -2153,10 +2153,10 @@ def _key_sso_validate(key_doc, username, email, sso_mode, org_id, groups,
     })
 
     if http_redirect:
-        return utils.redirect(utils.get_url_root() + "/")
+        return utils.redirect(utils.get_url_root() + "/success")
     else:
         return utils.jsonify({
-            'redirect': utils.get_url_root() + "/",
+            'redirect': utils.get_url_root() + "/success",
         }, 200)
 
 @app.app.route('/key/callback', methods=['GET'])
