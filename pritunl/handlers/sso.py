@@ -279,6 +279,7 @@ def sso_request_get():
                 'callback': callback,
                 'state': state,
                 'secret': secret,
+                'region': settings.app.sso_azure_region or '',
                 'directory_id': settings.app.sso_azure_directory_id,
                 'app_id': settings.app.sso_azure_app_id,
                 'app_secret': settings.app.sso_azure_app_secret,
