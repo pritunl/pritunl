@@ -46,6 +46,7 @@ data_files = [
         'www/key_view_dark.html',
         'www/duo.html',
         'www/yubico.html',
+        'www/success.html',
         'www/login.html',
         'www/upgrade.html',
         'www/vendor/dist/index.html',
