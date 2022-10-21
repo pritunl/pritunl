@@ -637,6 +637,9 @@ class User(mongo.MongoObject):
         return True
 
     def _get_password_mode(self, svr):
+        if svr.sso_auth:
+            return None
+
         modes = self.get_auth_modes(svr)
         password_mode = None
 
@@ -776,6 +779,7 @@ class User(mongo.MongoObject):
             'sync_hosts': svr.get_sync_remotes(),
             'sync_hash': conf_hash,
             'dynamic_firewall': svr.dynamic_firewall,
+            'sso_auth': svr.sso_auth,
             'password_mode': self._get_password_mode(svr),
             'push_auth': True if self.get_push_type(svr) else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
