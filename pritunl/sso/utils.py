@@ -1,6 +1,23 @@
 from pritunl import settings
 from pritunl import plugins
 
+def server_sso_url():
+    if settings.app.server_sso_url:
+        domain = settings.app.server_sso_url
+    elif settings.app.acme_domain:
+        domain = settings.app.acme_domain
+    else:
+        domain = settings.local.host.public_addr
+
+    if not domain:
+        raise ValueError('Missing server sso url')
+
+    if '://' in domain:
+        domain = domain.split('://')[-1]
+    domain = domain.replace('/', '')
+
+    return 'https://' + domain
+
 def plugin_sso_authenticate(sso_type, user_name, user_email, remote_ip,
         sso_org_names=None, sso_group_names=None):
     from pritunl import organization
