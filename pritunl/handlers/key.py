@@ -1758,7 +1758,7 @@ def _key_request_init(org_id, user_id, server_id, mode):
 
     return utils.jsonify({
         'sso_token': token,
-        'sso_url': settings.app.server_sso_url +
+        'sso_url': sso.server_sso_url() +
             '/key/request?state=' + state,
     })
 
