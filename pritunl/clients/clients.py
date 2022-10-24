@@ -2385,7 +2385,7 @@ class Clients(object):
                     if not client:
                         continue
 
-                    diff = settings.vpn.client_ttl - 150 - \
+                    diff = int(settings.vpn.client_ttl / 2) - \
                            (time.time() - client['timestamp'])
 
                     if diff > settings.vpn.client_ttl:
