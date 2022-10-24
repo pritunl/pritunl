@@ -587,6 +587,7 @@ class Clients(object):
                         'mac_addr': mac_addr,
                         'client_id': doc_id,
                         'timestamp': utils.now(),
+                        'static': True,
                     }})
 
                     if response['updatedExisting']:
@@ -622,6 +623,7 @@ class Clients(object):
                             'mac_addr': mac_addr,
                             'client_id': doc_id,
                             'timestamp': utils.now(),
+                            'static': True,
                         }})
 
                         if response['updatedExisting']:
@@ -646,6 +648,7 @@ class Clients(object):
                             'mac_addr': mac_addr,
                             'client_id': doc_id,
                             'timestamp': utils.now(),
+                            'static': True,
                         })
                     except pymongo.errors.DuplicateKeyError:
                         virt_address = None
