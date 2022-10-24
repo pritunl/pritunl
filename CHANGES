@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with lost IP addresses from client pool
+
 Version 1.30.3292.22 2022-09-17
 -------------------------------
 
