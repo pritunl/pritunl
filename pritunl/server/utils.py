@@ -255,3 +255,10 @@ def unlink_servers(server_id, link_server_id):
     }})
 
     tran.commit()
+
+def has_server_sso():
+    return bool(Server.collection.find({
+        'sso_auth': True,
+    }, {
+        '_id': True,
+    }).count())
