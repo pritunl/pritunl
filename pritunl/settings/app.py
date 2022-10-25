@@ -140,6 +140,7 @@ class SettingsApp(SettingsGroupMongo):
         ],
         'sso_yubico_client': None,
         'sso_yubico_secret': None,
+        'server_sso_url': None,
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
         'queue_high_thread_limit': 1,
