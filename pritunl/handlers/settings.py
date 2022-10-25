@@ -4,6 +4,7 @@ from pritunl import utils
 from pritunl import app
 from pritunl import acme
 from pritunl import journal
+from pritunl import server
 from pritunl import auth
 from pritunl import event
 from pritunl import ipaddress
@@ -73,6 +74,8 @@ def _dict():
             'sso_jumpcloud_secret': 'demo',
             'sso_radius_secret': 'demo',
             'sso_radius_host': 'demo',
+            'server_sso_url': settings.app.server_sso_url,
+            'has_server_sso': server.has_server_sso(),
             'ipv6': settings.vpn.ipv6,
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
@@ -183,6 +186,8 @@ def _dict():
             'sso_jumpcloud_secret': settings.app.sso_jumpcloud_secret,
             'sso_radius_secret': settings.app.sso_radius_secret,
             'sso_radius_host': settings.app.sso_radius_host,
+            'server_sso_url': settings.app.server_sso_url,
+            'has_server_sso': server.has_server_sso(),
             'ipv6': settings.vpn.ipv6,
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
@@ -786,6 +791,16 @@ def settings_put():
             changes.add('sso')
         settings.app.sso_client_cache = sso_client_cache
 
+    if 'server_sso_url' in flask.request.json:
+        settings_commit = True
+        server_sso_url = \
+            flask.request.json['server_sso_url'] or None
+        if server_sso_url != settings.app.server_sso_url:
+            changes.add('sso')
+        if server_sso_url:
+            server_sso_url = server_sso_url.strip()
+        settings.app.server_sso_url = server_sso_url
+
     if 'restrict_import' in flask.request.json:
         settings_commit = True
         restrict_import = True if \
@@ -1037,6 +1052,7 @@ def settings_put():
         settings.app.sso_jumpcloud_secret = None
         settings.app.sso_radius_secret = None
         settings.app.sso_radius_host = None
+        settings.app.server_sso_url = None
     else:
         if RADIUS_AUTH in settings.app.sso and \
                 settings.app.sso_duo_mode == 'passcode':
