@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3331.78 2022-10-26
+-------------------------------
 
 Add connection single sign-on authentication
 Fix issue with lost IP addresses from client pool
