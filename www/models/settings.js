@@ -58,6 +58,7 @@ define([
       'sso_client_cache': null,
       'sso_yubico_client': null,
       'sso_yubico_secret': null,
+      'server_sso_url': null,
       'public_address': null,
       'public_address6': null,
       'routed_subnet6': null,
