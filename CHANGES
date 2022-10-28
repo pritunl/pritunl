@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix startup issues
+
 Version 1.30.3331.78 2022-10-26
 -------------------------------
 
