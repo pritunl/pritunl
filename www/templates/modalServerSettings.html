@@ -30,6 +30,12 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="dns-mapping-toggle toggle-form form-group">
+      <label>Enable VPN Client DNS Mapping</label>
+      <div class="selector <%= dns_mapping ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Map the vpn clients ip address to the .vpn domain such as example_user.example_org.vpn This will conflict with the DNS port if systemd-resolve is running">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
   </div>
   <div class="right">
     <div class="dns-servers form-group">
@@ -61,12 +67,6 @@
     <div class="ipv6-toggle toggle-form form-group">
       <label>Enable IPv6</label>
       <div class="selector <%= ipv6 ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable IPv6 on server, requires IPv6 network interface">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
-    </div>
-    <div class="dns-mapping-toggle toggle-form form-group">
-      <label>Enable VPN Client DNS Mapping</label>
-      <div class="selector <%= dns_mapping ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Map the vpn clients ip address to the .vpn domain such as example_user.example_org.vpn This will conflict with the DNS port if systemd-resolve is running">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
@@ -217,12 +217,6 @@
     <div class="vxlan-toggle toggle-form form-group">
       <label>VXLan Routing</label>
       <div class="selector <%= vxlan ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Use VXLan for routing client-to-client traffic with replicated servers">
-        <span class="selector-inner glyphicon glyphicon-ok"></span>
-      </div>
-    </div>
-    <div class="sso-auth-toggle toggle-form form-group">
-      <label>Single Sign-On Authentication</label>
-      <div class="selector <%= sso_auth ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Require client to authenticate with single sign-on provider on each connection using web browser. Requires client to have access to Pritunl web server port and running updated Pritunl Client.">
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
