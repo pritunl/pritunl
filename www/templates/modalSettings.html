@@ -126,6 +126,10 @@
       <label>Yubico Client ID</label>
       <input type="text" class="form-control" placeholder="Enter client ID" value="<%- sso_yubico_client || '' %>">
     </div>
+    <div class="server-sso-url form-group" <%= !has_server_sso ? 'style="display: none;"' : '' %>>
+      <label>Connection Single Sign-On Domain</label>
+      <input type="text" class="form-control" placeholder="Enter connection sign-on url" value="<%- server_sso_url || '' %>" data-toggle="tooltip" title="When server single sign-on is used the user will be directed to access the web server at this domain. For most configurations this should match the URL used to access the web console.">
+    </div>
     <div class="ipv6 toggle-form form-group" data-toggle="tooltip" title="Accept both IPv4 and IPv6 connections on VPN servers.">
       <label>Accept IPv6 Connections</label>
       <div class="selector <%= ipv6 ? 'selected' : '' %> no-select">
