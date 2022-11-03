@@ -113,6 +113,8 @@ class Clients(object):
         if (user.has_password(self.server) and has_token) or \
                 user.has_passcode(self.server) or \
                 user.get_push_type(self.server) or \
+                self.server.dynamic_firewall or \
+                self.server.sso_auth or \
                 not settings.user.reconnect:
             client_conf += 'push "ping-exit %s"\n' % \
                 self.server.ping_timeout
