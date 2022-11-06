@@ -1363,6 +1363,7 @@ define([
       var ssoDuoSecret = null;
       var ssoDuoHost = null;
       var ssoDuoMode = null;
+      var serverSsoUrl = null;
 
       if (this.$('.verify-pass input').is(':visible') &&
           password && password !== verifyPassword) {
@@ -1470,6 +1471,8 @@ define([
         }
 
         ssoOrg = this.$('.sso-org select').val();
+
+        serverSsoUrl = this.$('.server-sso-url input').val();
       }
 
       var modelAttr = {
@@ -1518,6 +1521,7 @@ define([
         sso_jumpcloud_secret: ssoJumpCloudSecret,
         sso_radius_host: ssoRadiusHost,
         sso_radius_secret: ssoRadiusSecret,
+        server_sso_url: serverSsoUrl,
         ipv6: ipv6,
         sso_cache: ssoCache,
         sso_client_cache: ssoClientCache,
