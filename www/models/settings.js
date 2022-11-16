@@ -103,7 +103,8 @@ define([
       'ap_south_1_access_key': null,
       'ap_south_1_secret_key': null,
       'sa_east_1_access_key': null,
-      'sa_east_1_secret_key': null
+      'sa_east_1_secret_key': null,
+      'has_server_sso': null
     },
     url: function() {
       return '/settings';
