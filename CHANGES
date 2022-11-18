@@ -1,6 +1,11 @@
 Pritunl Changelog
 =================
 
+Version 1.30.3343.47 2022-11-07
+-------------------------------
+
+Fix client reconnect issue with third party clients
+
 Version 1.30.3333.72 2022-10-28
 -------------------------------
 
