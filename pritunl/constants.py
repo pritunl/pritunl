@@ -1318,7 +1318,7 @@ Environment="BIND_PORT=%s"
 Environment="INTERNAL_ADDRESS=%s"
 Environment="SSL_CERT=%s"
 Environment="SSL_KEY=%s"
-ExecStart=%s
+ExecStart=pritunl-web
 TimeoutStopSec=5s
 LimitNOFILE=500000
 LimitNPROC=512
