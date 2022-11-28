@@ -1313,13 +1313,13 @@ User=nobody
 Group=nobody
 Environment="REVERSE_PROXY_HEADER=%s"
 Environment="REVERSE_PROXY_PROTO_HEADER=%s"
-Environment="REDIRECT_SERVER=true"
+Environment="REDIRECT_SERVER=%s"
 Environment="BIND_HOST=%s"
 Environment="BIND_PORT=%s"
 Environment="INTERNAL_ADDRESS=%s"
 Environment="SSL_CERT=%s"
 Environment="SSL_KEY=%s"
-ExecStart=pritunl-web
+ExecStart=/usr/bin/pritunl-web
 TimeoutStopSec=5s
 LimitNOFILE=500000
 LimitNPROC=512
