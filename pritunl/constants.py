@@ -364,6 +364,7 @@ GROUP_LOCAL = 'local'
 DEFAULT_USERNAME = 'pritunl'
 DEFAULT_PASSWORD = 'pritunl'
 DEFAULT_CONF_PATH = '/etc/pritunl.conf'
+SYSTEMD_WEB_PATH = '/etc/systemd/system/pritunl-web.service'
 SUBSCRIPTION_UPDATE_RATE = 900
 SUB_RESPONSE_TIMEOUT = 10
 CLIENT_CONF_VER = 1
