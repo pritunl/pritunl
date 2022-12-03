@@ -155,6 +155,8 @@ def acme_token_get(token):
     return flask.abort(404)
 
 def _run_server(restart):
+    systemd = settings.app.web_systemd
+
     global app_server
 
     try:
@@ -207,36 +209,75 @@ def _run_server(restart):
         settings.local.server_ready.set()
         settings.local.server_start.wait()
 
-    process_state = True
-    process = subprocess.Popen(
-        ['pritunl-web'],
-        env=dict(os.environ, **{
-            'REVERSE_PROXY_HEADER': settings.app.reverse_proxy_header if \
-                settings.app.reverse_proxy else '',
-            'REVERSE_PROXY_PROTO_HEADER': \
-                settings.app.reverse_proxy_proto_header if \
-                settings.app.reverse_proxy else '',
-            'REDIRECT_SERVER': redirect_server,
-            'BIND_HOST': settings.conf.bind_addr,
-            'BIND_PORT': str(settings.app.server_port),
-            'INTERNAL_ADDRESS': internal_addr,
-            'SSL_CERT': server_cert or '',
-            'SSL_KEY': server_key or '',
-        }),
-    )
+    if systemd:
+        systemd_service = os.path.basename(SYSTEMD_WEB_PATH)
 
-    def poll_thread():
-        time.sleep(0.5)
-        if process.wait() and process_state:
-            time.sleep(0.25)
-            if not check_global_interrupt():
-                logger.error('Web server process exited unexpectedly', 'app')
+        with open(SYSTEMD_WEB_PATH, 'w') as systemd_file:
+            os.chmod(SYSTEMD_WEB_PATH, 0o600)
+            systemd_file.write(WEB_SYSTEMD_TEMPLATE % (
+                settings.app.reverse_proxy_header if
+                    settings.app.reverse_proxy else '',
+                settings.app.reverse_proxy_proto_header if
+                    settings.app.reverse_proxy else '',
+                redirect_server,
+                settings.conf.bind_addr,
+                str(settings.app.server_port),
+                internal_addr,
+                server_cert or '',
+                server_key or '',
+            ))
+
+        utils.systemd_reload()
+        utils.systemd_start(systemd_service)
+
+        def poll_thread():
+            while True:
                 time.sleep(1)
-                restart_server(1)
 
-    thread = threading.Thread(target=poll_thread)
-    thread.daemon = True
-    thread.start()
+                if utils.systemd_is_active(systemd_service):
+                    continue
+
+                if not check_global_interrupt():
+                    logger.error('Web server process exited unexpectedly',
+                        'app')
+                    time.sleep(1)
+                    restart_server(1)
+
+        thread = threading.Thread(target=poll_thread)
+        thread.daemon = True
+        thread.start()
+    else:
+        process_state = True
+        process = subprocess.Popen(
+            ['pritunl-web'],
+            env=dict(os.environ, **{
+                'REVERSE_PROXY_HEADER': settings.app.reverse_proxy_header if \
+                    settings.app.reverse_proxy else '',
+                'REVERSE_PROXY_PROTO_HEADER': \
+                    settings.app.reverse_proxy_proto_header if \
+                    settings.app.reverse_proxy else '',
+                'REDIRECT_SERVER': redirect_server,
+                'BIND_HOST': settings.conf.bind_addr,
+                'BIND_PORT': str(settings.app.server_port),
+                'INTERNAL_ADDRESS': internal_addr,
+                'SSL_CERT': server_cert or '',
+                'SSL_KEY': server_key or '',
+            }),
+        )
+
+        def poll_thread():
+            time.sleep(0.5)
+            if process.wait() and process_state:
+                time.sleep(0.25)
+                if not check_global_interrupt():
+                    logger.error('Web server process exited unexpectedly',
+                        'app')
+                    time.sleep(1)
+                    restart_server(1)
+
+        thread = threading.Thread(target=poll_thread)
+        thread.daemon = True
+        thread.start()
 
     _watch_event.set()
 
@@ -254,7 +295,11 @@ def _run_server(restart):
     finally:
         process_state = False
         try:
-            process.kill()
+            if systemd:
+                systemd_service = os.path.basename(SYSTEMD_WEB_PATH)
+                utils.systemd_stop(systemd_service)
+            else:
+                process.kill()
         except:
             pass
 
