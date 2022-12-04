@@ -1308,7 +1308,6 @@ Disallow: /
 """
 
 WEB_SYSTEMD_TEMPLATE = """[Service]
-Type=notify
 User=nobody
 Group=nobody
 Environment="REVERSE_PROXY_HEADER=%s"
