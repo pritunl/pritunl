@@ -165,6 +165,7 @@ class SettingsApp(SettingsGroupMongo):
         'oracle_user_ocid': None,
         'oracle_private_key': None,
         'oracle_public_key': None,
+        'web_systemd': True,
         'us_east_1_access_key': None,
         'us_east_1_secret_key': None,
         'us_east_2_access_key': None,
