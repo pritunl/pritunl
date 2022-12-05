@@ -535,3 +535,25 @@ def check_openvpn_ver():
         logger.exception('Failed to check openvpn version', 'utils')
 
     return False
+
+def systemd_start(service):
+    check_output_logged([
+        'systemctl', 'start', service,
+    ])
+
+def systemd_stop(service):
+    check_output_logged([
+        'systemctl', 'stop', service,
+    ])
+
+def systemd_reload():
+    check_output_logged([
+        'systemctl', 'daemon-reload',
+    ])
+
+def systemd_is_active(service):
+    process = subprocess.Popen(['systemctl', 'is-active', '--quiet', service])
+    return_code = process.wait()
+    if return_code == 0:
+        return True
+    return False
