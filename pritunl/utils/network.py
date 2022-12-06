@@ -54,7 +54,7 @@ def get_remote_addr():
     if settings.app.reverse_proxy:
         forward_ip = flask.request.headers.get('PR-Forwarded-Header')
         if forward_ip:
-            return forward_ip.split(',')[-1]
+            return forward_ip.split(',')[-1].strip()
 
     forward_ip = flask.request.headers.get('PR-Forwarded-For')
     if forward_ip:
