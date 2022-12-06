@@ -10,6 +10,7 @@ from pritunl import clients
 from pritunl import ipaddress
 from pritunl import monitoring
 from pritunl import database
+from pritunl import organization
 
 import os
 import time
@@ -35,6 +36,8 @@ class ServerInstanceCom(object):
         self.client_bytes = {}
         self.cur_timestamp = utils.now()
         self.bandwidth_rate = settings.vpn.bandwidth_update_rate
+        self.org = organization.get_by_id(svr.primary_organization)
+        self.users = {}
 
     @cached_static_property
     def users_ip_collection(cls):
@@ -69,6 +72,18 @@ class ServerInstanceCom(object):
 
         self.client_bytes[client_id] = (
             self.cur_timestamp, bytes_recv, bytes_sent)
+
+        if self.users.get(client_id) is None:
+            self.users[client_id] = { 'lock': threading.Lock(), 'bytes_recv': 0, 'bytes_sent': 0 }
+            self.users[client_id]['lock'].acquire()
+            doc = self.clients.clients.find_id(client_id)
+            self.users[client_id].update(self.org.get_user(doc['user_id']).dict())
+            self.users[client_id]['lock'].release()
+
+        self.users[client_id]['lock'].acquire()
+        self.users[client_id]['bytes_recv'] += bytes_recv
+        self.users[client_id]['bytes_sent'] += bytes_sent
+        self.users[client_id]['lock'].release()
 
         self.bytes_lock.acquire()
         self.bytes_recv += bytes_recv - bytes_recv_prev
@@ -238,6 +253,24 @@ class ServerInstanceCom(object):
                         self.client_bytes.items()):
                     if timestamp < timestamp_ttl:
                         self.client_bytes.pop(client_id, None)
+                    
+                    if self.users.get(client_id) is not None:
+                        monitoring.insert_point('user_bandwidth', {
+                            'host': settings.local.host.name,
+                            'server': self.server.name,
+                            'username': self.users[client_id]['name'],
+                            'org_name': self.users[client_id]['organization_name'],
+                            'email': self.users[client_id]['email'],
+                        }, {
+                            'bytes_sent': self.users[client_id]['bytes_sent'],
+                            'bytes_recv': self.users[client_id]['bytes_recv'],
+                            'last_active': self.users[client_id]['last_active'],
+                        })
+
+                        self.users[client_id]['lock'].acquire()
+                        self.users[client_id]['bytes_recv'] = 0
+                        self.users[client_id]['bytes_sent'] = 0
+                        self.users[client_id]['lock'].release()
 
                 self.bytes_lock.acquire()
                 bytes_recv = self.bytes_recv
