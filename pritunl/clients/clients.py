@@ -97,6 +97,20 @@ class Clients(object):
             return self.instance.vxlan.vxlan_addr6
         return settings.local.host.local_addr6
 
+    def get_client(self, client_id):
+        client = self.clients.find_id(client_id)
+        if not client:
+            return None
+
+        return {
+            'org_id': client.get('org_id'),
+            'org_name': client.get('org_name'),
+            'user_id': client.get('user_id'),
+            'user_name': client.get('user_name'),
+            'device_id': client.get('device_id'),
+            'device_name': client.get('device_name'),
+        }
+
     def get_org(self, org_id):
         org = self.obj_cache.get(org_id)
         if not org:
