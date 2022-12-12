@@ -18,6 +18,7 @@ Commands:
   reset-password        Reset administrator password
   reset-version         Reset database version to server version
   reset-ssl-cert        Reset the server ssl certificate
+  renew-ssl-cert        Renew the Lets Encrypt server ssl certificate
   reconfigure           Reconfigure database connection
   get-mongodb           Get the current mongodb uri
   set-mongodb           Set the mongodb uri
@@ -287,6 +288,22 @@ def main(default_conf=None):
 
         time.sleep(.2)
         print('Server ssl certificate successfully reset')
+
+        sys.exit(0)
+    elif cmd == 'renew-ssl-cert':
+        from pritunl import setup
+        from pritunl import settings
+        from pritunl import acme
+        setup.setup_db()
+
+        if not settings.app.acme_domain:
+            print('Server does not have Lets Encrypt domain configured')
+            sys.exit(0)
+
+        acme.update_acme_cert(True)
+
+        time.sleep(.2)
+        print('Server ssl certificate successfully renewed')
 
         sys.exit(0)
     elif cmd == 'destroy-secondary':
