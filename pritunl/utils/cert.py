@@ -7,6 +7,7 @@ from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
 
 import os
+import uuid
 
 def create_server_cert():
     from pritunl import acme
@@ -54,8 +55,11 @@ def generate_private_ec_key():
         'openssl', 'ecparam', '-name', 'secp384r1', '-genkey', '-noout',
     ])
 
-def generate_csr(private_key, domain):
-    private_key_path = get_temp_path() + '.key'
+def generate_csr(private_key, domain, cmdline=False):
+    if cmdline:
+        private_key_path = '/tmp/pritunl_' + uuid.uuid4().hex + '.key'
+    else:
+        private_key_path = get_temp_path() + '.key'
 
     with open(private_key_path, 'w') as private_key_file:
         os.chmod(private_key_path, 0o600)
