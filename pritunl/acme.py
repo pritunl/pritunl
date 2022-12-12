@@ -4,6 +4,7 @@ from pritunl import mongo
 from pritunl import acmetiny
 
 import os
+import uuid
 
 def set_acme(token, authorization):
     coll = mongo.get_collection('acme_challenges')
@@ -26,8 +27,11 @@ def get_authorization(token):
     if doc:
         return doc.get('authorization')
 
-def get_acme_cert(account_key, csr):
-    temp_path = utils.get_temp_path()
+def get_acme_cert(account_key, csr, cmdline=False):
+    if cmdline:
+        temp_path = '/tmp/pritunl_' + uuid.uuid4().hex
+    else:
+        temp_path = utils.get_temp_path()
     account_key_path = temp_path + '.key'
     csr_path = temp_path + '.csr'
 
@@ -59,14 +63,14 @@ def get_acme_cert(account_key, csr):
 
     return certificate
 
-def update_acme_cert():
+def update_acme_cert(cmdline=False):
     if not settings.app.acme_key:
         settings.app.acme_key = utils.generate_private_key()
         settings.commit()
 
     private_key = utils.generate_private_ec_key()
-    csr = utils.generate_csr(private_key, settings.app.acme_domain)
-    cert = get_acme_cert(settings.app.acme_key, csr)
+    csr = utils.generate_csr(private_key, settings.app.acme_domain, cmdline)
+    cert = get_acme_cert(settings.app.acme_key, csr, cmdline)
 
     settings.app.server_key = private_key.strip()
     settings.app.server_cert = cert.strip()
