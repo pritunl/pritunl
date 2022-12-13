@@ -10,7 +10,7 @@ class LogFormatter(logging.Formatter):
         try:
             host_name = settings.local.host.name
         except AttributeError:
-            host_name = 'undefined'
+            host_name = 'local'
         try:
             host_id = settings.local.host_id
         except AttributeError:
