@@ -1,5 +1,8 @@
+from pritunl.constants import *
+
 import time
 import signal
+import os
 
 _interrupt = False
 _app_server_interrupt = False
@@ -73,6 +76,14 @@ def set_global_interrupt():
 
     from pritunl import logger
     logger.info('Stopping server', 'setup')
+
+    try:
+        from pritunl import utils
+        systemd_service = os.path.basename(SYSTEMD_WEB_PATH)
+        utils.systemd_stop_silent(systemd_service)
+    except:
+        pass
+
     signal.alarm(3)
 
 def check_app_server_interrupt():
