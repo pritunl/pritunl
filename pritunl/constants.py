@@ -1308,8 +1308,8 @@ Disallow: /
 """
 
 WEB_SYSTEMD_TEMPLATE = """[Service]
-User=nobody
-Group=nobody
+User=pritunl-web
+Group=pritunl-web
 Environment="REVERSE_PROXY_HEADER=%s"
 Environment="REVERSE_PROXY_PROTO_HEADER=%s"
 Environment="REDIRECT_SERVER=%s"
