@@ -546,6 +546,11 @@ def systemd_stop(service):
         'systemctl', 'stop', service,
     ])
 
+def systemd_stop_silent(service):
+    check_call_silent([
+        'systemctl', 'stop', service,
+    ])
+
 def systemd_reload():
     check_output_logged([
         'systemctl', 'daemon-reload',
