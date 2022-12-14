@@ -538,7 +538,7 @@ def check_openvpn_ver():
 
 def systemd_start(service):
     check_output_logged([
-        'systemctl', 'start', service,
+        'systemctl', 'restart', service,
     ])
 
 def systemd_stop(service):
