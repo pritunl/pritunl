@@ -123,9 +123,9 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
             usr.yubico_id = yubico_id
             usr.commit('yubico_id')
 
-        if groups and groups - set(usr.groups or []):
+        if groups and groups != set(usr.groups or []):
             changed = True
-            usr.groups = list(set(usr.groups or []) | groups)
+            usr.groups = list(groups)
             usr.commit('groups')
 
         if usr.auth_type != sso_mode:
