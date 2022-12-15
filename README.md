@@ -96,6 +96,9 @@ sudo restorecon -v /usr/bin/pritunl-dns || true
 sudo restorecon -v -R /var/lib/pritunl || true
 sudo restorecon -v /var/log/pritunl* || true
 
+sudo groupadd -r pritunl-web || true
+sudo useradd -r -g pritunl-web -s /sbin/nologin -c 'Pritunl web server' pritunl-web || true
+
 cd ../../
 sudo rm -rf ./pritunl-$VERSION
 
