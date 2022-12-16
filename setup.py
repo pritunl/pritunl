@@ -26,8 +26,8 @@ for arg in copy.copy(sys.argv):
         sys.argv.remove('--sysvinit')
         install_sysvinit = True
 
-if not os.path.exists('build'):
-    os.mkdir('build')
+if not os.path.exists(PATCH_DIR):
+    os.mkdir(PATCH_DIR)
 
 main_css_path = os.path.join('www/vendor/dist/css',
     os.listdir('www/vendor/dist/css')[0])
