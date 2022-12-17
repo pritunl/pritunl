@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.30.3383.72 2022-12-17
+-------------------------------
 
 Add renew SSL command
 
