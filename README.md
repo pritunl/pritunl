@@ -39,12 +39,12 @@ sudo yum -y install oracle-epel-release-el8
 
 sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel python3-virtualenv wget tar
 
-wget https://go.dev/dl/go1.18.linux-amd64.tar.gz
-echo "e85278e98f57cdb150fe8409e6e5df5343ecb13cebf03a5d5ff12bd55a80264f go1.18.linux-amd64.tar.gz" | sha256sum -c -
+wget https://go.dev/dl/go1.19.3.linux-amd64.tar.gz
+echo "74b9640724fd4e6bb0ed2a1bc44ae813a03f1e72a4c76253e2d5c015494430ba go1.19.3.linux-amd64.tar.gz" | sha256sum -c -
 
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xf go1.18.linux-amd64.tar.gz
-rm -f go1.18.linux-amd64.tar.gz
+sudo tar -C /usr/local -xf go1.19.3.linux-amd64.tar.gz
+rm -f go1.19.3.linux-amd64.tar.gz
 
 tee -a ~/.bashrc << EOF
 export GO111MODULE=on
