@@ -103,6 +103,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_google_mode': 'org',
         'sso_google_key': None,
         'sso_google_email': None,
+        'sso_google_groups_max': 200,
         'sso_saml_url': None,
         'sso_saml_issuer_url': None,
         'sso_saml_cert': None,
