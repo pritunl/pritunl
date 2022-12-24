@@ -43,7 +43,8 @@ def verify_google(user_email):
     if data.get('suspended'):
         return False, []
 
-    results = service.groups().list(userKey=user_email).execute()
+    results = service.groups().list(userKey=user_email,
+        maxResults=settings.app.sso_google_groups_max).execute()
 
     groups = []
     for group in results.get('groups') or []:
