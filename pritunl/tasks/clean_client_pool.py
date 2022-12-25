@@ -15,7 +15,7 @@ class TaskCleanClientPool(task.Task):
 
     def task(self):
         timestamp_spec = utils.now() - datetime.timedelta(
-            seconds=settings.vpn.client_ttl)
+            seconds=settings.vpn.client_ttl + 10)
 
         docs = self.pool_collection.find({
             'timestamp': {'$lt': timestamp_spec},
