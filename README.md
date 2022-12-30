@@ -70,7 +70,7 @@ tar xf $VERSION.tar.gz
 rm $VERSION.tar.gz
 cd ./pritunl-$VERSION
 /usr/lib/pritunl/bin/python setup.py build
-sudo /usr/lib/pritunl/bin/pip3 install -U -r requirements.txt
+sudo /usr/lib/pritunl/bin/pip3 install --upgrade --require-hashes -r requirements.txt
 sudo /usr/lib/pritunl/bin/python setup.py install
 sudo ln -sf /usr/lib/pritunl/bin/pritunl /usr/bin/pritunl
 
