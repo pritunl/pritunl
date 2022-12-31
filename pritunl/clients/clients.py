@@ -798,7 +798,7 @@ class Clients(object):
 
         return virt_address, address_dynamic, False
 
-    def allow_client(self, client_data, org, user, reauth=False,
+    def allow_client(self, client_data, org, user, password, reauth=False,
             has_token=False, doc_id=None):
         client_id = client_data['client_id']
         key_id = client_data['key_id']
@@ -910,6 +910,8 @@ class Clients(object):
                 'user_type': user.type,
                 'timestamp': time.time(),
                 'timestamp_start': time.time(),
+                'auth_check_timestamp': time.time(),
+                'password': password,
                 'dns_servers': dns_servers,
                 'dns_suffix': user.dns_suffix,
                 'device_id': device_id,
@@ -966,7 +968,7 @@ class Clients(object):
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
     def allow_client_wg(self, user, org, wg_public_key, platform, device_id,
-            device_name, mac_addr, client_public_address,
+            device_name, password, mac_addr, client_public_address,
             client_public_address6, remote_ip):
         try:
             user_id = user.id
@@ -1045,6 +1047,8 @@ class Clients(object):
                 'timestamp': time.time(),
                 'timestamp_start': time.time(),
                 'timestamp_wg': time.time(),
+                'auth_check_timestamp': time.time(),
+                'password': password,
                 'dns_servers': dns_servers,
                 'dns_suffix': user.dns_suffix,
                 'device_id': device_id,
@@ -1285,7 +1289,8 @@ class Clients(object):
                 try:
                     if allow:
                         self.allow_client(client_data, org, user,
-                            reauth, has_token, doc_id)
+                            auth_password or password, reauth,
+                            has_token, doc_id)
                     else:
                         self.instance_com.send_client_deny(
                             client_id, key_id, reason, challenge)
@@ -1406,6 +1411,7 @@ class Clients(object):
                             platform=platform,
                             device_id=device_id,
                             device_name=device_name,
+                            password=auth_password,
                             mac_addr=mac_addr,
                             remote_ip=remote_ip,
                             client_public_address=client_public_address,
@@ -2388,6 +2394,51 @@ class Clients(object):
                 else:
                     self.instance_com.client_kill(client_id)
                 break
+
+    def _auth_check_thread(self, client):
+        client_id = client['id']
+
+        org = self.get_org(client['org_id'])
+        if org:
+            usr = org.get_user(client['user_id'])
+        else:
+            usr = None
+
+        if not usr:
+            logger.error('User lost unexpectedly',
+                'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+                user_id=client['user_id'],
+            )
+            if len(client_id) > 32:
+                self.instance.disconnect_wg(client_id)
+            else:
+                self.instance_com.client_kill(client_id)
+            return
+
+        if usr.bypass_secondary or settings.vpn.stress_test:
+            return
+
+        if not usr.sso_auth_check(self.server, client['password'],
+            client['real_address']):
+            logger.error('User failed auth update check',
+                'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+                user_id=client['user_id'],
+            )
+            if len(client_id) > 32:
+                self.instance.disconnect_wg(client_id)
+            else:
+                self.instance_com.client_kill(client_id)
+            return
+
+    def auth_check(self, client):
+        thread = threading.Thread(
+            target=self._auth_check_thread, args=(client,))
+        thread.daemon = True
+        thread.start()
 
     @interrupter
     def ping_thread(self):
