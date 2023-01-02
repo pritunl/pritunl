@@ -2435,6 +2435,9 @@ class Clients(object):
             return
 
     def auth_check(self, client):
+        if not settings.app.sso_connection_check:
+            return
+
         thread = threading.Thread(
             target=self._auth_check_thread, args=(client,))
         thread.daemon = True
