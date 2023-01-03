@@ -2438,6 +2438,14 @@ class Clients(object):
         if not settings.app.sso_connection_check:
             return
 
+        if time.time() - client['auth_check_timestamp'] < \
+                settings.app.sso_connection_check_ttl:
+            return
+
+        self.clients.update_id(client['id'], {
+            'auth_check_timestamp': time.time(),
+        })
+
         thread = threading.Thread(
             target=self._auth_check_thread, args=(client,))
         thread.daemon = True
