@@ -2497,6 +2497,8 @@ class Clients(object):
                         else:
                             self.instance_com.client_kill(client_id)
 
+                    self.auth_check(client)
+
                     try:
                         updated = self.clients.update_id(client_id, {
                             'timestamp': time.time(),
