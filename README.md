@@ -36,6 +36,7 @@ export VERSION="master"
 sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
 # Oracle Linux EPEL
 sudo yum -y install oracle-epel-release-el8
+sudo yum-config-manager --enable ol8_developer_EPEL
 
 sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel python3-virtualenv wget tar
 
