@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Check user single sign-on status during connection
+
 Version 1.30.3388.46 2022-12-22
 -------------------------------
 
