@@ -51,12 +51,19 @@ define([
       this.$('.network-wg .label').tooltip();
       this.updateMaxHosts(false);
       this.updateMaxHosts(true);
+      if (parseInt(this.$('.dh-param-bits select').val(), 10) < 2048) {
+        this.setAlert('danger', 'Using DH Param Bits less then 2048 is ' +
+          'not compatible with newer versions of OpenSSL.', '.dh-param-bits');
+      }
     },
     onDhParamBits: function(evt) {
       var val = $(evt.target).val();
       if (val > 2048) {
-        this.setAlert('danger', 'Using dh parameters larger then 2048 can ' +
+        this.setAlert('danger', 'Using DH Param Bits larger then 2048 can ' +
           'take several hours to generate.', '.dh-param-bits');
+      } else if (val < 2048) {
+        this.setAlert('danger', 'Using DH Param Bits less then 2048 is ' +
+          'not compatible with newer versions of OpenSSL.', '.dh-param-bits');
       } else {
         this.clearAlert();
       }
