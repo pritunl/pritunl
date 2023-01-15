@@ -155,9 +155,12 @@ def acme_token_get(token):
     return flask.abort(404)
 
 def _run_server(restart):
-    systemd = settings.app.web_systemd
-
     global app_server
+
+    systemd = settings.app.web_systemd
+    if systemd and not utils.systemd_available():
+        logger.info('Systemd not available, skipping web service', 'app')
+        systemd = False
 
     try:
         context = subprocess.check_output(
