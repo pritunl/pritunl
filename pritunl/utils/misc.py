@@ -536,6 +536,12 @@ def check_openvpn_ver():
 
     return False
 
+def systemd_available():
+    for proc in psutil.process_iter():
+        if proc.name() == 'systemd':
+            return True
+    return False
+
 def systemd_start(service):
     check_output_logged([
         'systemctl', 'restart', service,
