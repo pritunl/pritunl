@@ -95,6 +95,10 @@ if install_systemd:
         ['%s/pritunl.service' % PATCH_DIR]))
     shutil.copy('data/systemd/pritunl.service',
         '%s/pritunl.service' % PATCH_DIR)
+    data_files.append(('/etc/systemd/system',
+        ['%s/pritunl-web.service' % PATCH_DIR]))
+    shutil.copy('data/systemd/pritunl-web.service',
+        '%s/pritunl-web.service' % PATCH_DIR)
 
 for file_name in patch_files:
     for line in fileinput.input(file_name, inplace=True):
