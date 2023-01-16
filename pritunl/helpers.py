@@ -79,8 +79,7 @@ def set_global_interrupt():
 
     try:
         from pritunl import utils
-        systemd_service = os.path.basename(SYSTEMD_WEB_PATH)
-        utils.systemd_stop_silent(systemd_service)
+        utils.systemd_stop_silent(SYSTEMD_WEB_SERVICE)
     except:
         pass
 
