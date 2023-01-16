@@ -5,6 +5,7 @@ require {
   type pritunl_tmp_t;
   type pritunl_var_log_t;
 
+  type init_t;
   type http_port_t;
   type net_conf_t;
   type node_t;
@@ -23,6 +24,7 @@ domain_type(pritunl_web_t)
 domain_entry_file(pritunl_web_t, pritunl_web_exec_t)
 init_daemon_domain(pritunl_web_t, pritunl_web_exec_t)
 
+type_transition init_t pritunl_web_exec_t:process pritunl_web_t;
 type_transition pritunl_t pritunl_web_exec_t:process pritunl_web_t;
 
 allow pritunl_web_t pritunl_t:fifo_file { read write ioctl };
