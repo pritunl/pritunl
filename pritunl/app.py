@@ -213,11 +213,9 @@ def _run_server(restart):
         settings.local.server_start.wait()
 
     if systemd:
-        systemd_service = os.path.basename(SYSTEMD_WEB_PATH)
-
-        with open(SYSTEMD_WEB_PATH, 'w') as systemd_file:
-            os.chmod(SYSTEMD_WEB_PATH, 0o600)
-            systemd_file.write(WEB_SYSTEMD_TEMPLATE % (
+        with open(SYSTEMD_WEB_ENV_PATH, 'w') as systemd_env_file:
+            os.chmod(SYSTEMD_WEB_ENV_PATH, 0o600)
+            systemd_env_file.write(WEB_SYSTEMD_ENV_TEMPLATE % (
                 settings.app.reverse_proxy_header if
                     settings.app.reverse_proxy else '',
                 settings.app.reverse_proxy_proto_header if
@@ -231,13 +229,13 @@ def _run_server(restart):
             ))
 
         utils.systemd_reload()
-        utils.systemd_start(systemd_service)
+        utils.systemd_start(SYSTEMD_WEB_SERVICE)
 
         def poll_thread():
             while True:
                 time.sleep(1)
 
-                if utils.systemd_is_active(systemd_service):
+                if utils.systemd_is_active(SYSTEMD_WEB_SERVICE):
                     continue
 
                 if not check_global_interrupt():
@@ -301,8 +299,7 @@ def _run_server(restart):
         process_state = False
         try:
             if systemd:
-                systemd_service = os.path.basename(SYSTEMD_WEB_PATH)
-                utils.systemd_stop(systemd_service)
+                utils.systemd_stop(SYSTEMD_WEB_SERVICE)
             else:
                 process.kill()
         except:
