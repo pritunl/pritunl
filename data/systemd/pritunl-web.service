@@ -1,0 +1,13 @@
+[Service]
+User=pritunl-web
+Group=pritunl-web
+EnvironmentFile=/var/lib/pritunl/pritunl_web_env
+ExecStart=/usr/bin/pritunl-web
+TimeoutStopSec=5s
+LimitNOFILE=500000
+LimitNPROC=512
+PrivateTmp=true
+ProtectSystem=full
+ProtectHostname=true
+ProtectKernelTunables=true
+AmbientCapabilities=CAP_NET_BIND_SERVICE
