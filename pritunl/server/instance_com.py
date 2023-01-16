@@ -355,6 +355,7 @@ class ServerInstanceCom(object):
                     instance_id=self.instance.id,
                     socket_path=self.socket_path,
                 )
+            time.sleep(0.3)
             self.instance.stop_process()
         finally:
             remove_listener(self.instance.id)
