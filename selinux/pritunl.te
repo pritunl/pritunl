@@ -13,6 +13,7 @@ require {
 
   type pritunl_web_t;
   type pritunl_web_exec_t;
+  type pritunl_web_unit_file_t;
   type pritunl_dns_t;
   type pritunl_dns_exec_t;
   type etc_t;
@@ -79,8 +80,10 @@ require {
   type syslogd_t;
   type system_cronjob_t;
   type system_dbusd_t;
+  type system_dbusd_var_run_t;
   type systemd_hostnamed_t;
   type systemd_logind_t;
+  type systemd_systemctl_exec_t;
   type tmpfs_t;
   type tun_tap_device_t;
   type tuned_t;
@@ -121,6 +124,8 @@ allow pritunl_t pritunl_dns_exec_t:file { execute open read };
 
 allow pritunl_t self:fifo_file rw_fifo_file_perms;
 allow pritunl_t self:unix_stream_socket { create_stream_socket_perms connectto };
+
+allow pritunl_t pritunl_web_unit_file_t:service { start status stop };
 
 domain_use_interactive_fds(pritunl_t)
 files_read_etc_files(pritunl_t)
@@ -186,6 +191,7 @@ allow pritunl_t lib_t:file { manage_file_perms };
 #################################
 # other
 #################################
+allow init_t pritunl_var_lib_t:file { getattr open read };
 allow pritunl_t NetworkManager_t:dir search;
 allow pritunl_t NetworkManager_t:file { getattr open read };
 allow pritunl_t apmd_t:dir search;
@@ -223,7 +229,10 @@ allow pritunl_t http_port_t:tcp_socket name_connect;
 allow pritunl_t hugetlbfs_t:dir { add_name read search write };
 allow pritunl_t ifconfig_exec_t:file { execute execute_no_trans open read };
 allow pritunl_t init_t:dir search;
-allow pritunl_t init_t:file { getattr open read };
+allow pritunl_t init_t:file { getattr ioctl open read };
+allow pritunl_t init_t:lnk_file { getattr open read };
+allow pritunl_t init_t:system reload;
+allow pritunl_t init_t:unix_stream_socket connectto;
 allow pritunl_t init_var_lib_t:dir search;
 allow pritunl_t init_var_lib_t:file { getattr open read };
 allow pritunl_t initrc_t:dir search;
@@ -300,12 +309,16 @@ allow pritunl_t syslogd_t:dir search;
 allow pritunl_t syslogd_t:file { getattr open read };
 allow pritunl_t system_cronjob_t:dir search;
 allow pritunl_t system_cronjob_t:file { getattr open read };
+allow pritunl_t system_cronjob_t:lnk_file read;
 allow pritunl_t system_dbusd_t:dir search;
 allow pritunl_t system_dbusd_t:file { getattr open read };
+allow pritunl_t system_dbusd_t:lnk_file read;
+allow pritunl_t system_dbusd_var_run_t:dir search;
 allow pritunl_t systemd_hostnamed_t:dir search;
 allow pritunl_t systemd_hostnamed_t:file { getattr open read };
 allow pritunl_t systemd_logind_t:dir search;
 allow pritunl_t systemd_logind_t:file { getattr open read };
+allow pritunl_t systemd_systemctl_exec_t:file { execute execute_no_trans getattr map open read };
 allow pritunl_t tmp_t:file { setattr write };
 allow pritunl_t tmpfs_t:dir { add_name write };
 allow pritunl_t tmpfs_t:file { execute open read write };
@@ -325,5 +338,5 @@ allow pritunl_t usermodehelper_t:file { getattr ioctl open read };
 allow pritunl_t virt_qemu_ga_t:dir search;
 allow pritunl_t virt_qemu_ga_t:file { getattr open read };
 allow pritunl_web_t sysfs_t:file open;
-allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read };
+allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read open };
 allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr map open read };
