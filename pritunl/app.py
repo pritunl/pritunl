@@ -228,7 +228,6 @@ def _run_server(restart):
                 server_key or '',
             ))
 
-        utils.systemd_reload()
         utils.systemd_start(SYSTEMD_WEB_SERVICE)
 
         def poll_thread():
