@@ -20,9 +20,9 @@ systemd_unit_file(pritunl_web_unit_file_t)
 
 type pritunl_web_t;
 type pritunl_web_exec_t;
-domain_type(pritunl_web_t)
-domain_entry_file(pritunl_web_t, pritunl_web_exec_t)
+
 init_daemon_domain(pritunl_web_t, pritunl_web_exec_t)
+inetd_service_domain(pritunl_web_t, pritunl_web_exec_t)
 
 type_transition init_t pritunl_web_exec_t:process pritunl_web_t;
 type_transition pritunl_t pritunl_web_exec_t:process pritunl_web_t;
