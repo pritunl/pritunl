@@ -140,7 +140,7 @@ allow pritunl_t pritunl_dns_exec_t:file { execute open read };
 allow pritunl_t self:fifo_file rw_fifo_file_perms;
 allow pritunl_t self:unix_stream_socket { create_stream_socket_perms connectto };
 
-allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read };
+allow systemd_tmpfiles_t pritunl_tmp_t:dir { getattr read open };
 allow systemd_tmpfiles_t pritunl_tmp_t:file { getattr open read map };
 
 allow pritunl_t pritunl_web_unit_file_t:service { start status stop };
