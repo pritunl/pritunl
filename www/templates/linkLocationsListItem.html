@@ -43,7 +43,7 @@
       <% if (host_status['state']) { %>
       <% tooltip += host_status['name'] + ': ' + (host_status['latency'] / 1000).toFixed(2) + 'ms<br>' %>
       <% } else { %>
-      <% tooltip += host_status['name'] + ': disconnected<br>' %>
+      <% tooltip += host_status['name'] + ': unknown<br>' %>
       <% } %>
       <% }); %>
       <div class="link-host-status label label-<%= host.hosts_state_available === host.hosts_state_total ? 'success' : 'danger' %> no-select" data-toggle="tooltip" data-html="true" title="<%= tooltip %>" <%= (host.hosts_state_total && (host.status === 'active' || host.status === 'available')) ? '' : 'style="display: none"' %>><%- host.hosts_state_available %>/<%- host.hosts_state_total %></div>
