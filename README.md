@@ -88,6 +88,8 @@ sudo restorecon -v -R /tmp/pritunl* || true
 sudo restorecon -v -R /run/pritunl* || true
 sudo restorecon -v /etc/systemd/system/pritunl.service || true
 sudo restorecon -v /usr/lib/systemd/system/pritunl.service || true
+sudo restorecon -v /etc/systemd/system/pritunl-web.service || true
+sudo restorecon -v /usr/lib/systemd/system/pritunl-web.service || true
 sudo restorecon -v /usr/lib/pritunl/bin/pritunl || true
 sudo restorecon -v /usr/lib/pritunl/bin/python || true
 sudo restorecon -v /usr/lib/pritunl/bin/python3 || true
