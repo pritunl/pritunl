@@ -765,6 +765,10 @@ class User(mongo.MongoObject):
     def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
         svr.generate_auth_key_commit()
 
+        disable_reconnect = not settings.user.reconnect
+        if svr.inactive_timeout or svr.session_timeout:
+            disable_reconnect = True
+
         data = {
             'version': CLIENT_CONF_VER,
             'user': self.name,
@@ -783,7 +787,7 @@ class User(mongo.MongoObject):
             'password_mode': self._get_password_mode(svr),
             'push_auth': True if self.get_push_type(svr) else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
-            'disable_reconnect': not settings.user.reconnect,
+            'disable_reconnect': disable_reconnect,
             'token_ttl': settings.app.sso_client_cache_timeout,
         }
 
