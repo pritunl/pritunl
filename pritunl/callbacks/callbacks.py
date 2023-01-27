@@ -1,6 +1,7 @@
 
 _port_listeners = {}
 _client_listeners = {}
+_client_link_listeners = {}
 _firewall_listeners = {}
 
 def add_port_listener(instance_id, callback):
@@ -22,6 +23,12 @@ def add_client_listener(instance_id, callback):
 def remove_client_listener(instance_id):
     _client_listeners.pop(instance_id, None)
 
+def add_client_link_listener(instance_id, callback):
+    _client_link_listeners[instance_id] = callback
+
+def remove_client_link_listener(instance_id):
+    _client_link_listeners.pop(instance_id, None)
+
 def on_client(msg):
     for listener in list(_client_listeners.values()):
         listener(
@@ -31,6 +38,18 @@ def on_client(msg):
             msg['message']['virt_address6'],
             msg['message']['host_address'],
             msg['message']['host_address6'],
+        )
+
+def on_client_link(msg):
+    for listener in list(_client_link_listeners.values()):
+        listener(
+            msg['message']['state'],
+            msg['message']['server_id'],
+            msg['message']['virt_address'],
+            msg['message']['virt_address6'],
+            msg['message']['host_address'],
+            msg['message']['host_address6'],
+            msg['message']['network_links'],
         )
 
 # Call in clients init
