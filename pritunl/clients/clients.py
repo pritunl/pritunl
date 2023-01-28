@@ -122,6 +122,7 @@ class Clients(object):
     def generate_client_conf(self, platform, client_id, virt_address,
             virt_address6, user, reauth, has_token):
         client_conf = ''
+        reserved_network_links = []
 
         client_conf += 'push "ping %s"\n' % self.server.ping_interval
         if settings.app.sso_cache and not self.server.dynamic_firewall and \
@@ -206,6 +207,7 @@ class Clients(object):
             network_links = user.get_network_links()
             for network_link in network_links:
                 if self.reserve_iroute(client_id, network_link, True):
+                    reserved_network_links.append(network_link)
                     if ':' in network_link:
                         utils.add_route6(
                             network_link,
@@ -283,12 +285,13 @@ class Clients(object):
                     client_conf += 'push "route-ipv6 %s"\n' % (
                         self.server.network6)
 
-        return client_conf
+        return client_conf, reserved_network_links
 
     def generate_client_conf_wg(self, platform, client_id, virt_address,
             virt_address6, user):
         network_gateway = utils.get_network_gateway(self.server.network_wg)
         network_gateway6 = utils.get_network_gateway(self.server.network6_wg)
+        reserved_network_links = []
 
         client_conf = {
             'hostname': settings.local.host.public_addr,
@@ -363,6 +366,7 @@ class Clients(object):
             network_links = user.get_network_links()
             for network_link in network_links:
                 if self.reserve_iroute(client_id, network_link, True):
+                    reserved_network_links.append(network_link)
                     if ':' in network_link:
                         client_conf['network_links6'].append(network_link)
                         utils.add_route6(
@@ -459,7 +463,7 @@ class Clients(object):
                     route_conf['next_hop'] = network_gateway
                     client_conf['routes'].append(route_conf)
 
-        return client_conf
+        return client_conf, reserved_network_links
 
     def reserve_iroute(self, client_id, network, primary):
         reserved = False
@@ -867,6 +871,26 @@ class Clients(object):
                     #             'host_address': doc['host_address'],
                     #             'host_address6': doc['host_address6'],
                     #         })
+                    #
+                    #     docs = self.collection.find({
+                    #         'user_id': user_id,
+                    #         'server_id': self.server.id,
+                    #     })
+                    #
+                    #     for doc in docs:
+                    #         network_links = doc.get('network_links')
+                    #         if not network_links:
+                    #             continue
+                    #
+                    #         messenger.publish('client_links', {
+                    #             'state': False,
+                    #             'server_id': self.server.id,
+                    #             'virt_address': doc['virt_address'],
+                    #             'virt_address6': doc['virt_address6'],
+                    #             'host_address': doc['host_address'],
+                    #             'host_address6': doc['host_address6'],
+                    #             'network_links': network_links,
+                    #         })
 
                     messenger.publish('instance', [
                         'user_reconnect',
@@ -950,8 +974,13 @@ class Clients(object):
                     'client_id': client_id,
                 })
 
-        client_conf = self.generate_client_conf(platform, client_id,
-            virt_address, virt_address6, user, reauth, has_token)
+        client_conf, network_links = self.generate_client_conf(
+            platform, client_id, virt_address, virt_address6, user,
+            reauth, has_token)
+
+        self.clients.update_id(client_id, {
+            'network_links': network_links,
+        })
 
         client_conf += 'ifconfig-push %s %s\n' % utils.parse_network(
             virt_address)
@@ -1089,8 +1118,12 @@ class Clients(object):
                     'client_id': client_id,
                 })
 
-            client_conf = self.generate_client_conf_wg(platform, client_id,
-                virt_address, virt_address6, user)
+            client_conf, network_links = self.generate_client_conf_wg(
+                platform, client_id, virt_address, virt_address6, user)
+
+            self.clients.update_id(client_id, {
+                'network_links': network_links,
+            })
 
             client_conf['address'] = virt_address
             if self.server.ipv6:
@@ -2085,6 +2118,7 @@ class Clients(object):
             'mac_addr': client['mac_addr'],
             'network': self.server.network,
             'network_wg': self.server.network_wg,
+            'network_links': client['network_links'],
             'real_address': client['real_address'],
             'virt_address': client['virt_address'],
             'virt_address6': client['virt_address6'],
@@ -2125,6 +2159,16 @@ class Clients(object):
                     'host_address': self.route_addr,
                     'host_address6': self.route_addr6,
                 })
+                messenger.publish('client_links', {
+                    'state': True,
+                    'server_id': self.server.id,
+                    'virt_address': client['virt_address'],
+                    'virt_address6': client['virt_address6'],
+                    'host_address': self.route_addr,
+                    'host_address6': self.route_addr6,
+                    'network_links': client['network_links'],
+                })
+
         except:
             logger.exception('Error adding client', 'server',
                 server_id=self.server.id,
@@ -2233,6 +2277,17 @@ class Clients(object):
         #         'virt_address6': client['virt_address6'],
         #         'host_address': self.route_addr,
         #         'host_address6': settings.local.host.local_addr6,
+        #     })
+        #
+        # if client['network_links']:
+        #     messenger.publish('client_links', {
+        #         'state': False,
+        #         'server_id': self.server.id,
+        #         'virt_address': client['virt_address'],
+        #         'virt_address6': client['virt_address6'],
+        #         'host_address': self.route_addr,
+        #         'host_address6': settings.local.host.local_addr6,
+        #         'network_links': client['network_links'],
         #     })
 
         self.instance_com.push_output(
@@ -2615,6 +2670,7 @@ class Clients(object):
             virt_address6 = doc.get('virt_address6')
             host_address = doc.get('host_address')
             host_address6 = doc.get('host_address6')
+            network_links = doc.get('network_links')
 
             if not virt_address or not host_address:
                 continue
