@@ -28,6 +28,7 @@ def init():
 
     _client = redis.StrictRedis.from_url(
         redis_uri,
+        decode_responses=True,
         socket_timeout=settings.app.redis_timeout,
         socket_connect_timeout=settings.app.redis_timeout,
     )
