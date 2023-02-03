@@ -67,7 +67,7 @@ def auth_jumpcloud(username):
     try:
         response = requests.get(
             JUMPCLOUD_URL +
-            '/api/v2/users/%s/applications' % user_id,
+            '/api/v2/users/%s/applications?limit=100' % user_id,
             headers={
                 'Accept': 'application/json',
                 'X-Api-Key': settings.app.sso_jumpcloud_secret,
