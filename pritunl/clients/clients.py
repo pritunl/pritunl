@@ -54,6 +54,8 @@ class Clients(object):
         self.obj_cache = objcache.ObjCache()
         self.client_routes = set()
         self.client_routes6 = set()
+        self.link_routes = set()
+        self.link_routes6 = set()
 
         self.clients = docdb.DocDb(
             'user_id',
@@ -2658,6 +2660,24 @@ class Clients(object):
             self.clients_call_queue.put(self.remove_route, virt_address,
                 virt_address6, host_address, host_address6)
 
+    def on_client_link(self, state, server_id, virt_address, virt_address6,
+            host_address, host_address6, network_links):
+        if server_id != self.server.id:
+            return
+
+        if not host_address or \
+                host_address == settings.local.host.local_addr or \
+                host_address == self.route_addr:
+            return
+
+        if state:
+            self.clients_call_queue.put(self.add_links_route, virt_address,
+                virt_address6, host_address, host_address6, network_links)
+        else:
+            self.clients_call_queue.put(self.remove_links_route,
+                virt_address, virt_address6, host_address, host_address6,
+                network_links)
+
     def init_routes(self):
         for doc in self.collection.find({
                     'server_id': self.server.id,
@@ -2681,6 +2701,11 @@ class Clients(object):
             self.add_route(virt_address, virt_address6,
                 host_address, host_address6)
 
+            if network_links:
+                for network_link in network_links:
+                    self.add_link_route(network_link,
+                        host_address, host_address6)
+
         self.clients_call_queue.start()
 
     def clear_routes(self):
@@ -2689,6 +2714,12 @@ class Clients(object):
 
         for virt_address6 in self.client_routes6.copy():
             self.remove_route(None, virt_address6, None, None)
+
+        for network_link in self.link_routes.copy():
+            self.remove_route(network_link, None, None, None)
+
+        for network_link6 in self.link_routes6.copy():
+            self.remove_route(None, network_link6, None, None)
 
     def add_route(self, virt_address, virt_address6,
             host_address, host_address6):
