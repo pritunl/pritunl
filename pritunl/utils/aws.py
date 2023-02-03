@@ -69,7 +69,7 @@ def add_vpc_route(network):
     ipv6 = ':' in network
 
     if not aws_key or not aws_secret:
-        raise ValueError('AWS credentials not available for %s' % region)
+        raise ValueError('AWS credentials not available for %s' % region_key)
 
     if aws_key == 'role':
         aws_key = None
