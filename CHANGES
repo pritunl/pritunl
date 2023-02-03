@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add support for user network links with replicated servers
+
 Version 1.30.3414.5 2023-01-17
 ------------------------------
 
