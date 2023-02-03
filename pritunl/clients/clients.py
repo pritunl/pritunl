@@ -2797,6 +2797,69 @@ class Clients(object):
 
             utils.del_route6(virt_address6)
 
+    def add_link_route(self, network_link, host_address, host_address6):
+        try:
+            if ':' in network_link:
+                if network_link in self.link_routes6:
+                    try:
+                        self.link_routes6.remove(network_link)
+                    except KeyError:
+                        pass
+                    utils.del_route(network_link)
+
+                self.link_routes6.add(network_link)
+                utils.add_route6(
+                    network_link,
+                    host_address6.split('/')[0],
+                )
+            else:
+                if network_link in self.link_routes6:
+                    try:
+                        self.link_routes.remove(network_link)
+                    except KeyError:
+                        pass
+                    utils.del_route(network_link)
+
+                self.link_routes.add(network_link)
+                utils.add_route(
+                    network_link,
+                    host_address.split('/')[0],
+                )
+        except:
+            logger.exception('Failed to add link route', 'clients',
+                network_link=network_link,
+                host_address=host_address,
+                host_address6=host_address6,
+            )
+
+    def remove_link_route(self, network_link, host_address, host_address6):
+        if ':' in network_link:
+            try:
+                self.link_routes6.remove(network_link)
+            except KeyError:
+                pass
+
+            utils.del_route(network_link)
+        else:
+            try:
+                self.link_routes.remove(network_link)
+            except KeyError:
+                pass
+
+            utils.del_route(network_link)
+
+    def add_links_route(self, virt_address, virt_address6,
+            host_address, host_address6, network_links):
+        for network_link in network_links:
+            self.add_link_route(network_link, host_address, host_address6)
+
+    def remove_links_route(self, virt_address, virt_address6,
+            host_address, host_address6, network_links):
+        pass
+        # for network_link in network_links:
+        #     self.remove_link_route(network_link,
+        #         host_address, host_address6)
+
     def on_firewall(self, client_id):
         clients = self.clients.find({
             'doc_id': client_id,
@@ -2820,6 +2883,8 @@ class Clients(object):
             self.instance.id, self.on_port_forwarding)
         callbacks.add_client_listener(
             self.instance.id, self.on_client)
+        callbacks.add_client_link_listener(
+            self.instance.id, self.on_client_link)
         callbacks.add_firewall_listener(
             self.instance.id, self.on_firewall)
         host.global_servers.add(self.instance.id)
@@ -2836,6 +2901,7 @@ class Clients(object):
     def stop(self):
         callbacks.remove_port_listener(self.instance.id)
         callbacks.remove_client_listener(self.instance.id)
+        callbacks.remove_client_link_listener(self.instance.id)
         callbacks.remove_firewall_listener(self.instance.id)
 
         try:
