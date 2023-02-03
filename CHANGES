@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for user network links with replicated servers
+Fix issue with JumpCloud users connected to more than 10 applications
 
 Version 1.30.3414.5 2023-01-17
 ------------------------------
