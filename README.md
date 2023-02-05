@@ -61,6 +61,13 @@ sudo mkdir -p /usr/lib/pritunl
 sudo mkdir -p /var/lib/pritunl
 sudo virtualenv-3 /usr/lib/pritunl
 
+GOPROXY=direct go install github.com/pritunl/pritunl-web@latest
+GOPROXY=direct go install github.com/pritunl/pritunl-dns@latest
+sudo rm /usr/bin/pritunl-dns
+sudo rm /usr/bin/pritunl-web
+sudo cp -f ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
+sudo cp -f ~/go/bin/pritunl-web /usr/bin/pritunl-web
+
 go get -v -u github.com/pritunl/pritunl-dns
 go get -v -u github.com/pritunl/pritunl-web
 sudo cp -f ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
