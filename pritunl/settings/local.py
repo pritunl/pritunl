@@ -28,6 +28,9 @@ class SettingsLocal(SettingsGroupLocal):
         'sub_trial_end': None,
         'sub_cancel_at_period_end': None,
         'sub_balance': None,
+        'sub_premium_buy_url': False,
+        'sub_enterprise_buy_url': False,
+        'sub_portal_url': False,
         'sub_url_key': False,
         'sub_styles': {},
     }
