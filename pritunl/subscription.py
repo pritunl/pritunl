@@ -32,6 +32,9 @@ def update():
         settings.local.sub_trial_end = None
         settings.local.sub_cancel_at_period_end = None
         settings.local.sub_balance = None
+        settings.local.sub_portal_url = None
+        settings.local.sub_premium_buy_url = None
+        settings.local.sub_enterprise_buy_url = None
         settings.local.sub_url_key = None
     else:
         for i in range(2):
@@ -68,6 +71,12 @@ def update():
                 settings.local.sub_cancel_at_period_end = \
                     data[x(b'Y2FuY2VsX2F0X3BlcmlvZF9lbmQ=')]
                 settings.local.sub_balance = data.get(x(b'YmFsYW5jZQ=='))
+                settings.local.sub_portal_url = \
+                    data.get(x(b'cG9ydGFsX3VybA=='))
+                settings.local.sub_premium_buy_url = \
+                    data.get(x(b'cHJlbWl1bV9idXlfdXJs'))
+                settings.local.sub_enterprise_buy_url = \
+                    data.get(x(b'ZW50ZXJwcmlzZV9idXlfdXJs'))
                 settings.local.sub_url_key = data.get(x(b'dXJsX2tleQ=='))
                 settings.local.sub_styles[data[x(b'cGxhbg==')]] = \
                     data[x(b'c3R5bGVz')]
@@ -134,6 +143,21 @@ def dict():
     else:
         url_key = settings.local.sub_url_key
 
+    if settings.app.demo_mode:
+        portal_url = 'demo'
+    else:
+        portal_url = settings.local.sub_portal_url
+
+    if settings.app.demo_mode:
+        premium_buy_url = 'demo'
+    else:
+        premium_buy_url = settings.local.sub_premium_buy_url
+
+    if settings.app.demo_mode:
+        enterprise_buy_url = 'demo'
+    else:
+        enterprise_buy_url = settings.local.sub_enterprise_buy_url
+
     return {
         'active': settings.local.sub_active,
         'status': settings.local.sub_status,
@@ -144,6 +168,9 @@ def dict():
         'trial_end': settings.local.sub_trial_end,
         'cancel_at_period_end': settings.local.sub_cancel_at_period_end,
         'balance': settings.local.sub_balance,
+        'portal_url': portal_url,
+        'premium_buy_url': premium_buy_url,
+        'enterprise_buy_url': enterprise_buy_url,
         'url_key': url_key,
     }
 
