@@ -345,6 +345,10 @@ class ServerInstance(object):
         if self.server.protocol == 'udp':
             server_conf += 'replay-window 128\n'
 
+        if settings.vpn.max_routes_per_client:
+            server_conf += 'max-routes-per-client %s\n' % \
+                settings.vpn.max_routes_per_client
+
         if self.server.mss_fix:
             server_conf += 'mssfix %s\n' % self.server.mss_fix
 
