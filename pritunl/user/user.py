@@ -553,6 +553,12 @@ class User(mongo.MongoObject):
             return False
         elif RADIUS_SSO in modes:
             if cached:
+                logger.info(
+                    'Client authentication cached, skipping Radius', 'sso',
+                    user_name=self.user.name,
+                    org_name=self.user.org.name,
+                    server_name=self.server.name,
+                )
                 return True
             try:
                 return sso.verify_radius(self.name, password)[0]
