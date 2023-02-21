@@ -8,6 +8,9 @@ define([
     defaults: {
       'card': null,
       'email': null,
+      'premium_buy_url': null,
+      'enterprise_buy_url': null,
+      'portal_url': null,
       'url_key': null,
       'active': null,
       'status': null,
