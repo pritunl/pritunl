@@ -341,7 +341,7 @@ class User(mongo.MongoObject):
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
 
-    def sso_auth_check(self, svr, password, remote_ip):
+    def sso_auth_check(self, svr, password, remote_ip, cached):
         modes = self.get_auth_modes(svr)
         auth_server = AUTH_SERVER
         if settings.app.dedicated:
@@ -552,6 +552,8 @@ class User(mongo.MongoObject):
                 )
             return False
         elif RADIUS_SSO in modes:
+            if cached:
+                return True
             try:
                 return sso.verify_radius(self.name, password)[0]
             except:
