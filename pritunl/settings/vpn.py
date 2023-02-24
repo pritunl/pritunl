@@ -32,6 +32,7 @@ class SettingsVpn(SettingsGroupMongo):
         'nat_routes': True,
         'ipv6_prefix': 'fd00',
         'ipv6_prefix_wg': 'fd01',
+        'fast_io': False,
         'ncp_disable': False,
         'stress_test': False,
         'vxlan_id_start': 9700,
