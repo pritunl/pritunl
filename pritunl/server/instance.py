@@ -352,6 +352,9 @@ class ServerInstance(object):
         if self.server.mss_fix:
             server_conf += 'mssfix %s\n' % self.server.mss_fix
 
+        if self.server.multihome:
+            server_conf += 'multihome\n'
+
         if settings.vpn.ncp_disable:
             server_conf += 'ncp-disable\n'
 
@@ -1705,6 +1708,8 @@ class ServerInstance(object):
                 bridge_interface=self.bridge_interface,
                 interface_wg=self.interface_wg,
                 vxlan=self.vxlan,
+                mss_fix=self.server.mss_fix,
+                multihome=self.server.multihome,
             )
             try:
                 while True:
@@ -1757,6 +1762,8 @@ class ServerInstance(object):
                     bridge_interface=self.bridge_interface,
                     interface_wg=self.interface_wg,
                     vxlan=self.vxlan,
+                    mss_fix=self.server.mss_fix,
+                    multihome=self.server.multihome,
                 )
 
             if not self.clean_exit:
