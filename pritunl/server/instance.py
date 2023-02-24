@@ -358,6 +358,9 @@ class ServerInstance(object):
         if settings.vpn.ncp_disable:
             server_conf += 'ncp-disable\n'
 
+        if settings.vpn.fast_io:
+            server_conf += 'fast-io\n'
+
         # Pritunl v0.10.x did not include comp-lzo in client conf
         # if lzo_compression is adaptive dont include comp-lzo in server conf
         if self.server.lzo_compression == ADAPTIVE:
