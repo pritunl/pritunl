@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add multihome option to server settings
+
 Version 1.30.3431.73 2023-02-03
 -------------------------------
 
