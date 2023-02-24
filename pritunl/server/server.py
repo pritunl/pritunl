@@ -84,6 +84,7 @@ dict_fields = [
     'debug',
     'pre_connect_msg',
     'mss_fix',
+    'multihome',
     'auth_public_key',
     'auth_private_key',
     'auth_box_public_key',
@@ -138,6 +139,7 @@ class Server(mongo.MongoObject):
         'debug',
         'pre_connect_msg',
         'mss_fix',
+        'multihome',
         'cipher',
         'hash',
         'block_outside_dns',
@@ -221,7 +223,7 @@ class Server(mongo.MongoObject):
             session_timeout=None, allowed_devices=None, max_clients=None,
             max_devices=None, replica_count=None, vxlan=None,
             dns_mapping=None, debug=None, pre_connect_msg=None,
-            mss_fix=None, **kwargs):
+            mss_fix=None, multihome=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if 'network' in self.loaded_fields:
@@ -320,6 +322,8 @@ class Server(mongo.MongoObject):
             self.pre_connect_msg = pre_connect_msg
         if mss_fix is not None:
             self.mss_fix = mss_fix
+        if multihome is not None:
+            self.multihome = multihome
 
     @cached_static_property
     def collection(cls):
@@ -414,6 +418,7 @@ class Server(mongo.MongoObject):
             'debug': True if self.debug else False,
             'pre_connect_msg': self.pre_connect_msg,
             'mss_fix': self.mss_fix,
+            'multihome': self.multihome,
         }
 
     @property
