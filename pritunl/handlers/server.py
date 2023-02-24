@@ -466,6 +466,12 @@ def server_put_post(server_id=None):
         if mss_fix:
             mss_fix = int(mss_fix) or None
 
+    multihome = False
+    multihome_def = False
+    if 'multihome' in flask.request.json:
+        multihome_def = True
+        multihome = True if flask.request.json['multihome'] else False
+
     lzo_compression = False
     lzo_compression_def = False
     if 'lzo_compression' in flask.request.json:
@@ -638,6 +644,7 @@ def server_put_post(server_id=None):
             debug=debug,
             pre_connect_msg=pre_connect_msg,
             mss_fix=mss_fix,
+            multihome=multihome,
         )
         svr.add_host(settings.local.host_id)
     else:
@@ -730,6 +737,8 @@ def server_put_post(server_id=None):
             svr.pre_connect_msg = pre_connect_msg
         if mss_fix_def:
             svr.mss_fix = mss_fix
+        if multihome_def:
+            svr.multihome = multihome
 
         changed = svr.changed
 
