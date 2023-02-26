@@ -38,7 +38,18 @@ sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.
 sudo yum -y install oracle-epel-release-el8
 sudo yum-config-manager --enable ol8_developer_EPEL
 
-sudo yum -y install python3-pip python3-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel python3-virtualenv wget tar
+sudo yum -y install openssl-devel bzip2-devel libffi-devel sqlite-devel xz-devel zlib-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel wget tar policycoreutils-python-utils
+
+wget https://www.python.org/ftp/python/3.9.16/Python-3.9.16.tar.xz
+echo "22dddc099246dd2760665561e8adb7394ea0cc43a72684c6480f9380f7786439 Python-3.9.16.tar.xz" | sha256sum -c -
+
+tar xf Python-3.9.16.tar.xz
+cd ./Python-3.9.16
+mkdir /usr/lib/pritunl
+./configure --prefix=/usr --libdir=/usr/lib --enable-optimizations --enable-ipv6 --enable-loadable-sqlite-extensions --disable-shared --with-lto --with-platlibdir=lib
+make DESTDIR="/usr/lib/pritunl" install
+/usr/lib/pritunl/usr/bin/python3 -m ensurepip --upgrade
+/usr/lib/pritunl/usr/bin/python3 -m pip install --upgrade pip
 
 wget https://go.dev/dl/go1.19.3.linux-amd64.tar.gz
 echo "74b9640724fd4e6bb0ed2a1bc44ae813a03f1e72a4c76253e2d5c015494430ba go1.19.3.linux-amd64.tar.gz" | sha256sum -c -
@@ -48,7 +59,6 @@ sudo tar -C /usr/local -xf go1.19.3.linux-amd64.tar.gz
 rm -f go1.19.3.linux-amd64.tar.gz
 
 tee -a ~/.bashrc << EOF
-export GO111MODULE=on
 export GOPATH=\$HOME/go
 export PATH=/usr/local/go/bin:\$PATH
 EOF
@@ -78,9 +88,9 @@ tar xf $VERSION.tar.gz
 rm $VERSION.tar.gz
 cd ./pritunl-$VERSION
 /usr/lib/pritunl/bin/python setup.py build
-sudo /usr/lib/pritunl/bin/pip3 install --require-hashes -r requirements.txt
-sudo /usr/lib/pritunl/bin/python setup.py install
-sudo ln -sf /usr/lib/pritunl/bin/pritunl /usr/bin/pritunl
+sudo /usr/lib/pritunl/usr/bin/pip3 install --require-hashes -r requirements.txt
+sudo /usr/lib/pritunl/usr/bin/python3 setup.py install
+sudo ln -sf /usr/lib/pritunl/usr/bin/pritunl /usr/bin/pritunl
 
 cd selinux8
 ln -s /usr/share/selinux/devel/Makefile
@@ -101,6 +111,12 @@ sudo restorecon -v /usr/lib/pritunl/bin/pritunl || true
 sudo restorecon -v /usr/lib/pritunl/bin/python || true
 sudo restorecon -v /usr/lib/pritunl/bin/python3 || true
 sudo restorecon -v /usr/lib/pritunl/bin/python3.6 || true
+sudo restorecon -v /usr/lib/pritunl/bin/python3.9 || true
+sudo restorecon -v /usr/lib/pritunl/usr/bin/pritunl || true
+sudo restorecon -v /usr/lib/pritunl/usr/bin/python || true
+sudo restorecon -v /usr/lib/pritunl/usr/bin/python3 || true
+sudo restorecon -v /usr/lib/pritunl/usr/bin/python3.6 || true
+sudo restorecon -v /usr/lib/pritunl/usr/bin/python3.9 || true
 sudo restorecon -v /usr/bin/pritunl-web || true
 sudo restorecon -v /usr/bin/pritunl-dns || true
 sudo restorecon -v -R /var/lib/pritunl || true
