@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix connection issues
+
 Version 1.32.3453.48 2023-02-25
 -------------------------------
 
