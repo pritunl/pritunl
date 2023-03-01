@@ -2478,7 +2478,7 @@ class Clients(object):
             return
 
         if not usr.sso_auth_check(self.server, client['password'],
-            client['real_address']):
+                client['real_address'], True):
             logger.error('User failed auth update check',
                 'server',
                 server_id=self.server.id,
