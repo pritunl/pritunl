@@ -453,6 +453,12 @@ def fnv64a(s):
         hval = (hval * prime64) % uint64_max
     return hval
 
+def base64raw_decode(data):
+    return base64.b64decode(data.encode() + b'=' * (-len(data) % 4))
+
+def base64raw_encode(data):
+    return base64.b64encode(data).strip(b'=').decode('utf8')
+
 def sync_public_ip(attempts=1, timeout=5):
     from pritunl import logger
 
