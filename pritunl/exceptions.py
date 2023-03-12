@@ -159,3 +159,18 @@ class AwsError(BaseError):
 
 class VpcRouteTableNotFound(AwsError):
     pass
+
+
+class DeviceUnregistered(Exception):
+    def __init__(self, message, reg_key):
+        self.reg_key = reg_key
+        super().__init__(message)
+
+class DeviceRegistrationLimit(Exception):
+    pass
+
+class DeviceRegistrationInvalid(Exception):
+    pass
+
+class DeviceNotFound(Exception):
+    pass
