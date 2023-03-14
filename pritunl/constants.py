@@ -961,6 +961,16 @@ REQUIRES_SUPER_USER_MSG = 'This administrator action can only be ' + \
 CANNOT_DISABLE_AUDITING = 'cannot_disable_auditing'
 CANNOT_DISABLE_AUDITING_MSG = 'Auditing cannot be disabled from web console.'
 
+DEVICE_NOT_FOUND = 'device_not_found'
+DEVICE_NOT_FOUND_MSG = 'Device not found.'
+
+DEVICE_REGISTRATION_KEY_INVALID = 'device_registration_key_invalid'
+DEVICE_REGISTRATION_KEY_INVALID_MSG = 'Device registration key is invalid.'
+
+DEVICE_REGISTRATION_LIMIT = 'device_registration_limit'
+DEVICE_REGISTRATION_LIMIT_MSG = 'Too many invalid device registration ' \
+    'attempts, device removed.'
+
 RANDOM_ONE = (
     'snowy',
     'restless',
