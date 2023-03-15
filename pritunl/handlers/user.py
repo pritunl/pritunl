@@ -792,7 +792,12 @@ def user_otp_secret_put(org_id, user_id):
 
     user.generate_otp_secret()
     user.commit()
+
+    user.clear_auth_cache()
+    user.disconnect()
+
     event.Event(type=USERS_UPDATED, resource_id=org.id)
+
     return utils.jsonify(user.dict())
 
 @app.app.route('/user/<org_id>/<user_id>/audit', methods=['GET'])
