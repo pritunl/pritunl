@@ -17,6 +17,7 @@ def get_user_id(username):
             _getokta_url() + '/api/v1/users/%s' % urllib.parse.quote(username),
             headers={
                 'Accept': 'application/json',
+                'User-Agent': 'Pritunl',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
@@ -68,6 +69,7 @@ def auth_okta(username):
             '/api/v1/apps/%s/users/%s' % (okta_app_id, user_id),
             headers={
                 'Accept': 'application/json',
+                'User-Agent': 'Pritunl',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
@@ -125,6 +127,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
             _getokta_url() + '/api/v1/users/%s/factors' % user_id,
             headers={
                 'Accept': 'application/json',
+                'User-Agent': 'Pritunl',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
             },
         )
@@ -204,6 +207,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 user_id, factor_id),
             headers={
                 'Accept': 'application/json',
+                'User-Agent': 'Pritunl',
                 'Content-Type': 'application/json',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
                 'X-Forwarded-For': remote_ip,
@@ -286,6 +290,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 poll_url,
                 headers={
                     'Accept': 'application/json',
+                    'User-Agent': 'Pritunl',
                     'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
                 },
             )
