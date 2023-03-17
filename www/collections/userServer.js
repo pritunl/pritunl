@@ -2,7 +2,7 @@ define([
   'jquery',
   'underscore',
   'backbone',
-  'models/serverOrg'
+  'models/userServer'
 ], function($, _, Backbone, UserServerModel) {
   'use strict';
   var UserServerCollection = Backbone.Collection.extend({
