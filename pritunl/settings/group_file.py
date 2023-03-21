@@ -14,6 +14,7 @@ class SettingsGroupFile(SettingsGroupBase):
         if not os.path.isfile(self.path):
             return
 
+        os.chmod(self.path, 0o600)
         with open(self.path, 'r') as settings_file:
             doc = json.loads(settings_file.read())
 
@@ -30,4 +31,5 @@ class SettingsGroupFile(SettingsGroupBase):
                     doc[field] = getattr(self, field)
 
         with open(self.path, 'w') as settings_file:
+            os.chmod(self.path, 0o600)
             settings_file.write(json.dumps(doc, indent=4))
