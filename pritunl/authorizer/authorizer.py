@@ -72,6 +72,7 @@ class Authorizer(object):
         logger.info(
             'Authenticating user',
             'authorizer',
+            user_name=self.user.name,
             factors=self.modes,
         )
 
@@ -296,6 +297,7 @@ class Authorizer(object):
             logger.info(
                 'Storing authentication cache token',
                 'authorizer',
+                user_name=self.user.name,
                 factors=self.modes,
             )
 
