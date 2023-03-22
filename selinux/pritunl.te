@@ -134,7 +134,7 @@ miscfiles_read_localization(pritunl_t)
 #################################
 # etc
 #################################
-allow pritunl_t etc_t:file write;
+allow pritunl_t etc_t:file { setattr write };
 # files_etc_filetrans
 
 #################################
