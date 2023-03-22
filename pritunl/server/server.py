@@ -50,6 +50,7 @@ dict_fields = [
     'network_start',
     'network_end',
     'dynamic_firewall',
+    'device_auth',
     'restrict_routes',
     'bind_address',
     'port',
@@ -117,6 +118,7 @@ class Server(mongo.MongoObject):
         'network_start',
         'network_end',
         'dynamic_firewall',
+        'device_auth',
         'restrict_routes',
         'multi_device',
         'routes',
@@ -185,6 +187,7 @@ class Server(mongo.MongoObject):
         'tls_auth': True,
         'lzo_compression': False,
         'dynamic_firewall': False,
+        'device_auth': False,
         'restrict_routes': True,
         'inter_client': True,
         'ping_interval': 10,
@@ -211,19 +214,19 @@ class Server(mongo.MongoObject):
 
     def __init__(self, name=None, groups=None, network_wg=None,
             network=None, network_mode=None, network_start=None,
-            network_end=None, dynamic_firewall=None, restrict_routes=None,
-            wg=None, ipv6=None, ipv6_firewall=None, bind_address=None,
-            port=None, protocol=None, port_wg=None, dh_param_bits=None,
-            multi_device=None, dns_servers=None, search_domain=None,
-            otp_auth=None, sso_auth=None, cipher=None, hash=None,
-            block_outside_dns=None, jumbo_frames=None, lzo_compression=None,
-            inter_client=None, ping_interval=None, ping_timeout=None,
-            ping_timeout_wg=None, link_ping_interval=None,
-            link_ping_timeout=None, inactive_timeout=None,
-            session_timeout=None, allowed_devices=None, max_clients=None,
-            max_devices=None, replica_count=None, vxlan=None,
-            dns_mapping=None, debug=None, pre_connect_msg=None,
-            mss_fix=None, multihome=None, **kwargs):
+            network_end=None, dynamic_firewall=None, device_auth=None,
+            restrict_routes=None, wg=None, ipv6=None, ipv6_firewall=None,
+            bind_address=None, port=None, protocol=None, port_wg=None,
+            dh_param_bits=None, multi_device=None, dns_servers=None,
+            search_domain=None, otp_auth=None, sso_auth=None, cipher=None,
+            hash=None, block_outside_dns=None, jumbo_frames=None,
+            lzo_compression=None, inter_client=None, ping_interval=None,
+            ping_timeout=None, ping_timeout_wg=None,
+            link_ping_interval=None, link_ping_timeout=None,
+            inactive_timeout=None, session_timeout=None,
+            allowed_devices=None, max_clients=None, max_devices=None,
+            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
+            pre_connect_msg=None, mss_fix=None, multihome=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if 'network' in self.loaded_fields:
@@ -250,6 +253,8 @@ class Server(mongo.MongoObject):
             self.network_end = network_end
         if dynamic_firewall is not None:
             self.dynamic_firewall = dynamic_firewall
+        if device_auth is not None:
+            self.device_auth = device_auth
         if restrict_routes is not None:
             self.restrict_routes = restrict_routes
         if wg is not None:
@@ -390,6 +395,7 @@ class Server(mongo.MongoObject):
             'network_start': self.network_start,
             'network_end': self.network_end,
             'dynamic_firewall': self.dynamic_firewall,
+            'device_auth': self.device_auth,
             'restrict_routes': self.restrict_routes,
             'multi_device': self.multi_device,
             'dns_servers': self.dns_servers,
