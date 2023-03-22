@@ -11,6 +11,8 @@ from pritunl import ipaddress
 from pritunl import sso
 from pritunl import auth
 from pritunl import plugins
+from pritunl import event
+from pritunl import database
 
 import tarfile
 import zipfile
@@ -28,6 +30,7 @@ import requests
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.primitives.asymmetric.utils import Prehashed
 
@@ -56,6 +59,7 @@ class User(mongo.MongoObject):
         'dns_servers',
         'dns_suffix',
         'port_forwarding',
+        'devices',
     }
     fields_default = {
         'name': '',
@@ -164,6 +168,25 @@ class User(mongo.MongoObject):
         if self.last_active:
             last_active = int(self.last_active.strftime('%s'))
 
+        devices = self.devices or []
+        new_devices = []
+        for device in devices:
+            timestamp = device.get('timestamp')
+            if timestamp:
+                timestamp = timestamp.strftime('%s')
+            else:
+                timestamp = None
+
+            new_devices.append({
+                'id': device.get('id'),
+                'user_id': self.id,
+                'org_id': self.org.id,
+                'name': device.get('name'),
+                'platform': device.get('platform'),
+                'registered': device.get('registered'),
+                'timestamp': timestamp,
+            })
+
         return {
             'id': self.id,
             'organization': self.org.id,
@@ -184,6 +207,7 @@ class User(mongo.MongoObject):
             'dns_servers': self.dns_servers,
             'dns_suffix': self.dns_suffix,
             'port_forwarding': self.port_forwarding,
+            'devices': new_devices,
         }
 
     def initialize(self):
@@ -791,6 +815,7 @@ class User(mongo.MongoObject):
             'sync_hosts': svr.get_sync_remotes(),
             'sync_hash': conf_hash,
             'dynamic_firewall': svr.dynamic_firewall,
+            'device_auth': svr.device_auth,
             'sso_auth': svr.sso_auth,
             'password_mode': self._get_password_mode(svr),
             'push_auth': True if self.get_push_type(svr) else False,
@@ -871,6 +896,7 @@ class User(mongo.MongoObject):
                 server_network_start=svr.network_start,
                 server_network_stop=svr.network_end,
                 server_dynamic_firewall=svr.dynamic_firewall,
+                server_device_auth=svr.device_auth,
                 server_restrict_routes=svr.restrict_routes,
                 server_bind_address=svr.bind_address,
                 server_onc_hostname=None,
