@@ -205,7 +205,8 @@ class Authorizer(object):
                 self.has_token = True
 
     def _check_fw_token(self):
-        if not self.server.dynamic_firewall or self.stage == 'open' or \
+        if (not self.server.dynamic_firewall and not
+                self.server.device_auth) or self.stage == 'open' or \
                 self.has_link:
             return
 
