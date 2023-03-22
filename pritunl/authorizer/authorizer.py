@@ -293,6 +293,12 @@ class Authorizer(object):
     def _update_token(self):
         if settings.app.sso_client_cache and self.server_auth_token and \
                 not self.has_token:
+            logger.info(
+                'Storing authentication cache token',
+                'authorizer',
+                factors=self.modes,
+            )
+
             self.sso_client_cache_collection.update({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
