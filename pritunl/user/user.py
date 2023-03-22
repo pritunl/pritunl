@@ -1263,6 +1263,157 @@ class User(mongo.MongoObject):
             Prehashed(hashes.SHA512()),
         )
 
+    def device_verify_sig(self, device_name, platform, pub_key,
+        digest, signature):
+
+        # TODO remove registration key from admin json data
+        # TODO limit to 3 unregistered devices
+
+        public_key = serialization.load_der_public_key(
+            pub_key,
+        )
+
+        pub_key_enc = public_key.public_bytes(
+            encoding=serialization.Encoding.DER,
+            format=serialization.PublicFormat.SubjectPublicKeyInfo,
+        )
+        pub_key_enc64 = utils.base64raw_encode(pub_key_enc)
+
+        devices = self.devices or []
+        dev_id = None
+        dev_index = None
+        reg_key = None
+        match = False
+        for i, device in enumerate(devices):
+            if utils.const_compare(device.get('pub_key', ''), pub_key_enc64):
+                dev_index = i
+                dev_id = device.get('id')
+                if device.get('registered'):
+                    match = True
+                else:
+                    reg_key = device.get('reg_key')
+                break
+
+        if not match:
+            if not reg_key:
+                reg_key = utils.rand_str_ne(
+                    settings.user.device_key_length).upper()
+
+            device = {
+                'id': dev_id or database.ObjectId(),
+                'name': device_name,
+                'platform': platform,
+                'pub_key': pub_key_enc64,
+                'reg_key': reg_key,
+                'registered': False,
+                'timestamp': utils.now(),
+            }
+
+            if dev_index is not None:
+                devices[dev_index] = device
+            else:
+                devices.append(device)
+
+            dev_names = set()
+            dev_pub_keys = set()
+            dev_reg_keys = set()
+
+            new_devices = []
+            for device in devices:
+                dev_name = device.get('name')
+                dev_pub_key = device.get('pub_key')
+                dev_reg_key = device.get('reg_key')
+
+                if not dev_name or dev_name in dev_names:
+                    continue
+                if not dev_pub_key or dev_pub_key in dev_pub_keys:
+                    continue
+                if dev_reg_key and (dev_reg_key in dev_reg_keys):
+                    continue
+
+                dev_names.add(dev_name)
+                dev_pub_keys.add(dev_pub_key)
+                if dev_reg_key:
+                    dev_reg_keys.add(dev_reg_key)
+
+                new_devices.append(device)
+
+            self.devices = new_devices
+            self.commit('devices')
+
+            event.Event(type=USERS_UPDATED, resource_id=self.org_id)
+            event.Event(type=DEVICES_UPDATED, resource_id=self.org_id)
+
+            raise DeviceUnregistered('Device is not registed', reg_key)
+
+        public_key = serialization.load_der_public_key(
+            utils.base64raw_decode(pub_key_enc64),
+        )
+
+        public_key.verify(
+            signature,
+            digest,
+            ec.ECDSA(hashes.SHA256()),
+        )
+
+        device['timestamp'] = utils.now()
+        devices[dev_index] = device
+
+        self.devices = devices
+        self.commit('devices')
+
+        event.Event(type=USERS_UPDATED, resource_id=self.org_id)
+        event.Event(type=DEVICES_UPDATED, resource_id=self.org_id)
+
+    def device_register(self, device_id, reg_key):
+        devices = self.devices or []
+
+        if not device_id or not reg_key:
+            raise DeviceNotFound()
+
+        for i, device in enumerate(devices):
+            if device.get('id') == device_id:
+                if utils.const_compare(device.get('reg_key', ''), reg_key):
+                    device['registered'] = True
+                    device['reg_key'] = None
+                    device['reg_count'] = None
+
+                    devices[i] = device
+
+                    self.devices = devices
+                    self.commit('devices')
+                    return
+                else:
+                    new_count = (device.get('reg_count') or 0) + 1
+                    device['reg_count'] = new_count
+                    if new_count >= settings.user.device_reg_attempts:
+                        devices.pop(i)
+
+                        self.devices = devices
+                        self.commit('devices')
+
+                        raise DeviceRegistrationLimit()
+
+                    raise DeviceRegistrationInvalid()
+
+        raise DeviceNotFound()
+
+    def device_remove(self, device_id):
+        devices = self.devices or []
+
+        if not device_id:
+            raise DeviceNotFound()
+
+        for i, device in enumerate(devices):
+            if device.get('id') == device_id:
+                devices.pop(i)
+
+                self.devices = devices
+                self.commit('devices')
+                return
+
+        raise DeviceNotFound()
+
     def send_key_email(self, key_link_domain):
         user_key_link = self.org.create_user_key_link(self.id)
 
