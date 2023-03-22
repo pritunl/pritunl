@@ -88,6 +88,7 @@ def user_get(org_id, user_id=None, page=None):
         'dns_servers',
         'dns_suffix',
         'port_forwarding',
+        'devices',
     )
 
     if user_id:
@@ -815,3 +816,77 @@ def user_audit_get(org_id, user_id):
     if settings.app.demo_mode:
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
+
+@app.app.route('/user/<org_id>/<user_id>/device/<device_id>',
+    methods=['PUT'])
+@auth.session_auth
+def user_device_put(org_id, user_id, device_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    org = organization.get_by_id(org_id)
+    usr = org.get_user(user_id)
+
+    reg_key = flask.request.json.get('reg_key')
+    if not reg_key:
+        return utils.jsonify({
+            'error': DEVICE_NOT_FOUND,
+            'error_msg': DEVICE_NOT_FOUND_MSG,
+        }, 400)
+
+    reg_key = reg_key.upper()
+
+    try:
+        usr.device_register(device_id, reg_key)
+    except DeviceNotFound:
+        return utils.jsonify({
+            'error': DEVICE_NOT_FOUND,
+            'error_msg': DEVICE_NOT_FOUND_MSG,
+        }, 400)
+    except DeviceRegistrationLimit:
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=DEVICES_UPDATED, resource_id=org.id)
+
+        return utils.jsonify({
+            'error': DEVICE_REGISTRATION_LIMIT,
+            'error_msg': DEVICE_REGISTRATION_LIMIT_MSG,
+        }, 400)
+    except DeviceRegistrationInvalid:
+        event.Event(type=USERS_UPDATED, resource_id=org.id)
+        event.Event(type=DEVICES_UPDATED, resource_id=org.id)
+
+        return utils.jsonify({
+            'error': DEVICE_REGISTRATION_KEY_INVALID,
+            'error_msg': DEVICE_REGISTRATION_KEY_INVALID_MSG,
+        }, 400)
+
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
+    event.Event(type=DEVICES_UPDATED, resource_id=org.id)
+
+    return utils.jsonify({})
+
+@app.app.route('/user/<org_id>/<user_id>/device/<device_id>',
+    methods=['DELETE'])
+@auth.session_auth
+def user_device_delete(org_id, user_id, device_id):
+    if settings.app.demo_mode:
+        return utils.demo_blocked()
+
+    org = organization.get_by_id(org_id)
+    usr = org.get_user(user_id)
+
+    try:
+        usr.device_remove(device_id)
+    except DeviceNotFound:
+        return utils.jsonify({
+            'error': DEVICE_NOT_FOUND,
+            'error_msg': DEVICE_NOT_FOUND_MSG,
+        }, 400)
+
+    usr.clear_auth_cache()
+    usr.disconnect()
+
+    event.Event(type=USERS_UPDATED, resource_id=org.id)
+    event.Event(type=DEVICES_UPDATED, resource_id=org.id)
+
+    return utils.jsonify({})
