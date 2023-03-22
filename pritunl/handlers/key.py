@@ -929,11 +929,12 @@ def key_wg_post(org_id, user_id, server_id):
     box_nonce64 = flask.request.json.get('nonce')
     public_key64 = flask.request.json.get('public_key')
     signature64 = flask.request.json.get('signature')
+    device_signature64 = flask.request.json.get('device_signature')
 
     auth_string = '&'.join([
         usr.sync_token, auth_timestamp, auth_nonce, flask.request.method,
         flask.request.path, cipher_data64, box_nonce64, public_key64,
-        signature64])
+        signature64] + ([device_signature64] if device_signature64 else []))
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
         journal.entry(
@@ -1022,6 +1023,7 @@ def key_wg_post(org_id, user_id, server_id):
     client_platform = utils.filter_str(key_data['platform'])
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
+    client_device_key64 = utils.filter_str(key_data.get('device_key'))
     client_mac_addr = utils.filter_str(key_data['mac_addr'])
     client_mac_addrs = key_data['mac_addrs']
     if client_mac_addrs:
@@ -1079,6 +1081,80 @@ def key_wg_post(org_id, user_id, server_id):
             event_long='Public key invalid',
         )
         return flask.abort(417)
+
+    if svr.device_auth:
+        if not client_device_key64 or not device_signature64:
+            journal.entry(
+                journal.USER_WG_FAILURE,
+                usr.journal_data,
+                remote_address=remote_addr,
+                event_long='Invalid device signature',
+            )
+            return utils.jsonify({
+                'error': 'device_signature_missing',
+                'error_msg': 'Device signature missing.',
+            }, 400)
+
+        try:
+            usr.device_verify_sig(
+                client_device_name,
+                client_platform,
+                utils.base64raw_decode(client_device_key64),
+                data_hash,
+                utils.base64raw_decode(device_signature64),
+            )
+        except DeviceUnregistered as err:
+            send_data = {
+                'allow': False,
+                'token': None,
+                'reason': None,
+                'reg_key': err.reg_key,
+                'remote': settings.local.host.public_addr,
+                'remote6': settings.local.host.public_addr6,
+            }
+
+            send_nonce = nacl.utils.random(nacl.public.Box.NONCE_SIZE)
+            nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+            send_cipher_data = nacl_box.encrypt(
+                json.dumps(send_data).encode(), send_nonce)
+            send_cipher_data = send_cipher_data[nacl.public.Box.NONCE_SIZE:]
+
+            send_nonce64 = base64.b64encode(send_nonce).decode()
+            send_cipher_data64 = base64.b64encode(send_cipher_data).decode()
+
+            usr.audit_event('user_profile',
+                'User device registration required',
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.USER_OVPN_FAILURE,
+                usr.journal_data,
+                remote_address=remote_addr,
+                event_long='Device registration required',
+            )
+
+            sync_signature = base64.b64encode(hmac.new(
+                usr.sync_secret.encode(),
+                (send_cipher_data64 + '&' + send_nonce64).encode(),
+                hashlib.sha512).digest()).decode()
+
+            return utils.jsonify({
+                'data': send_cipher_data64,
+                'nonce': send_nonce64,
+                'signature': sync_signature,
+            })
+        except InvalidSignature:
+            journal.entry(
+                journal.USER_WG_FAILURE,
+                usr.journal_data,
+                remote_address=remote_addr,
+                event_long='Invalid device signature',
+            )
+            return utils.jsonify({
+                'error': 'device_signature_invalid',
+                'error_msg': 'Device signature invalid.',
+            }, 400)
 
     instance = server.get_instance(server_id)
     if not instance or instance.state != 'running':
@@ -1534,11 +1610,12 @@ def key_ovpn_post(org_id, user_id, server_id):
     box_nonce64 = flask.request.json.get('nonce')
     public_key64 = flask.request.json.get('public_key')
     signature64 = flask.request.json.get('signature')
+    device_signature64 = flask.request.json.get('device_signature')
 
     auth_string = '&'.join([
         usr.sync_token, auth_timestamp, auth_nonce, flask.request.method,
         flask.request.path, cipher_data64, box_nonce64, public_key64,
-        signature64])
+        signature64] + ([device_signature64] if device_signature64 else []))
 
     if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
         journal.entry(
@@ -1627,6 +1704,7 @@ def key_ovpn_post(org_id, user_id, server_id):
     client_platform = utils.filter_str(key_data['platform'])
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
+    client_device_key64 = utils.filter_str(key_data.get('device_key'))
     client_mac_addr = utils.filter_str(key_data['mac_addr'])
     client_mac_addrs = key_data['mac_addrs']
     if client_mac_addrs:
@@ -1658,6 +1736,80 @@ def key_ovpn_post(org_id, user_id, server_id):
     else:
         remote_addr = str(ipaddress.IPv4Address(remote_addr))
 
+    if svr.device_auth:
+        if not client_device_key64 or not device_signature64:
+            journal.entry(
+                journal.USER_WG_FAILURE,
+                usr.journal_data,
+                remote_address=remote_addr,
+                event_long='Invalid device signature',
+            )
+            return utils.jsonify({
+                'error': 'device_signature_missing',
+                'error_msg': 'Device signature missing.',
+            }, 400)
+
+        try:
+            usr.device_verify_sig(
+                client_device_name,
+                client_platform,
+                utils.base64raw_decode(client_device_key64),
+                data_hash,
+                utils.base64raw_decode(device_signature64),
+            )
+        except DeviceUnregistered as err:
+            send_data = {
+                'allow': False,
+                'token': None,
+                'reason': None,
+                'reg_key': err.reg_key,
+                'remote': settings.local.host.public_addr,
+                'remote6': settings.local.host.public_addr6,
+            }
+
+            send_nonce = nacl.utils.random(nacl.public.Box.NONCE_SIZE)
+            nacl_box = nacl.public.Box(priv_key, sender_pub_key)
+            send_cipher_data = nacl_box.encrypt(
+                json.dumps(send_data).encode(), send_nonce)
+            send_cipher_data = send_cipher_data[nacl.public.Box.NONCE_SIZE:]
+
+            send_nonce64 = base64.b64encode(send_nonce).decode()
+            send_cipher_data64 = base64.b64encode(send_cipher_data).decode()
+
+            usr.audit_event('user_profile',
+                'User device registration required',
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.USER_OVPN_FAILURE,
+                usr.journal_data,
+                remote_address=remote_addr,
+                event_long='Device registration required',
+            )
+
+            sync_signature = base64.b64encode(hmac.new(
+                usr.sync_secret.encode(),
+                (send_cipher_data64 + '&' + send_nonce64).encode(),
+                hashlib.sha512).digest()).decode()
+
+            return utils.jsonify({
+                'data': send_cipher_data64,
+                'nonce': send_nonce64,
+                'signature': sync_signature,
+            })
+        except InvalidSignature:
+            journal.entry(
+                journal.USER_WG_FAILURE,
+                usr.journal_data,
+                remote_address=remote_addr,
+                event_long='Invalid device signature',
+            )
+            return utils.jsonify({
+                'error': 'device_signature_invalid',
+                'error_msg': 'Device signature invalid.',
+            }, 400)
+
     instance = server.get_instance(server_id)
     if not instance or instance.state != 'running':
         return flask.abort(429)
@@ -1665,7 +1817,8 @@ def key_ovpn_post(org_id, user_id, server_id):
     if instance.server.sso_auth:
         return _key_request_init(org.id, usr.id, svr.id, 'ovpn')
 
-    if not instance.server.dynamic_firewall:
+    if not instance.server.dynamic_firewall and \
+            not instance.server.device_auth:
         return flask.abort(431)
 
     clients = instance.instance_com.clients
