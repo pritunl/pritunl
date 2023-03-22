@@ -107,3 +107,23 @@ def find_user_auth(name, auth_type):
         return None
 
     return usr
+
+def iter_unreg_devices():
+    cursor = User.collection.find({
+        'devices.registered': False,
+    }).sort('name')
+
+    for doc in cursor:
+        devices = doc.get('devices')
+        if not devices:
+            continue
+
+        for device in devices:
+            yield {
+                'id': device.get('id'),
+                'org_id': doc.get('org_id'),
+                'user_id': doc.get('_id'),
+                'user_name': doc.get('name'),
+                'name': device.get('name'),
+                'platform': device.get('platform'),
+            }
