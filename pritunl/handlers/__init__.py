@@ -1,6 +1,7 @@
 import pritunl.handlers.errors
 import pritunl.handlers.auth
 import pritunl.handlers.before_request
+import pritunl.handlers.device
 import pritunl.handlers.event
 import pritunl.handlers.host
 import pritunl.handlers.key
