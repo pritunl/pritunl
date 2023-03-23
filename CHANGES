@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add device authentication
+
 Version 1.32.3457.59 2023-03-01
 -------------------------------
 
