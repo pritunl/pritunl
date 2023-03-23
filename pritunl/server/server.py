@@ -1064,7 +1064,9 @@ class Server(mongo.MongoObject):
                 address = doc.get('auto_public_host') or \
                     doc['public_address'] or \
                     doc['auto_public_address']
-                if settings.app.server_port == 443:
+                if settings.app.server_port == 443 or \
+                        settings.app.reverse_proxy or \
+                        not settings.app.server_ssl:
                     remotes.add('https://%s' % address)
                 else:
                     remotes.add('https://%s:%s' % (
