@@ -214,6 +214,12 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="multihome-toggle toggle-form form-group">
+      <label>Multihome</label>
+      <div class="selector <%= multihome ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable multihome to allow UDP connections from multiple external IP addresses. This option will add overhead to VPN connections">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="vxlan-toggle toggle-form form-group">
       <label>VXLan Routing</label>
       <div class="selector <%= vxlan ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Use VXLan for routing client-to-client traffic with replicated servers">
