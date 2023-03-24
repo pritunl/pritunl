@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.32.3480.55 2023-03-24
+-------------------------------
 
 Fix device authentication issues
 
