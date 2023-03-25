@@ -909,6 +909,14 @@ def user_device_delete(org_id, user_id, device_id):
             'error_msg': DEVICE_NOT_FOUND_MSG,
         }, 400)
 
+    journal.entry(
+        journal.USER_DEVICE_DELETE,
+        usr.journal_data,
+        device_id=device_id,
+        remote_address=remote_addr,
+        event_long='User device removed',
+    )
+
     usr.clear_auth_cache()
     usr.disconnect()
 
