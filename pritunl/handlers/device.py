@@ -15,7 +15,7 @@ import flask
 @auth.session_auth
 def device_unregistered_get():
     if settings.app.demo_mode:
-        return utils.jsonify([]) # TODO
+        return utils.jsonify(DEMO_UNREGISTERED_DEVICES)
 
     devices = []
 
