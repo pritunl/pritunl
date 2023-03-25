@@ -332,6 +332,33 @@ DEMO_ADMIN_AUDIT_EVENTS = [
     },
 ]
 
+DEMO_UNREGISTERED_DEVICES = [
+    {
+        "id": "591ac2693eff2141a2182bec",
+        "org_id": "59875e033eff21276da0f0b9",
+        "user_id": "59875e053eff21276da0f0f3",
+        "user_name": "user1@domain.com",
+        "name": "macbook",
+        "platform": "darwin",
+    },
+    {
+        "id": "591ac2693eff2141a2182bef",
+        "org_id": "59875e033eff21276da0f0b9",
+        "user_id": "61c2320bf8e0d6a61a08a168",
+        "user_name": "user2@domain.com",
+        "name": "windows-latop",
+        "platform": "win",
+    },
+    {
+        "id": "591ac2693eff2141a2182bf2",
+        "org_id": "59875e033eff21276da0f0b9",
+        "user_id": "61c4498ff43304a36562119c",
+        "user_name": "user3@domain.com",
+        "name": "linux-desktop",
+        "platform": "linux",
+    },
+]
+
 DEMO_LOGS = [
     '[us-east][2016-03-08 04:35:40,616][INFO] Starting server',
     '[us-west][2016-03-08 04:35:56,616][INFO] Starting server',
