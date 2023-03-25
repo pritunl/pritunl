@@ -7,6 +7,7 @@ from pritunl import user
 from pritunl import organization
 from pritunl import settings
 from pritunl import event
+from pritunl import journal
 
 import flask
 
@@ -32,6 +33,7 @@ def device_register_put(org_id, user_id, device_id):
 
     org = organization.get_by_id(org_id)
     usr = org.get_user(user_id)
+    remote_addr = utils.get_remote_addr()
 
     reg_key = flask.request.json.get('reg_key')
     if not reg_key:
@@ -44,6 +46,14 @@ def device_register_put(org_id, user_id, device_id):
 
     try:
         usr.device_register(device_id, reg_key)
+
+        journal.entry(
+            journal.USER_DEVICE_REGISTER_SUCCESS,
+            usr.journal_data,
+            device_id=device_id,
+            remote_address=remote_addr,
+            event_long='User device registered',
+        )
     except DeviceNotFound:
         return utils.jsonify({
             'error': DEVICE_NOT_FOUND,
@@ -53,6 +63,14 @@ def device_register_put(org_id, user_id, device_id):
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=DEVICES_UPDATED, resource_id=org.id)
 
+        journal.entry(
+            journal.USER_DEVICE_REGISTER_FAILURE,
+            usr.journal_data,
+            device_id=device_id,
+            remote_address=remote_addr,
+            event_long='User device register failed, device limit',
+        )
+
         return utils.jsonify({
             'error': DEVICE_REGISTRATION_LIMIT,
             'error_msg': DEVICE_REGISTRATION_LIMIT_MSG,
@@ -60,6 +78,14 @@ def device_register_put(org_id, user_id, device_id):
     except DeviceRegistrationInvalid:
         event.Event(type=USERS_UPDATED, resource_id=org.id)
         event.Event(type=DEVICES_UPDATED, resource_id=org.id)
+
+        journal.entry(
+            journal.USER_DEVICE_REGISTER_FAILURE,
+            usr.journal_data,
+            device_id=device_id,
+            remote_address=remote_addr,
+            event_long='User device register failed, invalid code',
+        )
 
         return utils.jsonify({
             'error': DEVICE_REGISTRATION_KEY_INVALID,
@@ -80,6 +106,7 @@ def device_register_delete(org_id, user_id, device_id):
 
     org = organization.get_by_id(org_id)
     usr = org.get_user(user_id)
+    remote_addr = utils.get_remote_addr()
 
     try:
         usr.device_remove(device_id)
@@ -88,6 +115,14 @@ def device_register_delete(org_id, user_id, device_id):
             'error': DEVICE_NOT_FOUND,
             'error_msg': DEVICE_NOT_FOUND_MSG,
         }, 400)
+
+    journal.entry(
+        journal.USER_DEVICE_DELETE,
+        usr.journal_data,
+        device_id=device_id,
+        remote_address=remote_addr,
+        event_long='User device removed',
+    )
 
     event.Event(type=USERS_UPDATED, resource_id=org.id)
     event.Event(type=DEVICES_UPDATED, resource_id=org.id)

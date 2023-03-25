@@ -1103,6 +1103,16 @@ def key_wg_post(org_id, user_id, server_id):
                 data_hash,
                 utils.base64raw_decode(device_signature64),
             )
+
+            journal.entry(
+                journal.USER_DEVICE_AUTHENTICATE_SUCCESS,
+                usr.journal_data,
+                device_name=client_device_name,
+                device_platform=client_platform,
+                device_public_key=client_device_key64,
+                remote_address=remote_addr,
+                event_long='User verified device signature',
+            )
         except DeviceUnregistered as err:
             send_data = {
                 'allow': False,
@@ -1128,7 +1138,17 @@ def key_wg_post(org_id, user_id, server_id):
             )
 
             journal.entry(
-                journal.USER_OVPN_FAILURE,
+                journal.USER_DEVICE_CREATE,
+                usr.journal_data,
+                device_name=client_device_name,
+                device_platform=client_platform,
+                device_public_key=client_device_key64,
+                remote_address=remote_addr,
+                event_long='New user device request',
+            )
+
+            journal.entry(
+                journal.USER_WG_FAILURE,
                 usr.journal_data,
                 remote_address=remote_addr,
                 event_long='Device registration required',
@@ -1146,8 +1166,20 @@ def key_wg_post(org_id, user_id, server_id):
             })
         except InvalidSignature:
             journal.entry(
+                journal.USER_DEVICE_AUTHENTICATE_FAILURE,
+                usr.journal_data,
+                device_name=client_device_name,
+                device_platform=client_platform,
+                device_public_key=client_device_key64,
+                remote_address=remote_addr,
+                event_long='User device signature invalid',
+            )
+            journal.entry(
                 journal.USER_WG_FAILURE,
                 usr.journal_data,
+                device_name=client_device_name,
+                device_platform=client_platform,
+                device_public_key=client_device_key64,
                 remote_address=remote_addr,
                 event_long='Invalid device signature',
             )
@@ -1757,6 +1789,16 @@ def key_ovpn_post(org_id, user_id, server_id):
                 data_hash,
                 utils.base64raw_decode(device_signature64),
             )
+
+            journal.entry(
+                journal.USER_DEVICE_AUTHENTICATE_SUCCESS,
+                usr.journal_data,
+                device_name=client_device_name,
+                device_platform=client_platform,
+                device_public_key=client_device_key64,
+                remote_address=remote_addr,
+                event_long='User verified device signature',
+            )
         except DeviceUnregistered as err:
             send_data = {
                 'allow': False,
@@ -1782,6 +1824,16 @@ def key_ovpn_post(org_id, user_id, server_id):
             )
 
             journal.entry(
+                journal.USER_DEVICE_CREATE,
+                usr.journal_data,
+                device_name=client_device_name,
+                device_platform=client_platform,
+                device_public_key=client_device_key64,
+                remote_address=remote_addr,
+                event_long='Device registration required',
+            )
+
+            journal.entry(
                 journal.USER_OVPN_FAILURE,
                 usr.journal_data,
                 remote_address=remote_addr,
@@ -1799,6 +1851,15 @@ def key_ovpn_post(org_id, user_id, server_id):
                 'signature': sync_signature,
             })
         except InvalidSignature:
+            journal.entry(
+                journal.USER_DEVICE_AUTHENTICATE_FAILURE,
+                usr.journal_data,
+                device_name=client_device_name,
+                device_platform=client_platform,
+                device_public_key=client_device_key64,
+                remote_address=remote_addr,
+                event_long='User device signature invalid',
+            )
             journal.entry(
                 journal.USER_WG_FAILURE,
                 usr.journal_data,
