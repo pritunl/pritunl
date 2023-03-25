@@ -1023,6 +1023,8 @@ def key_wg_post(org_id, user_id, server_id):
     client_platform = utils.filter_str(key_data['platform'])
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
+    client_device_hostname = utils.filter_str(
+        key_data.get('device_hostname')) or client_device_name
     client_device_key64 = utils.filter_str(key_data.get('device_key'))
     client_mac_addr = utils.filter_str(key_data['mac_addr'])
     client_mac_addrs = key_data['mac_addrs']
@@ -1097,7 +1099,7 @@ def key_wg_post(org_id, user_id, server_id):
 
         try:
             usr.device_verify_sig(
-                client_device_name,
+                client_device_hostname,
                 client_platform,
                 utils.base64raw_decode(client_device_key64),
                 data_hash,
@@ -1107,7 +1109,7 @@ def key_wg_post(org_id, user_id, server_id):
             journal.entry(
                 journal.USER_DEVICE_AUTHENTICATE_SUCCESS,
                 usr.journal_data,
-                device_name=client_device_name,
+                device_name=client_device_hostname,
                 device_platform=client_platform,
                 device_public_key=client_device_key64,
                 remote_address=remote_addr,
@@ -1140,7 +1142,7 @@ def key_wg_post(org_id, user_id, server_id):
             journal.entry(
                 journal.USER_DEVICE_CREATE,
                 usr.journal_data,
-                device_name=client_device_name,
+                device_name=client_device_hostname,
                 device_platform=client_platform,
                 device_public_key=client_device_key64,
                 remote_address=remote_addr,
@@ -1736,6 +1738,8 @@ def key_ovpn_post(org_id, user_id, server_id):
     client_platform = utils.filter_str(key_data['platform'])
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
+    client_device_hostname = utils.filter_str(
+        key_data.get('device_hostname')) or client_device_name
     client_device_key64 = utils.filter_str(key_data.get('device_key'))
     client_mac_addr = utils.filter_str(key_data['mac_addr'])
     client_mac_addrs = key_data['mac_addrs']
@@ -1783,7 +1787,7 @@ def key_ovpn_post(org_id, user_id, server_id):
 
         try:
             usr.device_verify_sig(
-                client_device_name,
+                client_device_hostname,
                 client_platform,
                 utils.base64raw_decode(client_device_key64),
                 data_hash,
@@ -1793,7 +1797,7 @@ def key_ovpn_post(org_id, user_id, server_id):
             journal.entry(
                 journal.USER_DEVICE_AUTHENTICATE_SUCCESS,
                 usr.journal_data,
-                device_name=client_device_name,
+                device_name=client_device_hostname,
                 device_platform=client_platform,
                 device_public_key=client_device_key64,
                 remote_address=remote_addr,
@@ -1826,7 +1830,7 @@ def key_ovpn_post(org_id, user_id, server_id):
             journal.entry(
                 journal.USER_DEVICE_CREATE,
                 usr.journal_data,
-                device_name=client_device_name,
+                device_name=client_device_hostname,
                 device_platform=client_platform,
                 device_public_key=client_device_key64,
                 remote_address=remote_addr,
@@ -1854,7 +1858,7 @@ def key_ovpn_post(org_id, user_id, server_id):
             journal.entry(
                 journal.USER_DEVICE_AUTHENTICATE_FAILURE,
                 usr.journal_data,
-                device_name=client_device_name,
+                device_name=client_device_hostname,
                 device_platform=client_platform,
                 device_public_key=client_device_key64,
                 remote_address=remote_addr,
