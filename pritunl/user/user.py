@@ -1318,6 +1318,7 @@ class User(mongo.MongoObject):
             dev_pub_keys = set()
             dev_reg_keys = set()
 
+            unreg_count = 0
             new_devices = []
             for device in devices:
                 dev_name = device.get('name')
@@ -1330,6 +1331,12 @@ class User(mongo.MongoObject):
                     continue
                 if dev_reg_key and (dev_reg_key in dev_reg_keys):
                     continue
+
+                if not device.get('registered') and \
+                        dev_pub_key != pub_key_enc64:
+                    if unreg_count >= 2:
+                        continue
+                    unreg_count += 1
 
                 dev_names.add(dev_name)
                 dev_pub_keys.add(dev_pub_key)
