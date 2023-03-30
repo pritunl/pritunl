@@ -1390,6 +1390,8 @@ class Authorizer(object):
                 platform=self.platform,
                 device_id=self.device_id,
                 device_name=self.device_name,
+                bypass_secondary=self.user.bypass_secondary,
+                has_token=self.has_token,
                 password=self.password,
             )
 
