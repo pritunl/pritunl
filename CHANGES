@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add device authentication auditing
+
 Version 1.32.3480.65 2023-03-24
 -------------------------------
 
