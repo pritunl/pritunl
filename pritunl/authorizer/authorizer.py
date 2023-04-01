@@ -797,6 +797,7 @@ class Authorizer(object):
                         passcode=passcode,
                         remote_ip=self.remote_ip,
                         okta_mode=utils.get_okta_mode(),
+                        platform=self.platform,
                     )
                 else:
                     raise AuthError('Unknown secondary passcode challenge')
@@ -1350,6 +1351,7 @@ class Authorizer(object):
                 passcode=None,
                 remote_ip=self.remote_ip,
                 okta_mode=utils.get_okta_mode(),
+                platform=self.platform,
             )
         else:
             raise ValueError('Unkown push auth type')
