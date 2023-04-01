@@ -1181,7 +1181,7 @@ class Authorizer(object):
         if settings.vpn.stress_test:
             return
 
-        if self.user.bypass_secondary:
+        if BYPASS_SECONDARY in self.modes:
             logger.info('Bypass secondary enabled, skipping push', 'sso',
                 user_name=self.user.name,
                 org_name=self.user.org.name,
@@ -1207,6 +1207,22 @@ class Authorizer(object):
         if self.has_sso_token:
             logger.info(
                 'Client sso authentication, skipping push', 'sso',
+                user_name=self.user.name,
+                org_name=self.user.org.name,
+                server_name=self.server.name,
+            )
+            journal.entry(
+                journal.USER_CONNECT_SSO,
+                self.journal_data,
+                self.user.journal_data,
+                self.server.journal_data,
+                event_long='Client sso authentication, skipping push',
+            )
+            return
+
+        if self.has_fw_token:
+            logger.info(
+                'Client firewall authentication, skipping push', 'sso',
                 user_name=self.user.name,
                 org_name=self.user.org.name,
                 server_name=self.server.name,
