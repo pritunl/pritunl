@@ -111,7 +111,23 @@ def auth_okta(username):
 
     return False
 
-def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
+def auth_okta_secondary(username, passcode, remote_ip, okta_mode, platform):
+    ua_platform = ''
+    if platform == 'linux':
+        ua_platform = 'Linux; '
+    elif platform == 'mac':
+        ua_platform = 'Macintosh; '
+    elif platform == 'ios':
+        ua_platform = 'Macintosh; '
+    elif platform == 'android':
+        ua_platform = 'Android; '
+    elif platform == 'win':
+        ua_platform = 'Windows; '
+    elif platform == 'chrome':
+        ua_platform = 'Android; '
+
+    useragent = 'Mozilla/5.0 (%sPython 3.9) Pritunl/1.32' % ua_platform
+
     user_id = get_user_id(username)
     if not user_id:
         return False
@@ -208,7 +224,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 user_id, factor_id),
             headers={
                 'Accept': 'application/json',
-                'User-Agent': USER_AGENT,
+                'User-Agent': useragent,
                 'Content-Type': 'application/json',
                 'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
                 'X-Forwarded-For': remote_ip,
@@ -291,7 +307,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode):
                 poll_url,
                 headers={
                     'Accept': 'application/json',
-                    'User-Agent': USER_AGENT,
+                    'User-Agent': useragent,
                     'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
                 },
             )
