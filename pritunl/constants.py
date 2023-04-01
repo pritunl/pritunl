@@ -468,7 +468,7 @@ UPGRADE_NAME = 'upgrade.html'
 CONF_TEMP_EXT = '.tmp'
 LOG_ARCHIVE_NAME = 'pritunl_log'
 SHUT_DOWN = 'shut_down'
-USER_AGENT = 'Mozilla/5.0 Pritunl (v1.32)'
+USER_AGENT = 'Mozilla/5.0 (Python 3.9) Pritunl/1.32'
 
 CERT_CA = 'ca'
 CERT_SERVER = 'server'
