@@ -54,7 +54,8 @@ define([
       'dns_mapping': null,
       'debug': null,
       'pre_connect_msg': null,
-      'mss_fix': null
+      'mss_fix': null,
+      'multihome': null
     },
     url: function() {
       var url = '/server';
