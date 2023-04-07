@@ -133,6 +133,10 @@ def upsert_indexes():
         ('last_active', pymongo.ASCENDING),
         ('name', pymongo.ASCENDING),
     ], background=True)
+    upsert_index('users', [
+        ('devices.registered', pymongo.ASCENDING),
+        ('name', pymongo.ASCENDING),
+    ], background=True)
     upsert_index('users_audit', [
         ('org_id', pymongo.ASCENDING),
         ('user_id', pymongo.ASCENDING),
