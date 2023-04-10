@@ -13,6 +13,7 @@ from pritunl.setup.public_ip import setup_public_ip
 from pritunl.setup.poolers import setup_poolers
 from pritunl.setup.host import setup_host
 from pritunl.setup.token import setup_token
+from pritunl.setup.server_fix import setup_server_fix
 from pritunl.setup.server_listeners import setup_server_listeners
 from pritunl.setup.settings import setup_settings
 from pritunl.setup.dns import setup_dns
@@ -55,6 +56,7 @@ def setup_all():
         setup_ndppd()
         setup_runners()
         setup_token()
+        setup_server_fix()
         setup_handlers()
         setup_check()
         setup_plugins()
