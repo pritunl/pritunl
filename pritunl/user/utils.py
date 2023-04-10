@@ -119,6 +119,9 @@ def iter_unreg_devices():
             continue
 
         for device in devices:
+            if device.get('registered'):
+                continue
+
             yield {
                 'id': device.get('id'),
                 'org_id': doc.get('org_id'),
