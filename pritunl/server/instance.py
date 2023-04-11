@@ -359,6 +359,7 @@ class ServerInstance(object):
             server_conf += 'ncp-disable\n'
 
         if settings.vpn.fast_io:
+            server_conf += 'ignore-unknown-option fast-io\n'
             server_conf += 'fast-io\n'
 
         # Pritunl v0.10.x did not include comp-lzo in client conf
