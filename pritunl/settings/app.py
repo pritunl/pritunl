@@ -142,7 +142,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_yubico_client': None,
         'sso_yubico_secret': None,
         'sso_connection_check': True,
-        'sso_connection_check_ttl': 1800,
+        'sso_connection_check_ttl': 3600,
         'server_sso_url': None,
         'queue_low_thread_limit': 4,
         'queue_med_thread_limit': 2,
