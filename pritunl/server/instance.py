@@ -436,9 +436,10 @@ class ServerInstance(object):
         server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
         if self.server.tls_auth:
+            tls_mode = settings.vpn.tls_mode
             server_conf += \
-                'key-direction 0\n<tls-auth>\n%s\n</tls-auth>\n' % (
-                self.server.tls_auth_key)
+                'key-direction 0\n<%s>\n%s\n</%s>\n' % (
+                    tls_mode, self.server.tls_auth_key, tls_mode)
 
         server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
             self.primary_user.certificate)

@@ -78,8 +78,9 @@ class ServerInstanceLink(object):
         client_conf += '<ca>\n%s\n</ca>\n' % self.linked_server.ca_certificate
 
         if self.linked_server.tls_auth:
-            client_conf += 'key-direction 1\n<tls-auth>\n%s\n</tls-auth>\n' % (
-                self.linked_server.tls_auth_key)
+            tls_mode = settings.vpn.tls_mode
+            client_conf += 'key-direction 1\n<%s>\n%s\n</%s>\n' % (
+                tls_mode, self.linked_server.tls_auth_key, tls_mode)
 
         client_conf += ('<cert>\n%s\n' +
             '</cert>\n') % utils.get_cert_block(self.user.certificate)
