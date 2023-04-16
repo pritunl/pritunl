@@ -962,8 +962,9 @@ class User(mongo.MongoObject):
         client_conf += '<ca>\n%s\n</ca>\n' % ca_certificate
         if include_user_cert:
             if svr.tls_auth:
-                client_conf += '<tls-auth>\n%s\n</tls-auth>\n' % (
-                    svr.tls_auth_key)
+                tls_mode = settings.vpn.tls_mode
+                client_conf += '<%s>\n%s\n</%s>\n' % (
+                    tls_mode, svr.tls_auth_key, tls_mode)
 
             client_conf += '<cert>\n%s\n</cert>\n' % certificate
             client_conf += '<key>\n%s\n</key>\n' % private_key
