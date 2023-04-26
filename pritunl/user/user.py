@@ -855,7 +855,7 @@ class User(mongo.MongoObject):
         certificate = utils.get_cert_block(self.certificate)
         private_key = self.private_key.strip()
 
-        conf_hash = hashlib.md5()
+        conf_hash = utils.unsafe_md5()
         conf_hash.update(self.name.encode())
         conf_hash.update(self.org.name.encode())
         conf_hash.update(svr.name.encode())
@@ -976,7 +976,7 @@ class User(mongo.MongoObject):
                 not svr.primary_user:
             svr.create_primary_user()
 
-        conf_hash = hashlib.md5()
+        conf_hash = utils.unsafe_md5()
         conf_hash.update(str(svr.id).encode())
         conf_hash.update(str(self.org_id).encode())
         conf_hash.update(str(self.id).encode())
@@ -1000,7 +1000,7 @@ class User(mongo.MongoObject):
         onc_certs = {}
         cert_ids = []
         for cert in ca_certs:
-            cert_id = '{%s}' % hashlib.md5(cert.encode()).hexdigest()
+            cert_id = '{%s}' % utils.unsafe_md5(cert.encode()).hexdigest()
             onc_certs[cert_id] = cert
             cert_ids.append(cert_id)
 
@@ -1155,7 +1155,7 @@ class User(mongo.MongoObject):
 
             with open(user_p12_path, 'rb') as user_key_p12:
                 user_key_base64 = base64.b64encode(user_key_p12.read())
-                user_cert_id = '{%s}' % hashlib.md5(
+                user_cert_id = '{%s}' % utils.unsafe_md5(
                     user_key_base64).hexdigest()
 
             os.remove(user_cert_path)
