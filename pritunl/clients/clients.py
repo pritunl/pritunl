@@ -2146,7 +2146,7 @@ class Clients(object):
                 '@')[0].lower().replace('.', '-')
             domain_org = str(client['org_name']).lower().replace('.', '-')
             domain = domain_user + '.' + domain_org
-            domain_hash = hashlib.md5()
+            domain_hash = utils.unsafe_md5()
             domain_hash.update(domain.encode())
             domain_hash = bson.binary.Binary(domain_hash.digest(),
                 subtype=bson.binary.MD5_SUBTYPE)
