@@ -16,6 +16,7 @@ import subprocess
 import os
 import base64
 import cheroot.wsgi
+import ssl
 
 app = flask.Flask(__name__)
 app_server = None
@@ -173,10 +174,12 @@ def _run_server(restart):
     journal.entry(
         journal.WEB_SERVER_START,
         selinux_context=context,
+        ssl_version=ssl.OPENSSL_VERSION,
     )
 
     logger.info('Starting server', 'app',
         selinux_context=context,
+        ssl_version=ssl.OPENSSL_VERSION,
     )
 
     app_server = cheroot.wsgi.Server(
