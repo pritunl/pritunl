@@ -197,7 +197,7 @@ def _auth_radius(username, password, remote_addr):
     journal.entry(
         journal.SSO_AUTH_SUCCESS,
         usr.journal_data,
-        key_id_hash=hashlib.md5(key_link['id'].encode()).hexdigest(),
+        key_id_hash=utils.unsafe_md5(key_link['id'].encode()).hexdigest(),
         remote_address=remote_addr,
     )
 
