@@ -37,6 +37,7 @@ class SettingsVpn(SettingsGroupMongo):
         'fast_io': False,
         'ncp_disable': False,
         'stress_test': False,
+        'ignore_nonce': False,
         'vxlan_id_start': 9700,
         'vxlan_net_prefix': '100.97.',
         'vxlan_iface_prefix': 'pxlan',
