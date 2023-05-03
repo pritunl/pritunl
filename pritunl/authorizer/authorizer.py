@@ -391,22 +391,23 @@ class Authorizer(object):
                 'timestamp': utils.now(),
             })
         except pymongo.errors.DuplicateKeyError:
-            self.user.audit_event(
-                'user_connection',
-                ('User connection to "%s" denied. Duplicate nonce '
-                    'from reconnection') % self.server.name,
-                remote_addr=self.remote_ip,
-            )
+            if not settings.vpn.ignore_nonce:
+                self.user.audit_event(
+                    'user_connection',
+                    ('User connection to "%s" denied. Duplicate nonce '
+                        'from reconnection') % self.server.name,
+                    remote_addr=self.remote_ip,
+                )
 
-            journal.entry(
-                journal.USER_CONNECT_FAILURE,
-                self.journal_data,
-                self.user.journal_data,
-                self.server.journal_data,
-                event_long='Duplicate nonce from reconnection',
-            )
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Duplicate nonce from reconnection',
+                )
 
-            raise AuthError('Duplicate nonce')
+                raise AuthError('Duplicate nonce')
 
         self.password = self.auth_password
         self.server_auth_token = auth_token
