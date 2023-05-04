@@ -1581,7 +1581,7 @@ def key_ovpn_post(org_id, user_id, server_id):
 
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
-            settings.app.auth_time_window:
+                settings.app.auth_time_window:
             journal.entry(
                 journal.USER_OVPN_FAILURE,
                 remote_address=remote_addr,
@@ -2344,7 +2344,7 @@ def _key_sso_validate(key_doc, username, email, sso_mode, org_id, groups,
     journal.entry(
         journal.SSO_AUTH_SUCCESS,
         usr.journal_data,
-        key_id_hash=hashlib.md5(key_link['id'].encode()).hexdigest(),
+        key_id_hash=utils.unsafe_md5(key_link['id'].encode()).hexdigest(),
         remote_address=remote_addr,
     )
 
