@@ -11,3 +11,4 @@ from pritunl.utils.oracle import *
 from pritunl.utils.sig import *
 from pritunl.utils.none_queue import NoneQueue
 from pritunl.utils.auth import *
+from pritunl.utils.md5_hash import unsafe_md5
