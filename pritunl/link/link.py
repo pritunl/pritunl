@@ -450,14 +450,14 @@ class Host(mongo.MongoObject):
                         hosts[str(host.id)] = host_addr
 
         for lnk in links:
-            link_hash = hashlib.md5(json.dumps(
+            link_hash = utils.unsafe_md5(json.dumps(
                 lnk,
                 sort_keys=True,
                 default=lambda x: str(x),
             ).encode()).hexdigest()
             lnk['hash'] = link_hash
 
-        state['hash'] = hashlib.md5(json.dumps(
+        state['hash'] = utils.unsafe_md5(json.dumps(
             state,
             sort_keys=True,
             default=lambda x: str(x),
@@ -801,7 +801,7 @@ class Location(mongo.MongoObject):
         except ValueError:
             raise NetworkInvalid('Network address is invalid')
 
-        network_id = hashlib.md5(network.encode()).hexdigest()
+        network_id = utils.unsafe_md5(network.encode()).hexdigest()
         self.routes[network_id] = {
             'network': network,
         }
