@@ -10,10 +10,12 @@ define([
   'views/modalAuditUser',
   'views/modalOtpAuth',
   'views/userServersList',
+  'views/userDevicesList',
   'text!templates/usersListItem.html'
 ], function($, _, Backbone, KeyModel, UserAuditCollection, AlertView,
     ModalRenameUserView, ModalKeyLinkView, ModalAuditUserView,
-    ModalOtpAuthView, UserServersListView, usersListItemTemplate) {
+    ModalOtpAuthView, UserServersListView, UserDevicesListView,
+    usersListItemTemplate) {
   'use strict';
   var UsersListItemView = Backbone.View.extend({
     template: _.template(usersListItemTemplate),
@@ -30,6 +32,9 @@ define([
     initialize: function() {
       this.serverList = new UserServersListView({
         models: this.model.get('servers')
+      });
+      this.deviceList = new UserDevicesListView({
+        models: this.model.get('devices')
       });
     },
     _getDownloadTooltip: function() {
@@ -71,6 +76,7 @@ define([
         }, this.model.toJSON())));
       this.$('[data-toggle="tooltip"]').tooltip();
       this.$el.append(this.serverList.render().el);
+      this.$el.append(this.deviceList.render().el);
       if (this.model.get('disabled')) {
         this.$('.disable-user').hide();
       }
@@ -268,6 +274,7 @@ define([
       }
 
       this.serverList.update(this.model.get('servers'));
+      this.deviceList.update(this.model.get('devices'));
     },
     getSelect: function() {
       return this.$('.selector').hasClass('selected');
@@ -390,12 +397,14 @@ define([
         this.$('.toggle-servers').removeClass('glyphicon-chevron-down');
         this.$('.toggle-servers').addClass('glyphicon-chevron-up');
         this.$('.user-servers').slideDown(window.slideTime);
+        this.$('.user-devices').slideDown(window.slideTime);
         tooltipText = 'Hide additional user information';
       }
       else {
         this.$('.toggle-servers').removeClass('glyphicon-chevron-up');
         this.$('.toggle-servers').addClass('glyphicon-chevron-down');
         this.$('.user-servers').slideUp(window.slideTime);
+        this.$('.user-devices').slideUp(window.slideTime);
         tooltipText = 'Show additional user information';
       }
 
