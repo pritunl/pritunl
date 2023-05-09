@@ -44,7 +44,7 @@ def subscription_styles_get(plan, ver):
             styles = {'etag' : 0, 'last_modified' : 0, 'data' : ''}
 
     if styles['etag'] and styles['data']:
-        iv = hashlib.md5(styles['etag'].encode()).digest()
+        iv = utils.unsafe_md5(styles['etag'].encode()).digest()
         key = hashlib.sha256(settings.local.sub_url_key.encode()).digest()
         cipher = Cipher(
             algorithms.AES(key),
