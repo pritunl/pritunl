@@ -1,6 +1,7 @@
 from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
+from pritunl import utils
 
 import oci
 import requests
@@ -18,7 +19,7 @@ def oracle_get_metadata():
     public_key = load_pem_public_key(
         public_key_pem.encode(), default_backend())
 
-    fingerprint = hashlib.md5()
+    fingerprint = utils.unsafe_md5()
 
     fingerprint.update(public_key.public_bytes(
         encoding=serialization.Encoding.DER,
