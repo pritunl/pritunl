@@ -33,6 +33,7 @@ define([
         'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect',
         'click .wg-toggle': 'onWgSelect',
         'click .restrict-routes-toggle': 'onRestrictRoutesSelect',
+        'click .multihome-toggle': 'onMultihomeSelect',
         'change select.protocol, .cipher select, .network-mode select':
           'onInputChange',
         'click div.otp-auth-toggle': 'onInputChange'
@@ -325,6 +326,22 @@ define([
     onIpv6FirewallSelect: function() {
       this.setIpv6FirewallSelect(!this.getIpv6FirewallSelect());
     },
+    getMultihomeSelect: function() {
+      return this.$('.multihome-toggle .selector').hasClass('selected');
+    },
+    setMultihomeSelect: function(state) {
+      if (state) {
+        this.$('.multihome-toggle .selector').addClass('selected');
+        this.$('.multihome-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.multihome-toggle .selector').removeClass('selected');
+        this.$('.multihome-toggle .selector-inner').hide();
+      }
+    },
+    onMultihomeSelect: function() {
+      this.setMultihomeSelect(!this.getMultihomeSelect());
+    },
     onInputChange: function(evt) {
       if ($(evt.target).parent().hasClass('network')) {
         this.updateMaxHosts(false);
@@ -486,6 +503,7 @@ define([
       var preConnectMsg = this.$(
         '.pre-connect-msg textarea').val().trim() || null;
       var mssFix =  parseInt(this.$('.mss-fix input').val(), 10) || null;
+      var multihome = this.getMultihomeSelect();
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -565,6 +583,7 @@ define([
         'dns_mapping': dnsMapping,
         'debug': debug,
         'mss_fix': mssFix,
+        'multihome': multihome,
         'pre_connect_msg': preConnectMsg
       };
 
