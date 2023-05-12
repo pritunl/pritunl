@@ -430,6 +430,7 @@ MOBILE_PLATFORMS = {
 }
 DESKTOP_PLATFORMS = {
     'linux',
+    'freebsd',
     'mac',
     'win',
     'chrome',
