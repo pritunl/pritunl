@@ -29,6 +29,7 @@ define([
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
         'click .dynamic-firewall-toggle': 'onDynamicFirewallSelect',
+        'click .device-auth-toggle': 'onDeviceAuthSelect',
         'click .sso-auth-toggle': 'onSsoAuthSelect',
         'click .ipv6-firewall-toggle': 'onIpv6FirewallSelect',
         'click .wg-toggle': 'onWgSelect',
@@ -293,6 +294,23 @@ define([
     onDynamicFirewallSelect: function() {
       this.setDynamicFirewallSelect(!this.getDynamicFirewallSelect());
     },
+    getDeviceAuthSelect: function() {
+      return this.$('.device-auth-toggle .selector').hasClass(
+        'selected');
+    },
+    setDeviceAuthSelect: function(state) {
+      if (state) {
+        this.$('.device-auth-toggle .selector').addClass('selected');
+        this.$('.device-auth-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.device-auth-toggle .selector').removeClass('selected');
+        this.$('.device-auth-toggle .selector-inner').hide();
+      }
+    },
+    onDeviceAuthSelect: function() {
+      this.setDeviceAuthSelect(!this.getDeviceAuthSelect());
+    },
     getSsoAuthSelect: function() {
       return this.$('.sso-auth-toggle .selector').hasClass(
         'selected');
@@ -462,6 +480,7 @@ define([
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var dynamicFirewall = this.getDynamicFirewallSelect();
+      var deviceAuth = this.getDeviceAuthSelect();
       var ipv6 = this.getIpv6Select();
       var ipv6Firewall = this.getIpv6FirewallSelect();
       var multiDevice = this.getMultiDeviceSelect();
@@ -558,6 +577,7 @@ define([
         'restrict_routes': restrictRoutes,
         'wg': wg,
         'dynamic_firewall': dynamicFirewall,
+        'device_auth': deviceAuth,
         'ipv6': ipv6,
         'ipv6_firewall': ipv6Firewall,
         'multi_device': multiDevice,
