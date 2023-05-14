@@ -596,12 +596,18 @@ class ServerInstance(object):
             if route['virtual_network'] or route['link_virtual_network']:
                 self.iptables.add_nat_network(route['network'])
 
-            if route['virtual_network'] or route['net_gateway']:
+            if route['virtual_network']:
                 continue
 
             network = route['network']
             is6 = ':' in network
             network_obj = ipaddress.ip_network(network, strict=False)
+
+            if route['net_gateway']:
+                self.iptables.add_deny_route(
+                    network,
+                )
+                continue
 
             interface = route['nat_interface']
             if is6:
@@ -766,12 +772,18 @@ class ServerInstance(object):
             include_server_links=True,
             include_default=True,
         ):
-            if route['virtual_network'] or route['net_gateway']:
+            if route['virtual_network']:
                 continue
 
             network = route['network']
             is6 = ':' in network
             network_obj = ipaddress.ip_network(network, strict=False)
+
+            if route['net_gateway']:
+                self.iptables_wg.add_deny_route(
+                    network,
+                )
+                continue
 
             interface = route['nat_interface']
             if is6:
