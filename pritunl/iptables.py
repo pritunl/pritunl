@@ -24,9 +24,13 @@ class Iptables(object):
         self._nat_routes6 = {}
         self._nat_networks = set()
         self._nat_networks6 = set()
+        self._deny_routes = set()
+        self._deny_routes6 = set()
         name_prefix = '%s_%s'  % (server_id, server_type)
         self._routes_name = name_prefix + 'r'
         self._routes6_name = name_prefix + 'r6'
+        self._deny_routes_name = name_prefix + 'd'
+        self._deny_routes6_name = name_prefix + 'd6'
         self._nat_routes_name = name_prefix + 'n'
         self._nat_routes6_name = name_prefix + 'n6'
         self._nat_networks_name = name_prefix + 'h'
@@ -38,6 +42,8 @@ class Iptables(object):
         self._accept6 = []
         self._drop = []
         self._drop6 = []
+        self._deny = []
+        self._deny6 = []
         self._other = []
         self._other6 = []
         self._accept_all = False
@@ -71,6 +77,12 @@ class Iptables(object):
                 self._nat_routes[network] = nat_interface
             else:
                 self._routes.add(network)
+
+    def add_deny_route(self, network):
+        if ':' in network:
+            self._deny_routes6.add(network)
+        else:
+            self._deny_routes.add(network)
 
     def add_nat_network(self, network):
         if self.cleared:
@@ -151,6 +163,8 @@ class Iptables(object):
     def _generate_sets(self):
         routes_set = set()
         routes6_set = set()
+        deny_routes_set = set()
+        deny_routes6_set = set()
         nat_routes_set = set()
         nat_routes6_set = set()
         nat_networks_set = set()
@@ -164,6 +178,15 @@ class Iptables(object):
             if route == '::/0':
                 continue
             routes6_set.add(route)
+
+        for route in self._deny_routes:
+            if route == '0.0.0.0/0':
+                continue
+            deny_routes_set.add(route)
+        for route in self._deny_routes6:
+            if route == '::/0':
+                continue
+            deny_routes6_set.add(route)
 
         for route in list(self._nat_routes.keys()):
             if route == '0.0.0.0/0':
@@ -185,6 +208,8 @@ class Iptables(object):
 
         self._sets[self._routes_name] = routes_set
         self._sets6[self._routes6_name] = routes6_set
+        self._sets[self._deny_routes_name] = routes_set
+        self._sets6[self._deny_routes6_name] = routes6_set
         self._sets[self._nat_routes_name] = nat_routes_set
         self._sets6[self._nat_routes6_name] = nat_routes6_set
         self._sets[self._nat_networks_name] = nat_networks_set
@@ -346,6 +371,21 @@ class Iptables(object):
             rule = self._init_rule()
             rule.in_interface = self.virt_interface
             match = rule.create_match('set')
+            match.match_set = [self._deny_routes_name, 'dst']
+            rule.create_target('DROP')
+            self._deny.append(('INPUT', rule))
+        else:
+            self._deny.append([
+                'INPUT',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._deny_routes_name, 'dst',
+                '-j', 'DROP',
+            ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
             match.match_set = [self._nat_routes_name, 'dst']
             rule.create_target('ACCEPT')
             self._accept.append(('INPUT', rule))
@@ -372,6 +412,21 @@ class Iptables(object):
                 '-m', 'set',
                 '--match-set', self._routes6_name, 'dst',
                 '-j', 'ACCEPT',
+            ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._deny_routes6_name, 'dst']
+            rule.create_target('DROP')
+            self._deny6.append(('INPUT', rule))
+        else:
+            self._deny6.append([
+                'INPUT',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._deny_routes6_name, 'dst',
+                '-j', 'DROP',
             ])
         if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule6()
@@ -517,6 +572,21 @@ class Iptables(object):
             rule = self._init_rule()
             rule.out_interface = self.virt_interface
             match = rule.create_match('set')
+            match.match_set = [self._deny_routes_name, 'src']
+            rule.create_target('DROP')
+            self._deny.append(('OUTPUT', rule))
+        else:
+            self._deny.append([
+                'OUTPUT',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._deny_routes_name, 'src',
+                '-j', 'DROP',
+            ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
             match.match_set = [self._nat_routes_name, 'src']
             rule.create_target('ACCEPT')
             self._accept.append(('OUTPUT', rule))
@@ -543,6 +613,21 @@ class Iptables(object):
                 '-m', 'set',
                 '--match-set', self._routes6_name, 'src',
                 '-j', 'ACCEPT',
+            ])
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._deny_routes6_name, 'src']
+            rule.create_target('DROP')
+            self._deny6.append(('OUTPUT', rule))
+        else:
+            self._deny6.append([
+                'OUTPUT',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._deny_routes6_name, 'src',
+                '-j', 'DROP',
             ])
         if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule6()
@@ -792,6 +877,38 @@ class Iptables(object):
             ])
 
         if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._deny_routes_name, 'dst']
+            rule.create_target('DROP')
+            self._deny.append(('FORWARD', rule))
+        else:
+            self._deny.append([
+                'FORWARD',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._deny_routes_name, 'dst',
+                '-j', 'DROP',
+            ])
+
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._deny_routes_name, 'src']
+            rule.create_target('DROP')
+            self._deny.append(('FORWARD', rule))
+        else:
+            self._deny.append([
+                'FORWARD',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._deny_routes_name, 'src',
+                '-j', 'DROP',
+            ])
+
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
             rule = self._init_rule6()
             rule.in_interface = self.virt_interface
             match = rule.create_match('set')
@@ -821,6 +938,38 @@ class Iptables(object):
                 '-m', 'set',
                 '--match-set', self._routes6_name, 'src',
                 '-j', 'ACCEPT',
+            ])
+
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.in_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._deny_routes6_name, 'dst']
+            rule.create_target('DROP')
+            self._deny6.append(('FORWARD', rule))
+        else:
+            self._deny6.append([
+                'FORWARD',
+                '-i', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._deny_routes6_name, 'dst',
+                '-j', 'DROP',
+            ])
+
+        if settings.vpn.lib_iptables and LIB_IPTABLES:
+            rule = self._init_rule6()
+            rule.out_interface = self.virt_interface
+            match = rule.create_match('set')
+            match.match_set = [self._deny_routes6_name, 'src']
+            rule.create_target('DROP')
+            self._deny6.append(('FORWARD', rule))
+        else:
+            self._deny6.append([
+                'FORWARD',
+                '-o', self.virt_interface,
+                '-m', 'set',
+                '--match-set', self._deny_routes6_name, 'src',
+                '-j', 'DROP',
             ])
 
         if settings.vpn.lib_iptables and LIB_IPTABLES:
@@ -1115,6 +1264,8 @@ class Iptables(object):
         self._accept6 = []
         self._drop = []
         self._drop6 = []
+        self._deny = []
+        self._deny6 = []
 
         self._generate_sets()
         self._generate_input()
@@ -1450,6 +1601,32 @@ class Iptables(object):
                             self._append_iptables_rule(rule, ipv6=True,
                                 tables=tables)
 
+            if self._deny_routes:
+                for rule in self._deny:
+                    if not self._exists_iptables_rule(rule, tables=tables):
+                        if log:
+                            logger.error(
+                                'Unexpected loss of iptables deny rule, ' +
+                                'adding again...',
+                                'iptables',
+                                rule=rule,
+                            )
+                        self._insert_iptables_rule(rule, tables=tables)
+
+            if self._deny_routes6 and self.ipv6:
+                for rule in self._deny6:
+                    if not self._exists_iptables_rule(rule, ipv6=True,
+                        tables=tables):
+                        if log:
+                            logger.error(
+                                'Unexpected loss of ip6tables deny ' +
+                                'rule, adding again...',
+                                'iptables',
+                                rule=rule,
+                            )
+                        self._insert_iptables_rule(rule, ipv6=True,
+                            tables=tables)
+
             # tables['nat'].commit()
             # tables['nat6'].commit()
             # tables['filter'].commit()
@@ -1498,6 +1675,14 @@ class Iptables(object):
                         self._remove_iptables_rule(rule, ipv6=True,
                             tables=tables)
 
+            for rule in self._deny:
+                self._remove_iptables_rule(rule, tables=tables)
+
+            if self.ipv6:
+                for rule in self._deny6:
+                    self._remove_iptables_rule(rule, ipv6=True,
+                        tables=tables)
+
             self._delete_sets()
 
             self._accept = None
@@ -1506,6 +1691,8 @@ class Iptables(object):
             self._other6 = None
             self._drop = None
             self._drop6 = None
+            self._deny = None
+            self._deny6 = None
 
             # tables['nat'].commit()
             # tables['nat6'].commit()
