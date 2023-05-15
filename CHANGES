@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add block route option
+
 Version 1.32.3504.68 2023-04-17
 -------------------------------
 
