@@ -20,6 +20,12 @@
   <label>NAT Network Mapping</label>
   <input type="text" class="form-control" placeholder="Disabled" data-toggle="tooltip" title="Create a network mapping to remap this network into a new network with the same subnet. Clients will have access to this network through the mapped network">
 </div>
+<div class="net-gateway-toggle toggle-form form-group">
+  <label>Block Route and Net Gateway</label>
+  <div class="selector no-select" data-toggle="tooltip" title="Route the network through the pre-existing default gateway. Useful for excluding an address or network from routing that is inside an already routed network. Restricted access to route is enforced on the server iptables">
+    <span class="selector-inner glyphicon glyphicon-ok"></span>
+  </div>
+</div>
 <div class="route-advertisement-toggle toggle-form form-group">
   <label>Cloud Route Advertisement</label>
   <div class="selector no-select" data-toggle="tooltip" title="Enable VPC route advertisement. Requires cloud provider to be configured in settings">
@@ -35,12 +41,6 @@
   </select>
 </div>
 <div class="advanced form-group">
-  <div class="net-gateway-toggle toggle-form form-group">
-    <label>Net Gateway</label>
-    <div class="selector no-select" data-toggle="tooltip" title="Route the network through the pre-existing default gateway. Useful for excluding an address or network from routing that is inside an already routed network">
-      <span class="selector-inner glyphicon glyphicon-ok"></span>
-    </div>
-  </div>
   <div class="route-metric form-group">
     <label>Metric</label>
     <input type="text" class="form-control" placeholder="Enter route metric" data-toggle="tooltip" title="Optional route metric, must be greater then zero">
