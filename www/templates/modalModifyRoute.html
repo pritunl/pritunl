@@ -17,8 +17,8 @@
   <input type="text" class="form-control" placeholder="Disabled" data-toggle="tooltip" title="Create a network mapping to remap this network into a new network with the same subnet. Clients will have access to this network through the mapped network" value="<%- nat_netmap || '' %>">
 </div>
 <div class="net-gateway-toggle toggle-form form-group">
-  <label>Net Gateway</label>
-  <div class="selector <%= net_gateway ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Route the network through the pre-existing default gateway. Useful for excluding an address or network from routing that is inside an already routed network">
+  <label>Block Route and Net Gateway</label>
+  <div class="selector <%= net_gateway ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Route the network through the pre-existing default gateway. Useful for excluding an address or network from routing that is inside an already routed network. Restricted access to route is enforced on the server iptables">
     <span class="selector-inner glyphicon glyphicon-ok"></span>
   </div>
 </div>
