@@ -119,12 +119,12 @@ class Duo(object):
             if factor == 'push' and self.factor == 'push_phone':
                 self._auth('phone')
             else:
-                logger.error('Invalid Duo username',
+                logger.error('Invalid Duo username or device',
                     'sso',
                     username=self.username,
                     data=data,
                 )
-                raise InvalidUser('Invalid username')
+                raise InvalidUser('Invalid username or device')
         else:
             logger.error('Duo authentication failure', 'sso',
                 data=data,
