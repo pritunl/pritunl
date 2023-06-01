@@ -208,8 +208,8 @@ class Iptables(object):
 
         self._sets[self._routes_name] = routes_set
         self._sets6[self._routes6_name] = routes6_set
-        self._sets[self._deny_routes_name] = routes_set
-        self._sets6[self._deny_routes6_name] = routes6_set
+        self._sets[self._deny_routes_name] = deny_routes_set
+        self._sets6[self._deny_routes6_name] = deny_routes6_set
         self._sets[self._nat_routes_name] = nat_routes_set
         self._sets6[self._nat_routes6_name] = nat_routes6_set
         self._sets[self._nat_networks_name] = nat_networks_set
