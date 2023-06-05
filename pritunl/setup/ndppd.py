@@ -18,6 +18,12 @@ def _default_interface_thread():
     while True:
         iface6 = None
         iface6_alt = None
+        host_routed_subnet6 = settings.local.host.routed_subnet6
+        host_proxy_ndp = settings.local.host.proxy_ndp
+
+        if not host_routed_subnet6 or not host_proxy_ndp:
+            yield interrupter_sleep(3)
+            continue
 
         try:
             routes_output = utils.check_output_logged(
@@ -49,6 +55,7 @@ def _default_interface_thread():
 
 @interrupter
 def _ndppd_thread():
+    iface_err_count = 0
     conf_path = utils.get_temp_path() + '_ndppd.conf'
     time.sleep(3)
 
@@ -65,9 +72,13 @@ def _ndppd_thread():
                 continue
 
             if not iface6:
-                logger.error('Default IPv6 interface not available', 'setup')
+                iface_err_count += 1
+                if iface_err_count > 3:
+                    logger.error('Default IPv6 interface not available', 'setup')
                 yield interrupter_sleep(3)
                 continue
+
+            iface_err_count = 0
 
             with open(conf_path, 'w') as conf_file:
                 conf_file.write(NDPPD_CONF % (
