@@ -171,6 +171,7 @@ def sync_db():
                             'etag': etag,
                             'last_modified': last_modified,
                             'data': css_file.read(),
+                            'format': 1,
                         },
                     }}, upsert=True)
 
