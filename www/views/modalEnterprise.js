@@ -45,6 +45,14 @@ define([
         this.$('.renew .enterprise-label').text('Renew:');
       }
 
+      if (this.model.get('url_key')) {
+        this.$('.key .enterprise-item').text(this.model.get('url_key'));
+        this.$('.key').show();
+      }
+      else {
+        this.$('.key').hide();
+      }
+
       if (this.model.get('quantity')) {
         this.$('.quantity .enterprise-item').text(this.model.get('quantity'));
       }
