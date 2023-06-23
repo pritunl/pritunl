@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with Radius cache
+
 Version 1.32.3552.76 2023-06-04
 -------------------------------
 
