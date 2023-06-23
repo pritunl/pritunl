@@ -579,9 +579,9 @@ class User(mongo.MongoObject):
             if cached:
                 logger.info(
                     'Client authentication cached, skipping Radius', 'sso',
-                    user_name=self.user.name,
-                    org_name=self.user.org.name,
-                    server_name=self.server.name,
+                    user_name=self.name,
+                    org_name=self.org.name,
+                    server_name=svr.name,
                 )
                 return True
             try:
