@@ -46,7 +46,7 @@ define([
       }
 
       if (this.model.get('url_key')) {
-        this.$('.key .enterprise-item').text(this.model.get('url_key'));
+        this.$('.key .enterprise-label').text(this.model.get('url_key'));
         this.$('.key').show();
       }
       else {
