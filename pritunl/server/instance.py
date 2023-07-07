@@ -369,6 +369,8 @@ class ServerInstance(object):
         elif self.server.lzo_compression:
             server_conf += 'comp-lzo yes\npush "comp-lzo yes"\n'
         else:
+            server_conf += 'ignore-unknown-option allow-compression\n'
+            server_conf += 'allow-compression no\n'
             server_conf += 'comp-lzo no\npush "comp-lzo no"\n'
 
         server_conf += JUMBO_FRAMES[self.server.jumbo_frames]
