@@ -1567,7 +1567,7 @@ def key_ovpn_post(org_id, user_id, server_id):
     auth_nonce = flask.request.headers.get('Auth-Nonce', None)
     auth_signature = flask.request.headers.get('Auth-Signature', None)
     if not auth_token or not auth_timestamp or not auth_nonce or \
-        not auth_signature:
+            not auth_signature:
         journal.entry(
             journal.USER_OVPN_FAILURE,
             remote_address=remote_addr,
