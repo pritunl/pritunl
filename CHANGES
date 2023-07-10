@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Web interface improvements
+
 Version 1.32.3585.79 2023-07-07
 -------------------------------
 
