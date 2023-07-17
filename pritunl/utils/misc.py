@@ -303,6 +303,11 @@ def generate_secret_len(n):
             return x
     raise ValueError('Failed to generate secret')
 
+def generate_random_mac():
+    random_digits = [random.choice('0123456789ABCDEF') for _ in range(10)]
+    return '02:' + ':'.join(
+        [''.join(random_digits[i:i+2]) for i in range(0, 10, 2)])
+
 def generate_otp_secret():
     sha_hash = hashlib.sha512()
     sha_hash.update(os.urandom(8192))
