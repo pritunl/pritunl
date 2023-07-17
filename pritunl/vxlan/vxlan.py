@@ -9,6 +9,8 @@ import threading
 import random
 import pymongo
 import subprocess
+import time
+
 
 _vxlans = {}
 _vxlan_instances = {}
@@ -85,7 +87,9 @@ class Vxlan(object):
             'nolearning',
         ], ignore_states=['File exists'])
 
+        time.sleep(2)  # See https://forum.pritunl.com/t/vxlan-routing-does-not-work/1220
         self.vxlan_mac = utils.get_interface_mac_address(self.iface_name)
+
         self._init_host()
         self.vxlan_addr = self.get_host_addr(self.host_vxlan_id)
         if self.ipv6:
