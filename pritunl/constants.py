@@ -1033,28 +1033,31 @@ RANDOM_TWO = (
 
 CIPHERS = {
     'none': 'cipher none',
-    'bf128': 'cipher BF-CBC',
-    'bf256': 'cipher BF-CBC\nkeysize 256',
+    'bf128': 'cipher AES-128-CBC',
+    'bf256': 'cipher AES-256-CBC',
     'aes128': 'cipher AES-128-CBC',
-    'aes192': 'cipher AES-192-CBC',
+    'aes192': 'cipher AES-256-CBC',
     'aes256': 'cipher AES-256-CBC',
+    'chacha20poly1205': 'cipher CHACHA20-POLY1305',
 }
 
 SERVER_CIPHERS_OLD = {
     'none': 'cipher none',
-    'bf128': 'cipher BF-CBC',
-    'bf256': 'cipher BF-CBC\nkeysize 256',
+    'bf128': 'cipher AES-128-CBC',
+    'bf256': 'cipher AES-256-CBC',
     'aes128': 'cipher AES-128-CBC',
-    'aes192': 'cipher AES-192-CBC',
+    'aes192': 'cipher AES-256-CBC',
     'aes256': 'cipher AES-256-CBC',
+    'chacha20poly1205': 'cipher CHACHA20-POLY1305',
 }
 SERVER_CIPHERS = {
     'none': 'cipher none',
-    'bf128': 'cipher BF-CBC',
-    'bf256': 'cipher BF-CBC\nkeysize 256',
+    'bf128': 'cipher AES-128-CBC\nncp-ciphers AES-128-GCM:AES-128-CBC',
+    'bf256': 'cipher AES-256-CBC\nncp-ciphers AES-256-GCM:AES-256-CBC',
     'aes128': 'cipher AES-128-CBC\nncp-ciphers AES-128-GCM:AES-128-CBC',
-    'aes192': 'cipher AES-192-CBC\nncp-ciphers AES-192-GCM:AES-192-CBC',
+    'aes192': 'cipher AES-256-CBC\nncp-ciphers AES-256-GCM:AES-256-CBC',
     'aes256': 'cipher AES-256-CBC\nncp-ciphers AES-256-GCM:AES-256-CBC',
+    'chacha20poly1205': 'cipher CHACHA20-POLY1305\nncp-ciphers CHACHA20-POLY1305',
 }
 
 HASHES = {
@@ -1067,10 +1070,10 @@ HASHES = {
 
 ONC_CIPHERS = {
     'none': 'none',
-    'bf128': 'BF-CBC',
-    'bf256': 'BF-CBC',
+    'bf128': 'AES-128-CBC',
+    'bf256': 'AES-256-CBC',
     'aes128': 'AES-128-CBC',
-    'aes192': 'AES-192-CBC',
+    'aes192': 'AES-256-CBC',
     'aes256': 'AES-256-CBC',
 }
 
