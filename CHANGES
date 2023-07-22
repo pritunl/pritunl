@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issue with VXLan
+
 Version 1.32.3588.94 2023-07-10
 -------------------------------
 
