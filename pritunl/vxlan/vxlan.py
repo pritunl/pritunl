@@ -85,7 +85,33 @@ class Vxlan(object):
             'nolearning',
         ], ignore_states=['File exists'])
 
-        self.vxlan_mac = utils.get_interface_mac_address(self.iface_name)
+        mac_addr = utils.generate_random_mac()
+
+        utils.check_output_logged([
+            'ip',
+            'link',
+            'set',
+            'dev',
+            self.iface_name,
+            'address',
+            mac_addr,
+        ])
+
+        iface_mac = utils.get_interface_mac_address(self.iface_name)
+        if mac_addr.lower() != iface_mac.lower():
+            logger.error('Failed to set vxlan mac address', 'vxlan',
+                vxlan_id=self.vxlan_id,
+                server_id=self.server_id,
+                host_id=settings.local.host_id,
+                local_addr=settings.local.host.local_addr,
+                mac_addr=mac_addr,
+                iface_mac=iface_mac,
+            )
+            time.sleep(1)
+            iface_mac = utils.get_interface_mac_address(self.iface_name)
+
+        self.vxlan_mac = iface_mac
+
         self._init_host()
         self.vxlan_addr = self.get_host_addr(self.host_vxlan_id)
         if self.ipv6:
