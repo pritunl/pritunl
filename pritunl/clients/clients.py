@@ -207,9 +207,16 @@ class Clients(object):
                         dns_server
 
             if self.server.search_domain:
-                for domain in self.server.search_domain.split(','):
+                domains = self.server.search_domain.split(',')
+
+                if len(domains) == 1:
                     client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
-                        domain.strip())
+                        domains[0].strip())
+                else:
+                    for domain in domains:
+                        client_conf += (
+                            'push "dhcp-option DOMAIN-SEARCH %s"\n' % (
+                            domain.strip()))
 
             network_links = user.get_network_links()
             for network_link in network_links:
