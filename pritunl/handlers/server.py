@@ -220,6 +220,13 @@ def server_put_post(server_id=None):
         dynamic_firewall = True if flask.request.json['dynamic_firewall'] \
             else False
 
+    route_dns = None
+    route_dns_def = False
+    if 'route_dns' in flask.request.json:
+        route_dns_def = True
+        route_dns = True if flask.request.json['route_dns'] \
+            else False
+
     device_auth = None
     device_auth_def = False
     if 'device_auth' in flask.request.json:
@@ -616,6 +623,7 @@ def server_put_post(server_id=None):
             network_start=network_start,
             network_end=network_end,
             dynamic_firewall=dynamic_firewall,
+            route_dns=route_dns,
             device_auth=device_auth,
             restrict_routes=restrict_routes,
             wg=wg,
@@ -672,6 +680,8 @@ def server_put_post(server_id=None):
             svr.network_end = network_end
         if dynamic_firewall_def:
             svr.dynamic_firewall = dynamic_firewall
+        if route_dns_def:
+            svr.route_dns = route_dns
         if device_auth_def:
             svr.device_auth = device_auth
         if restrict_routes_def:
