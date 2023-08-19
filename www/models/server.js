@@ -18,6 +18,7 @@ define([
       'groups': null,
       'bind_address': null,
       'dynamic_firewall': null,
+      'route_dns': null,
       'device_auth': null,
       'port': null,
       'port_wg': null,
