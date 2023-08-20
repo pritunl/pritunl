@@ -189,7 +189,7 @@ class Server(mongo.MongoObject):
         'tls_auth': True,
         'lzo_compression': False,
         'dynamic_firewall': False,
-        'route_dns': False,
+        'route_dns': True,
         'device_auth': False,
         'restrict_routes': True,
         'inter_client': True,
