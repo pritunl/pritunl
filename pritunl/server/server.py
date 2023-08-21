@@ -654,7 +654,7 @@ class Server(mongo.MongoObject):
         return False
 
     def get_routes(self, include_hidden=False, include_default=True,
-            include_server_links=False):
+            include_server_links=False, include_dns_routes=True):
         routes = []
         link_routes = []
         routes_dict = {}
@@ -663,6 +663,33 @@ class Server(mongo.MongoObject):
         virtual_advertise = None
         virtual_vpc_region = None
         virtual_vpc_id = None
+
+        if self.route_dns and include_dns_routes:
+            for dns_server in self.dns_servers:
+                if ":" in dns_server:
+                    dns_network = dns_server + "/128"
+                else:
+                    dns_network = dns_server + "/32"
+
+                route_id = dns_network.encode().hex()
+                routes_dict[dns_network] = ({
+                    'id': route_id,
+                    'server': self.id,
+                    'network': dns_network,
+                    'comment': None,
+                    'metric': 0,
+                    'nat': True,
+                    'nat_interface': None,
+                    'nat_netmap': None,
+                    'advertise': None,
+                    'vpc_region': None,
+                    'vpc_id': None,
+                    'net_gateway': False,
+                    'virtual_network': False,
+                    'network_link': False,
+                    'server_link': False,
+                    'link_virtual_network': False,
+                })
 
         for network_link in self.network_links:
             route_id = network_link.encode().hex()
