@@ -895,9 +895,10 @@ def server_route_get(server_id):
 
     svr = server.get_by_id(server_id, fields=('_id', 'wg', 'network',
         'network_wg', 'links', 'network_start', 'network_end', 'routes',
-        'organizations', 'ipv6'))
+        'route_dns', 'dns_servers', 'organizations', 'ipv6'))
 
-    resp = svr.get_routes(include_server_links=True, include_hidden=True)
+    resp = svr.get_routes(include_server_links=True, include_hidden=True,
+        include_dns_routes=False)
     if settings.app.demo_mode:
         utils.demo_set_cache(resp)
     return utils.jsonify(resp)
