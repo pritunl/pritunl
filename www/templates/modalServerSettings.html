@@ -24,6 +24,12 @@
         <input type="text" placeholder="Enter groups" value="<%- groups ? groups.join(',') : '' %>">
       </div>
     </div>
+    <div class="route-dns-toggle toggle-form form-group">
+      <label>Enable DNS Routing</label>
+      <div class="selector <%= route_dns ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Route DNS traffic through VPN to prevent DNS vulnerabilities on malicious networks">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="wg-toggle toggle-form form-group">
       <label>Enable WireGuard</label>
       <div class="selector <%= wg ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enable WG connections on server. WireGuard packages must be installed separately">
