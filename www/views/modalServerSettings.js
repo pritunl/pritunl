@@ -498,7 +498,7 @@ define([
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var dynamicFirewall = this.getDynamicFirewallSelect();
-      var routeDns = this.getDynamicFirewallSelect();
+      var routeDns = this.getRouteDnsSelect();
       var deviceAuth = this.getDeviceAuthSelect();
       var ipv6 = this.getIpv6Select();
       var ipv6Firewall = this.getIpv6FirewallSelect();
