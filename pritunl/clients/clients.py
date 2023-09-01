@@ -158,7 +158,10 @@ class Clients(object):
                 network = route['network']
                 metric = route.get('metric')
                 if metric:
-                    metric_def = ' vpn_gateway %s' % metric
+                    if ':' in network:
+                        metric_def = ' %s %s' % (network_gateway6, metric)
+                    else:
+                        metric_def = ' vpn_gateway %s' % metric
                 else:
                     metric_def = ''
 
@@ -257,7 +260,11 @@ class Clients(object):
                     network = route['network']
                     metric = route.get('metric')
                     if metric:
-                        metric_def = ' vpn_gateway %s' % metric
+                        if ':' in network:
+                            metric_def = ' %s %s' % (
+                                network_gateway6, metric)
+                        else:
+                            metric_def = ' vpn_gateway %s' % metric
                         metric = ' %s' % metric
                     else:
                         metric_def = ''
