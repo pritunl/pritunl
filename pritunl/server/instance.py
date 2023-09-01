@@ -182,19 +182,23 @@ class ServerInstance(object):
         push = ''
         routes = []
         for route in self.server.get_routes(include_default=False):
+            network = route['network']
+
             routes.append(route['network'])
             if route['virtual_network'] and not route.get('wg_network'):
                 continue
 
             metric = route.get('metric')
             if metric:
-                metric_def = ' vpn_gateway %s' % metric
+                if ':' in network:
+                    metric_def = ' %s %s' % (gateway6, metric)
+                else:
+                    metric_def = ' vpn_gateway %s' % metric
                 metric = ' %s' % metric
             else:
                 metric_def = ''
                 metric = ''
 
-            network = route['network']
             netmap = route.get('nat_netmap')
             if netmap:
                 network = netmap
