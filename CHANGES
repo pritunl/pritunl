@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add DNS routing option
 Fix IPv6 route metric option
 
 Version 1.32.3602.80 2023-07-24
