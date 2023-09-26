@@ -133,10 +133,9 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
             usr.auth_type = sso_mode
             usr.commit('auth_type')
 
-        usr.clear_auth_cache()
-        usr.disconnect()
-
         if changed:
+            usr.clear_auth_cache()
+            usr.disconnect()
             event.Event(type=USERS_UPDATED, resource_id=org.id)
 
     key_link = org.create_user_key_link(usr.id, one_time=True)
