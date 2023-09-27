@@ -134,6 +134,14 @@ def _validate_user(username, email, sso_mode, org_id, groups, remote_addr,
             usr.commit('auth_type')
 
         if changed:
+            journal.entry(
+                journal.SSO_AUTH_UPDATE,
+                user_name=username,
+                remote_address=remote_addr,
+                reason=journal.SSO_AUTH_REASON_CHANGED,
+                reason_long='User sso attributes changed',
+            )
+
             usr.clear_auth_cache()
             usr.disconnect()
             event.Event(type=USERS_UPDATED, resource_id=org.id)
