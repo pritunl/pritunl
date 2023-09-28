@@ -52,6 +52,8 @@ USER_DEVICE_DELETE = 'user_device_delete'
 
 SSO_AUTH_FAILURE = 'sso_auth_failure'
 SSO_AUTH_SUCCESS = 'sso_auth_success'
+SSO_AUTH_UPDATE = 'sso_auth_update'
+SSO_AUTH_REASON_CHANGED = 'sso_changed'
 SSO_AUTH_REASON_RATE_LIMIT = 'rate_limit'
 SSO_AUTH_REASON_DISABLED = 'disabled'
 SSO_AUTH_REASON_GOOGLE_FAILED = 'google_failed'
