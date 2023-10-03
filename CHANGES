@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix wg DNS issue
+
 Version 1.32.3660.72 2023-09-20
 -------------------------------
 
