@@ -80,6 +80,7 @@ def _dict():
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'restrict_import': settings.user.restrict_import,
+            'restrict_client': settings.user.restrict_client,
             'drop_permissions': settings.vpn.drop_permissions,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
@@ -192,6 +193,7 @@ def _dict():
             'sso_cache': settings.app.sso_cache,
             'sso_client_cache': settings.app.sso_client_cache,
             'restrict_import': settings.user.restrict_import,
+            'restrict_client': settings.user.restrict_client,
             'drop_permissions': settings.vpn.drop_permissions,
             'client_reconnect': settings.user.reconnect,
             'public_address': settings.local.host.public_addr,
@@ -808,6 +810,14 @@ def settings_put():
         if restrict_import != settings.user.restrict_import:
             changes.add('restrict_import')
         settings.user.restrict_import = restrict_import
+
+    if 'restrict_client' in flask.request.json:
+        settings_commit = True
+        restrict_client = True if \
+            flask.request.json['restrict_client'] else False
+        if restrict_client != settings.user.restrict_client:
+            changes.add('restrict_client')
+        settings.user.restrict_client = restrict_client
 
     if 'client_reconnect' in flask.request.json:
         settings_commit = True
