@@ -821,6 +821,7 @@ class User(mongo.MongoObject):
             'push_auth': True if self.get_push_type(svr) else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
             'disable_reconnect': disable_reconnect,
+            'restrict_client': settings.user.restrict_client,
             'token_ttl': settings.app.sso_client_cache_timeout,
         }
 
