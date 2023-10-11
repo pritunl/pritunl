@@ -20,4 +20,5 @@ class SettingsUser(SettingsGroupMongo):
         'skip_remote_sso_check': False,
         'conf_sync': True,
         'restrict_import': False,
+        'restrict_client': False,
     }
