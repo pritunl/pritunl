@@ -1521,7 +1521,9 @@ class ServerInstance(object):
         )
 
         def timeout():
-            logger.error('Server startup timed out, stopping server',
+            logger.error(
+                'Server startup timed out, stopping server. ' +
+                'Use clear-message-cache command.',
                 'server',
                 server_id=self.server.id,
                 instance_id=self.id,
