@@ -20,6 +20,7 @@ Commands:
   reset-ssl-cert        Reset the server ssl certificate
   renew-ssl-cert        Renew the Lets Encrypt server ssl certificate
   reconfigure           Reconfigure database connection
+  clear-message-cache   Clear the cache of the internal message system
   get-mongodb           Get the current mongodb uri
   set-mongodb           Set the mongodb uri
   get-host-id           Get the current host id
@@ -304,6 +305,22 @@ def main(default_conf=None):
 
         time.sleep(.2)
         print('Server ssl certificate successfully renewed')
+
+        sys.exit(0)
+    elif cmd == 'clear-message-cache':
+        from pritunl import setup
+        from pritunl import logger
+        from pritunl import mongo
+
+        setup.setup_db()
+
+        print('Clearing message cache...')
+
+        mongo.get_collection('messages').drop()
+
+        setup.upsert_indexes()
+
+        print('Message cache cleared')
 
         sys.exit(0)
     elif cmd == 'destroy-secondary':
