@@ -21,6 +21,7 @@ _changes_audit_text = {
     'smtp': 'SMTP settings changed',
     'pin_mode': 'User pin mode setting changed',
     'restrict_import': 'Restrict import setting changed',
+    'restrict_client': 'Restrict client options changed',
     'sso': 'Single sign-on settings changed',
     'drop_permissions': 'Drop openvpn permissions setting changed',
 }
