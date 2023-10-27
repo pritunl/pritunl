@@ -55,6 +55,8 @@ def main(default_conf=None):
             help='Limit log lines')
         parser.add_option('--natural', action='store_true',
             help='Natural log sort')
+        parser.add_option('--unformatted', action='store_true',
+            help='Disable terminal color formatting')
     elif cmd == 'set':
         parser.disable_interspersed_args()
 
@@ -461,6 +463,7 @@ def main(default_conf=None):
             print(log_view.get_log_lines(
                 natural=options.natural,
                 limit=options.limit,
+                formatted=not options.unformatted,
             ))
 
         sys.exit(0)
