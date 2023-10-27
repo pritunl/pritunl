@@ -133,7 +133,9 @@ def after_request(response):
     response.headers.add('X-Robots-Tag', 'noindex')
 
     if settings.app.server_ssl or settings.app.reverse_proxy:
-        response.headers.add('Strict-Transport-Security', 'max-age=31536000')
+        response.headers.add(
+            'Strict-Transport-Security',
+            'max-age=31536000; includeSubDomains')
 
     if not flask.request.path.startswith('/event'):
         monitoring.insert_point('requests', {
