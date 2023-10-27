@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Add restrict client option
 Fix wg DNS issue
+Update libraries
 
 Version 1.32.3660.72 2023-09-20
 -------------------------------
