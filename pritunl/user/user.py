@@ -1282,6 +1282,7 @@ class User(mongo.MongoObject):
         pub_key_enc64 = utils.base64raw_encode(pub_key_enc)
 
         devices = self.devices or []
+        unreg_devices = []
         dev_id = None
         dev_index = None
         reg_key = None
@@ -1314,7 +1315,7 @@ class User(mongo.MongoObject):
             if dev_index is not None:
                 devices[dev_index] = device
             else:
-                devices.append(device)
+                unreg_devices.append(device)
 
             dev_names = set()
             dev_pub_keys = set()
@@ -1322,7 +1323,7 @@ class User(mongo.MongoObject):
 
             unreg_count = 0
             new_devices = []
-            for device in devices:
+            for device in unreg_devices + devices:
                 dev_name = device.get('name')
                 dev_pub_key = device.get('pub_key')
                 dev_reg_key = device.get('reg_key')
