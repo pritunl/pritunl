@@ -16,6 +16,7 @@ define([
       'email_from': null,
       'pin_mode': null,
       'restrict_import': null,
+      'restrict_client': null,
       'monitoring': null,
       'influxdb_url': null,
       'influxdb_token': null,
