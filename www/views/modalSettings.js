@@ -29,6 +29,7 @@ define([
         'click .sso-cache': 'onSsoCacheSelect',
         'click .sso-client-cache': 'onSsoClientCacheSelect',
         'click .restrict-import': 'onRestrictImportSelect',
+        'click .restrict-client': 'onRestrictClientSelect',
         'click .client-reconnect': 'onClientReconnect',
         'click .drop-permissions': 'onDropPermissions',
         'propertychange .pass input': 'onPassEvent',
@@ -1090,6 +1091,22 @@ define([
     onRestrictImportSelect: function() {
       this.setRestrictImportSelect(!this.getRestrictImportSelect());
     },
+    getRestrictClientSelect: function() {
+      return this.$('.restrict-client .selector').hasClass('selected');
+    },
+    setRestrictClientSelect: function(state) {
+      if (state) {
+        this.$('.restrict-client .selector').addClass('selected');
+        this.$('.restrict-client .selector-inner').show();
+      }
+      else {
+        this.$('.restrict-client .selector').removeClass('selected');
+        this.$('.restrict-client .selector-inner').hide();
+      }
+    },
+    onRestrictClientSelect: function() {
+      this.setRestrictClientSelect(!this.getRestrictClientSelect());
+    },
     getClientReconnect: function() {
       return this.$('.client-reconnect .selector').hasClass('selected');
     },
@@ -1220,6 +1237,7 @@ define([
       var ssoCache = this.getSsoCacheSelect();
       var ssoClientCache = this.getSsoClientCacheSelect();
       var restrictImport = this.getRestrictImportSelect();
+      var restrictClient = this.getRestrictClientSelect();
       var oracleUserOcid = this.$(
         '.oracle-user-ocid input').val();
       var oraclePublicKey = this.$(
@@ -1526,6 +1544,7 @@ define([
         sso_cache: ssoCache,
         sso_client_cache: ssoClientCache,
         restrict_import: restrictImport,
+        restrict_client: restrictClient,
         client_reconnect: clientReconnect,
         drop_permissions: dropPermissions,
         public_address: publicAddress,
