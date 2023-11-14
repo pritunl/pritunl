@@ -226,7 +226,7 @@ class Authorizer(object):
                 })
                 if updated:
                     logger.info(
-                        'Client authentication with firewall token',
+                        'Client authentication with device token',
                         'clients',
                         user_name=self.user.name,
                         org_name=self.user.org.name,
@@ -236,7 +236,7 @@ class Authorizer(object):
                     self.has_fw_token = True
                     return
 
-        raise AuthError('Invalid firewall token')
+        raise AuthError('Invalid device token')
 
     def _check_sso_token(self):
         if not self.server.sso_auth or self.has_link:
