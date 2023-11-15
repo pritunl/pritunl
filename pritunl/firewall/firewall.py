@@ -21,7 +21,7 @@ def _insert_rule(rule, ipv6=False):
             try:
                 utils.Process(
                     ['ip6tables' if ipv6 else 'iptables', '-I'] + rule,
-                    ).run(15)
+                ).run(15)
                 break
             except:
                 if i == 2:
@@ -42,7 +42,7 @@ def _remove_rule(rule, ipv6=False):
             try:
                 utils.Process(
                     ['ip6tables' if ipv6 else 'iptables', '-D'] + rule,
-                    ).run(15)
+                ).run(15)
                 break
             except:
                 if i == 2:
@@ -248,15 +248,20 @@ def close_server(server_id, instance_id, port, proto, wg_port):
             '--comment', 'pritunl-%s' % server_id,
         ], True)
 
-    utils.check_output_logged(
-        ['ipset', 'destroy', _set_name(instance_id)],
-    )
-    utils.check_output_logged(
-        ['ipset', 'destroy', _set_name6(instance_id)],
-    )
-    _clients.remove({
-        'instance_id': instance_id,
-    })
+    _lock.acquire()
+    try:
+        utils.check_output_logged(
+            ['ipset', 'destroy', _set_name(instance_id)],
+        )
+        utils.check_output_logged(
+            ['ipset', 'destroy', _set_name6(instance_id)],
+        )
+
+        _clients.remove({
+            'instance_id': instance_id,
+        })
+    finally:
+        _lock.release()
 
 def open_client(instance_id, client_id, addresses):
     for address in addresses:
