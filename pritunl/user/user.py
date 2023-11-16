@@ -1403,6 +1403,9 @@ class User(mongo.MongoObject):
                         self.commit('devices')
 
                         raise DeviceRegistrationLimit()
+                    else:
+                        self.devices = devices
+                        self.commit('devices')
 
                     raise DeviceRegistrationInvalid()
 
