@@ -116,7 +116,7 @@
         value="<%- link_ping_interval || '' %>" min="0" step="0.1"
         autocapitalize="off">
     </div>
-    <div class="inactive-timeout form-group">
+    <div class="inactive-timeout form-group" <%= inactive_timeout ? '' : 'style="display: none;"' %>>
       <label>User Inactive Timeout</label>
       <input type="number" class="form-control" placeholder="Enter inactive timeout" data-toggle="tooltip" title="Optional, disconnect users after the specified number of seconds of inactivity." min="0" step="0.1" value="<%- inactive_timeout || '' %>" autocapitalize="off">
     </div>
