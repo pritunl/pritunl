@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix device registration issue
+
 Version 1.32.3697.80 2023-10-27
 -------------------------------
 
