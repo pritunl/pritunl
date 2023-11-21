@@ -355,6 +355,7 @@ class ServerInstance(object):
 
         if self.server.mss_fix:
             server_conf += 'mssfix %s\n' % self.server.mss_fix
+            server_conf += 'tun-mtu %s\n' % self.server.mss_fix
 
         if self.server.multihome:
             server_conf += 'multihome\n'
