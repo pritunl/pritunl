@@ -798,7 +798,8 @@ class User(mongo.MongoObject):
         svr.generate_auth_key_commit()
 
         disable_reconnect = not settings.user.reconnect
-        if svr.inactive_timeout or svr.session_timeout:
+        #if svr.inactive_timeout or svr.session_timeout:
+        if svr.session_timeout:
             disable_reconnect = True
 
         data = {
