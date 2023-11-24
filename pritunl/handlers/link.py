@@ -756,7 +756,7 @@ def link_state_put():
     resp.headers.add('Cache-Control', 'no-cache, no-store, must-revalidate')
     resp.headers.add('Pragma', 'no-cache')
     resp.headers.add('Expires', 0)
-    resp.headers.add('Cipher-IV', base64.b64encode(iv))
+    resp.headers.add('Cipher-IV', base64.b64encode(iv).decode())
     resp.headers.add('Cipher-Signature', enc_signature)
 
     return resp
