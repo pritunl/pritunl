@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix server MTU configuration
+Remove user inactive timeout
 
 Version 1.32.3719.89 2023-11-18
 -------------------------------
