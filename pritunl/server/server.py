@@ -716,7 +716,7 @@ class Server(mongo.MongoObject):
             for link_svr in self.iter_links(fields=('_id', 'wg',
                    'network', 'network_wg', 'network_start',
                    'network_end', 'routes', 'organizations', 'links',
-                   'ipv6')):
+                   'ipv6', 'route_dns')):
                 for route in link_svr.get_routes():
                     if route['network'] == '0.0.0.0/0':
                         continue

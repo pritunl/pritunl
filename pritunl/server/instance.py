@@ -228,7 +228,8 @@ class ServerInstance(object):
         for link_svr in self.server.iter_links(fields=(
                 '_id', 'wg', 'network', 'network_wg', 'local_networks',
                 'network_start', 'network_end', 'organizations', 'routes',
-                'links', 'ipv6', 'replica_count', 'network_mode')):
+                'links', 'ipv6', 'replica_count', 'network_mode',
+                'route_dns')):
             if self.server.id < link_svr.id:
                 for route in link_svr.get_routes(include_default=False):
                     network = route['network']
