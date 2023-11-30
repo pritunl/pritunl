@@ -1137,6 +1137,7 @@ mute %s
 """
 
 OVPN_INLINE_CLIENT_CONF = """\
+ignore-unknown-option data-ciphers
 %s
 setenv UV_ID %s
 setenv UV_NAME %s
