@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.32.3732.84 2023-12-01
+-------------------------------
 
 Fix issue with linked servers
 
