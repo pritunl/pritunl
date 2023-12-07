@@ -216,10 +216,15 @@ class Clients(object):
                     client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
                         domains[0].strip())
                 else:
-                    for domain in domains:
-                        client_conf += (
-                            'push "dhcp-option DOMAIN-SEARCH %s"\n' % (
-                            domain.strip()))
+                    for (i, domain) in enumerate(domains):
+                        if i == 0:
+                            client_conf += (
+                                'push "dhcp-option DOMAIN %s"\n' % (
+                                domain.strip()))
+                        else:
+                            client_conf += (
+                                'push "dhcp-option DOMAIN-SEARCH %s"\n' % (
+                                domain.strip()))
 
             network_links = user.get_network_links()
             for network_link in network_links:
