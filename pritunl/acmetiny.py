@@ -23,7 +23,7 @@ def get_crt(account_key, csr, set_acme, contact=None):
         proc = subprocess.Popen(cmd_list, stdin=stdin, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         out, err = proc.communicate(cmd_input)
         if proc.returncode != 0:
-            raise IOError("{0}\n{1}".format(err_msg, err))
+            raise OSError("{0}\n{1}".format(err_msg, err))
         return out
 
     # helper function - make request and automatically parse json response
@@ -35,7 +35,7 @@ def get_crt(account_key, csr, set_acme, contact=None):
                 resp_data = json.loads(resp_data) # try to parse json results
             except ValueError:
                 pass # ignore json parsing errors
-        except IOError as e:
+        except OSError as e:
             resp_data = e.read().decode("utf8") if hasattr(e, "read") else str(e)
             code, headers = getattr(e, "code", None), {}
         if depth < 100 and code == 400 and json.loads(resp_data)['type'] == "urn:ietf:params:acme:error:badNonce":
