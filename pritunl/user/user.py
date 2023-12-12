@@ -1269,8 +1269,6 @@ class User(mongo.MongoObject):
     def device_verify_sig(self, device_name, platform, pub_key,
         digest, signature):
 
-        # TODO remove registration key from admin json data
-        # TODO limit to 3 unregistered devices
 
         public_key = serialization.load_der_public_key(
             pub_key,
