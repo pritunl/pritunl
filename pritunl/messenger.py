@@ -151,6 +151,7 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
                 if timeout and time.time() - start_time >= timeout:
                     return
 
+                time.sleep(0.2)
                 yield
 
         except pymongo.errors.AutoReconnect:
