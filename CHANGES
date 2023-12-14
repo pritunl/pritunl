@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix memory leak
+
 Version 1.32.3732.84 2023-12-01
 -------------------------------
 
