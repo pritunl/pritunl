@@ -932,6 +932,13 @@ class Server(mongo.MongoObject):
 
         return routes + link_routes
 
+    def reset_ip_pool(self):
+        self.collection.update({
+            '_id': self.id,
+        }, {'$set': {
+            'pool_cursor': None,
+        }})
+
     def upsert_route(self, network, nat_route, nat_interface, nat_netmap,
             advertise, vpc_region, vpc_id, net_gateway, comment, metric):
         exists = False
