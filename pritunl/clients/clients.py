@@ -603,6 +603,8 @@ class Clients(object):
 
         virt_address = self.server.get_ip_addr(org_id, user_id)
         if not virt_address:
+            self.server.reset_ip_pool()
+
             logger.error('User missing ip address',
                 'clients',
                 server_id=self.server.id,
