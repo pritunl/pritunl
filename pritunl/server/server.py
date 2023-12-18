@@ -335,6 +335,8 @@ class Server(mongo.MongoObject):
         if multihome is not None:
             self.multihome = multihome
 
+        self._last_reset_ip = 0
+
     @cached_static_property
     def collection(cls):
         return mongo.get_collection('servers')
@@ -933,11 +935,14 @@ class Server(mongo.MongoObject):
         return routes + link_routes
 
     def reset_ip_pool(self):
-        self.collection.update({
-            '_id': self.id,
-        }, {'$set': {
-            'pool_cursor': None,
-        }})
+        cur_time = utils.time_now()
+        if cur_time - self._last_reset_ip > 300:
+            self._last_reset_ip = cur_time
+            self.collection.update({
+                '_id': self.id,
+            }, {'$set': {
+                'pool_cursor': None,
+            }})
 
     def upsert_route(self, network, nat_route, nat_interface, nat_netmap,
             advertise, vpc_region, vpc_id, net_gateway, comment, metric):
