@@ -239,6 +239,7 @@ class Server(mongo.MongoObject):
             self._orig_network_hash = self.network_hash
         self._orgs_added = []
         self._orgs_removed = []
+        self._last_reset_ip = 0
 
         if name is not None:
             self.name = name
@@ -334,8 +335,6 @@ class Server(mongo.MongoObject):
             self.mss_fix = mss_fix
         if multihome is not None:
             self.multihome = multihome
-
-        self._last_reset_ip = 0
 
     @cached_static_property
     def collection(cls):
