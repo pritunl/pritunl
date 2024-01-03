@@ -1201,7 +1201,7 @@ def server_host_put(server_id, host_id):
     hst = host.get_by_id(host_id, fields=('_id', 'name',
         'public_address', 'auto_public_address', 'auto_public_host',
         'public_address6', 'auto_public_address6', 'auto_public_host6'))
-    if not svr:
+    if not hst:
         return flask.abort(404)
 
     try:
