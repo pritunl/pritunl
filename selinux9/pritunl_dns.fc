@@ -1,0 +1,1 @@
+/usr/bin/pritunl-dns -- gen_context(system_u:object_r:pritunl_dns_exec_t,s0)
