@@ -595,7 +595,7 @@ def sso_callback_get():
         email = None
         user_team = params.get('team')[0]
         org_names = params.get('orgs', [''])[0]
-        org_names = sorted(org_names.split(','))
+        org_names = org_names.split(',')
         org_names = [utils.filter_unicode(x) for x in org_names]
 
         if user_team != settings.app.sso_match[0]:
