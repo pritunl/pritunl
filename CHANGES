@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve IP pool
+
 Version 1.32.3746.95 2023-12-15
 -------------------------------
 
