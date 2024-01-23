@@ -381,7 +381,10 @@ class Clients(object):
                 client_conf['dns_servers'].append(network_gateway)
 
             if not self.server.dns_mapping or \
-                    settings.vpn.dns_mapping_push_all:
+                    (settings.vpn.dns_mapping_push_all and
+                     platform not in ('ios', 'mac')) or \
+                    (settings.vpn.dns_mapping_push_all_apple and
+                     platform in ('ios', 'mac')):
                 for dns_server in self.server.dns_servers:
                     client_conf['dns_servers'].append(dns_server)
 
