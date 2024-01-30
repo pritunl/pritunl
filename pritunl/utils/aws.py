@@ -7,29 +7,51 @@ import boto3
 import requests
 import time
 
-def connect_ec2(aws_key, aws_secret, region):
-    return boto3.client(
-        'ec2',
-        aws_access_key_id=aws_key,
-        aws_secret_access_key=aws_secret,
-        region_name=region,
-    )
+def get_imds_token():
+    response = requests.put(AWS_TOKEN_URL,
+        headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"})
+    if response.status_code != 200:
+        raise Exception("Failed to get IMDSv2 token")
+
+    return response.text
+
+def get_instance_metadata(key):
+    token = get_imds_token()
+    response = requests.get(AWS_METADATA_BASE + key,
+        headers={
+            "X-aws-ec2-metadata-token": token,
+        })
+    if response.status_code != 200:
+        raise Exception("Failed to get instance metadata")
+    return response.text
 
 def get_instance_id():
-    try:
-        resp = requests.get(
-            'http://169.254.169.254/latest/meta-data/instance-id',
-            timeout=0.5,
-        )
+    return get_instance_metadata("instance-id")
 
-        if resp.status_code != 200:
-            return
+def get_availability_zone():
+    return get_instance_metadata("placement/availability-zone")
 
-        return resp.content
-    except:
-        pass
+def get_region():
+    zone = get_availability_zone()
 
-def get_metadata():
+    for aws_region in AWS_REGIONS:
+        if zone.startswith(aws_region):
+            return aws_region
+
+    raise Exception("Failed to get instance region")
+
+def get_vpc_id():
+    macs = get_instance_metadata("network/interfaces/macs")
+    for mac_path in macs.splitlines():
+        return get_instance_metadata(
+            "network/interfaces/macs/" + mac_path + "vpc-id")
+
+    raise Exception("Failed to get instance VPC")
+
+def get_iface_macs():
+    return get_instance_metadata("network/interfaces/macs")
+
+def get_metadata1():
     metadata = boto.utils.get_instance_metadata()
 
     instance_id = metadata['instance-id']
@@ -58,6 +80,36 @@ def get_metadata():
         'vpc_id': vpc_id,
         'region': region,
     }
+
+def get_metadata2():
+    instance_id = get_instance_id()
+    availability_zone = get_availability_zone()
+    region = get_region()
+    vpc_id = get_vpc_id()
+
+    return {
+        'instance_id': instance_id,
+        'availability_zone': availability_zone,
+        'vpc_id': vpc_id,
+        'region': region,
+    }
+
+def get_metadata():
+    try:
+        return get_metadata2()
+    except:
+        try:
+            return get_metadata1()
+        except:
+            return get_metadata2()
+
+def connect_ec2(aws_key, aws_secret, region):
+    return boto3.client(
+        'ec2',
+        aws_access_key_id=aws_key,
+        aws_secret_access_key=aws_secret,
+        region_name=region,
+    )
 
 def add_vpc_route(network):
     time.sleep(0.1)
