@@ -67,6 +67,10 @@ class Authorizer(object):
                 self.state = challenge[2]
                 self.password = challenge[4]
 
+        if self.password and self.password.startswith('SCRV1:'):
+            self.password = base64.b64decode(
+                self.password.split(':')[-1]).decode()
+
         self.modes = usr.get_auth_modes(svr)
 
         logger.info(
