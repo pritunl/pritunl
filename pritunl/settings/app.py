@@ -64,7 +64,7 @@ class SettingsApp(SettingsGroupMongo):
         'auth_expire_window': 86400,
         'auth_limiter_ttl': 600,
         'auth_limiter_count_max': 30,
-        'wg_public_key_ttl': 604800,
+        'wg_public_key_ttl': 7776000,
         'org_pool_size': 1,
         'user_pool_size': 6,
         'server_pool_size': 3,
