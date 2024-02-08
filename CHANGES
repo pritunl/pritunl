@@ -6,6 +6,7 @@ Pritunl Changelog
 Improve IP pool
 Add IMDSv2 for AWS
 Fix mobile device connection issues
+Fix connection issues with linked servers
 
 Version 1.32.3746.95 2023-12-15
 -------------------------------
