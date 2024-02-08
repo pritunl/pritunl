@@ -664,6 +664,9 @@ class User(mongo.MongoObject):
                 'timestamp': utils.now(),
             })
         except pymongo.errors.DuplicateKeyError:
+            logger.error('Duplicate Google OTP key', 'user',
+                user_name=self.user.name,
+            )
             return False
 
         return True
@@ -1268,7 +1271,6 @@ class User(mongo.MongoObject):
 
     def device_verify_sig(self, device_name, platform, pub_key,
         digest, signature):
-
 
         public_key = serialization.load_der_public_key(
             pub_key,
