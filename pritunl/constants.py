@@ -74,6 +74,8 @@ MONGO_ACTION_METHODS = {
     'upsert',
 }
 
+AWS_TOKEN_URL = 'http://169.254.169.254/latest/api/token'
+AWS_METADATA_BASE = 'http://169.254.169.254/latest/meta-data/'
 AWS_REGIONS = {
     'us-east-1',
     'us-east-2',
