@@ -225,13 +225,10 @@ class ServerInstance(object):
                     push += 'route %s %s %s%s\n' % (
                         utils.parse_network(network) + (gateway, metric))
 
-        for link_svr in self.server.iter_links(fields=(
-                '_id', 'wg', 'network', 'network_wg', 'local_networks',
-                'network_start', 'network_end', 'organizations', 'routes',
-                'links', 'ipv6', 'replica_count', 'network_mode',
-                'route_dns')):
+        for link_svr in self.server.iter_links():
             if self.server.id < link_svr.id:
-                for route in link_svr.get_routes(include_default=False):
+                for route in link_svr.get_routes(include_default=False,
+                        include_dns_routes=False):
                     network = route['network']
                     metric = route.get('metric')
                     if metric:
