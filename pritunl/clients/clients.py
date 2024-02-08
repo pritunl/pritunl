@@ -149,12 +149,10 @@ class Clients(object):
         network_gateway6 = utils.get_network_gateway(self.server.network6)
 
         if user.link_server_id:
-            link_usr_svr = self.server.get_link_server(user.link_server_id,
-                fields=('_id', 'wg', 'network', 'network_wg',
-                    'network_start', 'network_end', 'local_networks',
-                    'organizations', 'routes', 'links', 'ipv6'))
+            link_usr_svr = self.server.get_link_server(user.link_server_id)
 
-            for route in link_usr_svr.get_routes(include_default=False):
+            for route in link_usr_svr.get_routes(include_default=False,
+                    include_dns_routes=False):
                 network = route['network']
                 metric = route.get('metric')
                 if metric:
@@ -261,7 +259,7 @@ class Clients(object):
 
             for link_svr in self.server.iter_links():
                 for route in link_svr.get_routes(
-                        include_default=False):
+                        include_default=False, include_dns_routes=False):
                     network = route['network']
                     metric = route.get('metric')
                     if metric:
@@ -418,7 +416,8 @@ class Clients(object):
                 thread.start()
 
             for link_svr in self.server.iter_links():
-                for route in link_svr.get_routes(include_default=False):
+                for route in link_svr.get_routes(include_default=False,
+                        include_dns_routes=False):
                     network = route['network']
                     metric = route.get('metric')
 
