@@ -36,6 +36,7 @@ class Authorizer(object):
         self.mac_addr = mac_addr
         self.mac_addrs = mac_addrs
         self.password = password
+        self.password_pin = None
         self.auth_password = auth_password
         self.auth_token = auth_token
         self.fw_token = fw_token
@@ -61,21 +62,37 @@ class Authorizer(object):
         if self.mac_addrs:
             self.mac_addrs = [x.lower() for x in self.mac_addrs]
 
+        self.modes = usr.get_auth_modes(svr)
+
         if self.password and self.password.startswith('CRV1:'):
             challenge = self.password.split(':')
             if len(challenge) == 5:
                 self.state = challenge[2]
                 self.password = challenge[4]
-
-        if self.password and self.password.startswith('SCRV1:'):
+        elif self.password and self.password.startswith('SCRV1:'):
             challenge = self.password.split(':')
             if len(challenge) == 3:
-                self.password = base64.b64decode(challenge[1]).decode()
-                self.password += base64.b64decode(challenge[2]).decode()
+                pass1 = base64.b64decode(challenge[1]).decode()
+                pass2 = base64.b64decode(challenge[2]).decode()
+
+                has_passcode = DUO_PASSCODE in self.modes or \
+                   ONELOGIN_PASSCODE in self.modes or \
+                   OKTA_PASSCODE in self.modes or \
+                   YUBICO_PASSCODE in self.modes or \
+                   OTP_PASSCODE in self.modes
+                has_pin = PIN in self.modes
+
+                if has_passcode and has_pin:
+                    if self.user.check_pin(pass1):
+                        self.password_pin = pass1
+                        self.password = pass2
+                    else:
+                        self.password_pin = pass2
+                        self.password = pass1
+                else:
+                    self.password = pass2
             else:
                 self.password = base64.b64decode(challenge[-1]).decode()
-
-        self.modes = usr.get_auth_modes(svr)
 
         logger.info(
             'Authenticating user',
@@ -161,7 +178,7 @@ class Authorizer(object):
             return
 
         state, password = data.split(':', 1)
-        if self.state == state:
+        if utils.const_compare(self.state, state):
             if not password and PIN in self.modes:
                 self.state = None
             else:
@@ -700,6 +717,7 @@ class Authorizer(object):
         has_onelogin_passcode = ONELOGIN_PASSCODE in self.modes
         has_okta_passcode = OKTA_PASSCODE in self.modes
         has_pin = PIN in self.modes
+        reuse_otp_code = None
 
         if has_duo_passcode or has_onelogin_passcode or has_okta_passcode:
             if not self.password and self.has_challenge() and has_pin:
@@ -723,10 +741,13 @@ class Authorizer(object):
             if challenge:
                 self.password = challenge + self.password
 
-            passcode_len = settings.app.sso_duo_passcode_length
-            orig_password = self.password
-            passcode = self.password[-passcode_len:]
-            self.password = self.password[:-passcode_len]
+            if PIN in self.modes and not self.password_pin:
+                passcode_len = settings.app.sso_duo_passcode_length
+                orig_password = self.password
+                passcode = self.password[-passcode_len:]
+                self.password = self.password[:-passcode_len]
+            else:
+                passcode = self.password
 
             allow = False
             if settings.app.sso_cache and not self.server_auth_token:
@@ -1088,6 +1109,8 @@ class Authorizer(object):
                                 None, 'Enter OTP Code', True)
                         raise AuthError('Challenge OTP code')
                     raise AuthError('Invalid OTP code')
+                else:
+                    reuse_otp_code = otp_code
 
                 if settings.app.sso_cache and not self.server_auth_token:
                     self.otp_cache_collection.update({
@@ -1125,7 +1148,7 @@ class Authorizer(object):
                 )
                 raise AuthError('User does not have a pin set')
 
-            if not self.user.check_pin(self.password):
+            if not self.user.check_pin(self.password_pin or self.password):
                 self.user.audit_event('user_connection',
                     ('User connection to "%s" denied. ' +
                      'User failed pin authentication') % (
@@ -1139,6 +1162,9 @@ class Authorizer(object):
                     self.server.journal_data,
                     event_long='Failed pin authentication',
                 )
+
+                if reuse_otp_code:
+                    self.user.reuse_otp_code(reuse_otp_code)
 
                 if self.has_challenge():
                     self.set_challenge(None, 'Enter Pin', False)
