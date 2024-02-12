@@ -665,11 +665,19 @@ class User(mongo.MongoObject):
             })
         except pymongo.errors.DuplicateKeyError:
             logger.error('Duplicate Google OTP key', 'user',
-                user_name=self.user.name,
+                user_name=self.name,
             )
             return False
 
         return True
+
+    def reuse_otp_code(self, code):
+        self.otp_collection.remove({
+            '_id': {
+                'user_id': self.id,
+                'code': code,
+            },
+        })
 
     def _get_password_mode(self, svr):
         if svr.sso_auth:
