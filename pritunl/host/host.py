@@ -15,7 +15,6 @@ class Host(mongo.MongoObject):
         'hostname',
         'ping_timestamp',
         'instance_id',
-        'auto_instance_id',
         'status',
         'start_timestamp',
         'version',
