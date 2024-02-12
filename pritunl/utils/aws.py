@@ -9,7 +9,9 @@ import time
 
 def get_imds_token():
     response = requests.put(AWS_TOKEN_URL,
-        headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"})
+        headers={"X-aws-ec2-metadata-token-ttl-seconds": "21600"},
+        timeout=10,
+    )
     if response.status_code != 200:
         raise Exception("Failed to get IMDSv2 token")
 
@@ -20,7 +22,9 @@ def get_instance_metadata(key):
     response = requests.get(AWS_METADATA_BASE + key,
         headers={
             "X-aws-ec2-metadata-token": token,
-        })
+        },
+        timeout=10,
+    )
     if response.status_code != 200:
         raise Exception("Failed to get instance metadata")
     return response.text
