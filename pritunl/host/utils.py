@@ -165,12 +165,6 @@ def init():
                 interface=settings.conf.local_address_interface)
             settings.local.host.auto_local_address6 = None
 
-    try:
-        metadata = utils.get_metadata()
-        settings.local.host.auto_instance_id = metadata['instance_id']
-    except:
-        pass
-
     settings.local.host.local_networks = utils.get_local_networks()
 
     settings.local.host.commit()
