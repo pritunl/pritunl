@@ -1519,6 +1519,13 @@ class ServerInstance(object):
             libipt=settings.vpn.lib_iptables,
         )
 
+        if self.server.dh_param_bits < 2048:
+            logger.warning('Using DH params less than 2048 is not '
+                'compatibile with newer versions of OpenSSL',
+                server_id=self.server.id,
+                instance_id=self.id,
+            )
+
         def timeout():
             logger.error(
                 'Server startup timed out, stopping server. ' +
