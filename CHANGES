@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix mobile device connection issues
+
 Version 1.32.3805.31 2024-02-12
 -------------------------------
 
