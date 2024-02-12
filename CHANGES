@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix slow startup
+
 Version 1.32.3801.41 2024-02-08
 -------------------------------
 
