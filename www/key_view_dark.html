@@ -286,10 +286,6 @@
         width: 150px;
       }
 
-      #cur-pin {
-        display: <%= cur_pin_display %>;
-      }
-
       .alert {
         display: none;
         width: 350px;
@@ -317,10 +313,27 @@
         border-color: #813c47;
       }
 
-      .pin-disabled #pin-alert,
-      .pin-disabled #cur-pin,
-      .pin-disabled #pin,
-      .pin-disabled #change-pin {
+      .pin-disabled #config-pin {
+        display: none;
+      }
+
+      #cur-pin,
+      #pin,
+      #change-pin {
+        display: none;
+      }
+
+      .pin-edit #cur-pin {
+        display: <%= cur_pin_display %>;
+      }
+
+      .pin-edit #pin,
+      .pin-edit #change-pin,
+      .pin-edit #config-pin {
+        display: block;
+      }
+
+      .pin-edit #config-pin {
         display: none;
       }
 
@@ -390,6 +403,7 @@
         <input id="pin" type="password" class="form-control"
           placeholder="Enter new pin" data-toggle="tooltip">
         <button id="change-pin" class="btn" onclick="changePin()">Change Pin</button>
+        <button id="config-pin" class="btn" onclick="showChangePin()">Configure Pin</button>
         <button class="btn btn-danger" onclick="deleteKey()">Delete Temporary Profile Link</button>
         <div id="toggle-show">Show More</div>
       </div>
@@ -443,6 +457,10 @@
         otpKey.style.display = 'none';
         document.getElementById('otp-label').style.display = 'none';
         document.getElementById('qrcode').style.display = 'none';
+      }
+
+      var showChangePin = function() {
+        document.getElementById('key-box').classList.add('pin-edit');
       }
 
       var changePin = function() {
