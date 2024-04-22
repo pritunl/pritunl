@@ -2515,6 +2515,20 @@ class Clients(object):
                 self.instance_com.client_kill(client_id)
             return
 
+        if not self.server.check_groups(usr.groups) and \
+                usr.type != CERT_SERVER:
+            logger.error('User failed auth group update check',
+                'server',
+                server_id=self.server.id,
+                instance_id=self.instance.id,
+                user_id=client['user_id'],
+            )
+            if len(client_id) > 32:
+                self.instance.disconnect_wg(client_id)
+            else:
+                self.instance_com.client_kill(client_id)
+            return
+
     def auth_check(self, client):
         if not settings.app.sso_connection_check:
             return
