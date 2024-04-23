@@ -296,6 +296,8 @@ allow pritunl_t modules_dep_t:file { getattr map open read };
 allow pritunl_t modules_object_t:dir search;
 allow pritunl_t modules_object_t:file { getattr open read };
 allow pritunl_t mongod_port_t:tcp_socket name_connect;
+allow pritunl_t dns_port_t:tcp_socket name_connect;
+allow pritunl_t dns_port_t:udp_socket name_connect;
 allow pritunl_t mongod_t:dir search;
 allow pritunl_t mongod_t:file { getattr open read };
 allow pritunl_t mongod_t:lnk_file { read read };
