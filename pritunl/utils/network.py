@@ -50,17 +50,29 @@ def interface_release(interface_type, interface):
     else:
         raise ValueError('Unknown interface type %s' % interface_type)
 
+def strip_port(hostport):
+    colon = hostport.find(':')
+    if colon == -1:
+        return hostport
+
+    if ']' in hostport:
+        i = hostport.find(']')
+        if i != -1:
+            return hostport[:i].lstrip('[')
+
+    return hostport[:colon]
+
 def get_remote_addr():
     if settings.app.reverse_proxy:
         forward_ip = flask.request.headers.get('PR-Forwarded-Header')
         if forward_ip:
-            return forward_ip.split(',')[-1].strip()
+            return strip_port(forward_ip.split(',')[-1].strip())
 
     forward_ip = flask.request.headers.get('PR-Forwarded-For')
     if forward_ip:
-        return forward_ip
+        return strip_port(forward_ip)
 
-    return flask.request.remote_addr
+    return strip_port(flask.request.remote_addr)
 
 def get_interface_address(iface):
     try:
