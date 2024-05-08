@@ -227,13 +227,27 @@ class Organization(mongo.MongoObject):
                 status = search[n + 7:].split(None, 1)
                 status = status[0] if status else ''
                 search = search[:n] + search[n + 7 + len(status):].strip()
+                status_spec = {}
+
+                status = status.split(":")
+
+                if len(status) == 1:
+                    status = status[0]
+                elif len(status) == 2 and len(status[1]) == 24:
+                    status_spec = {
+                        'server_id': database.ParseObjectId(status[1])
+                    }
+                    status = status[0]
+                else:
+                    return
 
                 if status not in (ONLINE, OFFLINE):
                     return
 
-                user_ids = self.clients_collection.find(None, {
+                user_ids = self.clients_collection.find(status_spec, {
                     '_id': True,
                     'user_id': True,
+                    'server_id': True,
                 }).distinct('user_id')
 
                 if status == ONLINE:
