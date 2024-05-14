@@ -1,8 +1,7 @@
 Pritunl Changelog
 =================
 
-Version 1.32.3897.58 2024-05-14
--------------------------------
+<%= version %>
 
 Change profile page layout
 
