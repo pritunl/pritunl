@@ -34,6 +34,7 @@ require {
   type debugfs_t;
   type device_t;
   type dhcpc_t;
+  type dns_port_t;
   type firewalld_t;
   type fs_t;
   type fsdaemon_t;

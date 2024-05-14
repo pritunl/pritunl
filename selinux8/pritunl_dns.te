@@ -36,7 +36,7 @@ allow pritunl_dns_t pritunl_tmp_t:dir search;
 allow pritunl_dns_t pritunl_tmp_t:file { getattr open read };
 
 allow pritunl_dns_t dns_port_t:tcp_socket { name_bind name_connect };
-allow pritunl_dns_t dns_port_t:udp_socket { name_bind name_connect };
+allow pritunl_dns_t dns_port_t:udp_socket name_bind;
 allow pritunl_dns_t mongod_port_t:tcp_socket name_connect;
 allow pritunl_dns_t net_conf_t:file { getattr open read };
 allow pritunl_dns_t node_t:tcp_socket node_bind;
