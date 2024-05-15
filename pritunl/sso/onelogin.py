@@ -254,7 +254,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             },
         )
 
-        if response.status_code != 200:
+        if response.status_code != 201:
             logger.error('OneLogin api error creating verification', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
@@ -307,10 +307,13 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             )
             return False
 
-        if response.status_code == 401:
-            if 'Authentication pending' in verify['message']:
+        if response.status_code == 200:
+            if verify == "pending":
                 time.sleep(0.5)
                 continue
+            
+            if verify == "accepted":
+                return True
 
             logger.error('OneLogin secondary rejected', 'sso',
                 username=username,
@@ -319,7 +322,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             )
             return False
 
-        if response.status_code != 200 or verify['type'] != "success":
+        if response.status_code != 200:
             logger.error('OneLogin verify bad data', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
