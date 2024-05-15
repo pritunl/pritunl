@@ -155,6 +155,7 @@ def auth_onelogin(username):
 
 def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     access_token = _get_access_token()
+    
     if not access_token:
         return False
 
@@ -165,12 +166,10 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         return False
 
     response = requests.get(
-        _get_base_url() + '/api/2/users',
+        _get_base_url() + '/api/2/users?username=%s' % urllib.parse.quote(username),
         headers={
-            'Authorization': 'bearer:%s' % access_token,
-        },
-        params={
-            'username': username,
+            'Authorization': 'bearer: %s' % access_token,
+            'Content-Type': 'application/json',
         },
     )
 
@@ -182,7 +181,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         )
         return False
 
-    users = response.json()['data']
+    users = response.json()
     if not users:
         logger.error('OneLogin user not found', 'sso',
             username=username,
@@ -190,7 +189,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         return False
 
     user = users[0]
-    if user['status'] != 1:
+    if user['state'] != 1:
         logger.error('OneLogin user disabled', 'sso',
             username=username,
         )
@@ -199,14 +198,14 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     user_id = user['id']
 
     response = requests.get(
-        _get_base_url() + '/api/2/mfa/users/%d/factors' % user_id,
+        _get_base_url() + '/api/2/mfa/users/%d/devices' % user_id,
         headers={
-            'Authorization': 'bearer:%s' % access_token,
+            'Authorization': 'bearer: %s' % access_token,
         },
     )
 
     if response.status_code != 200:
-        logger.error('OneLogin api error getting factors', 'sso',
+        logger.error('OneLogin api error getting devices', 'sso',
             username=username,
             onelogin_mode=onelogin_mode,
             status_code=response.status_code,
@@ -215,19 +214,16 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         return False
 
     device_id = None
-    devices = response.json()['data']
+    devices = response.json()
     needs_trigger = False
     for device in devices:
-        if device['auth_factor_name'] != 'OneLogin Protect':
+        if device['auth_factor_name'] != 'OneLogin':
             continue
 
         if device['default']:
-            device_id = device['id']
-            needs_trigger = bool(device.get('needs_trigger'))
+            device_id = device['device_id']
+            needs_trigger = True
             break
-        elif not device_id:
-            device_id = device['id']
-            needs_trigger = bool(device.get('needs_trigger'))
 
     if not device_id:
         if 'none' in onelogin_mode:
@@ -244,13 +240,12 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
 
         return False
 
-    state_token = None
     if needs_trigger or 'push' in onelogin_mode:
         response = requests.post(
             _get_base_url() + '/api/2/mfa/users/%d/verifications' % (
                 user_id),
             headers={
-                'Authorization': 'bearer:%s' % access_token,
+                'Authorization': 'bearer: %s' % access_token,
                 'Content-Type': 'application/json',
                 'X-Forwarded-For': remote_ip,
             },
@@ -276,8 +271,6 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             )
             return False
 
-        state_token = activate[0]['state_token']
-
     start = utils.time_now()
     while True:
         if utils.time_now() - start > 45:
@@ -289,12 +282,11 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             return False
 
         response = requests.get(
-            _get_base_url() + '/api/2/mfa/users/%d/verifications/%d/' % (
+            _get_base_url() + '/api/2/mfa/users/%d/verifications/%s' % (
                 user_id, activate),
             headers={
-                'Authorization': 'bearer:%s' % access_token,
+                'Authorization': 'bearer: %s' % access_token,
                 'Content-Type': 'application/json',
-                'X-Forwarded-For': remote_ip,
             },
         )
 
