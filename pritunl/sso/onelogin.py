@@ -80,7 +80,7 @@ def auth_onelogin(username):
         return False
 
     response = requests.get(
-        _get_base_url() + '/api/1/users',
+        _get_base_url() + '/api/2/users',
         headers={
             'Authorization': 'bearer:%s' % access_token,
             'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ def auth_onelogin(username):
     user_id = user['id']
 
     response = requests.get(
-        _get_base_url() + '/api/1/users/%d/apps' % user_id,
+        _get_base_url() + '/api/2/users/%d/apps' % user_id,
         headers={
             'Authorization': 'bearer:%s' % access_token,
         },
@@ -168,7 +168,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         return False
 
     response = requests.get(
-        _get_base_url() + '/api/1/users',
+        _get_base_url() + '/api/2/users',
         headers={
             'Authorization': 'bearer:%s' % access_token,
         },
@@ -202,7 +202,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     user_id = user['id']
 
     response = requests.get(
-        _get_base_url() + '/api/1/users/%d/otp_devices' % user_id,
+        _get_base_url() + '/api/2/users/%d/otp_devices' % user_id,
         headers={
             'Authorization': 'bearer:%s' % access_token,
         },
@@ -250,7 +250,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     state_token = None
     if needs_trigger or 'push' in onelogin_mode:
         response = requests.post(
-            _get_base_url() + '/api/1/users/%d/otp_devices/%d/trigger' % (
+            _get_base_url() + '/api/2/users/%d/otp_devices/%d/trigger' % (
                 user_id, device_id),
             headers={
                 'Authorization': 'bearer:%s' % access_token,
@@ -292,7 +292,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             return False
 
         response = requests.post(
-            _get_base_url() + '/api/1/users/%d/otp_devices/%d/verify' % (
+            _get_base_url() + '/api/2/users/%d/otp_devices/%d/verify' % (
                 user_id, device_id),
             headers={
                 'Authorization': 'bearer:%s' % access_token,
