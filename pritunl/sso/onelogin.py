@@ -37,45 +37,8 @@ def _get_access_token():
     return response.json()['access_token']
 
 def auth_onelogin(username):
-    if not settings.app.sso_onelogin_id or \
-            not settings.app.sso_onelogin_secret:
-        try:
-            response = requests.get(
-                ONELOGIN_URL + '/api/v2/users?username=%d' % (
-                    urllib.parse.quote(username)),
-                auth=(settings.app.sso_onelogin_key, 'x'),
-                )
-        except http.client.HTTPException:
-            logger.exception('OneLogin api error getting user', 'sso',
-                username=username,
-            )
-            return False
-
-        if response.status_code == 200:
-            data = xml.etree.ElementTree.fromstring(response.content)
-            if data.find('status').text == '1':
-                return True
-
-            logger.warning('OneLogin user disabled', 'sso',
-                username=username,
-            )
-        elif response.status_code == 404:
-            logger.error('OneLogin user not found', 'sso',
-                username=username,
-            )
-        elif response.status_code == 406:
-            logger.warning('OneLogin user disabled', 'sso',
-                username=username,
-            )
-        else:
-            logger.error('OneLogin api error', 'sso',
-                username=username,
-                status_code=response.status_code,
-                response=response.content,
-            )
-        return False
-
     access_token = _get_access_token()
+    
     if not access_token:
         return False
 
@@ -250,7 +213,8 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 'X-Forwarded-For': remote_ip,
             },
             json={
-                'device_id': device_id
+                'device_id': device_id,
+                'otp': passcode,
             },
         )
 
