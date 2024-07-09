@@ -1509,6 +1509,7 @@ class ServerInstance(object):
             network=self.server.network,
             network6=self.server.network6,
             dynamic_firewall=self.server.dynamic_firewall,
+            sso_auth=self.server.sso_auth,
             route_dns=self.server.route_dns,
             device_auth=self.server.device_auth,
             host_id=settings.local.host.id,
