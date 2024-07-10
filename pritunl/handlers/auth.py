@@ -59,6 +59,7 @@ def _auth_radius(username, password, remote_addr):
         user_name=username,
         user_email=None,
         remote_ip=utils.get_remote_addr(),
+        sso_org_names=org_names,
     )
     if valid:
         org_id = org_id_new or org_id

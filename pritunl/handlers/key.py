@@ -2477,6 +2477,7 @@ def key_callback_get():
             user_email=email,
             remote_ip=remote_addr,
             sso_org_names=org_names,
+            sso_group_names=groups,
         )
         if valid:
             org_id = org_id_new or org_id
@@ -2585,6 +2586,7 @@ def key_callback_get():
             user_name=username,
             user_email=email,
             remote_ip=remote_addr,
+            sso_group_names=google_groups,
         )
         if valid:
             org_id = org_id_new or org_id
@@ -2669,6 +2671,7 @@ def key_callback_get():
             user_name=username,
             user_email=email,
             remote_ip=remote_addr,
+            sso_group_names=azure_groups,
         )
         if valid:
             org_id = org_id_new or org_id
