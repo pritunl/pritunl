@@ -50,9 +50,7 @@ def iter_hosts(spec=None):
 def get_page_total():
     collection = mongo.get_collection('links')
 
-    count = collection.find({}, {
-        '_id': True,
-    }).count()
+    count = collection.estimated_document_count()
 
     return int(math.floor(max(0, float(count - 1)) /
         settings.app.link_page_count))

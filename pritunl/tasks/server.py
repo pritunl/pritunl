@@ -52,7 +52,7 @@ class TaskServer(task.Task):
                             ping_timestamp=instance['ping_timestamp'],
                         )
 
-                        self.server_collection.update({
+                        self.server_collection.update_one({
                             '_id': doc['_id'],
                             'instances.instance_id': instance['instance_id'],
                         }, {
@@ -143,7 +143,7 @@ class TaskServer(task.Task):
                         new_availability_group=group_best,
                     )
 
-                    self.server_collection.update({
+                    self.server_collection.update_one({
                         '_id': doc['_id'],
                         'status': ONLINE,
                     }, {'$set': {

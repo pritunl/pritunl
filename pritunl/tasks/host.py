@@ -46,7 +46,7 @@ class TaskHost(task.Task):
 
                 if doc.get('ping_timestamp') and \
                         now - doc['ping_timestamp'] > ttl:
-                    response = self.hosts_collection.update({
+                    response = self.hosts_collection.update_one({
                         '_id': doc['_id'],
                         'ping_timestamp': ttl_timestamp,
                     }, {'$set': {
@@ -56,7 +56,7 @@ class TaskHost(task.Task):
 
                     yield
 
-                    if response['updatedExisting']:
+                    if bool(response.modified_count):
                         event.Event(type=HOSTS_UPDATED)
 
             yield

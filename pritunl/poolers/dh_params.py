@@ -15,20 +15,16 @@ def fill_dh_params():
     dh_param_counts = utils.LeastCommonCounter()
 
     for dh_param_bits in dh_param_bits_pool:
-        pool_count = collection.find({
+        pool_count = collection.count_documents({
             'dh_param_bits': dh_param_bits,
-        }, {
-            '_id': True
-        }).count()
+        })
 
         dh_param_counts[dh_param_bits] = pool_count
 
-        pool_count = queue_collection.find({
+        pool_count = queue_collection.count_documents({
             'type': 'dh_params',
             'dh_param_bits': dh_param_bits,
-        }, {
-            '_id': True
-        }).count()
+        })
 
         dh_param_counts[dh_param_bits] += pool_count
 

@@ -47,7 +47,7 @@ class ServerIpPool:
         network_hash = self.server.network_hash
         server_id = self.server.id
 
-        response = self.collection.update({
+        response = self.collection.update_one({
             'network': network_hash,
             'server_id': server_id,
             'user_id': {'$exists': False},
@@ -55,7 +55,7 @@ class ServerIpPool:
             'org_id': org_id,
             'user_id': user_id,
         }})
-        if response['updatedExisting']:
+        if bool(response.modified_count):
             return
 
         network = ipaddress.IPv4Network(self.server.network)
@@ -90,7 +90,7 @@ class ServerIpPool:
                 break
 
             try:
-                self.collection.insert({
+                self.collection.insert_one({
                     '_id': int(remote_ip_addr),
                     'network': network_hash,
                     'server_id': server_id,
@@ -105,7 +105,7 @@ class ServerIpPool:
         return False
 
     def unassign_ip_addr(self, org_id, user_id):
-        self.collection.update({
+        self.collection.update_one({
             'server_id': self.server.id,
             'network': self.server.network_hash,
             'user_id': user_id,
@@ -155,7 +155,7 @@ class ServerIpPool:
 
         for user in org.iter_users(include_pool=True):
             if ip_pool_avial:
-                response = self.collection.update({
+                response = self.collection.update_one({
                     'network': network_hash,
                     'server_id': server_id,
                     'user_id': {'$exists': False},
@@ -163,7 +163,7 @@ class ServerIpPool:
                     'org_id': org_id,
                     'user_id': user.id,
                 }})
-                if response['updatedExisting']:
+                if bool(response.modified_count):
                     continue
                 ip_pool_avial = False
 
@@ -201,7 +201,7 @@ class ServerIpPool:
             )
 
     def unassign_ip_pool_org(self, org_id):
-        self.collection.update({
+        self.collection.update_one({
             'server_id': self.server.id,
             'network': self.server.network_hash,
             'org_id': org_id,
@@ -257,7 +257,7 @@ class ServerIpPool:
                     bulk.find(spec).upsert().update(doc)
                     bulk_empty = False
                 else:
-                    self.collection.update(spec, doc, upsert=True)
+                    self.collection.update_one(spec, doc, upsert=True)
 
             if pool_end:
                 logger.warning('Failed to assign ip addresses ' +

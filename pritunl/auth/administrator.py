@@ -247,7 +247,7 @@ class Administrator(mongo.MongoObject):
         if code not in valid_codes:
             return False
 
-        response = self.otp_collection.update({
+        response = self.otp_collection.update_one({
             '_id': {
                 'user_id': self.id,
                 'code': code,
@@ -256,7 +256,7 @@ class Administrator(mongo.MongoObject):
             'timestamp': utils.now(),
         }}, upsert=True)
 
-        if response['updatedExisting']:
+        if bool(response.modified_count):
             return False
 
         return True
@@ -275,7 +275,7 @@ class Administrator(mongo.MongoObject):
 
     def new_session(self):
         session_id = utils.generate_secret()
-        self.collection.update({
+        self.collection.update_one({
             '_id': self.id,
         }, {'$push': {
             'sessions': {
@@ -313,7 +313,7 @@ class Administrator(mongo.MongoObject):
 
         timestamp = utils.now()
 
-        self.audit_collection.insert({
+        self.audit_collection.insert_one({
             'user_id': self.id,
             'timestamp': timestamp,
             'type': event_type,
@@ -361,7 +361,7 @@ class Administrator(mongo.MongoObject):
         return events
 
 def clear_session(id, session_id):
-    Administrator.collection.update({
+    Administrator.collection.update_one({
         '_id': id,
     }, {'$pull': {
         'sessions': session_id,
@@ -431,7 +431,7 @@ def check_session(csrf_check):
             return False
 
         try:
-            Administrator.nonces_collection.insert({
+            Administrator.nonces_collection.insert_one({
                 'token': auth_token,
                 'nonce': auth_nonce,
                 'timestamp': utils.now(),
@@ -559,12 +559,10 @@ def new_admin(**kwargs):
     return admin
 
 def super_user_count():
-    return Administrator.collection.find({
+    return Administrator.collection.count_documents({
         'super_user': {'$ne': False},
         'disabled': {'$ne': True},
-    }, {
-        '_id': True,
-    }).count()
+    })
 
 has_default_pass = None
 def has_default_password():

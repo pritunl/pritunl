@@ -103,7 +103,7 @@ for operation in operations:
 
     mongo_db.users_audit.delete_many({'user_id': remove_id})
     mongo_db.users_net_link.delete_many({'user_id': remove_id})
-    mongo_db.servers_ip_pool.update({
+    mongo_db.servers_ip_pool.update_one({
         'user_id': remove_id,
     }, {'$unset': {
         'org_id': '',
@@ -113,7 +113,7 @@ for operation in operations:
 
     print 'RENAMING: %r' % rename_id, new_name
 
-    mongo_db.users.update({
+    mongo_db.users.update_one({
         '_id': rename_id,
     }, {'$set': {
         'name': new_name,

@@ -510,10 +510,10 @@ class Server(mongo.MongoObject):
         if self.status != ONLINE:
             return 0
 
-        return self.clients_collection.find({
+        return self.clients_collection.count_documents({
             'server_id': self.id,
             'type': CERT_CLIENT,
-        }).count()
+        })
 
     @cached_property
     def user_count(self):
@@ -935,7 +935,7 @@ class Server(mongo.MongoObject):
         cur_time = utils.time_now()
         if cur_time - self._last_reset_ip > 300:
             self._last_reset_ip = cur_time
-            self.collection.update({
+            self.collection.update_one({
                 '_id': self.id,
             }, {'$set': {
                 'pool_cursor': None,
@@ -1268,7 +1268,7 @@ class Server(mongo.MongoObject):
                     'Linked servers must be offline to unlink')
 
         for link in self.links:
-            self.collection.update({
+            self.collection.update_one({
                 '_id': link.get('server_id'),
             }, {'$pull': {
                 'links': {'server_id': self.id},
@@ -1440,7 +1440,7 @@ class Server(mongo.MongoObject):
 
         self.hosts.remove(host_id)
 
-        response = self.collection.update({
+        response = self.collection.update_one({
             '_id': self.id,
             'instances.host_id': host_id,
         }, {
@@ -1455,7 +1455,7 @@ class Server(mongo.MongoObject):
             },
         })
 
-        if response['updatedExisting']:
+        if bool(response.modified_count):
             self.publish('start', extra={
                 'prefered_hosts': host.get_prefered_hosts(
                     self.hosts, self.replica_count),
@@ -1640,7 +1640,7 @@ class Server(mongo.MongoObject):
         self.pre_start_check()
 
         start_timestamp = utils.now()
-        response = self.collection.update({
+        response = self.collection.update_one({
             '_id': self.id,
             'status': OFFLINE,
             'instances_count': 0,
@@ -1651,7 +1651,7 @@ class Server(mongo.MongoObject):
             'availability_group': self.get_best_availability_group(),
         }})
 
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             raise ServerInstanceSet('Server instances already running. %r', {
                     'server_id': self.id,
                 })
@@ -1700,7 +1700,7 @@ class Server(mongo.MongoObject):
                     })
         except:
             self.publish('force_stop')
-            self.collection.update({
+            self.collection.update_one({
                 '_id': self.id,
             }, {'$set': {
                 'status': OFFLINE,
@@ -1716,7 +1716,7 @@ class Server(mongo.MongoObject):
         if self.status != ONLINE:
             return
 
-        response = self.collection.update({
+        response = self.collection.update_one({
             '_id': self.id,
             'status': ONLINE,
         }, {'$set': {
@@ -1728,7 +1728,7 @@ class Server(mongo.MongoObject):
             'availability_group': None,
         }})
 
-        self.vxlan_collection.update({
+        self.vxlan_collection.update_one({
             'server_id': self.id,
         }, {'$set': {
             'hosts': [],
@@ -1738,7 +1738,7 @@ class Server(mongo.MongoObject):
             'server_id': self.id,
         })
 
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             raise ServerStopError('Server not running', {
                     'server_id': self.id,
                 })

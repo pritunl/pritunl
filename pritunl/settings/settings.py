@@ -66,7 +66,7 @@ class Settings(object):
                 has_docs = True
                 collection.bulk().find({
                     '_id': doc['_id'],
-                }).upsert().update({
+                }).upsert().update_one({
                     '$set': doc,
                 })
 
@@ -76,7 +76,7 @@ class Settings(object):
                 doc_id = unset_doc.pop('_id')
                 collection.bulk().find({
                     '_id': doc_id,
-                }).upsert().update({
+                }).upsert().update_one({
                     '$unset': unset_doc,
                 })
 

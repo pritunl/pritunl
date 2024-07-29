@@ -405,7 +405,7 @@ def get_vxlan_id(server_id):
 
         vxlan_id = vxlan_ids.pop()
         try:
-            coll.insert({
+            coll.insert_one({
                 '_id': vxlan_id,
                 'server_id': server_id,
                 'hosts': [],

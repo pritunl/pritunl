@@ -46,7 +46,7 @@ class HostUsage(object):
                 },
             }
 
-            bulk.find(spec).upsert().update(doc)
+            bulk.find(spec).upsert().update_one(doc)
             bulk.find(rem_spec).remove()
 
         bulk.execute()

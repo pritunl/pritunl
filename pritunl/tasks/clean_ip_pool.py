@@ -45,7 +45,7 @@ class TaskCleanIpPool(task.Task):
             doc_ids = doc['docs'][1:]
 
             for doc_id in doc_ids:
-                self.pool_collection.update({
+                self.pool_collection.update_one({
                     '_id': doc_id,
                     'network': network,
                     'user_id': user_id,
@@ -70,7 +70,7 @@ class TaskCleanIpPool(task.Task):
         ])
 
         for doc in response:
-            self.pool_collection.update({
+            self.pool_collection.update_one({
                 '_id': doc['_id'],
                 'org_id': doc['org_id'],
                 'user_id': doc['user_id'],

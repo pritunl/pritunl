@@ -111,7 +111,7 @@ class LogView(object):
     def tail_log_lines(self, formatted=True):
         cursor = self.collection.find().sort(
             '$natural', pymongo.DESCENDING)
-        cursor_count = cursor.count()
+        cursor_count = self.collection.estimated_document_count()
 
         if cursor_count > 127:
             cursor_id = cursor[127]['_id']

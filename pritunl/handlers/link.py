@@ -692,7 +692,7 @@ def link_state_put():
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),
@@ -809,7 +809,7 @@ def link_state_delete():
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),

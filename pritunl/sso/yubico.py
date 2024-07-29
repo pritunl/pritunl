@@ -38,7 +38,7 @@ def auth_yubico(yubikey):
     yubikey_hash = base64.b64encode(yubikey_hash.digest()).decode()
 
     try:
-        yubikey_collection.insert({
+        yubikey_collection.insert_one({
             '_id': yubikey_hash,
             'timestamp': utils.now(),
         })

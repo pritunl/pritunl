@@ -120,7 +120,7 @@ def _keep_alive_thread():
                     settings.local.public_ip6
                 host_event = True
 
-            settings.local.host.collection.update({
+            settings.local.host.collection.update_one({
                 '_id': settings.local.host_id,
             }, {'$set': {
                 'version': settings.local.version,

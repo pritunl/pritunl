@@ -32,7 +32,7 @@ def publish(channels, message, extra=None, transaction=None):
 
         if isinstance(channels, str):
             doc['channel'] = channels
-            tran_collection.update({
+            tran_collection.update_one({
                 'nonce': database.ObjectId(),
             }, {
                 '$set': doc,
@@ -51,14 +51,14 @@ def publish(channels, message, extra=None, transaction=None):
     else:
         if isinstance(channels, str):
             doc['channel'] = channels
-            collection.insert(doc, manipulate=False)
+            collection.insert_one(doc)
         else:
             docs = []
             for channel in channels:
                 doc_copy = doc.copy()
                 doc_copy['channel'] = channel
                 docs.append(doc_copy)
-            collection.insert(docs, manipulate=False)
+            collection.insert_many(docs)
 
 def get_cursor_id(channels):
     if cache.has_cache:

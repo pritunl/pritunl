@@ -279,7 +279,7 @@ def init_master_key(cipher_data):
     nonces_add(crypto_data['n'])
 
     if crypto_data['k'] != crypto_keys:
-        settings_db.update({
+        settings_db.update_one({
             '_id': 'se',
         }, {'$set': {
             'keys': crypto_data['k'],

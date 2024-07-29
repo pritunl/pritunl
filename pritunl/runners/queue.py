@@ -59,14 +59,14 @@ def run_timeout_queues():
     }
 
     for queue_item in queue.iter_queues(spec):
-        response = queue.Queue.collection.update({
+        response = queue.Queue.collection.update_one({
             '_id': queue_item.id,
             'ttl_timestamp': {'$lt': cur_timestamp},
         }, {'$unset': {
             'runner_id': '',
         }})
 
-        if response['updatedExisting']:
+        if bool(response.modified_count):
             runner_queues[queue_item.cpu_type].put((
                 abs(queue_item.priority - 4),
                 queue_item,

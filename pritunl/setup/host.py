@@ -11,7 +11,7 @@ def setup_host():
     from pritunl import host
     collection = mongo.get_collection('settings')
 
-    collection.update({
+    collection.update_one({
         '_id': 'subscription',
     }, {'$setOnInsert': {
         'active': None,

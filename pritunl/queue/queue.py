@@ -73,14 +73,14 @@ class Queue(mongo.MongoObject):
             time.sleep(self.ttl - 6)
             if self.queue_com.state in (COMPLETE, STOPPED):
                 break
-            response = self.collection.update({
+            response = self.collection.update_one({
                 '_id': self.id,
                 'runner_id': self.runner_id,
             }, {'$set': {
                 'ttl_timestamp': utils.now() + \
                     datetime.timedelta(seconds=self.ttl),
             }})
-            if response['updatedExisting']:
+            if bool(response.modified_count):
                 messenger.publish('queue', [UPDATE, self.id])
             else:
                 self.queue_com.state_lock.acquire()
@@ -153,7 +153,7 @@ class Queue(mongo.MongoObject):
         doc['ttl_timestamp'] = utils.now() + \
             datetime.timedelta(seconds=self.ttl)
 
-        response = self.collection.update({
+        response = self.collection.update_one({
             '_id': self.id,
             '$or': [
                 {'runner_id': self.runner_id},
@@ -163,12 +163,12 @@ class Queue(mongo.MongoObject):
             '$set': doc,
         })
 
-        self.claimed = response['updatedExisting']
+        self.claimed = bool(response.modified_count)
 
         if self.claimed:
             self.keep_alive()
 
-        return response['updatedExisting']
+        return bool(response.modified_count)
 
     @classmethod
     def reserve(cls, reserve_id, reserve_data, block=False, block_timeout=90):

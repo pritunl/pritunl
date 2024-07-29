@@ -28,7 +28,7 @@ class TaskCleanClientPool(task.Task):
                     'timestamp': doc['timestamp'],
                 })
             else:
-                self.pool_collection.update({
+                self.pool_collection.update_one({
                     '_id': doc['_id'],
                     'timestamp': doc['timestamp'],
                 }, {'$set': {

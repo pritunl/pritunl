@@ -68,12 +68,10 @@ class Organization(mongo.MongoObject):
 
     @property
     def otp_auth(self):
-        return bool(self.server_collection.find({
+        return bool(self.server_collection.count_documents({
             'organizations': self.id,
             'otp_auth': True,
-        }, {
-            '_id': True,
-        }).limit(1).count())
+        }))
 
     @cached_property
     def user_count(self):
@@ -160,12 +158,10 @@ class Organization(mongo.MongoObject):
             resource_id=resource_id)
 
     def _get_user_count(self, type=CERT_CLIENT):
-        return user.User.collection.find({
+        return user.User.collection.count_documents({
             'type': type,
             'org_id': self.id,
-        }, {
-            '_id': True,
-        }).count()
+        })
 
     def iter_users(self, page=None, search=None, search_limit=None,
             fields=None, include_pool=False, sort_last_active=False):
@@ -325,7 +321,7 @@ class Organization(mongo.MongoObject):
                 short_id = utils.rand_str_ne(settings.app.short_url_length)
 
             try:
-                self.key_link_collection.update({
+                self.key_link_collection.update_one({
                     'org_id': self.id,
                     'user_id': user_id,
                 }, {'$set': {
@@ -411,7 +407,7 @@ class Organization(mongo.MongoObject):
             if server.status == ONLINE:
                 server.stop()
 
-        server_collection.update({
+        server_collection.update_one({
             'organizations': self.id,
         }, {'$pull': {
             'organizations': self.id,

@@ -212,7 +212,7 @@ class Host(mongo.MongoObject):
         cur_timestamp = utils.now()
 
         if has_available:
-            response = self.collection.update({
+            response = self.collection.update_one({
                 '_id': self.id,
                 'ping_timestamp_ttl': self.ping_timestamp_ttl,
                 '$or': [
@@ -226,7 +226,7 @@ class Host(mongo.MongoObject):
                 'ping_timestamp_ttl': None,
             }})
 
-            if response['updatedExisting']:
+            if bool(response.modified_count):
                 self.active = False
                 self.status = UNAVAILABLE
                 self.backoff_timestamp = cur_timestamp
@@ -236,7 +236,7 @@ class Host(mongo.MongoObject):
         if self.status == UNAVAILABLE:
             return
 
-        response = self.collection.update({
+        response = self.collection.update_one({
             '_id': self.id,
             'ping_timestamp_ttl': self.ping_timestamp_ttl,
             'status': {'$ne': UNAVAILABLE},
@@ -246,7 +246,7 @@ class Host(mongo.MongoObject):
             'ping_timestamp_ttl': None,
         }})
 
-        if response['updatedExisting']:
+        if bool(response.modified_count):
             self.status = UNAVAILABLE
             self.backoff_timestamp = cur_timestamp
             self.ping_timestamp_ttl = None
@@ -262,13 +262,13 @@ class Host(mongo.MongoObject):
         return 'pritunl://%s:%s@' % (self.id, self.secret)
 
     def set_active(self):
-        response = self.collection.update({
+        response = self.collection.update_one({
             '_id': self.id,
             'status': AVAILABLE,
         }, {'$set': {
             'active': True,
         }})
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             return False
 
         Host.collection.update_many({
@@ -933,14 +933,14 @@ class Location(mongo.MongoObject):
             return
 
         doc_id = doc['_id']
-        response = Host.collection.update({
+        response = Host.collection.update_one({
             '_id': doc_id,
             'status': AVAILABLE,
             'active': False,
         }, {'$set': {
             'active': True,
         }})
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             return
 
         Host.collection.update_many({
@@ -1085,14 +1085,14 @@ class Location(mongo.MongoObject):
             return Host(link=self.link, location=self, doc=best_doc)
 
         doc_id = best_doc['_id']
-        response = Host.collection.update({
+        response = Host.collection.update_one({
             '_id': doc_id,
             'status': AVAILABLE,
             'active': False,
         }, {'$set': {
             'active': True,
         }})
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             return
         best_doc['active'] = True
 

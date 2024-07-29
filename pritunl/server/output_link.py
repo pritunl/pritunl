@@ -42,7 +42,7 @@ class ServerOutputLink(ServerOutput):
         else:
             server_ids = [self.server_id]
 
-        self.collection.insert({
+        self.collection.insert_one({
             'server_id': server_ids,
             'timestamp': utils.now(),
             'output': '[%s] %s' % (label, output.rstrip('\n')),

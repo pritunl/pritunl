@@ -52,7 +52,7 @@ class Task(mongo.MongoObject):
         doc['timestamp'] = utils.now()
 
         try:
-            response = self.collection.update({
+            response = self.collection.update_one({
                 '_id': self.id,
                 '$and': [
                     {'$or': [
@@ -67,8 +67,7 @@ class Task(mongo.MongoObject):
             }, {
                 '$set': doc,
             }, upsert=True)
-            claimed = bool(response.get('updatedExisting') or response.get(
-                'upserted'))
+            claimed = bool(response.modified_count or response.upserted_id)
         except pymongo.errors.DuplicateKeyError:
             claimed = False
 
@@ -91,7 +90,7 @@ class Task(mongo.MongoObject):
             )
 
     def complete(self):
-        self.collection.update({
+        self.collection.update_one({
             '_id': self.id,
             '$or': [
                 {'runner_id': self.runner_id},

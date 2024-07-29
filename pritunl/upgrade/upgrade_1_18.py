@@ -24,7 +24,7 @@ def upgrade_1_18():
                 'nat': nat,
             })
 
-        servers_collection.update({
+        servers_collection.update_one({
             '_id': doc['_id'],
         }, {'$set': {
             'routes': routes,

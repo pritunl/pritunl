@@ -619,7 +619,7 @@ class Clients(object):
                     orig_virt_address = virt_address
                     virt_address = utils.long_to_ip(doc['_id']) + subnet
 
-                    response = self.pool_collection.update({
+                    response = self.pool_collection.update_one({
                         '_id': doc['_id'],
                         'server_id': self.server.id,
                         'user_id': user_id,
@@ -633,7 +633,7 @@ class Clients(object):
                         'static': True,
                     }})
 
-                    if response['updatedExisting']:
+                    if bool(response.modified_count):
                         device_found = True
                         messenger.publish('instance', [
                             'user_disconnect_id',
@@ -654,7 +654,7 @@ class Clients(object):
                     if doc['server_id'] == self.server.id and \
                             doc['user_id'] == user_id and \
                             mac_addr and doc['mac_addr'] == mac_addr:
-                        response = self.pool_collection.update({
+                        response = self.pool_collection.update_one({
                             '_id': utils.ip_to_long(
                                 virt_address.split('/')[0]),
                             'server_id': self.server.id,
@@ -669,7 +669,7 @@ class Clients(object):
                             'static': True,
                         }})
 
-                        if response['updatedExisting']:
+                        if bool(response.modified_count):
                             messenger.publish('instance', [
                                 'user_disconnect_id',
                                 user_id,
@@ -683,7 +683,7 @@ class Clients(object):
                         virt_address = None
                 else:
                     try:
-                        self.pool_collection.insert({
+                        self.pool_collection.insert_one({
                             '_id': utils.ip_to_long(
                                 virt_address.split('/')[0]),
                             'server_id': self.server.id,
@@ -738,7 +738,7 @@ class Clients(object):
                 if ip_pool:
                     for ip_addr in ip_pool:
                         try:
-                            self.pool_collection.insert({
+                            self.pool_collection.insert_one({
                                 '_id': int(ip_addr._ip),
                                 'server_id': self.server.id,
                                 'user_id': user_id,
@@ -753,7 +753,7 @@ class Clients(object):
                             continue
 
                     if virt_address:
-                        self.server_collection.update({
+                        self.server_collection.update_one({
                             '_id': self.server.id,
                             'status': ONLINE,
                         }, {'$set': {
@@ -801,7 +801,7 @@ class Clients(object):
 
             if conn_count >= self.server.max_devices:
                 if address_dynamic:
-                    self.pool_collection.update({
+                    self.pool_collection.update_one({
                         'server_id': self.server.id,
                         'user_id': user_id,
                         'client_id': doc_id,
@@ -1620,7 +1620,7 @@ class Clients(object):
 
                             tokens_collection = mongo.get_collection(
                                 'server_sso_tokens')
-                            tokens_collection.insert({
+                            tokens_collection.insert_one({
                                 '_id': conn_sso_token,
                                 'user_id': user.id,
                                 'server_id': self.server.id,
@@ -2343,7 +2343,7 @@ class Clients(object):
 
         if self.server.multi_device:
             if client['address_dynamic']:
-                self.pool_collection.update({
+                self.pool_collection.update_one({
                     'server_id': self.server.id,
                     'user_id': client.get('user_id'),
                     'client_id': doc_id,
@@ -2600,13 +2600,13 @@ class Clients(object):
                             self.instance.disconnect_wg(client_id)
                             continue
 
-                        response = self.collection.update({
+                        response = self.collection.update_one({
                             '_id': client['doc_id'],
                         }, {'$set': {
                             'timestamp': utils.now(),
                             'real_address': client['real_address'],
                         }})
-                        if not response['updatedExisting']:
+                        if not bool(response.modified_count):
                             logger.error('Client lost unexpectedly',
                                 'server',
                                 server_id=self.server.id,
@@ -2620,13 +2620,13 @@ class Clients(object):
                             continue
 
                         if self.server.multi_device:
-                            response = self.pool_collection.update({
+                            response = self.pool_collection.update_one({
                                 'client_id': client['doc_id'],
                             }, {'$set': {
                                 'timestamp': utils.now(),
                             }})
 
-                            if not response['updatedExisting']:
+                            if not bool(response.modified_count):
                                 logger.error('Client pool lost unexpectedly',
                                     'server',
                                     server_id=self.server.id,

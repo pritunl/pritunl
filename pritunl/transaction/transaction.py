@@ -141,7 +141,7 @@ class Transaction(mongo.MongoObject):
             if not doc:
                 return
             elif doc['attempts'] > settings.mongo.tran_max_attempts:
-                response = self.transaction_collection.update({
+                response = self.transaction_collection.update_one({
                     '_id': self.id,
                     'state': PENDING,
                 }, {
@@ -149,7 +149,7 @@ class Transaction(mongo.MongoObject):
                         'state': ROLLBACK,
                     },
                 })
-                if response['updatedExisting']:
+                if bool(response.modified_count):
                     self.rollback_actions()
                 return
 
@@ -162,7 +162,7 @@ class Transaction(mongo.MongoObject):
             )
             raise
 
-        response = self.transaction_collection.update({
+        response = self.transaction_collection.update_one({
             '_id': self.id,
             'state': PENDING,
         }, {
@@ -170,7 +170,7 @@ class Transaction(mongo.MongoObject):
                 'state': COMMITTED,
             },
         })
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             return
         self.run_post_actions()
 
@@ -186,7 +186,7 @@ class Transaction(mongo.MongoObject):
             actions=self.action_sets,
         )
 
-        response = self.transaction_collection.update({
+        response = self.transaction_collection.update_one({
             '_id': self.id,
             'state': ROLLBACK,
         }, {
@@ -196,7 +196,7 @@ class Transaction(mongo.MongoObject):
             },
         })
 
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             return
 
         try:
@@ -218,7 +218,7 @@ class Transaction(mongo.MongoObject):
             self._run_collection_actions(collection, post_actions)
 
     def run_post_actions(self):
-        response = self.transaction_collection.update({
+        response = self.transaction_collection.update_one({
             '_id': self.id,
             'state': COMMITTED,
         }, {
@@ -228,7 +228,7 @@ class Transaction(mongo.MongoObject):
             },
         })
 
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             return
 
         try:
@@ -255,7 +255,7 @@ class Transaction(mongo.MongoObject):
             default=utils.json_default)
         actions_json_zlib = zlib.compress(actions_json.encode())
 
-        self.transaction_collection.insert({
+        self.transaction_collection.insert_one({
             '_id': self.id,
             'state': PENDING,
             'priority': self.priority,

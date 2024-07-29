@@ -97,12 +97,12 @@ def _find_doc(query, one_time=None, one_time_new=False):
                 'one_time': 'used',
             }
 
-        response = collection.update({
+        response = collection.update_one({
             '_id': doc['_id'],
             'short_id': doc['short_id'],
             'one_time': True,
         }, {'$set': set_doc})
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             return None
 
         if one_time_new:
@@ -799,7 +799,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),
@@ -959,7 +959,7 @@ def key_wg_post(org_id, user_id, server_id):
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),
@@ -1004,7 +1004,7 @@ def key_wg_post(org_id, user_id, server_id):
     plaintext = nacl_box.decrypt(cipher_data, box_nonce).decode()
 
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': box_nonce64,
             'timestamp': utils.now(),
@@ -1202,7 +1202,7 @@ def key_wg_post(org_id, user_id, server_id):
 
     wg_keys_collection = mongo.get_collection('wg_keys')
     try:
-        wg_keys_collection.insert({
+        wg_keys_collection.insert_one({
             '_id': client_wg_public_key,
             'timestamp': utils.now(),
         })
@@ -1406,7 +1406,7 @@ def key_wg_put(org_id, user_id, server_id):
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),
@@ -1451,7 +1451,7 @@ def key_wg_put(org_id, user_id, server_id):
     plaintext = nacl_box.decrypt(cipher_data, box_nonce).decode()
 
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': box_nonce64,
             'timestamp': utils.now(),
@@ -1674,7 +1674,7 @@ def key_ovpn_post(org_id, user_id, server_id):
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),
@@ -1719,7 +1719,7 @@ def key_ovpn_post(org_id, user_id, server_id):
     plaintext = nacl_box.decrypt(cipher_data, box_nonce).decode()
 
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': box_nonce64,
             'timestamp': utils.now(),
@@ -1962,7 +1962,7 @@ def _key_request_init(org_id, user_id, server_id, mode):
     token = utils.rand_str(32)
 
     tokens_collection = mongo.get_collection('key_tokens')
-    tokens_collection.insert({
+    tokens_collection.insert_one({
         '_id': state,
         'org_id': org_id,
         'user_id': user_id,
@@ -2052,7 +2052,7 @@ def key_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('key_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'org_id': org_id,
             'user_id': user_id,
@@ -2093,7 +2093,7 @@ def key_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('key_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'org_id': org_id,
             'user_id': user_id,
@@ -2137,7 +2137,7 @@ def key_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('key_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'org_id': org_id,
             'user_id': user_id,
@@ -2178,7 +2178,7 @@ def key_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('key_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'org_id': org_id,
             'user_id': user_id,
@@ -2222,7 +2222,7 @@ def key_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('key_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'org_id': org_id,
             'user_id': user_id,
@@ -2362,7 +2362,7 @@ def _key_sso_validate(key_doc, username, email, sso_mode, org_id, groups,
     })
 
     tokens_collection = mongo.get_collection('server_sso_tokens')
-    tokens_collection.insert({
+    tokens_collection.insert_one({
         '_id': key_doc['token'],
         'user_id': usr.id,
         'server_id': key_doc['server_id'],
@@ -2796,7 +2796,7 @@ def key_callback_get():
         state = utils.generate_secret()
 
         tokens_collection = mongo.get_collection('key_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'org_id': doc['org_id'],
             'user_id': doc['user_id'],
@@ -2838,7 +2838,7 @@ def key_callback_get():
         state = utils.generate_secret()
 
         tokens_collection = mongo.get_collection('key_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'org_id': doc['org_id'],
             'user_id': doc['user_id'],
@@ -3169,7 +3169,7 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),
@@ -3214,7 +3214,7 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
     plaintext = nacl_box.decrypt(cipher_data, box_nonce).decode()
 
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': box_nonce64,
             'timestamp': utils.now(),
@@ -3584,7 +3584,7 @@ def key_wg_wait_post(org_id, user_id, server_id):
 
     nonces_collection = mongo.get_collection('auth_nonces')
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': auth_nonce,
             'timestamp': utils.now(),
@@ -3629,7 +3629,7 @@ def key_wg_wait_post(org_id, user_id, server_id):
     plaintext = nacl_box.decrypt(cipher_data, box_nonce).decode()
 
     try:
-        nonces_collection.insert({
+        nonces_collection.insert_one({
             'token': auth_token,
             'nonce': box_nonce64,
             'timestamp': utils.now(),
@@ -3842,7 +3842,7 @@ def key_wg_wait_post(org_id, user_id, server_id):
 
     wg_keys_collection = mongo.get_collection('wg_keys')
     try:
-        wg_keys_collection.insert({
+        wg_keys_collection.insert_one({
             '_id': client_wg_public_key,
             'timestamp': utils.now(),
         })

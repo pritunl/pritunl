@@ -1883,7 +1883,7 @@ class ServerInstance(object):
                 )
 
             try:
-                self.collection.update({
+                self.collection.update_one({
                     '_id': self.server.id,
                     'instances.instance_id': self.id,
                 }, {
@@ -1914,7 +1914,7 @@ class ServerInstance(object):
     def run(self, send_events=False):
         availability_group = settings.local.host.availability_group
 
-        response = self.collection.update({
+        response = self.collection.update_one({
             '_id': self.server.id,
             'status': ONLINE,
             'instances_count': {'$lt': self.server.replica_count},
@@ -1940,7 +1940,7 @@ class ServerInstance(object):
             },
         })
 
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             return
 
         threading.Thread(target=self._run_thread, args=(send_events,)).start()

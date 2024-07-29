@@ -305,7 +305,7 @@ def sso_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('sso_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'type': AZURE_AUTH,
             'secret': secret,
@@ -341,7 +341,7 @@ def sso_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('sso_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'type': GOOGLE_AUTH,
             'secret': secret,
@@ -380,7 +380,7 @@ def sso_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('sso_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'type': AUTHZERO_AUTH,
             'secret': secret,
@@ -416,7 +416,7 @@ def sso_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('sso_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'type': SLACK_AUTH,
             'secret': secret,
@@ -455,7 +455,7 @@ def sso_request_get():
             return flask.abort(500)
 
         tokens_collection = mongo.get_collection('sso_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': state,
             'type': SAML_AUTH,
             'secret': secret,
@@ -890,7 +890,7 @@ def sso_callback_get():
         token = utils.generate_secret()
 
         tokens_collection = mongo.get_collection('sso_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': token,
             'type': DUO_AUTH,
             'username': username,
@@ -927,7 +927,7 @@ def sso_callback_get():
         token = utils.generate_secret()
 
         tokens_collection = mongo.get_collection('sso_tokens')
-        tokens_collection.insert({
+        tokens_collection.insert_one({
             '_id': token,
             'type': YUBICO_AUTH,
             'username': username,

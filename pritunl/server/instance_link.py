@@ -94,15 +94,14 @@ class ServerInstanceLink(object):
         return ovpn_conf_path
 
     def openvpn_start(self):
-        # TODO Remove might no longer be needed
-        response = self.collection.update({
+        response = self.collection.update_one({
             '_id': self.linked_server.id,
             'links.server_id': self.server.id,
         }, {'$set': {
             'links.$.user_id': self.user.id,
         }})
 
-        if not response['updatedExisting']:
+        if not bool(response.modified_count):
             raise ServerLinkError('Failed to update server links')
 
         self.user.link_server_id = self.server.id

@@ -57,7 +57,7 @@ class ServerOutput(object):
 
         label = label or settings.local.host.name
 
-        self.collection.insert({
+        self.collection.insert_one({
             'server_id': self.server_id,
             'timestamp': utils.now(),
             'output': '[%s] %s' % (label, output.rstrip('\n')),

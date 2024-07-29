@@ -47,7 +47,7 @@ def auth_check(user_id):
             'count': 1,
             'timestamp': utils.now(),
         }
-        collection.update({
+        collection.update_one({
             '_id': user_id,
         }, doc, upsert=True)
 

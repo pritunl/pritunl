@@ -109,11 +109,9 @@ def iter_orgs(spec=None, type=ORG_DEFAULT, fields=None, page=None):
 def get_org_page_total():
     org_collection = mongo.get_collection('organizations')
 
-    count = org_collection.find({
+    count = org_collection.count_documents({
         'type': ORG_DEFAULT,
-    }, {
-        '_id': True,
-    }).count()
+    })
 
     return int(math.floor(max(0, float(count - 1)) /
         settings.app.org_page_count))
@@ -123,12 +121,10 @@ def get_user_count(org_ids, type=CERT_CLIENT):
     org_user_count = {}
 
     for org_id in org_ids:
-        org_user_count[org_id] = user_collection.find({
+        org_user_count[org_id] = user_collection.count_documents({
             'type': type,
             'org_id': org_id,
-        }, {
-            '_id': True,
-        }).count()
+        })
 
     return org_user_count
 
@@ -138,6 +134,4 @@ def get_user_count_multi(org_ids=None, type=CERT_CLIENT):
     }
     if org_ids is not None:
         spec['org_id'] = {'$in': org_ids}
-    return user.User.collection.find(spec, {
-        '_id': True,
-    }).count()
+    return user.User.collection.count_documents(spec)

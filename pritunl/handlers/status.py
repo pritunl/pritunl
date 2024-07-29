@@ -93,11 +93,9 @@ def status_get():
 
     user_count = organization.get_user_count_multi()
 
-    orgs_count = org_collection.find({
+    orgs_count = org_collection.count_documents({
        'type': ORG_DEFAULT,
-    }, {
-        '_id': True,
-    }).count()
+    })
 
     notification = settings.local.notification
 

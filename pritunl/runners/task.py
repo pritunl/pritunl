@@ -78,14 +78,14 @@ def check_thread():
             for task_item in task.iter_tasks(spec):
                 random_sleep()
 
-                response = task.Task.collection.update({
+                response = task.Task.collection.update_one({
                     '_id': task_item.id,
                     'state': {'$ne': COMPLETE},
                     'ttl_timestamp': {'$lt': cur_timestamp},
                 }, {'$unset': {
                     'runner_id': '',
                 }})
-                if response['updatedExisting']:
+                if bool(response.modified_count):
                     run_task(task_item)
         except:
             logger.exception('Error in task check thread', 'runners')

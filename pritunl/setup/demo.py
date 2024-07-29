@@ -22,13 +22,13 @@ def setup_demo():
         platforms = list(DESKTOP_PLATFORMS)
         start_timestamp = datetime.datetime(2015, 12, 28, 4, 1, 0)
         hosts_collection = mongo.get_collection('hosts')
-        servers_collection  = mongo.get_collection('servers')
+        servers_collection = mongo.get_collection('servers')
         clients_collection = mongo.get_collection('clients')
 
         clients_collection.remove({})
 
         for hst in host.iter_hosts():
-            hosts_collection.update({
+            hosts_collection.update_one({
                 '_id': hst.id,
             }, {'$set': {
                 'server_count': 0,
@@ -58,7 +58,7 @@ def setup_demo():
                     'ping_timestamp': utils.now(),
                 })
 
-            servers_collection.update({
+            servers_collection.update_one({
                 '_id': svr.id,
             }, {'$set': {
                 'status': ONLINE,
@@ -100,7 +100,7 @@ def setup_demo():
                         'connected_since': int(start_timestamp.strftime('%s')),
                     }
 
-                    clients_collection.insert(doc)
+                    clients_collection.insert_one(doc)
 
         for lnk in link.iter_links():
             lnk.status = ONLINE

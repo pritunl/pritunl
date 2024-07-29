@@ -40,7 +40,7 @@ class TaskCleanServers(task.Task):
             if (doc['primary_user'] or doc['primary_organization']) and (
                     doc['primary_user'] not in user_ids or
                     doc['primary_organization'] not in org_ids):
-                self.server_collection.update({
+                self.server_collection.update_one({
                     '_id': doc['_id'],
                     'primary_user': doc['primary_user'],
                     'primary_organization': doc['primary_organization'],
@@ -58,7 +58,7 @@ class TaskCleanServers(task.Task):
                     if item_id not in item_distinct:
                         missing_items.append(item_id)
                     if missing_items:
-                        self.server_collection.update({
+                        self.server_collection.update_one({
                             '_id': doc['_id'],
                         }, {'$pull': {
                             item_type: {'$in': missing_items},
@@ -69,7 +69,7 @@ class TaskCleanServers(task.Task):
                 if link_doc['server_id'] not in server_ids:
                     missing_links.append(link_doc['server_id'])
             if missing_links:
-                self.server_collection.update({
+                self.server_collection.update_one({
                     '_id': doc['_id'],
                 }, {'$pull': {
                     'links': {

@@ -105,7 +105,7 @@ def update():
         settings.app.license_plan = settings.local.sub_plan
         settings.commit()
 
-    response = collection.update({
+    response = collection.update_one({
         '_id': 'subscription',
         '$or': [
             {'active': {'$ne': settings.local.sub_active}},
@@ -115,7 +115,7 @@ def update():
         'active': settings.local.sub_active,
         'plan': settings.local.sub_plan,
     }})
-    if response['updatedExisting']:
+    if bool(response.modified_count):
         if settings.local.sub_active:
             if settings.local.sub_plan == 'premium':
                 event.Event(type=SUBSCRIPTION_PREMIUM_ACTIVE)

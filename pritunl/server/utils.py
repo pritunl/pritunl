@@ -24,10 +24,10 @@ def get_dict(id):
     return Server(id=id, fields=dict_fields).dict()
 
 def get_online_ipv6_count():
-    return Server.collection.find({
+    return Server.collection.count_documents({
         'status': ONLINE,
         'ipv6': True,
-    }).count()
+    })
 
 def get_used_resources(ignore_server_id):
     response = Server.collection.aggregate(([
@@ -125,9 +125,7 @@ def iter_servers_dict(page=None):
 def get_server_page_total():
     org_collection = mongo.get_collection('servers')
 
-    count = org_collection.find({}, {
-        '_id': True,
-    }).count()
+    count = org_collection.estimated_document_count()
 
     return int(math.floor(max(0, float(count - 1)) /
         settings.app.server_page_count))
@@ -198,7 +196,7 @@ def link_servers(server_id, link_server_id, use_local_address=False):
     tran = transaction.Transaction()
     collection = tran.collection('servers')
 
-    collection.update({
+    collection.update_one({
         '_id': server_id,
         'links.server_id': {'$ne': link_server_id},
     }, {'$push': {
@@ -209,7 +207,7 @@ def link_servers(server_id, link_server_id, use_local_address=False):
         },
     }})
 
-    collection.update({
+    collection.update_one({
         '_id': link_server_id,
         'links.server_id': {'$ne': server_id},
     }, {'$addToSet': {
@@ -242,13 +240,13 @@ def unlink_servers(server_id, link_server_id):
     tran = transaction.Transaction()
     collection = tran.collection('servers')
 
-    collection.update({
+    collection.update_one({
         '_id': server_id,
     }, {'$pull': {
         'links': {'server_id': link_server_id},
     }})
 
-    collection.update({
+    collection.update_one({
         '_id': link_server_id,
     }, {'$pull': {
         'links': {'server_id': server_id},
@@ -257,8 +255,6 @@ def unlink_servers(server_id, link_server_id):
     tran.commit()
 
 def has_server_sso():
-    return bool(Server.collection.find({
+    return bool(Server.collection.count_documents({
         'sso_auth': True,
-    }, {
-        '_id': True,
-    }).count())
+    }))

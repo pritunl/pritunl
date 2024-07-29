@@ -648,7 +648,7 @@ class User(mongo.MongoObject):
             return False
 
         try:
-            self.otp_collection.insert({
+            self.otp_collection.insert_one({
                 '_id': {
                     'user_id': self.id,
                     'code': code,
@@ -1462,7 +1462,7 @@ class User(mongo.MongoObject):
 
         network = str(ipaddress.ip_network(network))
 
-        self.net_link_collection.update({
+        self.net_link_collection.update_one({
             'user_id': self.id,
             'org_id': self.org_id,
             'network': network,
@@ -1508,7 +1508,7 @@ class User(mongo.MongoObject):
         if self.org:
             org_name = self.org.name
 
-        self.audit_collection.insert({
+        self.audit_collection.insert_one({
             'user_id': self.id,
             'user_name': self.name,
             'org_id': self.org_id,
