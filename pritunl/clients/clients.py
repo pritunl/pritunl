@@ -209,8 +209,13 @@ class Clients(object):
 
             if self.server.search_domain:
                 domains = self.server.search_domain.split(',')
-                client_conf += 'push "dhcp-option DOMAIN-SEARCH %s"\n' % (
-                    domains[0].strip())
+                for (i, domain) in enumerate(domains):
+                    if i == 0:
+                        client_conf += 'push "dhcp-option DOMAIN %s"\n' % (
+                            domain.strip())
+                    client_conf += (
+                        'push "dhcp-option DOMAIN-SEARCH %s"\n' % (
+                        domain.strip()))
 
             network_links = user.get_network_links()
             for network_link in network_links:
