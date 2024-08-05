@@ -18,7 +18,7 @@
 </div>
 <div class="net-gateway-toggle toggle-form form-group">
   <label>Block Route and Net Gateway</label>
-  <div class="selector <%= net_gateway ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Route the network through the pre-existing default gateway. Useful for excluding an address or network from routing that is inside an already routed network. Restricted access to route is enforced on the server iptables">
+  <div class="selector <%= net_gateway ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Route the network through the pre-existing default gateway. Useful for excluding an address or network from routing that is inside an already routed network. Restricted access to route is enforced on the server iptables. Will not work if 0.0.0.0/0 is routed or with the restrict routing option disabled">
     <span class="selector-inner glyphicon glyphicon-ok"></span>
   </div>
 </div>
