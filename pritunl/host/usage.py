@@ -23,33 +23,30 @@ class HostUsage(object):
         cpu_usage = round(cpu_usage, 4)
         mem_usage = round(mem_usage, 4)
 
-        bulk = self.collection.initialize_unordered_bulk_op()
+        bulk = []
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
-            spec = {
+            bulk.append(pymongo.UpdateOne({
                 'host_id': self.host_id,
                 'period': period,
                 'timestamp': usage_utils.get_period_timestamp(
                     period, timestamp),
-            }
-            doc = {'$inc': {
+            }, {'$inc': {
                 'count': 1,
                 'cpu': cpu_usage,
                 'mem': mem_usage,
-            }}
-            rem_spec = {
+            }}, upsert=True))
+
+            bulk.append(pymongo.DeleteMany({
                 'host_id': self.host_id,
                 'period': period,
                 'timestamp': {
                     '$lt': usage_utils.get_period_max_timestamp(
                         period, timestamp),
                 },
-            }
+            }))
 
-            bulk.find(spec).upsert().update_one(doc)
-            bulk.find(rem_spec).remove()
-
-        bulk.execute()
+        self.collection.bulk_write(bulk)
 
     def get_period(self, period):
         date_end = usage_utils.get_period_timestamp(period, utils.now())

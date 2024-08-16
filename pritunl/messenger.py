@@ -7,7 +7,7 @@ from pritunl import database
 import pymongo
 import time
 
-def publish(channels, message, extra=None, transaction=None):
+def publish(channels, message, extra=None):
     if cache.has_cache:
         return cache.publish(channels, message, extra=extra)
 
@@ -27,38 +27,16 @@ def publish(channels, message, extra=None, transaction=None):
     # insert is not supported.
     # When using inserts manipulate=False must be set to prevent pymongo
     # from setting ObjectId locally.
-    if transaction:
-        tran_collection = transaction.collection(collection.name_str)
-
-        if isinstance(channels, str):
-            doc['channel'] = channels
-            tran_collection.update_one({
-                'nonce': database.ObjectId(),
-            }, {
-                '$set': doc,
-            }, upsert=True)
-        else:
-            for channel in channels:
-                doc_copy = doc.copy()
-                doc_copy['channel'] = channel
-
-                tran_collection.bulk().find({
-                    'nonce': database.ObjectId(),
-                }).upsert().update({
-                    '$set': doc_copy,
-                })
-            tran_collection.bulk_execute()
+    if isinstance(channels, str):
+        doc['channel'] = channels
+        collection.insert_one(doc)
     else:
-        if isinstance(channels, str):
-            doc['channel'] = channels
-            collection.insert_one(doc)
-        else:
-            docs = []
-            for channel in channels:
-                doc_copy = doc.copy()
-                doc_copy['channel'] = channel
-                docs.append(doc_copy)
-            collection.insert_many(docs)
+        docs = []
+        for channel in channels:
+            doc_copy = doc.copy()
+            doc_copy['channel'] = channel
+            docs.append(doc_copy)
+        collection.insert_many(docs)
 
 def get_cursor_id(channels):
     if cache.has_cache:

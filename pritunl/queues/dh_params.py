@@ -98,16 +98,18 @@ class QueueDhParams(queue.Queue):
 
 @queue.add_reserve('pooled_dh_params')
 def reserve_pooled_dh_params(svr):
-    doc = QueueDhParams.dh_params_collection.find_and_modify({
+    doc = QueueDhParams.dh_params_collection.find_one_and_update({
         'dh_param_bits': svr.dh_param_bits,
     }, {'$set': {
         'dh_param_bits': None,
-    }}, new=True)
+    }}, return_document=True)
 
     if not doc:
         return False
 
-    QueueDhParams.dh_params_collection.remove(doc['_id'])
+    QueueDhParams.dh_params_collection.delete_one({
+        "_id": doc['_id'],
+    })
 
     svr.dh_params = doc['dh_params']
     return True

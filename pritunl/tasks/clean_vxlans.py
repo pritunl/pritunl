@@ -17,7 +17,7 @@ class TaskCleanVxlans(task.Task):
         server_ids = set(self.server_collection.find().distinct('_id'))
         vxlan_ids = set(self.vxlan_collection.find().distinct('server_id'))
 
-        self.vxlan_collection.remove({
+        self.vxlan_collection.delete_many({
             'server_id': {'$in': list(vxlan_ids - server_ids)}
         })
 

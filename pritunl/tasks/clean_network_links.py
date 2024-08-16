@@ -23,7 +23,7 @@ class TaskCleanNetworkLinks(task.Task):
             '_id': True,
         }).distinct('_id'))
 
-        self.user_net_link_collection.remove({
+        self.user_net_link_collection.delete_many({
             'user_id': {'$in': list(user_ids_link - user_ids)},
         })
 

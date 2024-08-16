@@ -31,7 +31,7 @@ class ServerOutputLink(ServerOutput):
                 )
 
     def clear_output(self, link_server_ids):
-        self.collection.remove({
+        self.collection.delete_many({
             'server_id': self.server_id,
         })
         self.send_event(link_server_ids, delay=False)

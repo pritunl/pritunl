@@ -150,8 +150,7 @@ class ServerIpPool:
         except IndexError:
             pass
 
-        bulk = self.collection.initialize_unordered_bulk_op()
-        bulk_empty = True
+        bulk = []
 
         for user in org.iter_users(include_pool=True):
             if ip_pool_avial:
@@ -176,23 +175,19 @@ class ServerIpPool:
                 break
             doc_id = int(remote_ip_addr)
 
-            spec = {
+            bulk.append(pymongo.UpdateOne({
                 '_id': doc_id,
-            }
-            doc = {'$set': {
+            }, {'$set': {
                 '_id': doc_id,
                 'network': network_hash,
                 'server_id': server_id,
                 'org_id': org_id,
                 'user_id': user.id,
                 'address': '%s/%s' % (remote_ip_addr, network.prefixlen),
-            }}
+            }}, upsert=True))
 
-            bulk.find(spec).upsert().update(doc)
-            bulk_empty = False
-
-        if not bulk_empty:
-            bulk.execute()
+        if bulk:
+            self.collection.bulk_write(bulk)
 
         if pool_end:
             logger.warning('Failed to assign ip addresses ' +
@@ -225,8 +220,7 @@ class ServerIpPool:
         if not ip_pool:
             return
 
-        bulk = self.collection.initialize_unordered_bulk_op()
-        bulk_empty = True
+        bulk = []
 
         for org in self.server.iter_orgs():
             org_id = org.id
@@ -241,23 +235,16 @@ class ServerIpPool:
                     break
                 doc_id = int(remote_ip_addr)
 
-                spec = {
+                bulk.append(pymongo.UpdateOne({
                     '_id': doc_id,
-                }
-                doc = {'$set': {
+                }, {'$set': {
                     '_id': doc_id,
                     'network': network_hash,
                     'server_id': server_id,
                     'org_id': org_id,
                     'user_id': user.id,
                     'address': '%s/%s' % (remote_ip_addr, network.prefixlen),
-                }}
-
-                if bulk:
-                    bulk.find(spec).upsert().update(doc)
-                    bulk_empty = False
-                else:
-                    self.collection.update_one(spec, doc, upsert=True)
+                }}, upsert=True))
 
             if pool_end:
                 logger.warning('Failed to assign ip addresses ' +
@@ -267,19 +254,18 @@ class ServerIpPool:
                 )
                 break
 
-        if not bulk_empty:
-            bulk.execute()
+        if bulk:
+            self.collection.bulk_write(bulk)
 
     def sync_ip_pool(self):
         server_id = self.server.id
 
-        bulk = self.collection.initialize_unordered_bulk_op()
+        bulk = []
 
-        spec = {
+        bulk.append(pymongo.DeleteMany({
             'server_id': server_id,
             'network': {'$ne': self.server.network_hash},
-        }
-        bulk.find(spec).remove()
+        }))
 
         dup_user_ips = self.collection.aggregate([
             {'$match': {
@@ -301,15 +287,12 @@ class ServerIpPool:
 
         for dup_user_ip in dup_user_ips:
             for doc_id in dup_user_ip['ids'][1:]:
-                spec = {
+                bulk.append(pymongo.UpdateOne({
                     '_id': doc_id,
-                }
-                doc = {'$unset': {
+                }, {'$unset': {
                     'org_id': '',
                     'user_id': '',
-                }}
-
-                bulk.find(spec).update(doc)
+                }}))
 
         user_ids = self.users_collection.find({
             'org_id': {'$in': self.server.organizations},
@@ -326,19 +309,16 @@ class ServerIpPool:
         user_ip_ids = set(user_ip_ids)
 
         for user_id in user_ip_ids - user_ids:
-            spec = {
+            bulk.append(pymongo.UpdateOne({
                 'server_id': server_id,
                 'network': self.server.network_hash,
                 'user_id': user_id,
-            }
-            doc = {'$unset': {
+            }, {'$unset': {
                 'org_id': '',
                 'user_id': '',
-            }}
+            }}))
 
-            bulk.find(spec).update(doc)
-
-        bulk.execute()
+        self.collection.bulk_write(bulk)
 
         for user_id in user_ids - user_ip_ids:
             doc = self.users_collection.find_one(user_id, {

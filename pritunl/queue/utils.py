@@ -9,14 +9,13 @@ reserve_types = {}
 def get(doc):
     return queue_types[doc['type']](doc=doc)
 
-def start(queue_type, transaction=None, block=False, block_timeout=60,
+def start(queue_type, block=False, block_timeout=60,
         *args, **kwargs):
     que = queue_types[queue_type](*args, **kwargs)
-    que.start(transaction=transaction, block=block,
-        block_timeout=block_timeout)
+    que.start(block=block, block_timeout=block_timeout)
     return que
 
-def stop(queue_id=None, spec=None, transaction=None):
+def stop(queue_id=None, spec=None):
     if queue_id is not None:
         pass
     elif spec is not None:
@@ -29,7 +28,7 @@ def stop(queue_id=None, spec=None, transaction=None):
     else:
         raise ValueError('Must provide queue_id or spec')
 
-    messenger.publish('queue', [STOP, queue_id], transaction=transaction)
+    messenger.publish('queue', [STOP, queue_id])
 
 def iter_queues(spec=None):
     for doc in Queue.collection.find(spec or {}).sort('priority'):

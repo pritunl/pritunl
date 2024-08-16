@@ -18,7 +18,7 @@ class TaskCleanIpPool(task.Task):
             '_id': True,
         }).distinct('_id')
 
-        self.pool_collection.remove({
+        self.pool_collection.delete_many({
             'server_id': {'$nin': server_ids},
         })
 

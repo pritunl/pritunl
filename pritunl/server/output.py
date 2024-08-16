@@ -29,7 +29,7 @@ class ServerOutput(object):
         )
 
     def clear_output(self):
-        self.collection.remove({
+        self.collection.delete_many({
             'server_id': self.server_id,
         })
         self.send_event(delay=False)
@@ -47,7 +47,7 @@ class ServerOutput(object):
             doc_ids.append(doc['_id'])
 
         if doc_ids:
-            self.collection.remove({
+            self.collection.delete_one({
                 '_id': {'$in': doc_ids},
             })
 

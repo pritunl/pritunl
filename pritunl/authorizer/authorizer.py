@@ -280,9 +280,9 @@ class Authorizer(object):
         if self.sso_token:
             tokens_collection = mongo.get_collection(
                 'server_sso_tokens')
-            doc = tokens_collection.find_and_modify(query={
+            doc = tokens_collection.find_one_and_delete({
                 '_id': self.sso_token,
-            }, remove=True)
+            })
             if doc and doc['user_id'] == self.user.id and \
                     doc['server_id'] == self.server.id and \
                     doc['stage'] == self.stage and \
@@ -327,7 +327,7 @@ class Authorizer(object):
                 factors=self.modes,
             )
 
-            self.sso_client_cache_collection.update_one({
+            self.sso_client_cache_collection.replace_one({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
                 'device_id': self.device_id,
@@ -762,7 +762,7 @@ class Authorizer(object):
                     'passcode': passcode,
                 })
                 if doc:
-                    self.sso_passcode_cache_collection.update_one({
+                    self.sso_passcode_cache_collection.replace_one({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
                         'remote_ip': self.remote_ip,
@@ -859,7 +859,7 @@ class Authorizer(object):
                     raise AuthError('Invalid secondary passcode')
 
                 if settings.app.sso_cache and not self.server_auth_token:
-                    self.sso_passcode_cache_collection.update_one({
+                    self.sso_passcode_cache_collection.replace_one({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
                         'mac_addr': self.mac_addr,
@@ -920,7 +920,7 @@ class Authorizer(object):
                     'passcode': yubikey_hash,
                 })
                 if doc:
-                    self.sso_passcode_cache_collection.update_one({
+                    self.sso_passcode_cache_collection.replace_one({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
                         'remote_ip': self.remote_ip,
@@ -989,7 +989,7 @@ class Authorizer(object):
                     raise AuthError('Invalid YubiKey')
 
                 if settings.app.sso_cache and not self.server_auth_token:
-                    self.sso_passcode_cache_collection.update_one({
+                    self.sso_passcode_cache_collection.replace_one({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
                         'mac_addr': self.mac_addr,
@@ -1046,7 +1046,7 @@ class Authorizer(object):
                     'passcode': otp_code,
                 })
                 if doc:
-                    self.otp_cache_collection.update_one({
+                    self.otp_cache_collection.replace_one({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
                         'remote_ip': self.remote_ip,
@@ -1113,7 +1113,7 @@ class Authorizer(object):
                     reuse_otp_code = otp_code
 
                 if settings.app.sso_cache and not self.server_auth_token:
-                    self.otp_cache_collection.update_one({
+                    self.otp_cache_collection.replace_one({
                         'user_id': self.user.id,
                         'server_id': self.server.id,
                         'mac_addr': self.mac_addr,
@@ -1298,7 +1298,7 @@ class Authorizer(object):
                 'device_name': self.device_name,
             })
             if doc:
-                self.sso_push_cache_collection.update_one({
+                self.sso_push_cache_collection.replace_one({
                     'user_id': self.user.id,
                     'server_id': self.server.id,
                     'mac_addr': self.mac_addr,
@@ -1408,7 +1408,7 @@ class Authorizer(object):
             raise AuthError('User failed push authentication')
 
         if settings.app.sso_cache and not self.server_auth_token:
-            self.sso_push_cache_collection.update_one({
+            self.sso_push_cache_collection.replace_one({
                 'user_id': self.user.id,
                 'server_id': self.server.id,
                 'mac_addr': self.mac_addr,

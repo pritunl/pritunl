@@ -56,7 +56,7 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
     if port_forwarding is not None:
         doc['port_forwarding'] = port_forwarding
 
-    doc = User.collection.find_and_modify({
+    doc = User.collection.find_one_and_update({
         'org_id': org.id,
         'type': {
             CERT_SERVER: CERT_SERVER_POOL,
@@ -64,7 +64,7 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
         }[type],
     }, {
         '$set': doc,
-    }, new=True)
+    }, return_document=True)
 
     if doc:
         return User(org=org, doc=doc)

@@ -9,7 +9,7 @@ import uuid
 def set_acme(token, authorization):
     coll = mongo.get_collection('acme_challenges')
 
-    coll.update_one({
+    coll.replace_one({
         '_id': token,
     }, {
         '_id': token,

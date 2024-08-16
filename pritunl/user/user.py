@@ -339,11 +339,11 @@ class User(mongo.MongoObject):
             self.load()
 
     def remove(self):
-        self.audit_collection.remove({
+        self.audit_collection.delete_many({
             'user_id': self.id,
             'org_id': self.org_id,
         })
-        self.net_link_collection.remove({
+        self.net_link_collection.delete_many({
             'user_id': self.id,
             'org_id': self.org_id,
         })
@@ -664,7 +664,7 @@ class User(mongo.MongoObject):
         return True
 
     def reuse_otp_code(self, code):
-        self.otp_collection.remove({
+        self.otp_collection.delete_one({
             '_id': {
                 'user_id': self.id,
                 'code': code,
@@ -1462,7 +1462,7 @@ class User(mongo.MongoObject):
 
         network = str(ipaddress.ip_network(network))
 
-        self.net_link_collection.update_one({
+        self.net_link_collection.replace_one({
             'user_id': self.id,
             'org_id': self.org_id,
             'network': network,
@@ -1482,7 +1482,7 @@ class User(mongo.MongoObject):
                     svr.restart()
 
     def remove_network_link(self, network):
-        self.net_link_collection.remove({
+        self.net_link_collection.delete_many({
             'user_id': self.id,
             'org_id': self.org_id,
             'network': network,

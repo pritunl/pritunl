@@ -7,6 +7,7 @@ import os
 import json
 import random
 import datetime
+import pymongo
 
 class ServerBandwidth(object):
     def __init__(self, server_id):
@@ -57,30 +58,26 @@ class ServerBandwidth(object):
                 minutes=timestamp.minute) - datetime.timedelta(days=365)
 
     def add_data(self, timestamp, received, sent):
-        bulk = self.collection.initialize_unordered_bulk_op()
+        bulk = []
 
         for period in ('1m', '5m', '30m', '2h', '1d'):
-            spec = {
+            bulk.append(pymongo.UpdateOne({
                 'server_id': self.server_id,
                 'period': period,
                 'timestamp': self._get_period_timestamp(period, timestamp),
-            }
-            doc = {'$inc': {
+            }, {'$inc': {
                 'received': received,
                 'sent': sent,
-            }}
-            rem_spec = {
+            }}, upsert=True))
+            bulk.append(pymongo.DeleteMany({
                 'server_id': self.server_id,
                 'period': period,
                 'timestamp': {
                     '$lt': self._get_period_max_timestamp(period, timestamp),
                 },
-            }
+            }))
 
-            bulk.find(spec).upsert().update_one(doc)
-            bulk.find(rem_spec).remove()
-
-        bulk.execute()
+        self.collection.bulk_write(bulk)
 
     def get_period(self, period):
         date_end = self._get_period_timestamp(period, utils.now())

@@ -23,7 +23,7 @@ class TaskCleanClientPool(task.Task):
 
         for doc in docs:
             if doc.get('static'):
-                self.pool_collection.remove({
+                self.pool_collection.delete_one({
                     '_id': doc['_id'],
                     'timestamp': doc['timestamp'],
                 })

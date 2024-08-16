@@ -97,7 +97,7 @@ class QueueAssignIpPool(queue.Queue):
 
     def post_task(self):
         try:
-            self.server_ip_pool_collection.remove({
+            self.server_ip_pool_collection.delete_many({
                 'network': self.old_network_hash,
                 'server_id': self.server_id,
             })
@@ -111,7 +111,7 @@ class QueueAssignIpPool(queue.Queue):
 
     def rollback_task(self):
         try:
-            self.server_ip_pool_collection.remove({
+            self.server_ip_pool_collection.delete_many({
                 'network': self.network_hash,
                 'server_id': self.server_id,
             })

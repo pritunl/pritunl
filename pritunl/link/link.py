@@ -790,7 +790,7 @@ class Location(mongo.MongoObject):
         }
 
     def remove(self):
-        Host.collection.remove({
+        Host.collection.delete_many({
             'location_id': self.id,
         })
         mongo.MongoObject.remove(self)
@@ -1193,10 +1193,10 @@ class Link(mongo.MongoObject):
         }
 
     def remove(self):
-        self.host_collection.remove({
+        self.host_collection.delete_many({
             'link_id': self.id,
         })
-        self.location_collection.remove({
+        self.location_collection.delete_many({
             'link_id': self.id,
         })
         mongo.MongoObject.remove(self)

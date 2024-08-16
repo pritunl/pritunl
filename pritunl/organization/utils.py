@@ -27,11 +27,11 @@ def reserve_pooled(name=None, auth_api=None, type=ORG_DEFAULT):
     if type is not None:
         doc['type'] = type
 
-    doc = Organization.collection.find_and_modify({
+    doc = Organization.collection.find_one_and_update({
         'type': ORG_POOL,
     }, {
         '$set': doc,
-    }, new=True)
+    }, return_document=True)
 
     if doc:
         return Organization(doc=doc)

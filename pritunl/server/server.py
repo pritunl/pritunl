@@ -13,7 +13,6 @@ from pritunl import host
 from pritunl import utils
 from pritunl import mongo
 from pritunl import queue
-from pritunl import transaction
 from pritunl import event
 from pritunl import messenger
 from pritunl import organization
@@ -1209,11 +1208,8 @@ class Server(mongo.MongoObject):
         return hosts
 
     def commit(self, *args, **kwargs):
-        tran = None
-
         if 'network' in self.loaded_fields and \
                 self.network_hash != self._orig_network_hash:
-            tran = transaction.Transaction()
             if self.network_lock:
                 raise ServerNetworkLocked('Server network is locked', {
                     'server_id': self.id,
@@ -1221,7 +1217,6 @@ class Server(mongo.MongoObject):
                 })
             else:
                 queue_ip_pool = queue.start('assign_ip_pool',
-                    transaction=tran,
                     server_id=self.id,
                     network=self.network,
                     network_start=self.network_start,
@@ -1242,12 +1237,7 @@ class Server(mongo.MongoObject):
             for org_id in self._orgs_removed:
                 self.ip_pool.unassign_ip_pool_org(org_id)
 
-        mongo.MongoObject.commit(self, transaction=tran, *args, **kwargs)
-
-        if tran:
-            messenger.publish('queue', 'queue_updated',
-                transaction=tran)
-            tran.commit()
+        self.commit()
 
     def remove(self):
         link_ids = []
@@ -1322,7 +1312,7 @@ class Server(mongo.MongoObject):
         self.commit(('primary_organization', 'primary_user'))
 
     def remove_primary_user(self):
-        self.user_collection.remove({
+        self.user_collection.delete_one({
             'resource_id': self.id,
         })
 
@@ -1461,13 +1451,13 @@ class Server(mongo.MongoObject):
                     self.hosts, self.replica_count),
             })
 
-        doc = self.collection.find_and_modify({
+        doc = self.collection.find_one_and_update({
             '_id': self.id,
         }, {'$pull': {
             'hosts': host_id,
-        }}, fields={
+        }}, {
             'hosts': True,
-        }, new=True)
+        }, return_document=True)
 
         if doc and not doc['hosts']:
             self.status = OFFLINE
@@ -1546,13 +1536,12 @@ class Server(mongo.MongoObject):
     def get_cursor_id(self):
         return messenger.get_cursor_id('servers')
 
-    def publish(self, message, transaction=None, extra=None):
+    def publish(self, message, extra=None):
         extra = extra or {}
         extra.update({
             'server_id': self.id,
         })
-        messenger.publish('servers', message,
-            extra=extra, transaction=transaction)
+        messenger.publish('servers', message, extra=extra)
 
     def subscribe(self, cursor_id=None, timeout=None):
         for msg in messenger.subscribe('servers', cursor_id=cursor_id,
@@ -1656,7 +1645,7 @@ class Server(mongo.MongoObject):
                     'server_id': self.id,
                 })
 
-        self.clients_pool_collection.remove({
+        self.clients_pool_collection.delete_many({
             'server_id': self.id,
         })
 
@@ -1734,7 +1723,7 @@ class Server(mongo.MongoObject):
             'hosts': [],
         }})
 
-        self.clients_pool_collection.remove({
+        self.clients_pool_collection.delete_many({
             'server_id': self.id,
         })
 

@@ -5,7 +5,6 @@ from pritunl.server.server import Server, dict_fields
 
 from pritunl.constants import *
 from pritunl.exceptions import *
-from pritunl import transaction
 from pritunl import mongo
 from pritunl import ipaddress
 from pritunl import settings
@@ -193,8 +192,7 @@ def link_servers(server_id, link_server_id, use_local_address=False):
             return SERVER_LINK_COMMON_ROUTE, SERVER_LINK_COMMON_ROUTE_MSG
         routes.update(routes_set)
 
-    tran = transaction.Transaction()
-    collection = tran.collection('servers')
+    collection = mongo.get_collection('servers')
 
     collection.update_one({
         '_id': server_id,
@@ -218,8 +216,6 @@ def link_servers(server_id, link_server_id, use_local_address=False):
         },
     }})
 
-    tran.commit()
-
     return None, None
 
 def unlink_servers(server_id, link_server_id):
@@ -237,8 +233,7 @@ def unlink_servers(server_id, link_server_id):
         if doc['status'] == ONLINE:
             raise ServerLinkOnlineError('Server must be offline to unlink')
 
-    tran = transaction.Transaction()
-    collection = tran.collection('servers')
+    collection = mongo.get_collection('servers')
 
     collection.update_one({
         '_id': server_id,
@@ -251,8 +246,6 @@ def unlink_servers(server_id, link_server_id):
     }, {'$pull': {
         'links': {'server_id': server_id},
     }})
-
-    tran.commit()
 
 def has_server_sso():
     return bool(Server.collection.count_documents({

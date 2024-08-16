@@ -87,13 +87,12 @@ class ServerInstance(object):
             return True
         return self.sock_interrupt
 
-    def publish(self, message, transaction=None, extra=None):
+    def publish(self, message, extra=None):
         extra = extra or {}
         extra.update({
             'server_id': self.server.id,
         })
-        messenger.publish('servers', message,
-            extra=extra, transaction=transaction)
+        messenger.publish('servers', message, extra=extra)
 
     def subscribe(self, cursor_id=None, timeout=None):
         for msg in messenger.subscribe('servers', cursor_id=cursor_id,
@@ -1022,17 +1021,17 @@ class ServerInstance(object):
 
             while not self.startup_interrupt:
                 try:
-                    doc = self.collection.find_and_modify({
+                    doc = self.collection.find_one_and_update({
                         '_id': self.server.id,
                         'availability_group': \
                             settings.local.host.availability_group,
                         'instances.instance_id': self.id,
                     }, {'$set': {
                         'instances.$.ping_timestamp': utils.now(),
-                    }}, fields={
+                    }}, {
                         '_id': False,
                         'instances': True,
-                    }, new=True)
+                    }, return_document=True)
 
                     yield
 
@@ -1095,17 +1094,17 @@ class ServerInstance(object):
                     continue
 
                 try:
-                    doc = self.collection.find_and_modify({
+                    doc = self.collection.find_one_and_update({
                         '_id': self.server.id,
                         'availability_group': \
                             settings.local.host.availability_group,
                         'instances.instance_id': self.id,
                     }, {'$set': {
                         'instances.$.ping_timestamp': utils.now(),
-                    }}, fields={
+                    }}, {
                         '_id': False,
                         'instances': True,
-                    }, new=True)
+                    }, return_document=True)
 
                     yield
 
@@ -1220,7 +1219,7 @@ class ServerInstance(object):
 
     def clear_route_advertisements(self):
         for ra_id in self.route_advertisements.copy():
-            self.routes_collection.remove({
+            self.routes_collection.delete_one({
                 '_id': ra_id,
             })
 

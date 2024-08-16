@@ -36,7 +36,7 @@ class TaskRoute(task.Task):
 
                 svr = server.get_by_id(server_id)
                 if not svr:
-                    self.routes_collection.remove({
+                    self.routes_collection.delete_one({
                         '_id': doc['_id'],
                     })
                     continue
@@ -55,7 +55,7 @@ class TaskRoute(task.Task):
                         match = True
 
                 if not match:
-                    self.routes_collection.remove({
+                    self.routes_collection.delete_one({
                         '_id': doc['_id'],
                     })
                     continue

@@ -34,12 +34,12 @@ class Limiter(object):
 def auth_check(user_id):
     collection = mongo.get_collection('auth_limiter')
 
-    doc = collection.find_and_modify({
+    doc = collection.find_one_and_update({
         '_id': user_id,
     }, {
         '$inc': {'count': 1},
         '$setOnInsert': {'timestamp': utils.now()},
-    }, new=True, upsert=True)
+    }, return_document=True, upsert=True)
 
     if utils.now() > doc['timestamp'] + datetime.timedelta(
             seconds=settings.app.auth_limiter_ttl):
@@ -47,7 +47,7 @@ def auth_check(user_id):
             'count': 1,
             'timestamp': utils.now(),
         }
-        collection.update_one({
+        collection.replace_one({
             '_id': user_id,
         }, doc, upsert=True)
 

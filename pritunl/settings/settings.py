@@ -49,12 +49,11 @@ class Settings(object):
 
     def commit(self, init=False):
         from pritunl import messenger
-        from pritunl import transaction
+        from pritunl import mongo
 
         docs = []
         has_docs = False
-        tran = transaction.Transaction()
-        collection = tran.collection(self.collection.name_str)
+        collection = mongo.get_collection(self.collection.name_str)
 
         for group in self.groups:
             group_cls = getattr(self, group)
@@ -64,21 +63,21 @@ class Settings(object):
             doc = group_cls.get_commit_doc(init)
             if doc:
                 has_docs = True
-                collection.bulk().find({
+                collection.update_one({
                     '_id': doc['_id'],
-                }).upsert().update_one({
+                }, {
                     '$set': doc,
-                })
+                }, upsert=True)
 
             unset_doc = group_cls.get_commit_unset_doc()
             if unset_doc:
                 has_docs = True
                 doc_id = unset_doc.pop('_id')
-                collection.bulk().find({
+                collection.update_one({
                     '_id': doc_id,
-                }).upsert().update_one({
+                }, {
                     '$unset': unset_doc,
-                })
+                }, upsert=True)
 
                 doc = doc or {'_id': doc_id}
                 for key in unset_doc:
@@ -87,13 +86,10 @@ class Settings(object):
             if doc:
                 docs.append(doc)
 
-        messenger.publish('setting', docs, transaction=tran)
+        messenger.publish('setting', docs)
 
         if not has_docs:
             return
-
-        collection.bulk_execute()
-        tran.commit()
 
     def _load_mongo(self):
         for cls in module_classes:

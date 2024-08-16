@@ -157,7 +157,7 @@ class Vxlan(object):
         if self.ipv6:
             local_addr6 = settings.local.host.local_addr6
 
-        doc = self.vxlan_collection.find_and_modify({
+        doc = self.vxlan_collection.find_one_and_update({
             '_id': self.vxlan_id,
             'server_id': self.server_id,
             'hosts.host_dst': {'$nin': [local_addr]},
@@ -167,10 +167,10 @@ class Vxlan(object):
                 'host_dst': local_addr,
                 'host_dst6': local_addr6,
             },
-        }}, new=True)
+        }}, return_document=True)
 
         if not doc:
-            doc = self.vxlan_collection.find_and_modify({
+            doc = self.vxlan_collection.find_one_and_update({
                 '_id': self.vxlan_id,
                 'server_id': self.server_id,
                 'hosts.host_dst': local_addr,
@@ -178,7 +178,7 @@ class Vxlan(object):
                 'hosts.$.vxlan_mac': self.vxlan_mac,
                 'hosts.$.host_dst': local_addr,
                 'hosts.$.host_dst6': local_addr6,
-            }}, new=True)
+            }}, return_document=True)
 
         if doc:
             for host_vxlan_id, data in enumerate(doc['hosts']):

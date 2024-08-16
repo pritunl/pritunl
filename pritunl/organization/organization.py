@@ -392,11 +392,11 @@ class Organization(mongo.MongoObject):
         user_net_link_collection = mongo.get_collection('users_net_link')
         server_collection = mongo.get_collection('servers')
 
-        user_audit_collection.remove({
+        user_audit_collection.delete_many({
             'org_id': self.id,
         })
 
-        user_net_link_collection.remove({
+        user_net_link_collection.delete_many({
             'org_id': self.id,
         })
 
@@ -414,7 +414,7 @@ class Organization(mongo.MongoObject):
         }})
 
         mongo.MongoObject.remove(self)
-        user_collection.remove({
+        user_collection.delete_many({
             'org_id': self.id,
         })
 

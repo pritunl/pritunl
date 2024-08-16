@@ -711,7 +711,7 @@ class Clients(object):
                     ])
 
         if not virt_address:
-            doc = self.pool_collection.find_and_modify({
+            doc = self.pool_collection.find_one_and_replace({
                 'server_id': self.server.id,
                 'user_id': None,
             }, {
@@ -720,7 +720,7 @@ class Clients(object):
                 'mac_addr': mac_addr,
                 'client_id': doc_id,
                 'timestamp': utils.now(),
-            }, new=True)
+            }, return_document=True)
 
             if doc:
                 address_dynamic = True
@@ -817,7 +817,7 @@ class Clients(object):
                         'timestamp': None,
                     }})
                 else:
-                    self.pool_collection.remove({
+                    self.pool_collection.delete_many({
                         'server_id': self.server.id,
                         'user_id': user_id,
                         'client_id': doc_id,
@@ -2173,7 +2173,7 @@ class Clients(object):
                 client['virt_address'].split('/')[0])
 
         try:
-            self.collection.insert(doc)
+            self.collection.insert_one(doc)
             if self.server.route_clients:
                 messenger.publish('client', {
                     'state': True,
@@ -2338,7 +2338,7 @@ class Clients(object):
         doc_id = client.get('doc_id')
         if doc_id:
             try:
-                self.collection.remove({
+                self.collection.delete_one({
                     '_id': doc_id,
                 })
             except:
@@ -2359,7 +2359,7 @@ class Clients(object):
                     'timestamp': None,
                 }})
             else:
-                self.pool_collection.remove({
+                self.pool_collection.delete_many({
                     'server_id': self.server.id,
                     'user_id': client.get('user_id'),
                     'client_id': doc_id,
@@ -2676,7 +2676,7 @@ class Clients(object):
                     doc_ids.append(doc_id)
 
             try:
-                self.collection.remove({
+                self.collection.delete_one({
                     '_id': {'$in': doc_ids},
                 })
             except:

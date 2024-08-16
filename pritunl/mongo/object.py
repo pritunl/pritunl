@@ -123,16 +123,12 @@ class MongoObject(object):
     def unset(self, field):
         self.unseted.add(field)
 
-    def commit(self, fields=None, transaction=None, spec=None):
+    def commit(self, fields=None, spec=None):
         doc = self.get_commit_doc(fields=fields)
         unset = {x: '' for x in self.unseted}
         response = False
 
-        if transaction:
-            collection = transaction.collection(
-                self.collection.name_str)
-        else:
-            collection = self.collection
+        collection = self.collection
 
         if doc or unset:
             update_doc = {}
@@ -153,10 +149,7 @@ class MongoObject(object):
             response = collection.update_one(
                 spec, update_doc, upsert=not fields)
 
-            if transaction:
-                response = True
-            else:
-                response = bool(response.modified_count)
+            response = bool(response.modified_count)
 
         self.exists = True
         self.changed = set()
@@ -165,7 +158,7 @@ class MongoObject(object):
         return response
 
     def remove(self):
-        self.collection.remove(self.id)
+        self.collection.delete_one(self.id)
 
     def read_file(self, field, path, rstrip=True):
         with open(path, 'r') as field_file:

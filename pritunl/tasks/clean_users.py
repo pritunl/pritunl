@@ -36,7 +36,7 @@ class TaskCleanUsers(task.Task):
 
         org_ids = self._get_org_ids()
 
-        self.user_collection.remove({
+        self.user_collection.delete_many({
             'org_id': {'$in': list(user_org_ids - org_ids)},
         })
 

@@ -492,9 +492,9 @@ def sso_callback_get():
     sig = flask.request.args.get('sig')
 
     tokens_collection = mongo.get_collection('sso_tokens')
-    doc = tokens_collection.find_and_modify(query={
+    doc = tokens_collection.find_one_and_delete({
         '_id': state,
-    }, remove=True)
+    })
 
     if not doc:
         return flask.abort(404)
@@ -973,9 +973,9 @@ def sso_duo_post():
         }, 401)
 
     tokens_collection = mongo.get_collection('sso_tokens')
-    doc = tokens_collection.find_and_modify(query={
+    doc = tokens_collection.find_one_and_delete({
         '_id': token,
-    }, remove=True)
+    })
     if not doc or doc['_id'] != token or doc['type'] != DUO_AUTH:
         journal.entry(
             journal.SSO_AUTH_FAILURE,
@@ -1094,9 +1094,9 @@ def sso_yubico_post():
         }, 401)
 
     tokens_collection = mongo.get_collection('sso_tokens')
-    doc = tokens_collection.find_and_modify(query={
+    doc = tokens_collection.find_one_and_delete({
         '_id': token,
-    }, remove=True)
+    })
     if not doc or doc['_id'] != token or doc['type'] != YUBICO_AUTH:
         journal.entry(
             journal.SSO_AUTH_FAILURE,

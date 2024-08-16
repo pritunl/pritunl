@@ -565,7 +565,7 @@ def user_linked_key_page_delete(short_code):
     )
 
     collection = mongo.get_collection('users_key_link')
-    collection.remove({
+    collection.delete_one({
         'short_id': short_code,
     })
 
@@ -1999,9 +1999,9 @@ def key_request_get():
     state = flask.request.args.get('state')
 
     tokens_collection = mongo.get_collection('key_tokens')
-    doc = tokens_collection.find_and_modify(query={
+    doc = tokens_collection.find_one_and_delete({
         '_id': state,
-    }, remove=True)
+    })
 
     if not doc or doc['type'] != KEY_REQUEST_AUTH:
         return flask.abort(404)
@@ -2398,9 +2398,9 @@ def key_callback_get():
     sig = flask.request.args.get('sig')
 
     tokens_collection = mongo.get_collection('key_tokens')
-    doc = tokens_collection.find_and_modify(query={
+    doc = tokens_collection.find_one_and_delete({
         '_id': state,
-    }, remove=True)
+    })
 
     if not doc:
         return flask.abort(404)
@@ -2888,9 +2888,9 @@ def key_duo_post():
         }, 401)
 
     tokens_collection = mongo.get_collection('key_tokens')
-    doc = tokens_collection.find_and_modify(query={
+    doc = tokens_collection.find_one_and_delete({
         '_id': token,
-    }, remove=True)
+    })
     if not doc or doc['_id'] != token or doc['type'] != DUO_AUTH:
         journal.entry(
             journal.SSO_AUTH_FAILURE,
@@ -3009,9 +3009,9 @@ def key_yubico_post():
         }, 401)
 
     tokens_collection = mongo.get_collection('key_tokens')
-    doc = tokens_collection.find_and_modify(query={
+    doc = tokens_collection.find_one_and_delete({
         '_id': token,
-    }, remove=True)
+    })
     if not doc or doc['_id'] != token or doc['type'] != YUBICO_AUTH:
         journal.entry(
             journal.SSO_AUTH_FAILURE,

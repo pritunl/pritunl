@@ -102,22 +102,19 @@ class Queue(mongo.MongoObject):
         self.keep_alive_thread.daemon = True
         self.keep_alive_thread.start()
 
-    def start(self, transaction=None, block=False, block_timeout=60):
+    def start(self, block=False, block_timeout=60):
         self.ttl_timestamp = utils.now() + \
             datetime.timedelta(seconds=self.ttl)
-        self.commit(transaction=transaction)
+        self.commit()
 
         if block:
-            if transaction:
-                raise TypeError('Cannot use transaction when blocking')
             cursor_id = messenger.get_cursor_id('queue')
 
         extra = {
             'queue_doc': self.export()
         }
 
-        messenger.publish('queue', [PENDING, self.id], extra=extra,
-            transaction=transaction)
+        messenger.publish('queue', [PENDING, self.id], extra=extra)
 
         if block:
             last_update = time.time()
@@ -175,13 +172,13 @@ class Queue(mongo.MongoObject):
         if block:
             cursor_id = messenger.get_cursor_id('queue')
 
-        doc = cls.collection.find_and_modify({
+        doc = cls.collection.find_one_and_update({
             'state': PENDING,
             'reserve_id': reserve_id,
             'reserve_data': None,
         }, {'$set': {
             'reserve_data': reserve_data,
-        }}, new=True)
+        }}, return_document=True)
         if not doc:
             return
 
