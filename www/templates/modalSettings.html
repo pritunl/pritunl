@@ -245,7 +245,7 @@
     </div>
     <div class="sso-azure-version form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
       <label>Azure API Version</label>
-      <select class="form-control" data-toggle="tooltip" title="Duo authentication mode">
+      <select class="form-control" data-toggle="tooltip" title="Migrating to newer Microsoft Graph API may require changes to permissions in Azure.">
         <option value="1" <%= sso_azure_version.toString() === '1' ? 'selected' : '' %>>Azure AD Graph (Old)</option>
         <option value="2" <%= sso_azure_version.toString() === '2' ? 'selected' : '' %>>Microsoft Graph</option>
       </select>
