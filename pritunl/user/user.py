@@ -952,6 +952,9 @@ class User(mongo.MongoObject):
         if svr.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
+        if svr.mss_fix:
+            client_conf += 'tun-mtu %s\n' % svr.mss_fix
+
         if svr.block_outside_dns:
             client_conf += 'ignore-unknown-option block-outside-dns\n'
             client_conf += 'block-outside-dns\n'
