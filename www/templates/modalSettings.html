@@ -236,7 +236,7 @@
     </div>
     <div class="sso-azure-region form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
       <label>Azure Region</label>
-      <select class="form-control" data-toggle="tooltip" title="Duo authentication mode">
+      <select class="form-control" data-toggle="tooltip" title="Azure region">
         <option value="" <%= !sso_azure_region ? 'selected' : '' %>>Global (Old)</option>
         <option value="global" <%= sso_azure_region === 'global' ? 'selected' : '' %>>Global</option>
         <option value="us-gov" <%= sso_azure_region === 'us-gov' ? 'selected' : '' %>>US Government</option>
