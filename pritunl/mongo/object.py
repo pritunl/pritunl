@@ -158,7 +158,7 @@ class MongoObject(object):
         return response
 
     def remove(self):
-        self.collection.delete_one(self.id)
+        self.collection.delete_one({'_id': self.id})
 
     def read_file(self, field, path, rstrip=True):
         with open(path, 'r') as field_file:
