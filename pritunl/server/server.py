@@ -1237,7 +1237,7 @@ class Server(mongo.MongoObject):
             for org_id in self._orgs_removed:
                 self.ip_pool.unassign_ip_pool_org(org_id)
 
-        self.commit()
+        mongo.MongoObject.commit(self, *args, **kwargs)
 
     def remove(self):
         link_ids = []
