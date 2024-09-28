@@ -805,6 +805,17 @@ class User(mongo.MongoObject):
         if svr.session_timeout:
             disable_reconnect = True
 
+        geo_sort = None
+        if svr.geo_sort:
+            if not settings.local.sub_url_key:
+                logger.error(
+                    'Cannot enable profile geo sort, missing subscription',
+                    'user',
+                    sub_url_key=settings.local.sub_url_key,
+                )
+            else:
+                geo_sort = settings.local.sub_url_key[:12]
+
         data = {
             'version': CLIENT_CONF_VER,
             'user': self.name,
@@ -819,6 +830,8 @@ class User(mongo.MongoObject):
             'sync_hosts': svr.get_sync_remotes(),
             'sync_hash': conf_hash,
             'dynamic_firewall': svr.dynamic_firewall,
+            'geo_sort': geo_sort,
+            'force_connect': svr.force_connect,
             'device_auth': svr.device_auth,
             'sso_auth': svr.sso_auth,
             'password_mode': self._get_password_mode(svr),
