@@ -94,11 +94,21 @@ class ServerInstance(object):
         })
         messenger.publish('servers', message, extra=extra)
 
-    def subscribe(self, cursor_id=None, timeout=None):
-        for msg in messenger.subscribe('servers', cursor_id=cursor_id,
-                timeout=timeout):
-            if msg.get('server_id') == self.server.id:
-                yield msg
+    def subscribe(self, cursor_id=None):
+        while True:
+            if self.interrupt:
+                return
+
+            for msg in messenger.subscribe('servers',
+                    cursor_id=cursor_id, timeout=60):
+                if self.interrupt:
+                    return
+
+                cursor_id = msg['_id']
+                if msg.get('server_id') == self.server.id:
+                    yield msg
+
+            time.sleep(0.1)
 
     def resources_acquire(self):
         if self.interface:
