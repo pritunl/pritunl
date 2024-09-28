@@ -220,6 +220,20 @@ def server_put_post(server_id=None):
         dynamic_firewall = True if flask.request.json['dynamic_firewall'] \
             else False
 
+    geo_sort = None
+    geo_sort_def = False
+    if 'geo_sort' in flask.request.json:
+        geo_sort_def = True
+        geo_sort = True if flask.request.json['geo_sort'] \
+            else False
+
+    force_connect = None
+    force_connect_def = False
+    if 'force_connect' in flask.request.json:
+        force_connect_def = True
+        force_connect = True if flask.request.json['force_connect'] \
+            else False
+
     route_dns = None
     route_dns_def = False
     if 'route_dns' in flask.request.json:
@@ -623,6 +637,8 @@ def server_put_post(server_id=None):
             network_start=network_start,
             network_end=network_end,
             dynamic_firewall=dynamic_firewall,
+            geo_sort=geo_sort,
+            force_connect=force_connect,
             route_dns=route_dns,
             device_auth=device_auth,
             restrict_routes=restrict_routes,
@@ -680,6 +696,10 @@ def server_put_post(server_id=None):
             svr.network_end = network_end
         if dynamic_firewall_def:
             svr.dynamic_firewall = dynamic_firewall
+        if geo_sort_def:
+            svr.geo_sort = geo_sort
+        if force_connect_def:
+            svr.force_connect = force_connect
         if route_dns_def:
             svr.route_dns = route_dns
         if device_auth_def:
