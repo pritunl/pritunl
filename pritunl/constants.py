@@ -759,6 +759,11 @@ DH_PARAM_BITS_INVALID_MSG = 'DH param bits are not valid, must ' + \
 PROTOCOL_INVALID = 'protocol_invalid'
 PROTOCOL_INVALID_MSG = 'Protocol is not valid, must be "udp" or "tcp".'
 
+GEO_SORT_INVALID = 'geo_sort_invalid'
+GEO_SORT_INVALID_MSG = 'Geo sort host selection requires either single ' + \
+    'sign-on authentication, device authentication or dynamic client ' + \
+    'firewall to also be enabled.'
+
 CIPHER_INVALID = 'cipher_invalid'
 CIPHER_INVALID_MSG = 'Encryption cipher is invalid.'
 
