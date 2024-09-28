@@ -49,6 +49,8 @@ dict_fields = [
     'network_start',
     'network_end',
     'dynamic_firewall',
+    'geo_sort',
+    'force_connect',
     'route_dns',
     'device_auth',
     'restrict_routes',
@@ -118,6 +120,8 @@ class Server(mongo.MongoObject):
         'network_start',
         'network_end',
         'dynamic_firewall',
+        'geo_sort',
+        'force_connect',
         'route_dns',
         'device_auth',
         'restrict_routes',
@@ -188,6 +192,8 @@ class Server(mongo.MongoObject):
         'tls_auth': True,
         'lzo_compression': False,
         'dynamic_firewall': False,
+        'geo_sort': False,
+        'force_connect': False,
         'route_dns': False,
         'device_auth': False,
         'restrict_routes': True,
@@ -216,8 +222,9 @@ class Server(mongo.MongoObject):
 
     def __init__(self, name=None, groups=None, network_wg=None,
             network=None, network_mode=None, network_start=None,
-            network_end=None, dynamic_firewall=None, route_dns=None,
-            device_auth=None, restrict_routes=None, wg=None, ipv6=None,
+            network_end=None, dynamic_firewall=None, geo_sort=None,
+            force_connect=None, route_dns=None, device_auth=None,
+            restrict_routes=None, wg=None, ipv6=None,
             ipv6_firewall=None, bind_address=None, port=None, protocol=None,
             port_wg=None, dh_param_bits=None, multi_device=None,
             dns_servers=None, search_domain=None, otp_auth=None,
@@ -256,6 +263,10 @@ class Server(mongo.MongoObject):
             self.network_end = network_end
         if dynamic_firewall is not None:
             self.dynamic_firewall = dynamic_firewall
+        if geo_sort is not None:
+            self.geo_sort = geo_sort
+        if force_connect is not None:
+            self.force_connect = force_connect
         if route_dns is not None:
             self.route_dns = route_dns
         if device_auth is not None:
@@ -400,6 +411,8 @@ class Server(mongo.MongoObject):
             'network_start': self.network_start,
             'network_end': self.network_end,
             'dynamic_firewall': self.dynamic_firewall,
+            'geo_sort': self.geo_sort,
+            'force_connect': self.force_connect,
             'route_dns': self.route_dns,
             'device_auth': self.device_auth,
             'restrict_routes': self.restrict_routes,
@@ -1830,5 +1843,10 @@ class Server(mongo.MongoObject):
 
         if self.dns_mapping and not self.dns_servers:
             return CLIENT_DNS_MAPPING_NO_DNS, CLIENT_DNS_MAPPING_NO_DNS_MSG
+
+        if self.geo_sort and not self.sso_auth and \
+                not self.device_auth and \
+                not self.dynamic_firewall:
+            return GEO_SORT_INVALID, GEO_SORT_INVALID_MSG
 
         return None, None
