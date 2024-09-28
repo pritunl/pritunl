@@ -817,10 +817,11 @@ class Clients(object):
                         'timestamp': None,
                     }})
                 else:
-                    self.pool_collection.delete_many({
+                    self.pool_collection.delete_one({
                         'server_id': self.server.id,
                         'user_id': user_id,
                         'client_id': doc_id,
+                        'static': True,
                     })
                 return None, False, True
 
