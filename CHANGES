@@ -1,8 +1,10 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.32.4034.11 2024-09-28
+-------------------------------
 
+Add geo sort host selection
 Refactor database code
 
 Version 1.32.3897.75 2024-05-14
