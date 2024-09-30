@@ -55,10 +55,11 @@ def strip_port(hostport):
     if colon == -1:
         return hostport
 
-    if ']' in hostport:
+    if hostport.count(":") > 1:
         i = hostport.find(']')
         if i != -1:
             return hostport[:i].lstrip('[')
+        return hostport
 
     return hostport[:colon]
 
