@@ -10,6 +10,7 @@ class SettingsUser(SettingsGroupMongo):
         'pin_mode': PIN_OPTIONAL,
         'pin_min_length': 6,
         'pin_digits_only': True,
+        'device_key_override': None,
         'device_key_length': 4,
         'device_reg_attempts': 10,
         'reconnect': True,
