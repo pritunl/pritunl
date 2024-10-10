@@ -21,6 +21,8 @@ Commands:
   renew-ssl-cert        Renew the Lets Encrypt server ssl certificate
   reconfigure           Reconfigure database connection
   clear-message-cache   Clear the cache of the internal message system
+  override-device-key   Allow device registration without key for 8 hours
+  require-device-key    Remove device registration key override
   get-mongodb           Get the current mongodb uri
   set-mongodb           Set the mongodb uri
   get-host-id           Get the current host id
@@ -225,6 +227,33 @@ def main(default_conf=None):
         print('Successfully updated configuration. This change is ' \
             'stored in the database and has been applied to all hosts ' \
             'in the cluster.')
+
+        sys.exit(0)
+    elif cmd == 'override-device-key':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_db_host()
+
+        settings.user.device_key_override = int(time.time())
+        settings.commit()
+
+        time.sleep(.2)
+
+        print('Device registration key override active for 8 hours. ' +
+            'Use command require-device-key to reactivate.')
+
+        sys.exit(0)
+    elif cmd == 'require-device-key':
+        from pritunl import setup
+        from pritunl import settings
+        setup.setup_db_host()
+
+        settings.user.device_key_override = None
+        settings.commit()
+
+        time.sleep(.2)
+
+        print('Device registration key override deactivated.')
 
         sys.exit(0)
     elif cmd == 'get-mongodb':
