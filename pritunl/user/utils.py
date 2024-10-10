@@ -113,6 +113,7 @@ def iter_unreg_devices():
         'devices.registered': False,
     }).sort('name')
 
+    override = User.is_device_key_override
     for doc in cursor:
         devices = doc.get('devices')
         if not devices:
@@ -129,4 +130,5 @@ def iter_unreg_devices():
                 'user_name': doc.get('name'),
                 'name': device.get('name'),
                 'platform': device.get('platform'),
+                'override': override,
             }

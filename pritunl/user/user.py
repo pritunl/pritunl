@@ -163,6 +163,14 @@ class User(mongo.MongoObject):
 
         return data
 
+    @static_property
+    def is_device_key_override(cls):
+        if not settings.user.device_key_override:
+            return False
+        if abs(int(time.time()) - settings.user.device_key_override) < 28800:
+            return True
+        return False
+
     def dict(self):
         last_active = None
         if self.last_active:
@@ -170,6 +178,7 @@ class User(mongo.MongoObject):
 
         devices = self.devices or []
         new_devices = []
+        override = self.is_device_key_override
         for device in devices:
             timestamp = device.get('timestamp')
             if timestamp:
@@ -185,6 +194,7 @@ class User(mongo.MongoObject):
                 'platform': device.get('platform'),
                 'registered': device.get('registered'),
                 'timestamp': timestamp,
+                'override': override,
             })
 
         return {
@@ -1395,12 +1405,22 @@ class User(mongo.MongoObject):
     def device_register(self, device_id, reg_key):
         devices = self.devices or []
 
-        if not device_id or not reg_key:
+        if not device_id:
             raise DeviceNotFound()
+
+        if self.is_device_key_override:
+            pass
+        elif not reg_key:
+            raise DeviceNotFound()
+        else:
+            reg_key = reg_key.upper()
 
         for i, device in enumerate(devices):
             if device.get('id') == device_id:
-                if utils.const_compare(device.get('reg_key', ''), reg_key):
+                dev_reg_key = device.get('reg_key', '')
+                if (dev_reg_key and utils.const_compare(
+                        dev_reg_key, reg_key)) or \
+                        self.is_device_key_override:
                     device['registered'] = True
                     device['reg_key'] = None
                     device['reg_count'] = None
