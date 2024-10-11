@@ -1469,10 +1469,7 @@ class ServerInstance(object):
             raise
 
     def disconnect_wg(self, wg_public_key, reason=""):
-        logger.exception('Disconnecting wg user', 'server',
-            server_id=self.server.id,
-            reason=reason,
-        )
+        self.server.output.push_output('wg-client-kill "%s"' % reason)
         for i in range(10):
             try:
                 utils.check_output_logged([

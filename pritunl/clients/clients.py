@@ -331,12 +331,10 @@ class Clients(object):
         if user.link_server_id:
             pass
             # TODO wg
-            # link_usr_svr = self.server.get_link_server(user.link_server_id,
-            #     fields=('_id', 'network', 'network_start', 'network_end',
-            #         'local_networks', 'organizations', 'routes', 'links',
-            #         'ipv6'))
+            # link_usr_svr = self.server.get_link_server(user.link_server_id)
             #
-            # for route in link_usr_svr.get_routes(include_default=False):
+            # for route in link_usr_svr.get_routes(include_default=False,
+            #         include_dns_routes=False):
             #     network = route['network']
             #     metric = route.get('metric')
             #     if metric:
@@ -524,9 +522,9 @@ class Clients(object):
             self.instance_com.push_output('Primary link available ' +
                 'over secondary, relinking %s' % network)
             if len(reconnect) > 32:
-                self.instance.disconnect_wg(reconnect)
+                self.instance.disconnect_wg(reconnect, "relink")
             else:
-                self.instance_com.client_kill(reconnect)
+                self.instance_com.client_kill(reconnect, "relink")
 
         return reserved
 
@@ -558,18 +556,18 @@ class Clients(object):
 
         for client_id in primary_reconnect:
             if len(client_id) > 32:
-                self.instance.disconnect_wg(client_id)
+                self.instance.disconnect_wg(client_id, "primary_reconnect")
             else:
-                self.instance_com.client_kill(client_id)
+                self.instance_com.client_kill(client_id, "primary_reconnect")
 
         if primary_reconnect:
             time.sleep(5)
 
         for client_id in secondary_reconnect:
             if len(client_id) > 32:
-                self.instance.disconnect_wg(client_id)
+                self.instance.disconnect_wg(client_id, "secondary_reconnect")
             else:
-                self.instance_com.client_kill(client_id)
+                self.instance_com.client_kill(client_id, "secondary_reconnect")
 
         if primary_reconnect or secondary_reconnect:
             self.instance_com.push_output('Gateway link ' +
@@ -927,9 +925,11 @@ class Clients(object):
                 for clnt in self.clients.find({'user_id': user_id}):
                     time.sleep(2)
                     if len(clnt['id']) > 32:
-                        self.instance.disconnect_wg(clnt['id'])
+                        self.instance.disconnect_wg(clnt['id'],
+                            "remove_multi")
                     else:
-                        self.instance_com.client_kill(clnt['id'])
+                        self.instance_com.client_kill(clnt['id'],
+                            "remove_multi")
 
             if not virt_address:
                 self.instance_com.send_client_deny(client_id, key_id,
@@ -1068,9 +1068,11 @@ class Clients(object):
                 for clnt in self.clients.find({'user_id': user_id}):
                     time.sleep(2)
                     if len(clnt['id']) > 32:
-                        self.instance.disconnect_wg(clnt['id'])
+                        self.instance.disconnect_wg(clnt['id'],
+                            "remove_multi_wg")
                     else:
-                        self.instance_com.client_kill(clnt['id'])
+                        self.instance_com.client_kill(clnt['id'],
+                            "remove_multi_wg")
 
             if not virt_address:
                 self.instance.disconnect_wg(wg_public_key)
@@ -2101,9 +2103,9 @@ class Clients(object):
             self.instance_com.push_output(
                 'ERROR Unknown client connected client_id=%s' % client_id)
             if len(client_id) > 32:
-                self.instance.disconnect_wg(client_id)
+                self.instance.disconnect_wg(client_id, "unknown_client")
             else:
-                self.instance_com.client_kill(client_id)
+                self.instance_com.client_kill(client_id, "unknown_client")
             return
 
         journal.entry(
@@ -2199,9 +2201,9 @@ class Clients(object):
                 server_id=self.server.id,
             )
             if client['type'] == 'wg':
-                self.instance.disconnect_wg(client_id)
+                self.instance.disconnect_wg(client_id, "client_db_err")
             else:
-                self.instance_com.client_kill(client_id)
+                self.instance_com.client_kill(client_id, "client_db_err")
             return
 
         self.clients.update_id(client_id, {
@@ -2371,9 +2373,9 @@ class Clients(object):
     def disconnect_user(self, user_id):
         for client in self.clients.find({'user_id': user_id}):
             if len(client['id']) > 32:
-                self.instance.disconnect_wg(client['id'])
+                self.instance.disconnect_wg(client['id'], "disconnect")
             else:
-                self.instance_com.client_kill(client['id'])
+                self.instance_com.client_kill(client['id'], "disconnect")
 
     def disconnect_user_id(self, user_id, client_id, server_id):
         if server_id and self.server.id != server_id:
@@ -2382,9 +2384,9 @@ class Clients(object):
         for clnt in self.clients.find({'user_id': user_id}):
             if clnt.get('doc_id') == client_id:
                 if len(clnt['id']) > 32:
-                    self.instance.disconnect_wg(clnt['id'])
+                    self.instance.disconnect_wg(clnt['id'], "disconnect_id")
                 else:
-                    self.instance_com.client_kill(clnt['id'])
+                    self.instance_com.client_kill(clnt['id'], "disconnect_id")
 
     def disconnect_user_mac(self, user_id, host_id, mac_addr, server_id):
         if host_id == settings.local.host_id:
@@ -2398,9 +2400,9 @@ class Clients(object):
                     'mac_addr': mac_addr,
                 }):
             if len(clnt['id']) > 32:
-                self.instance.disconnect_wg(clnt['id'])
+                self.instance.disconnect_wg(clnt['id'], "disconnect_mac")
             else:
-                self.instance_com.client_kill(clnt['id'])
+                self.instance_com.client_kill(clnt['id'], "disconnect_mac")
 
     def reconnect_user(self, user_id, host_id, server_id):
         if host_id == settings.local.host_id:
@@ -2414,9 +2416,9 @@ class Clients(object):
                 'ignore_routes': True,
             })
             if len(client['id']) > 32:
-                self.instance.disconnect_wg(client['id'])
+                self.instance.disconnect_wg(client['id'], "reconnect")
             else:
-                self.instance_com.client_kill(client['id'])
+                self.instance_com.client_kill(client['id'], "reconnect")
 
     def send_event(self):
         for org_id in self.server.organizations:
@@ -2470,9 +2472,9 @@ class Clients(object):
                 self.instance_com.push_output(
                     'Gateway link timeout on %s' % virt_address)
                 if len(client_id) > 32:
-                    self.instance.disconnect_wg(client_id)
+                    self.instance.disconnect_wg(client_id, "link_ping_err")
                 else:
-                    self.instance_com.client_kill(client_id)
+                    self.instance_com.client_kill(client_id, "link_ping_err")
                 break
 
     def _auth_check_thread(self, client):
@@ -2492,9 +2494,9 @@ class Clients(object):
                 user_id=client['user_id'],
             )
             if len(client_id) > 32:
-                self.instance.disconnect_wg(client_id)
+                self.instance.disconnect_wg(client_id, "auth_lost_err")
             else:
-                self.instance_com.client_kill(client_id)
+                self.instance_com.client_kill(client_id, "auth_lost_err")
             return
 
         if usr.bypass_secondary or settings.vpn.stress_test:
@@ -2509,9 +2511,9 @@ class Clients(object):
                 user_id=client['user_id'],
             )
             if len(client_id) > 32:
-                self.instance.disconnect_wg(client_id)
+                self.instance.disconnect_wg(client_id, "auth_update_err")
             else:
-                self.instance_com.client_kill(client_id)
+                self.instance_com.client_kill(client_id, "auth_update_err")
             return
 
         if not self.server.check_groups(usr.groups) and \
@@ -2523,9 +2525,9 @@ class Clients(object):
                 user_id=client['user_id'],
             )
             if len(client_id) > 32:
-                self.instance.disconnect_wg(client_id)
+                self.instance.disconnect_wg(client_id, "auth_group_err")
             else:
-                self.instance_com.client_kill(client_id)
+                self.instance_com.client_kill(client_id, "auth_group_err")
             return
 
     def auth_check(self, client):
@@ -2587,9 +2589,11 @@ class Clients(object):
                             'Client session timeout ' +
                             'user_id=%s' % client['user_id'])
                         if len(client_id) > 32:
-                            self.instance.disconnect_wg(client_id)
+                            self.instance.disconnect_wg(client_id,
+                                "session_limit")
                         else:
-                            self.instance_com.client_kill(client_id)
+                            self.instance_com.client_kill(client_id,
+                                "session_limit")
 
                     self.auth_check(client)
 
@@ -2620,9 +2624,11 @@ class Clients(object):
                                 client_id=client['doc_id'],
                             )
                             if len(client_id) > 32:
-                                self.instance.disconnect_wg(client_id)
+                                self.instance.disconnect_wg(client_id,
+                                    "ping_lost_err")
                             else:
-                                self.instance_com.client_kill(client_id)
+                                self.instance_com.client_kill(client_id,
+                                    "ping_lost_err")
                             continue
 
                         if self.server.multi_device:
@@ -2640,9 +2646,11 @@ class Clients(object):
                                     client_id=client['doc_id'],
                                 )
                                 if len(client_id) > 32:
-                                    self.instance.disconnect_wg(client_id)
+                                    self.instance.disconnect_wg(client_id,
+                                        "ping_pool_err")
                                 else:
-                                    self.instance_com.client_kill(client_id)
+                                    self.instance_com.client_kill(client_id,
+                                        "ping_pool_err")
                                 continue
                     except:
                         self.clients_queue.append(client_id)
