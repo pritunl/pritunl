@@ -48,8 +48,9 @@ class ServerInstanceCom(object):
         finally:
             self.sock_lock.release()
 
-    def client_kill(self, client_id):
+    def client_kill(self, client_id, reason=""):
         self.clients.disconnected(client_id)
+        self.push_output('client-kill "%s"' % reason)
         self.sock_send('client-kill %s\n' % client_id)
 
     def send_client_auth(self, client_id, key_id, client_conf):
