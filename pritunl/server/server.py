@@ -1844,9 +1844,4 @@ class Server(mongo.MongoObject):
         if self.dns_mapping and not self.dns_servers:
             return CLIENT_DNS_MAPPING_NO_DNS, CLIENT_DNS_MAPPING_NO_DNS_MSG
 
-        if self.geo_sort and not self.sso_auth and \
-                not self.device_auth and \
-                not self.dynamic_firewall:
-            return GEO_SORT_INVALID, GEO_SORT_INVALID_MSG
-
         return None, None
