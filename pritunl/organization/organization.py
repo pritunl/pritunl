@@ -276,7 +276,7 @@ class Organization(mongo.MongoObject):
             cursor = cursor.limit(limit + 1)
 
         if searched:
-            self.last_search_count = cursor.count()
+            self.last_search_count = user.User.collection.count_documents(spec)
 
         if limit is None:
             for doc in cursor:
