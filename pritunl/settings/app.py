@@ -132,6 +132,7 @@ class SettingsApp(SettingsGroupMongo):
         'sso_duo_secret': None,
         'sso_duo_mode': 'push_phone',
         'sso_duo_passcode_length': 6,
+        'sso_duo_timeout': 26,
         'sso_yubico_servers': [
             'https://api.yubico.com/wsapi/2.0/verify',
             'https://api2.yubico.com/wsapi/2.0/verify',

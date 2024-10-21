@@ -90,7 +90,7 @@ class Duo(object):
             response = requests.post(url,
                 headers=headers,
                 params=params,
-                timeout=30,
+                timeout=settings.app.sso_duo_timeout,
             )
         except:
             if factor == 'push' and self.factor == 'push_phone':
