@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix user search
+
 Version 1.32.4047.16 2024-10-11
 -------------------------------
 
