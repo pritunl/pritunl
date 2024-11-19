@@ -73,6 +73,7 @@ dict_fields = [
     'inter_client',
     'ping_interval',
     'ping_timeout',
+    'ping_interval_wg',
     'ping_timeout_wg',
     'link_ping_interval',
     'link_ping_timeout',
@@ -137,6 +138,7 @@ class Server(mongo.MongoObject):
         'inter_client',
         'ping_interval',
         'ping_timeout',
+        'ping_interval_wg',
         'ping_timeout_wg',
         'link_ping_interval',
         'link_ping_timeout',
@@ -200,7 +202,8 @@ class Server(mongo.MongoObject):
         'inter_client': True,
         'ping_interval': 10,
         'ping_timeout': 60,
-        'ping_timeout_wg': 360,
+        'ping_interval_wg': 30,
+        'ping_timeout_wg': 300,
         'link_ping_interval': 1,
         'link_ping_timeout': 5,
         'debug': False,
@@ -230,12 +233,13 @@ class Server(mongo.MongoObject):
             dns_servers=None, search_domain=None, otp_auth=None,
             sso_auth=None, cipher=None, hash=None, block_outside_dns=None,
             jumbo_frames=None, lzo_compression=None, inter_client=None,
-            ping_interval=None, ping_timeout=None, ping_timeout_wg=None,
-            link_ping_interval=None, link_ping_timeout=None,
-            inactive_timeout=None, session_timeout=None,
-            allowed_devices=None, max_clients=None, max_devices=None,
-            replica_count=None, vxlan=None, dns_mapping=None, debug=None,
-            pre_connect_msg=None, mss_fix=None, multihome=None, **kwargs):
+            ping_interval=None, ping_timeout=None, ping_interval_wg=None,
+            ping_timeout_wg=None, link_ping_interval=None,
+            link_ping_timeout=None, inactive_timeout=None,
+            session_timeout=None,allowed_devices=None, max_clients=None,
+            max_devices=None, replica_count=None, vxlan=None,
+            dns_mapping=None, debug=None, pre_connect_msg=None, mss_fix=None,
+            multihome=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         if 'network' in self.loaded_fields:
@@ -315,6 +319,8 @@ class Server(mongo.MongoObject):
             self.ping_interval = ping_interval
         if ping_timeout is not None:
             self.ping_timeout = ping_timeout
+        if ping_interval_wg is not None:
+            self.ping_interval_wg = ping_interval_wg
         if ping_timeout_wg is not None:
             self.ping_timeout_wg = ping_timeout_wg
         if link_ping_interval is not None:
@@ -429,6 +435,7 @@ class Server(mongo.MongoObject):
             'inter_client': True if self.inter_client else False,
             'ping_interval': self.ping_interval,
             'ping_timeout': self.ping_timeout,
+            'ping_interval_wg': self.ping_interval_wg,
             'ping_timeout_wg': self.ping_timeout_wg,
             'link_ping_interval': self.link_ping_interval,
             'link_ping_timeout': self.link_ping_timeout,
