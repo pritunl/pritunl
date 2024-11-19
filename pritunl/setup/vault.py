@@ -78,7 +78,7 @@ def setup_vault():
             with open(settings.conf.se_host_key_path, 'w') as key_file:
                 key_file.write(settings.local.se_host_key)
 
-        threading.Thread(target=_vault_thread).start()
+        threading.Thread(name="SetupVault", target=_vault_thread).start()
         time.sleep(4)
         vault.init()
         vault.init_host_key()

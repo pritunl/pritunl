@@ -73,7 +73,8 @@ class TunlDB(object):
         self._path = path
         self.import_data()
         if auto_export:
-            export_thread = threading.Thread(target=self._export_thread)
+            export_thread = threading.Thread(name="TunlPersist",
+                target=self._export_thread)
             export_thread.daemon = True
             export_thread.start()
 

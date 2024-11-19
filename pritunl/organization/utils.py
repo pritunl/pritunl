@@ -10,10 +10,14 @@ import threading
 import math
 
 def new_pooled():
-    thread = threading.Thread(target=new_org, kwargs={
-        'type': ORG_POOL,
-        'block': False,
-    })
+    thread = threading.Thread(
+        name="NewOrg",
+        target=new_org,
+        kwargs={
+            'type': ORG_POOL,
+            'block': False,
+        },
+    )
     thread.daemon = True
     thread.start()
 

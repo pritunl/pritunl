@@ -92,7 +92,7 @@ def stop_server(delay=0):
             app_server.interrupt = ServerStop('Stop')
         time.sleep(1)
         clear_app_server_interrupt()
-    thread = threading.Thread(target=thread_func)
+    thread = threading.Thread(name="StopServer", target=thread_func)
     thread.daemon = True
     thread.start()
 
@@ -105,7 +105,7 @@ def restart_server(delay=0):
             app_server.interrupt = ServerRestart('Restart')
         time.sleep(1)
         clear_app_server_interrupt()
-    thread = threading.Thread(target=thread_func)
+    thread = threading.Thread(name="RestartServer", target=thread_func)
     thread.daemon = True
     thread.start()
 
@@ -250,7 +250,7 @@ def _run_server(restart):
 
                 break
 
-        thread = threading.Thread(target=poll_thread)
+        thread = threading.Thread(name="AppPollThreadS", target=poll_thread)
         thread.daemon = True
         thread.start()
     else:
@@ -282,7 +282,7 @@ def _run_server(restart):
                     time.sleep(1)
                     restart_server(1)
 
-        thread = threading.Thread(target=poll_thread)
+        thread = threading.Thread(name="AppPollThreadP", target=poll_thread)
         thread.daemon = True
         thread.start()
 

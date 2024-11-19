@@ -390,6 +390,7 @@ def user_post(org_id):
             }, 429)
 
         thread = threading.Thread(
+            name="CreateUsers",
             target=_create_users,
             args=(org_id, users_data, remote_addr, True),
         )

@@ -44,7 +44,7 @@ def stop_server():
 
     setup_ready.set()
     settings.local.server_ready.wait()
-    threading.Thread(target=stop).start()
+    threading.Thread(name="SetupServerStop", target=stop).start()
 
 def redirect(location, code=302):
     url_root = flask.request.headers.get('PR-Forwarded-Url')
@@ -233,7 +233,7 @@ def server_thread():
             set_global_interrupt()
         else:
             server.interrupt = ServerStop('Stop server')
-    thread = threading.Thread(target=poll_thread)
+    thread = threading.Thread(name="SetupServerStop", target=poll_thread)
     thread.daemon = True
     thread.start()
 
@@ -256,7 +256,7 @@ def upgrade_database():
         except:
             logger.exception('Server upgrade failed')
             set_global_interrupt()
-    threading.Thread(target=_upgrade_thread).start()
+    threading.Thread(name="SetupServerUpgrade", target=_upgrade_thread).start()
 
 def on_system_msg(msg):
     if msg['message'] == SHUT_DOWN:
@@ -308,7 +308,7 @@ def setup_server():
 
         settings.local.server_start.clear()
 
-        thread = threading.Thread(target=server_thread)
+        thread = threading.Thread(name="SetupServer", target=server_thread)
         thread.daemon = True
         thread.start()
 

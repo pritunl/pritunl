@@ -239,7 +239,8 @@ class Clients(object):
                             utils.parse_network(network_link)
 
             if network_links and not reauth:
-                thread = threading.Thread(target=self.iroute_ping_thread,
+                thread = threading.Thread(name="IroutePingOvpn",
+                    target=self.iroute_ping_thread,
                     args=(client_id, virt_address.split('/')[0]))
                 thread.daemon = True
                 thread.start()
@@ -403,7 +404,8 @@ class Clients(object):
                         )
 
             if network_links:
-                thread = threading.Thread(target=self.iroute_ping_thread,
+                thread = threading.Thread(name="IroutePingWg",
+                    target=self.iroute_ping_thread,
                     args=(client_id, virt_address.split('/')[0]))
                 thread.daemon = True
                 thread.start()
@@ -2991,7 +2993,7 @@ class Clients(object):
         self.call_queue.start(settings.vpn.call_queue_threads)
 
         if self.server.route_clients:
-            thread = threading.Thread(target=self.init_routes)
+            thread = threading.Thread(name="InitRoutes", target=self.init_routes)
             thread.daemon = True
             thread.start()
 

@@ -1279,7 +1279,8 @@ class Stress(SessionTestCase):
 
                 for x in xrange(512):
                     name = '%s_%s' % (TEST_USER_NAME, str(num).zfill(4))
-                    thread = threading.Thread(target=self._create_user,
+                    thread = threading.Thread(name="StressNewUser",
+                        target=self._create_user,
                         args=(org_id, name))
                     thread.start()
                     threads.append(thread)

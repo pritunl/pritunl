@@ -69,6 +69,6 @@ def exception(log_msg, log_type=None, **kwargs):
     # Fix for python #15541
     _log('error', log_msg, log_type, exc_info=True, **kwargs)
 
-_thread = threading.Thread(target=_logger_thread)
+_thread = threading.Thread(name="Logger", target=_logger_thread)
 _thread.daemon = True
 _thread.start()

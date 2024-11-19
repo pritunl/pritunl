@@ -41,4 +41,4 @@ def start_updates():
     settings.local.www_state = OK
     settings.local.web_state = OK
     settings.local.vpn_state = OK
-    threading.Thread(target=_check_updates).start()
+    threading.Thread(name="CheckUpdates", target=_check_updates).start()

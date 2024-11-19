@@ -195,9 +195,11 @@ class ServerInstanceLink(object):
     def start(self):
         self.openvpn_start()
 
-        thread = threading.Thread(target=self.openvpn_watch)
+        thread = threading.Thread(name="OvpnLinkWatch",
+            target=self.openvpn_watch)
         thread.start()
-        thread = threading.Thread(target=self.stop_watch)
+        thread = threading.Thread(name="OvpnLinkStopWatch",
+            target=self.stop_watch)
         thread.start()
 
     def stop(self):

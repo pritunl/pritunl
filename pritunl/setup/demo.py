@@ -117,6 +117,6 @@ def setup_demo():
 
         logger.info('Demo initiated', 'demo')
 
-    thread = threading.Thread(target=thread)
+    thread = threading.Thread(name="SetupDemo", target=thread)
     thread.daemon = True
     thread.start()

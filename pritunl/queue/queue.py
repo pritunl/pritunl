@@ -98,6 +98,7 @@ class Queue(mongo.MongoObject):
         if self.keep_alive_thread:
             return
         self.keep_alive_thread = threading.Thread(
+            name="QueueKeepAlive",
             target=self._keep_alive_thread)
         self.keep_alive_thread.daemon = True
         self.keep_alive_thread.start()

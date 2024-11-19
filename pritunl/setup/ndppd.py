@@ -141,5 +141,7 @@ def _ndppd_thread():
         yield interrupter_sleep(1)
 
 def setup_ndppd():
-    threading.Thread(target=_default_interface_thread).start()
-    threading.Thread(target=_ndppd_thread).start()
+    threading.Thread(name="SetupNdppdIface",
+        target=_default_interface_thread).start()
+    threading.Thread(name="SetupNdppd",
+        target=_ndppd_thread).start()

@@ -51,7 +51,7 @@ class Process(object):
     def run(self, timeout=None):
         from pritunl import logger
 
-        thread = threading.Thread(target=self._proc_thread)
+        thread = threading.Thread(name="ProcExec", target=self._proc_thread)
         thread.daemon = True
         thread.start()
 

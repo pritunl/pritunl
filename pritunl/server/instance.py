@@ -981,11 +981,13 @@ class ServerInstance(object):
             yield
 
     def openvpn_output(self):
-        thread = threading.Thread(target=self._openvpn_stdout)
+        thread = threading.Thread(name="InstanceOvpnStdout",
+            target=self._openvpn_stdout)
         thread.daemon = True
         thread.start()
 
-        thread = threading.Thread(target=self._openvpn_stderr)
+        thread = threading.Thread(name="InstanceOvpnStderr",
+            target=self._openvpn_stderr)
         thread.daemon = True
         thread.start()
 
@@ -1497,15 +1499,18 @@ class ServerInstance(object):
         self.instance_com.clients.disconnected(wg_public_key)
 
     def start_threads(self, cursor_id):
-        thread = threading.Thread(target=self._sub_thread, args=(cursor_id,))
+        thread = threading.Thread(name="InstanceSub",
+            target=self._sub_thread, args=(cursor_id,))
         thread.daemon = True
         thread.start()
 
-        thread = threading.Thread(target=self._keep_alive_thread)
+        thread = threading.Thread(name="InstanceKeepAlive",
+            target=self._keep_alive_thread)
         thread.daemon = True
         thread.start()
 
-        thread = threading.Thread(target=self._route_ad_keep_alive_thread)
+        thread = threading.Thread(name="InstanceRouteKeepAlive",
+            target=self._route_ad_keep_alive_thread)
         thread.daemon = True
         thread.start()
 
@@ -1553,6 +1558,7 @@ class ServerInstance(object):
             self.stop_process()
 
         startup_keepalive_thread = threading.Thread(
+            name="InstanceStartupKeepAlive",
             target=self._startup_keepalive_thread)
         startup_keepalive_thread.daemon = True
 
@@ -1957,7 +1963,8 @@ class ServerInstance(object):
         if not bool(response.modified_count):
             return
 
-        threading.Thread(target=self._run_thread, args=(send_events,)).start()
+        threading.Thread(name="InstanceRun", target=self._run_thread,
+            args=(send_events,)).start()
 
 def get_instance(server_id):
     try:

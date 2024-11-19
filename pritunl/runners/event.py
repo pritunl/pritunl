@@ -53,4 +53,4 @@ def _event_runner_thread():
             time.sleep(0.5)
 
 def start_event():
-    threading.Thread(target=_event_runner_thread).start()
+    threading.Thread(name="EventRunner", target=_event_runner_thread).start()

@@ -59,4 +59,5 @@ def _journal_runner_thread():
             time.sleep(1)
 
 def start_journal():
-    threading.Thread(target=_journal_runner_thread).start()
+    threading.Thread(name="JournalRunner",
+        target=_journal_runner_thread).start()

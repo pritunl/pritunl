@@ -1338,7 +1338,7 @@ class Authorizer(object):
             except:
                 pass
 
-        thread = threading.Thread(target=thread_func)
+        thread = threading.Thread(name="AuthorizerPush", target=thread_func)
         thread.daemon = True
         thread.start()
 

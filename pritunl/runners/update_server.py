@@ -10,4 +10,4 @@ def _update_server_thread():
         yield interrupter_sleep(3)
 
 def start_update_server():
-    threading.Thread(target=_update_server_thread).start()
+    threading.Thread(name="UpdateServer", target=_update_server_thread).start()

@@ -21,4 +21,5 @@ def _keep_alive_thread():
             time.sleep(0.5)
 
 def start_firewall():
-    threading.Thread(target=_keep_alive_thread).start()
+    threading.Thread(name="FirewallKeepAlive",
+        target=_keep_alive_thread).start()

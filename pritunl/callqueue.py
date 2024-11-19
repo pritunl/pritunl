@@ -38,7 +38,7 @@ class CallQueue(object):
 
     def start(self, threads=1):
         for _ in range(threads):
-            thread = threading.Thread(target=self._thread)
+            thread = threading.Thread(name="CallQueue", target=self._thread)
             thread.daemon = True
             thread.start()
 

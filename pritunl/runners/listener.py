@@ -44,4 +44,4 @@ def listener_thread():
         yield
 
 def start_listener():
-    threading.Thread(target=listener_thread).start()
+    threading.Thread(name="ListenerRunner", target=listener_thread).start()

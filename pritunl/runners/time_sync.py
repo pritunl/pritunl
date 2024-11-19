@@ -16,4 +16,4 @@ def _time_sync_thread():
         yield interrupter_sleep(1800)
 
 def start_time_sync():
-    threading.Thread(target=_time_sync_thread).start()
+    threading.Thread(name="TimeSync", target=_time_sync_thread).start()

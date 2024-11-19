@@ -20,4 +20,4 @@ def _subscription_thread():
 def start_subscription():
     settings.local.sub_active = None
     subscription.update()
-    threading.Thread(target=_subscription_thread).start()
+    threading.Thread(name="SubRunner", target=_subscription_thread).start()

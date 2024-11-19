@@ -11,10 +11,12 @@ def new_pooled_user(org, type):
         CERT_CLIENT: CERT_CLIENT_POOL,
     }[type]
 
-    thread = threading.Thread(target=org.new_user, kwargs={
-        'type': type,
-        'block': False,
-    })
+    thread = threading.Thread(name="PoolNewUser",
+        target=org.new_user, kwargs={
+            'type': type,
+            'block': False,
+        },
+    )
     thread.daemon = True
     thread.start()
 

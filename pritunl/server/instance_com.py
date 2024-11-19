@@ -405,15 +405,18 @@ class ServerInstanceCom(object):
         self.sock.connect(self.socket_path)
 
     def start(self):
-        thread = threading.Thread(target=self._socket_thread)
+        thread = threading.Thread(name="ServerSocket",
+            target=self._socket_thread)
         thread.daemon = True
         thread.start()
 
-        thread = threading.Thread(target=self._watch_thread)
+        thread = threading.Thread(name="ServerWatch",
+            target=self._watch_thread)
         thread.daemon = True
         thread.start()
 
-        thread = threading.Thread(target=self.clients.ping_thread)
+        thread = threading.Thread(name="ServerPing",
+            target=self.clients.ping_thread)
         thread.daemon = True
         thread.start()
 
@@ -425,6 +428,7 @@ class ServerInstanceCom(object):
         self.clients.start()
 
         if settings.vpn.stress_test:
-            thread = threading.Thread(target=self._stress_thread)
+            thread = threading.Thread(name="ServerStress",
+                target=self._stress_thread)
             thread.daemon = True
             thread.start()

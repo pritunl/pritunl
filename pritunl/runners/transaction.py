@@ -39,4 +39,4 @@ def _check_thread():
             time.sleep(0.5)
 
 def start_transaction():
-    threading.Thread(target=_check_thread).start()
+    threading.Thread(name="TransactionCheck", target=_check_thread).start()

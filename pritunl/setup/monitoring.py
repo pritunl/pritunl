@@ -30,6 +30,7 @@ def _monitoring_thread():
 
 def setup_monitoring():
     monitoring.init()
-    thread = threading.Thread(target=_monitoring_thread)
+    thread = threading.Thread(name="SetupMonitoring",
+        target=_monitoring_thread)
     thread.daemon = True
     thread.start()

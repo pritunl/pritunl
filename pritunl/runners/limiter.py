@@ -25,4 +25,5 @@ def _limiter_runner_thread():
             time.sleep(0.5)
 
 def start_limiter():
-    threading.Thread(target=_limiter_runner_thread).start()
+    threading.Thread(name="LimiterRunner",
+        target=_limiter_runner_thread).start()

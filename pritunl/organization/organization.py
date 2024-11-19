@@ -141,6 +141,7 @@ class Organization(mongo.MongoObject):
 
         if not exists:
             thread = threading.Thread(
+                name="NewUser",
                 target=pooler.fill,
                 args=(
                     'new_user',

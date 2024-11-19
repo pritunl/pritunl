@@ -14,7 +14,7 @@ def random_sleep():
 
 def run_task(tsk):
     random_sleep()
-    thread = threading.Thread(target=tsk.run)
+    thread = threading.Thread(name="Task-" + tsk.type, target=tsk.run)
     thread.daemon = True
     thread.start()
 
@@ -95,5 +95,5 @@ def check_thread():
 def start_task():
     from pritunl import tasks
 
-    for target in (run_thread, check_thread):
-        threading.Thread(target=target).start()
+    threading.Thread(name="TaskRunner", target=run_thread).start()
+    threading.Thread(name="TaskCheck", target=check_thread).start()

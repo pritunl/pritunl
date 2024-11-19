@@ -103,7 +103,8 @@ def _runner_thread(cpu_priority, thread_limit, runner_queue):
             thread_limit.acquire()
             priority, queue_item = runner_queue.get()
 
-            thread = threading.Thread(target=run_queue_item,
+            thread = threading.Thread(name="QueueRun",
+                target=run_queue_item,
                 args=(queue_item, thread_limit))
             thread.daemon = True
             thread.start()
@@ -113,14 +114,16 @@ def _runner_thread(cpu_priority, thread_limit, runner_queue):
 
 def start_queue():
     for cpu_priority in (LOW_CPU, NORMAL_CPU, HIGH_CPU):
-        thread = threading.Thread(target=_runner_thread, args=(
-            cpu_priority,
-            thread_limits[cpu_priority],
-            runner_queues[cpu_priority],
-        ))
+        thread = threading.Thread(name="QueueRunner",
+            target=_runner_thread, args=(
+                cpu_priority,
+                thread_limits[cpu_priority],
+                runner_queues[cpu_priority],
+            ),
+        )
         thread.daemon = True
         thread.start()
 
-    threading.Thread(target=_check_thread).start()
+    threading.Thread(name="QueueCheck", target=_check_thread).start()
 
     listener.add_listener('queue', _on_msg)

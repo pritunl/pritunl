@@ -41,4 +41,4 @@ def _logger_runner_thread():
             time.sleep(0.5)
 
 def start_logger():
-    threading.Thread(target=_logger_runner_thread).start()
+    threading.Thread(name="LoggerRunner", target=_logger_runner_thread).start()

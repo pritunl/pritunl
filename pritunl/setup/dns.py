@@ -63,4 +63,4 @@ def _dns_thread():
         yield interrupter_sleep(1)
 
 def setup_dns():
-    threading.Thread(target=_dns_thread).start()
+    threading.Thread(name="SetupDns", target=_dns_thread).start()
