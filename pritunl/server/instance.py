@@ -1669,6 +1669,7 @@ class ServerInstance(object):
             self.state = 'openvpn_start'
             self.process = self.openvpn_start()
             self.start_threads(cursor_id)
+            self.openvpn_output()
 
             if self.is_interrupted():
                 return
@@ -1713,7 +1714,6 @@ class ServerInstance(object):
                 self.start_wg()
 
             self.state = 'running'
-            self.openvpn_output()
 
             if self.is_interrupted():
                 return
