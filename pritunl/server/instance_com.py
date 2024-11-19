@@ -417,6 +417,11 @@ class ServerInstanceCom(object):
         thread.daemon = True
         thread.start()
 
+        thread = threading.Thread(name="ServerAuth",
+            target=self.clients.auth_thread)
+        thread.daemon = True
+        thread.start()
+
         self.clients.start()
 
         if settings.vpn.stress_test:
