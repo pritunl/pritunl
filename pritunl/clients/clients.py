@@ -319,6 +319,8 @@ class Clients(object):
             'gateway6': network_gateway6,
             'port': self.server.port_wg,
             'mtu': self.server.mss_fix,
+            'ping_interval': self.server.ping_interval_wg,
+            'ping_timeout': self.server.ping_timeout_wg,
             'web_port': settings.app.server_port,
             'web_no_ssl': not settings.app.server_ssl,
             'public_key': self.instance.wg_public_key,
