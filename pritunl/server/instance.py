@@ -1773,7 +1773,7 @@ class ServerInstance(object):
                         break
                     if self.is_interrupted():
                         self.stop_process()
-                    time.sleep(0.05)
+                    time.sleep(0.2)
             finally:
                 plugins.caller(
                     'server_stop',
