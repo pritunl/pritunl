@@ -348,8 +348,9 @@ def main(default_conf=None):
         print('Clearing message cache...')
 
         mongo.get_collection('messages').drop()
-
-        setup.upsert_indexes()
+        mongo.secondary_database.create_collection(
+            prefix + 'messages', capped=True,
+            size=5000192, max=1000)
 
         print('Message cache cleared')
 
