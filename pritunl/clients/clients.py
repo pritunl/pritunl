@@ -2477,7 +2477,10 @@ class Clients(object):
                     self.instance_com.client_kill(client_id, "link_ping_err")
                 break
 
-    def _auth_check_thread(self, client):
+    def _auth_check(self, client):
+        if not settings.app.sso_connection_check:
+            return
+
         client_id = client['id']
 
         org = self.get_org(client['org_id'])
@@ -2530,22 +2533,71 @@ class Clients(object):
                 self.instance_com.client_kill(client_id, "auth_group_err")
             return
 
-    def auth_check(self, client):
-        if not settings.app.sso_connection_check:
-            return
+    @interrupter
+    def auth_thread(self):
+        while True:
+            try:
+                try:
+                    client_id = self.auths_queue.popleft()
+                except IndexError:
+                    if self.interrupter_sleep(10):
+                        return
+                    continue
 
-        if time.time() - client['auth_check_timestamp'] < \
-                settings.app.sso_connection_check_ttl:
-            return
+                client = self.clients.find_id(client_id)
+                if not client:
+                    continue
 
-        self.clients.update_id(client['id'], {
-            'auth_check_timestamp': time.time(),
-        })
+                diff = settings.app.sso_connection_check_ttl - \
+                        (time.time() - client['auth_check_timestamp'])
 
-        thread = threading.Thread(
-            target=self._auth_check_thread, args=(client,))
-        thread.daemon = True
-        thread.start()
+                if diff > settings.app.sso_connection_check_ttl:
+                    logger.error('Client auth time diff out of range',
+                        'server',
+                        time_diff=diff,
+                        server_id=self.server.id,
+                        instance_id=self.instance.id,
+                    )
+                    if self.interrupter_sleep(10):
+                        return
+                elif diff > 1:
+                    if self.interrupter_sleep(diff):
+                        return
+
+                if self.instance.sock_interrupt:
+                    return
+
+                self.clients.update_id(client['id'], {
+                    'auth_check_timestamp': time.time(),
+                })
+
+                try:
+                    self._auth_check(client)
+                except:
+                    logger.exception('Failed to update client',
+                        'server',
+                        server_id=self.server.id,
+                        instance_id=self.instance.id,
+                    )
+                    yield interrupter_sleep(1)
+                    continue
+                finally:
+                    self.auths_queue.append(client_id)
+
+                yield
+                if self.instance.sock_interrupt:
+                    return
+            except GeneratorExit:
+                raise
+            except:
+                logger.exception('Error in auth thread', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.instance.id,
+                )
+                yield interrupter_sleep(3)
+                if self.instance.sock_interrupt:
+                    return
+                time.sleep(1)
 
     @interrupter
     def ping_thread(self):
@@ -2594,8 +2646,6 @@ class Clients(object):
                         else:
                             self.instance_com.client_kill(client_id,
                                 "session_limit")
-
-                    self.auth_check(client)
 
                     try:
                         updated = self.clients.update_id(client_id, {
