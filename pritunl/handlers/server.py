@@ -386,6 +386,18 @@ def server_put_post(server_id=None):
         ping_timeout_def = True
         ping_timeout = int(flask.request.json['ping_timeout'] or 60)
 
+    ping_interval_wg = None
+    ping_interval_wg_def = False
+    if 'ping_interval_wg' in flask.request.json:
+        ping_interval_wg_def = True
+        ping_interval_wg = int(flask.request.json['ping_interval_wg'] or 30)
+
+    ping_timeout_wg = None
+    ping_timeout_wg_def = False
+    if 'ping_timeout_wg' in flask.request.json:
+        ping_timeout_wg_def = True
+        ping_timeout_wg = int(flask.request.json['ping_timeout_wg'] or 300)
+
     link_ping_interval = None
     link_ping_interval_def = False
     if 'link_ping_interval' in flask.request.json:
@@ -663,6 +675,8 @@ def server_put_post(server_id=None):
             inter_client=inter_client,
             ping_interval=ping_interval,
             ping_timeout=ping_timeout,
+            ping_interval_wg=ping_interval_wg,
+            ping_timeout_wg=ping_timeout_wg,
             link_ping_interval=link_ping_interval,
             link_ping_timeout=link_ping_timeout,
             inactive_timeout=inactive_timeout,
@@ -751,6 +765,10 @@ def server_put_post(server_id=None):
             svr.ping_interval = ping_interval
         if ping_timeout_def:
             svr.ping_timeout = ping_timeout
+        if ping_interval_wg_def:
+            svr.ping_interval_wg = ping_interval_wg
+        if ping_timeout_wg_def:
+            svr.ping_timeout_wg = ping_timeout_wg
         if link_ping_interval_def:
             svr.link_ping_interval = link_ping_interval
         if link_ping_timeout_def:
