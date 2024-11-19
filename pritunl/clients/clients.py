@@ -64,6 +64,7 @@ class Clients(object):
             'virt_address',
         )
         self.clients_queue = collections.deque()
+        self.auths_queue = collections.deque()
         self.ip_network = ipaddress.IPv4Network(self.server.network)
 
         self.firewall_clients = docdb.DocDb(
@@ -2211,6 +2212,7 @@ class Clients(object):
         })
 
         self.clients_queue.append(client_id)
+        self.auths_queue.append(client_id)
 
         if client['type'] == 'wg':
             self.instance_com.push_output(
