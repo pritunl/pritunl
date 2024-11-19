@@ -1960,6 +1960,16 @@ def key_ovpn_post(org_id, user_id, server_id):
 def _key_request_init(org_id, user_id, server_id, mode):
     state = utils.rand_str(64)
     token = utils.rand_str(32)
+    sso_mode = settings.app.sso
+
+    if sso_mode in (RADIUS_AUTH, RADIUS_DUO_AUTH, PLUGIN_AUTH):
+        logger.error(
+            'Connection single sign-on not supported with current mode. ' +
+              'Disable single sign-on authentication in server settings.',
+            'key',
+            sso_mode=sso_mode,
+        )
+        return flask.abort(401)
 
     tokens_collection = mongo.get_collection('key_tokens')
     tokens_collection.insert_one({
