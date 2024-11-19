@@ -840,6 +840,14 @@ NETWORK_WG_IN_USE_MSG = 'Network WG address is already in use.'
 PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
 
+PING_INTERVAL_TOO_HIGH = 'ping_interval_too_high'
+PING_INTERVAL_TOO_HIGH_MSG = 'Ping interval must be at ' \
+    'least 5 seconds shorter than ping timeout.'
+
+PING_INTERVAL_WG_TOO_HIGH = 'ping_interval_wg_too_high'
+PING_INTERVAL_WG_TOO_HIGH_MSG = 'WireGuard ping interval must be at ' \
+    'least 5 seconds shorter than WireGuard ping timeout.'
+
 PORT_WG_IN_USE = 'port_wg_protocol_in_use'
 PORT_WG_IN_USE_MSG = 'WG Port is already in use.'
 
