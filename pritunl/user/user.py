@@ -938,6 +938,8 @@ class User(mongo.MongoObject):
                 server_inter_client=svr.inter_client,
                 server_ping_interval=svr.ping_interval,
                 server_ping_timeout=svr.ping_timeout,
+                server_ping_interval_wg=svr.ping_interval_wg,
+                server_ping_timeout_wg=svr.ping_timeout_wg,
                 server_link_ping_interval=svr.link_ping_interval,
                 server_link_ping_timeout=svr.link_ping_timeout,
                 server_allowed_devices=svr.allowed_devices,
