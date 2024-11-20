@@ -1253,9 +1253,10 @@ OVPN_ONC_CLIENT_CERT = """\
     }"""
 
 OVPN_INLINE_LINK_CONF = """\
-client
+ignore-unknown-option data-ciphers
 setenv UV_ID %s
 setenv UV_NAME %s
+client
 dev %s
 dev-type %s
 %s
