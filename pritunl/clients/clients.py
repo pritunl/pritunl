@@ -1058,7 +1058,7 @@ class Clients(object):
                 self.get_virt_addr(org_id, user_id, mac_addr, doc_id)
 
             if device_limit:
-                self.instance.disconnect_wg(wg_public_key)
+                self.instance.disconnect_wg(wg_public_key, "device_limit")
                 return False, 'Too many devices'
 
             if not self.server.multi_device:
@@ -1080,7 +1080,7 @@ class Clients(object):
                             "remove_multi_wg")
 
             if not virt_address:
-                self.instance.disconnect_wg(wg_public_key)
+                self.instance.disconnect_wg(wg_public_key, "no_virt_address")
                 return False, 'Unable to assign ip address'
 
             virt_address = self.server.ip4to4wg(virt_address)
@@ -1175,7 +1175,7 @@ class Clients(object):
             logger.exception('Error allowing client wg connect', 'server',
                 server_id=self.server.id,
             )
-            self.instance.disconnect_wg(wg_public_key)
+            self.instance.disconnect_wg(wg_public_key, "allow_exception")
             return False, 'Error allowing client wg connect'
 
         addresses = set()
@@ -1459,7 +1459,7 @@ class Clients(object):
 
         def timeout_callback():
             if connect_callback_once(False, 'Authorization timed out'):
-                self.instance.disconnect_wg(wg_public_key)
+                self.instance.disconnect_wg(wg_public_key, "authorize_timeout")
 
         thread = threading.Timer(30, timeout_callback)
         thread.daemon = True
@@ -1515,7 +1515,8 @@ class Clients(object):
                         wg_public_key=wg_public_key,
                     )
                 except:
-                    self.instance.disconnect_wg(wg_public_key)
+                    self.instance.disconnect_wg(wg_public_key,
+                        "authorize_exception")
 
                     try:
                         connect_callback_once(False, 'Server exception')
@@ -1556,7 +1557,7 @@ class Clients(object):
             logger.exception('Error parsing client connect', 'server',
                 server_id=self.server.id,
             )
-            self.instance.disconnect_wg(wg_public_key)
+            self.instance.disconnect_wg(wg_public_key, "connect_exception")
             connect_callback_once(False, 'Error parsing client connect')
 
     def open_firewall(self, user, client_public_address,
@@ -2663,7 +2664,8 @@ class Clients(object):
                         if client['type'] == 'wg' and \
                                 time.time() - client['timestamp_wg'] > \
                                 self.server.ping_timeout_wg:
-                            self.instance.disconnect_wg(client_id)
+                            self.instance.disconnect_wg(client_id,
+                                "ping_timeout")
                             continue
 
                         response = self.collection.update_one({
