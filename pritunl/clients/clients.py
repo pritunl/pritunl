@@ -2574,6 +2574,10 @@ class Clients(object):
                 if self.instance.sock_interrupt:
                     return
 
+                client = self.clients.find_id(client_id)
+                if not client:
+                    continue
+
                 self.clients.update_id(client['id'], {
                     'auth_check_timestamp': time.time(),
                 })
@@ -2637,6 +2641,10 @@ class Clients(object):
                     elif diff > 1:
                         if self.interrupter_sleep(diff):
                             return
+
+                    client = self.clients.find_id(client_id)
+                    if not client:
+                        continue
 
                     if self.instance.sock_interrupt:
                         return
