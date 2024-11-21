@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Reduce CPU usage for WireGuard connections
+
 Version 1.32.4057.36 2024-10-21
 -------------------------------
 
