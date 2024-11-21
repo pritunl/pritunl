@@ -112,7 +112,7 @@ def iter_packages():
         for name in os.listdir(target_path):
             if cur_version not in name:
                 continue
-            elif name.endswith(".pkg.tar.xz"):
+            elif name.endswith(".pkg.tar.zst"):
                 pass
             elif name.endswith(".rpm"):
                 pass
@@ -691,23 +691,8 @@ if cmd == 'upload' or cmd == 'build-upload':
 
     # Sync mirror
     subprocess.check_call([
-        'mc',
-        'mirror',
-        '--remove',
-        '--overwrite',
-        '--md5',
-        'mirror',
-        'repo-east/unstable',
-    ], cwd=pacur_path)
-
-    subprocess.check_call([
-        'mc',
-        'mirror',
-        '--remove',
-        '--overwrite',
-        '--md5',
-        'mirror',
-        'repo-west/unstable',
+        'sh',
+        'upload-unstable.sh',
     ], cwd=pacur_path)
 
     # Add to github
