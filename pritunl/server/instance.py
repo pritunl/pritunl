@@ -500,7 +500,7 @@ class ServerInstance(object):
                 self.interface,
             )
         except BridgeLookupError:
-            self.server.output.push_output(
+            self.server.output.push_message(
                 'ERROR Failed to find bridged network interface')
             raise
 
@@ -924,7 +924,7 @@ class ServerInstance(object):
             logger.exception('Failed to start ovpn process', 'server',
                 server_id=self.server.id,
             )
-            self.server.output.push_output(traceback.format_exc())
+            self.server.output.push_message(traceback.format_exc())
             raise
 
     def interrupter_sleep(self, length):
@@ -1472,7 +1472,7 @@ class ServerInstance(object):
             raise
 
     def disconnect_wg(self, wg_public_key, reason=""):
-        self.server.output.push_output('wg-client-kill "%s"' % reason)
+        self.server.output.push_message('wg-client-kill "%s"' % reason)
         for i in range(10):
             try:
                 utils.check_output_logged([
