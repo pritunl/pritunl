@@ -1820,6 +1820,12 @@ class Server(mongo.MongoObject):
         if self.wg and '%sudp' % self.port_wg in port_used:
             return PORT_PROTOCOL_IN_USE, PORT_PROTOCOL_IN_USE_MSG
 
+        if self.ping_interval+5 > self.ping_timeout:
+            return PING_INTERVAL_TOO_HIGH, PING_INTERVAL_TOO_HIGH_MSG
+
+        if self.ping_interval_wg+5 > self.ping_timeout_wg:
+            return PING_INTERVAL_TOO_HIGH, PING_INTERVAL_TOO_HIGH_MSG
+
         if self.network_mode == BRIDGE:
             if not self.network_start or not self.network_end:
                 return MISSING_PARAMS, MISSING_PARAMS_MSG
