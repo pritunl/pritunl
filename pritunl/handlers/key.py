@@ -1420,23 +1420,6 @@ def key_wg_put(org_id, user_id, server_id):
         )
         return flask.abort(409)
 
-    data_hash = hashlib.sha512(
-        '&'.join([cipher_data64, box_nonce64, public_key64]).encode(),
-    ).digest()
-    try:
-        usr.verify_sig(
-            data_hash,
-            base64.b64decode(signature64),
-        )
-    except InvalidSignature:
-        journal.entry(
-            journal.USER_WG_FAILURE,
-            usr.journal_data,
-            remote_address=remote_addr,
-            event_long='Invalid rsa signature',
-        )
-        return flask.abort(412)
-
     svr = usr.get_server(server_id)
 
     sender_pub_key = nacl.public.PublicKey(
