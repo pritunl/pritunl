@@ -73,6 +73,7 @@ def user_config(host_id, host_name, org_id, user_id, user_name, server_id,
         server_dh_param_bits, server_multi_device, server_dns_servers,
         server_search_domain, server_otp_auth, server_cipher, server_hash,
         server_inter_client, server_ping_interval, server_ping_timeout,
+        server_ping_interval_wg, server_ping_timeout_wg,
         server_link_ping_interval, server_link_ping_timeout,
         server_allowed_devices, server_max_clients, server_replica_count,
         server_dns_mapping, server_debug, **kwargs):
