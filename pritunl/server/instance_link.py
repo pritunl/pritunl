@@ -101,7 +101,7 @@ class ServerInstanceLink(object):
             'links.$.user_id': self.user.id,
         }})
 
-        if not bool(response.modified_count):
+        if not bool(response.matched_count):
             raise ServerLinkError('Failed to update server links')
 
         self.user.link_server_id = self.server.id
