@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.32.4089.16 2024-11-22
+-------------------------------
 
 Reduce CPU usage for WireGuard connections
 Fix issue with WireGuard connection timeouts with modified ttl
