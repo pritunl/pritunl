@@ -7,6 +7,7 @@ Reduce CPU usage for WireGuard connections
 Fix issue with WireGuard connection timeouts with modified ttl
 Fix issue with slow single sign-on updates causing connection timeouts
 Improve web server performance
+Add WireGuard ping interval and ping timeout to server settings
 
 Version 1.32.4057.36 2024-10-21
 -------------------------------
