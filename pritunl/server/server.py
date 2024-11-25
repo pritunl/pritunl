@@ -684,7 +684,7 @@ class Server(mongo.MongoObject):
         virtual_vpc_region = None
         virtual_vpc_id = None
 
-        if include_dns_routes and self.route_dns:
+        if include_dns_routes and settings.vpn.dns_route:
             for dns_server in self.dns_servers:
                 if ":" in dns_server:
                     dns_network = dns_server + "/128"
