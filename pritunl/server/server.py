@@ -203,7 +203,7 @@ class Server(mongo.MongoObject):
         'ping_interval': 10,
         'ping_timeout': 60,
         'ping_interval_wg': 30,
-        'ping_timeout_wg': 300,
+        'ping_timeout_wg': 120,
         'link_ping_interval': 1,
         'link_ping_timeout': 5,
         'debug': False,
