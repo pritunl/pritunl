@@ -456,7 +456,9 @@ class Clients(object):
                             'network': vxlan.get_vxlan_net6(link_svr.id),
                         })
 
-            for route in self.server.get_routes(include_default=False):
+            for route in self.server.get_routes(
+                    include_default=False,
+                    include_dns_routes=self.server.block_outside_dns):
                 network = route['network']
                 route_conf = {
                     'network': network,
