@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix DNS routing
+
 Version 1.32.4089.16 2024-11-22
 -------------------------------
 
