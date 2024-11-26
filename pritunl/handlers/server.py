@@ -396,7 +396,7 @@ def server_put_post(server_id=None):
     ping_timeout_wg_def = False
     if 'ping_timeout_wg' in flask.request.json:
         ping_timeout_wg_def = True
-        ping_timeout_wg = int(flask.request.json['ping_timeout_wg'] or 300)
+        ping_timeout_wg = int(flask.request.json['ping_timeout_wg'] or 120)
 
     link_ping_interval = None
     link_ping_interval_def = False
