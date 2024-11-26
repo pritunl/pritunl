@@ -185,7 +185,7 @@ def link_servers(server_id, link_server_id, use_local_address=False):
         hosts.update(hosts_set)
 
         routes_set = set()
-        for route in svr.get_routes():
+        for route in svr.get_routes(include_dns_routes=False):
             if route['network'] != '0.0.0.0/0':
                 routes_set.add(route['network'])
         if routes & routes_set:
