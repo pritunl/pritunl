@@ -613,8 +613,9 @@ if cmd == 'build' or cmd == 'build-upload':
     archive_path = os.path.join(os.path.sep, 'tmp', archive_name)
     if os.path.isfile(archive_path):
         os.remove(archive_path)
-    wget('https://github.com/%s/%s/archive/refs/tags/%s' % (
-        github_owner, pkg_name, archive_name),
+
+    wget('https://codeload.github.com/%s/%s/tar.gz/refs/tags/%s' % (
+        github_owner, pkg_name, build_version),
         output=archive_name,
         cwd=os.path.join(os.path.sep, 'tmp'),
     )
