@@ -1788,7 +1788,7 @@ class Server(mongo.MongoObject):
             hosts.update(hosts_set)
 
             routes_set = set()
-            for route in link_svr.get_routes():
+            for route in link_svr.get_routes(include_dns_routes=False):
                 if route['network'] != '0.0.0.0/0':
                     routes_set.add(route['network'])
             if routes & routes_set:
