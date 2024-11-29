@@ -79,6 +79,23 @@ def user_config(host_id, host_name, org_id, user_id, user_name, server_id,
         server_dns_mapping, server_debug, **kwargs):
     return ''
 
+# Called every 15 seconds with user bandwidth used in that period
+def user_bandwidth(host_id, server_id, org_id, user_id, device_id,
+        host_name, server_name, org_name, user_name, device_name,
+        remote_ip, virtual_ip, virtual_ip6, timestamp,
+        bytes_sent, bytes_recv, **kwargs):
+
+    logger.info('User bandwidth', 'plugin',
+        server_id=server_id,
+        server_name=server_name,
+        user_id=user_id,
+        user_name=user_name,
+        remote_ip=remote_ip,
+        virtual_ip=virtual_ip,
+        bytes_sent=bytes_sent,
+        bytes_recv=bytes_recv,
+    )
+
 # Called on log entries. The kwargs includes variables from the log event.
 def log_entry(host_id, host_name, message, **kwargs):
     pass
