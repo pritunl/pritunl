@@ -112,6 +112,9 @@ class Clients(object):
             'user_name': client.get('user_name'),
             'device_id': client.get('device_id'),
             'device_name': client.get('device_name'),
+            'real_address': client.get('real_address'),
+            'virt_address': client.get('virt_address'),
+            'virt_address6': client.get('virt_address6'),
         }
 
     def get_org(self, org_id):
