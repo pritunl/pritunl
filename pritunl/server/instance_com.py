@@ -10,6 +10,7 @@ from pritunl import clients
 from pritunl import ipaddress
 from pritunl import monitoring
 from pritunl import database
+from pritunl import plugins
 
 import os
 import time
@@ -270,6 +271,26 @@ class ServerInstanceCom(object):
                                 'bytes_sent': bytes_sent,
                                 'bytes_recv': bytes_recv,
                             })
+
+                            plugins.event(
+                                'user_bandwidth',
+                                host_id=settings.local.host.id,
+                                host_name=settings.local.host.name,
+                                server_id=self.server.id,
+                                server_name=self.server.name,
+                                org_id=client.get('org_id'),
+                                org_name=client.get('org_name'),
+                                user_id=client.get('user_id'),
+                                user_name=client.get('user_name'),
+                                device_id=client.get('device_id'),
+                                device_name=client.get('device_name'),
+                                remote_ip=client.get('real_address'),
+                                virtual_ip=client.get('virt_address'),
+                                virtual_ip6=client.get('virt_address6'),
+                                timestamp=self.cur_timestamp,
+                                bytes_sent=bytes_sent,
+                                bytes_recv=bytes_recv,
+                            )
 
                 self.bytes_lock.acquire()
                 bytes_recv = self.bytes_recv
