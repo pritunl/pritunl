@@ -722,9 +722,9 @@ urllib3==1.26.19 \
 webauthn==2.2.0 \
     --hash=sha256:70e4f318d293125e3a8609838be0561119f4f8846bc430d524f8da4052ee18cc \
     --hash=sha256:e8e2daace85dde8f6fb436c1bca9aa72d5931dac8829ecc1562cc4e7cc169f6c
-Werkzeug==3.0.3 \
-    --hash=sha256:097e5bfda9f0aba8da6b8545146def481d06aa7d3266e7448e2cccf67dd8bd18 \
-    --hash=sha256:fc9645dc43e03e4d630d23143a04a7f947a9a3b5727cd535fdfe155a17cc48c8
+Werkzeug==3.0.6 \
+    --hash=sha256:1bc0c2310d2fbb07b1dd1105eba2f7af72f322e1e455f2f93c993bee8c8a5f17 \
+    --hash=sha256:a8dd59d4de28ca70471a34cba79bed5f7ef2e036a76b3ab0835474246eb41f8d
 yubico-client==1.13.0 \
     --hash=sha256:59d818661f638e3f041fae44ba2c0569e4eb2a17865fa7cc9ad6577185c4d185 \
     --hash=sha256:e3b86cd2a123105edfacad40551c7b26e9c1193d81ffe168ee704ebfd3d11162
