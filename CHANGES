@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Add user bandwidth monitoring plugin
+
 Version 1.32.4093.80 2024-11-26
 -------------------------------
 
