@@ -18,6 +18,7 @@ define([
       'click .org-del': 'onDelete',
       'click .org-sort': 'onSort',
       'click .toggle-hidden': 'onToggleHidden',
+      'click .org-settings': 'onRename',
       'input .org-search': 'onSearch'
     },
     initialize: function() {
