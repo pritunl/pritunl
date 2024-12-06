@@ -14,6 +14,7 @@ define([
     template: _.template(serverRoutesListItemTemplate),
     events: {
       'click .route-network': 'onModify',
+      'click .server-settings-route': 'onModify',
       'click .server-remove-route': 'onRemove'
     },
     initialize: function(options) {
