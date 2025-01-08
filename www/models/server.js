@@ -44,6 +44,8 @@ define([
       'inter_client': null,
       'ping_interval': null,
       'ping_timeout': null,
+      'ping_interval_wg': null,
+      'ping_timeout_wg': null,
       'link_ping_interval': null,
       'link_ping_timeout': null,
       'inactive_timeout': null,
