@@ -342,6 +342,7 @@ def main(default_conf=None):
         from pritunl import setup
         from pritunl import logger
         from pritunl import mongo
+        from pritunl import settings
 
         setup.setup_db()
 
