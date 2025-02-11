@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Allow some server changes while running
+Update libraries
 
 Version 1.32.4115.91 2024-12-18
 -------------------------------
