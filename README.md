@@ -15,13 +15,13 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 
 ```bash
 # Install MongoDB if running single host configuration
-sudo tee /etc/yum.repos.d/mongodb-org-6.0.repo << EOF
-[mongodb-org-6.0]
+sudo tee /etc/yum.repos.d/mongodb-org.repo << EOF
+[mongodb-org-8.0]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/8/mongodb-org/6.0/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/8.0/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://www.mongodb.org/static/pgp/server-6.0.asc
+gpgkey=https://pgp.mongodb.com/server-8.0.asc
 EOF
 
 sudo yum -y install mongodb-org
@@ -33,30 +33,30 @@ sudo systemctl enable mongod
 export VERSION="master"
 
 # RHEL EPEL
-sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-8.noarch.rpm
+sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
 # Oracle Linux EPEL
-sudo yum -y install oracle-epel-release-el8
-sudo yum-config-manager --enable ol8_developer_EPEL
+sudo yum -y install oracle-epel-release-el9
+sudo yum-config-manager --enable ol9_developer_EPEL
 
 sudo yum -y install openssl-devel bzip2-devel libffi-devel sqlite-devel xz-devel zlib-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel wget tar policycoreutils-python-utils
 
-wget https://www.python.org/ftp/python/3.9.16/Python-3.9.16.tar.xz
-echo "22dddc099246dd2760665561e8adb7394ea0cc43a72684c6480f9380f7786439 Python-3.9.16.tar.xz" | sha256sum -c -
+wget https://www.python.org/ftp/python/3.9.20/Python-3.9.20.tar.xz
+echo "6b281279efd85294d2d6993e173983a57464c0133956fbbb5536ec9646beaf0c Python-3.9.20.tar.xz" | sha256sum -c -
 
-tar xf Python-3.9.16.tar.xz
-cd ./Python-3.9.16
+tar xf Python-3.9.20.tar.xz
+cd ./Python-3.9.20
 mkdir /usr/lib/pritunl
 ./configure --prefix=/usr --libdir=/usr/lib --enable-optimizations --enable-ipv6 --enable-loadable-sqlite-extensions --disable-shared --with-lto --with-platlibdir=lib
 make DESTDIR="/usr/lib/pritunl" install
 /usr/lib/pritunl/usr/bin/python3 -m ensurepip --upgrade
 /usr/lib/pritunl/usr/bin/python3 -m pip install --upgrade pip
 
-wget https://go.dev/dl/go1.19.3.linux-amd64.tar.gz
-echo "74b9640724fd4e6bb0ed2a1bc44ae813a03f1e72a4c76253e2d5c015494430ba go1.19.3.linux-amd64.tar.gz" | sha256sum -c -
+wget https://go.dev/dl/go1.23.6.linux-amd64.tar.gz
+echo "9379441ea310de000f33a4dc767bd966e72ab2826270e038e78b2c53c2e7802d go1.23.6.linux-amd64.tar.gz" | sha256sum -c -
 
 sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xf go1.19.3.linux-amd64.tar.gz
-rm -f go1.19.3.linux-amd64.tar.gz
+sudo tar -C /usr/local -xf go1.23.6.linux-amd64.tar.gz
+rm -f go1.23.6.linux-amd64.tar.gz
 
 tee -a ~/.bashrc << EOF
 export GOPATH=\$HOME/go
