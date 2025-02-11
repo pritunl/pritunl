@@ -347,6 +347,7 @@ def main(default_conf=None):
 
         print('Clearing message cache...')
 
+        prefix = settings.conf.mongodb_collection_prefix or ''
         mongo.get_collection('messages').drop()
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
