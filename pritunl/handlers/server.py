@@ -796,12 +796,16 @@ def server_put_post(server_id=None):
             allow_online = False
             svr.ping_timeout = ping_timeout
         if ping_interval_wg_def:
+            allow_online = False # TODO
             svr.ping_interval_wg = ping_interval_wg
         if ping_timeout_wg_def:
+            allow_online = False # TODO
             svr.ping_timeout_wg = ping_timeout_wg
         if link_ping_interval_def:
+            allow_online = False # TODO
             svr.link_ping_interval = link_ping_interval
         if link_ping_timeout_def:
+            allow_online = False # TODO
             svr.link_ping_timeout = link_ping_timeout
         if inactive_timeout_def and svr.inactive_timeout != inactive_timeout:
             allow_online = False # TODO
