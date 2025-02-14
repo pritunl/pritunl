@@ -638,6 +638,7 @@ def server_put_post(server_id=None):
             dh_param_bits = settings.vpn.default_dh_param_bits
 
     changed = None
+    allow_online = True
 
     if not server_id:
         svr = server.new_server(
@@ -695,7 +696,6 @@ def server_put_post(server_id=None):
         svr.add_host(settings.local.host_id)
     else:
         svr = server.get_by_id(server_id)
-        allow_online = True
 
         if name_def:
             svr.name = name
