@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix issues with server management
+Update libraries
 
 Version 1.32.4170.67 2025-02-11
 -------------------------------
