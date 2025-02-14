@@ -40,11 +40,11 @@ sudo yum-config-manager --enable ol9_developer_EPEL
 
 sudo yum -y install openssl-devel bzip2-devel libffi-devel sqlite-devel xz-devel zlib-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel wget tar policycoreutils-python-utils
 
-wget https://www.python.org/ftp/python/3.9.20/Python-3.9.20.tar.xz
-echo "6b281279efd85294d2d6993e173983a57464c0133956fbbb5536ec9646beaf0c Python-3.9.20.tar.xz" | sha256sum -c -
+wget https://www.python.org/ftp/python/3.9.21/Python-3.9.21.tar.xz
+echo "3126f59592c9b0d798584755f2bf7b081fa1ca35ce7a6fea980108d752a05bb1 Python-3.9.21.tar.xz" | sha256sum -c -
 
-tar xf Python-3.9.20.tar.xz
-cd ./Python-3.9.20
+tar xf Python-3.9.21.tar.xz
+cd ./Python-3.9.21
 mkdir /usr/lib/pritunl
 ./configure --prefix=/usr --libdir=/usr/lib --enable-optimizations --enable-ipv6 --enable-loadable-sqlite-extensions --disable-shared --with-lto --with-platlibdir=lib
 make DESTDIR="/usr/lib/pritunl" install
