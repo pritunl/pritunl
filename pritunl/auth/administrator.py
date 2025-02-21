@@ -400,18 +400,33 @@ def check_session(csrf_check):
         auth_nonce = auth_nonce[:32]
         auth_signature = auth_signature[:512]
 
-        try:
-            if abs(int(auth_timestamp) - int(utils.time_now())) > \
-                    settings.app.auth_time_window:
-                return False
-        except ValueError:
-            return False
-
         administrator = find_user(token=auth_token)
         if not administrator:
             return False
 
+        try:
+            if abs(int(auth_timestamp) - int(utils.time_now())) > \
+                    settings.app.auth_time_window:
+                journal.entry(
+                    journal.ADMIN_AUTH_FAILURE,
+                    remote_address=utils.get_remote_addr(),
+                    event_long='Expired auth timestamp',
+                )
+                return False
+        except ValueError:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Invalid auth timestamp',
+            )
+            return False
+
         if not administrator.auth_api:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Administrator not API enabled',
+            )
             return False
 
         auth_string = '&'.join([
@@ -419,15 +434,30 @@ def check_session(csrf_check):
             flask.request.path])
 
         if len(auth_string) > AUTH_SIG_STRING_MAX_LEN or len(auth_nonce) < 8:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Invalid signature or nonce length',
+            )
             return False
 
         if not administrator.secret or len(administrator.secret) < 8:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Adminsitrator missing secret',
+            )
             return False
 
         auth_test_signature = base64.b64encode(hmac.new(
             administrator.secret.encode(), auth_string.encode(),
             hashlib.sha256).digest()).decode()
         if not utils.const_compare(auth_signature, auth_test_signature):
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Auth signature mismatch',
+            )
             return False
 
         try:
@@ -437,6 +467,11 @@ def check_session(csrf_check):
                 'timestamp': utils.now(),
             })
         except pymongo.errors.DuplicateKeyError:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Duplicate nonce from reconnection',
+            )
             return False
     else:
         if not flask.session:
@@ -444,6 +479,11 @@ def check_session(csrf_check):
 
         admin_id = utils.session_opt_str('admin_id')
         if not admin_id:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Missing admin ID',
+            )
             return False
 
         admin_id = database.ParseObjectId(admin_id)
@@ -451,18 +491,38 @@ def check_session(csrf_check):
 
         signature = utils.session_opt_str('signature')
         if not signature:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Missing session signature',
+            )
             return False
 
         if not utils.check_flask_sig():
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Session signature mismatch',
+            )
             return False
 
         if csrf_check:
             csrf_token = flask.request.headers.get('Csrf-Token', None)
             if not validate_token(admin_id, csrf_token):
+                journal.entry(
+                    journal.ADMIN_AUTH_FAILURE,
+                    remote_address=utils.get_remote_addr(),
+                    event_long='Invalid CSRF token',
+                )
                 return False
 
         administrator = get_user(admin_id, session_id)
         if not administrator:
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Invalid administrator user',
+            )
             return False
 
         if not settings.app.reverse_proxy and \
@@ -471,6 +531,11 @@ def check_session(csrf_check):
                 utils.session_opt_str('source') != utils.get_remote_addr():
             flask.session.clear()
             clear_session(admin_id, session_id)
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Remote address change',
+            )
             return False
 
         session_timeout = settings.app.session_timeout
@@ -478,12 +543,22 @@ def check_session(csrf_check):
                 utils.session_int('timestamp') > session_timeout:
             flask.session.clear()
             clear_session(admin_id, session_id)
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Session expired',
+            )
             return False
 
         flask.session['timestamp'] = int(utils.time_now())
         utils.set_flask_sig()
 
     if administrator.disabled:
+        journal.entry(
+            journal.ADMIN_AUTH_FAILURE,
+            remote_address=utils.get_remote_addr(),
+            event_long='Administrator disabled',
+        )
         return False
 
     flask.g.administrator = administrator
