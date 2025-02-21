@@ -40,13 +40,10 @@ def auth_request(method, path, headers=None, data=None):
     auth_timestamp = str(int(time.time()))
     auth_nonce = uuid.uuid4().hex
     auth_string = '&'.join([API_TOKEN, auth_timestamp, auth_nonce,
-        method.upper(), path])
-    if sys.version_info[0] < 3:
-        auth_signature = base64.b64encode(hmac.new(
-            API_SECRET, auth_string, hashlib.sha256).digest())
-    else:
-        auth_signature = base64.b64encode(hmac.new(
-            API_SECRET.encode('utf-8'), auth_string.encode('utf-8'), hashlib.sha256).digest())
+        method.upper(), path.split('?')[0]])
+    auth_signature = base64.b64encode(hmac.new(
+        API_SECRET.encode('utf-8'), auth_string.encode('utf-8'),
+        hashlib.sha256).digest())
     auth_headers = {
         'Auth-Token': API_TOKEN,
         'Auth-Timestamp': auth_timestamp,
