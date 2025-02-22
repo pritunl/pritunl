@@ -3,8 +3,8 @@ from pritunl import utils
 
 import json
 import io
-import apiclient.discovery
-import oauth2client.service_account
+from google.oauth2 import service_account
+from googleapiclient import discovery
 
 def verify_google(user_email):
     user_domain = user_email.split('@')[-1]
@@ -23,21 +23,18 @@ def verify_google(user_email):
 
     data = json.loads(google_key)
 
-    credentials = oauth2client.service_account. \
-        ServiceAccountCredentials.from_p12_keyfile_buffer(
-        data['client_email'],
-        io.StringIO(data['private_key']),
-        'notasecret',
+    credentials = service_account.Credentials.from_service_account_info(
+        data,
         scopes=[
             'https://www.googleapis.com/auth/admin.directory.user.readonly',
             'https://www.googleapis.com/auth/admin.directory.group.readonly',
         ],
     )
 
-    credentials = credentials.create_delegated(google_email)
+    delegated_credentials = credentials.with_subject(google_email)
 
-    service = apiclient.discovery.build(
-        'admin', 'directory_v1', credentials=credentials)
+    service = discovery.build(
+        'admin', 'directory_v1', credentials=delegated_credentials)
 
     data = service.users().get(userKey=user_email).execute()
     if data.get('suspended'):
