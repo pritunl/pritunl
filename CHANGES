@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve audit journal logging
+
 Version 1.32.4173.66 2025-02-14
 -------------------------------
 
