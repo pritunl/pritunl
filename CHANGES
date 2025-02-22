@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Fix Radius compatibility with device authentication and dynamic firewall
+Fix Google single sign-on issues with updated openssl library
 Improve audit journal logging
 
 Version 1.32.4173.66 2025-02-14
