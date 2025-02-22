@@ -375,7 +375,7 @@ class User(mongo.MongoObject):
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
 
-    def sso_auth_check(self, svr, password, remote_ip, cached):
+    def sso_auth_check(self, svr, password, remote_ip, has_token):
         modes = self.get_auth_modes(svr)
         auth_server = AUTH_SERVER
         if settings.app.dedicated:
@@ -586,6 +586,13 @@ class User(mongo.MongoObject):
                 )
             return False
         elif RADIUS_SSO in modes:
+            if has_token:
+                logger.info(
+                    'Client authentication cached, skipping radius', 'sso',
+                    user_id=self.id,
+                    user_name=self.name,
+                )
+                return True
             try:
                 return sso.verify_radius(self.name, password)[0]
             except:
@@ -595,6 +602,13 @@ class User(mongo.MongoObject):
                 )
             return False
         elif PLUGIN_SSO in modes:
+            if has_token:
+                logger.info(
+                    'Client authentication cached, skipping plugin', 'sso',
+                    user_id=self.id,
+                    user_name=self.name,
+                )
+                return True
             try:
                 return sso.plugin_login_authenticate(
                     user_name=self.name,
