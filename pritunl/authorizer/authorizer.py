@@ -1176,7 +1176,8 @@ class Authorizer(object):
             return
 
         if not self.user.sso_auth_check(
-                self.server, self.password, self.remote_ip, self.has_token):
+                self.server, self.password, self.remote_ip,
+                self.has_fw_token or self.has_sso_token):
             self.user.audit_event('user_connection',
                 ('User connection to "%s" denied. ' +
                  'Single sign-on authentication failed') % (
