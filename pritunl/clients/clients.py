@@ -600,7 +600,7 @@ class Clients(object):
 
         return False
 
-    def get_virt_addr(self, org_id, user_id, mac_addr, doc_id):
+    def get_virt_addr(self, org_id, user_id, mac_addr, doc_id, final=False):
         address_dynamic = False
         disconnected = set()
         subnet = '/%s' % self.ip_network.prefixlen
@@ -775,6 +775,21 @@ class Clients(object):
                         }})
 
         if not virt_address:
+            if not final:
+                logger.info('Unable to assign ip address, retrying',
+                    'clients',
+                    server_id=self.server.id,
+                    instance_id=self.instance.id,
+                    user_id=user_id,
+                    multi_device=self.server.multi_device,
+                    replica_count=self.server.replica_count,
+                    network=self.server.network,
+                    user_count=self.server.user_count,
+                )
+                self.server.reset_ip_pool()
+                return self.get_virt_addr(
+                    org_id, user_id, mac_addr, doc_id, True)
+
             logger.error('Unable to assign ip address, pool full',
                 'clients',
                 server_id=self.server.id,
