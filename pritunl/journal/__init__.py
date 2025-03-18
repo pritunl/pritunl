@@ -13,7 +13,7 @@ def get_base_entry(event):
     data = {
         'id': bson.ObjectId(),
         'event': event,
-        'timestamp': utils.time_now(),
+        'timestamp': int(utils.time_now() * 1000),
     }
 
     data.update(settings.local.host.journal_data)
