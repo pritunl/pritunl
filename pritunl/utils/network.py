@@ -103,8 +103,6 @@ def get_interface_address6(iface):
 
 def get_ip_pool_reverse(network, network_start):
     ip_pool = network_reverse_hosts(network)
-    next(ip_pool)
-    next(ip_pool)
 
     if network_start:
         network_break = network_start
@@ -114,8 +112,6 @@ def get_ip_pool_reverse(network, network_start):
                 ip_addr = next(ip_pool)
             except StopIteration:
                 ip_pool = network_reverse_hosts(network)
-                next(ip_pool)
-                next(ip_pool)
                 return
 
             if ip_addr == network_break:
