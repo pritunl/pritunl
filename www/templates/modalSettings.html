@@ -237,17 +237,19 @@
     <div class="sso-azure-region form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
       <label>Azure Region</label>
       <select class="form-control" data-toggle="tooltip" title="Azure region">
-        <option value="" <%= !sso_azure_region ? 'selected' : '' %>>Global (Old)</option>
-        <option value="global" <%= sso_azure_region === 'global' ? 'selected' : '' %>>Global</option>
-        <option value="us-gov" <%= sso_azure_region === 'us-gov' ? 'selected' : '' %>>US Government</option>
-        <option value="china" <%= sso_azure_region === 'china' ? 'selected' : '' %>>China</option>
+        <option value="global2" <%= sso_azure_region === 'global2' ? 'selected' : '' %>>Global (OAuth v2)</option>
+        <option value="us-gov2" <%= sso_azure_region === 'us-gov2' ? 'selected' : '' %>>US Government (OAuth v2)</option>
+        <option value="china2" <%= sso_azure_region === 'china2' ? 'selected' : '' %>>China (OAuth v2)</option>
+        <option value="global" <%= sso_azure_region === 'global' ? 'selected' : '' %>>Global (OAuth v1)</option>
+        <option value="us-gov" <%= sso_azure_region === 'us-gov' ? 'selected' : '' %>>US Government (OAuth v1)</option>
+        <option value="china" <%= sso_azure_region === 'china' ? 'selected' : '' %>>China (OAuth v1)</option>
       </select>
     </div>
     <div class="sso-azure-version form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
       <label>Azure API Version</label>
       <select class="form-control" data-toggle="tooltip" title="Migrating to newer Microsoft Graph API may require changes to permissions in Azure.">
-        <option value="1" <%= sso_azure_version.toString() === '1' ? 'selected' : '' %>>Azure AD Graph (Old)</option>
         <option value="2" <%= sso_azure_version.toString() === '2' ? 'selected' : '' %>>Microsoft Graph</option>
+        <option value="1" <%= sso_azure_version.toString() === '1' ? 'selected' : '' %>>Azure AD Graph (Legacy)</option>
       </select>
     </div>
     <div class="sso-azure-app-id form-group" <%= !sso || sso.indexOf('azure') === -1 ? 'style="display: none;"' : '' %>>
