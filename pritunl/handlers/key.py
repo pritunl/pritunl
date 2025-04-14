@@ -2398,6 +2398,15 @@ def key_callback_get():
     if not doc:
         return flask.abort(404)
 
+    org_id = doc['org_id']
+    user_id = doc['user_id']
+    server_id = doc['server_id']
+
+    org = organization.get_by_id(org_id)
+    usr = org.get_user(user_id)
+    if usr.disabled:
+        return flask.abort(403)
+
     query = flask.request.query_string.split('&sig='.encode())[0]
     test_sig = base64.urlsafe_b64encode(hmac.new(str(doc['secret']).encode(),
         query, hashlib.sha512).digest()).decode()
@@ -2827,7 +2836,7 @@ def key_callback_get():
 
         return duo_page.get_response()
 
-    if YUBICO_AUTH in sso_mode:
+    if usr.yubico_id or YUBICO_AUTH in sso_mode:
         state = utils.generate_secret()
 
         tokens_collection = mongo.get_collection('key_tokens')
@@ -2989,9 +2998,14 @@ def key_yubico_post():
     token = utils.filter_str(flask.request.json.get('token')) or None
     key = utils.filter_str(flask.request.json.get('key')) or None
 
-    if sso_mode not in (AZURE_YUBICO_AUTH, GOOGLE_YUBICO_AUTH,
-            AUTHZERO_YUBICO_AUTH, SLACK_YUBICO_AUTH, SAML_YUBICO_AUTH,
-            SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
+    if sso_mode not in (AZURE_AUTH, AZURE_DUO_AUTH, AZURE_YUBICO_AUTH,
+            GOOGLE_AUTH, GOOGLE_DUO_AUTH, GOOGLE_YUBICO_AUTH,
+            AUTHZERO_AUTH, AUTHZERO_DUO_AUTH, AUTHZERO_YUBICO_AUTH,
+            SLACK_AUTH, SLACK_DUO_AUTH, SLACK_YUBICO_AUTH, SAML_AUTH,
+            SAML_DUO_AUTH, SAML_YUBICO_AUTH, SAML_OKTA_AUTH,
+            SAML_OKTA_DUO_AUTH, SAML_OKTA_YUBICO_AUTH, SAML_ONELOGIN_AUTH,
+            SAML_ONELOGIN_DUO_AUTH, SAML_ONELOGIN_YUBICO_AUTH,
+            SAML_JUMPCLOUD_AUTH, SAML_JUMPCLOUD_DUO_AUTH,
             SAML_JUMPCLOUD_YUBICO_AUTH):
         return flask.abort(404)
 
