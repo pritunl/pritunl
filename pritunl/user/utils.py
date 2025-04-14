@@ -69,7 +69,9 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
     }, return_document=True)
 
     if doc:
-        return User(org=org, doc=doc)
+        usr = User(org=org, doc=doc)
+        usr.assign_ip_addr()
+        return usr
 
 def get_user(org, id, fields=None):
     return User(org=org, id=id, fields=fields)
