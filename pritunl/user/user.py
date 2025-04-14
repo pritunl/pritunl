@@ -324,13 +324,14 @@ class User(mongo.MongoObject):
         self.org.queue_com.wait_status()
 
         # If assign ip addr fails it will be corrected in ip sync task
-        try:
-            self.assign_ip_addr()
-        except:
-            logger.exception('Failed to assign users ip address', 'user',
-                org_id=self.org.id,
-                user_id=self.id,
-            )
+        if self.type == CERT_CLIENT:
+            try:
+                self.assign_ip_addr()
+            except:
+                logger.exception('Failed to assign users ip address', 'user',
+                    org_id=self.org.id,
+                    user_id=self.id,
+                )
 
     def queue_initialize(self, block, priority=LOW):
         if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
