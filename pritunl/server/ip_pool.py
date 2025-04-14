@@ -47,6 +47,10 @@ class ServerIpPool:
         network_hash = self.server.network_hash
         server_id = self.server.id
 
+        cur_doc = self.get_ip_addr(org_id, user_id)
+        if cur_doc:
+            return True
+
         response = self.collection.update_one({
             'network': network_hash,
             'server_id': server_id,
@@ -56,7 +60,7 @@ class ServerIpPool:
             'user_id': user_id,
         }})
         if bool(response.modified_count):
-            return
+            return True
 
         network = ipaddress.IPv4Network(self.server.network)
         if self.server.network_start:
@@ -70,7 +74,7 @@ class ServerIpPool:
 
         ip_pool = self.get_ip_pool(network, network_start)
         if not ip_pool:
-            return
+            return False
 
         try:
             doc = self.collection.find({
@@ -84,6 +88,33 @@ class ServerIpPool:
                         break
         except IndexError:
             pass
+
+        for remote_ip_addr in ip_pool:
+            if network_end and remote_ip_addr > network_end:
+                break
+
+            try:
+                self.collection.insert_one({
+                    '_id': int(remote_ip_addr),
+                    'network': network_hash,
+                    'server_id': server_id,
+                    'org_id': org_id,
+                    'user_id': user_id,
+                    'address': '%s/%s' % (remote_ip_addr, network.prefixlen),
+                })
+                return True
+            except pymongo.errors.DuplicateKeyError:
+                pass
+
+        logger.warning('Failed to assign IP, retrying pool', 'server',
+            server_id=self.server.id,
+            org_id=org_id,
+            user_id=user_id,
+        )
+
+        ip_pool = self.get_ip_pool(network, network_start)
+        if not ip_pool:
+            return False
 
         for remote_ip_addr in ip_pool:
             if network_end and remote_ip_addr > network_end:
