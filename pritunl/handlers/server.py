@@ -722,6 +722,7 @@ def server_put_post(server_id=None):
         if force_connect_def:
             svr.force_connect = force_connect
         if route_dns_def:
+            allow_online = False
             svr.route_dns = route_dns
         if device_auth_def and svr.device_auth != device_auth:
             allow_online = False
