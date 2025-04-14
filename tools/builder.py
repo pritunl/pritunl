@@ -39,10 +39,9 @@ TEST_PACUR_PATH = '../pritunl-pacur-test'
 BUILD_TARGETS = ('pritunl',)
 WWW_DIR = 'www'
 STYLES_DIR = 'www/styles'
-RELEASES_DIR = 'www/styles/releases'
 
 os.chdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..'))
-cur_date = datetime.datetime.utcnow()
+cur_date = datetime.datetime.now(datetime.timezone.utc)
 pacur_path = None
 
 def wget(url, cwd=None, output=None):
@@ -140,41 +139,21 @@ def generate_last_modifited_etag(file_path):
         zlib.adler32(file_name) & 0xffffffff,
     ))
 
-def sync_db():
-    import pymongo
-
-    releases_dbs = []
-    for mongodb_uri in mongodb_uris:
-        mongo_client = pymongo.MongoClient(mongodb_uri)
-        mongo_db = mongo_client.get_default_database()
-        releases_dbs.append(mongo_db.releases)
-
-    for releases_db in releases_dbs:
-        for file_name in os.listdir(RELEASES_DIR):
-            file_path = os.path.join(RELEASES_DIR, file_name)
-            ver, file_type, _ = file_name.split('.')
-            if file_type == 'release':
-                with open(file_path, 'r') as release_file:
-                    doc = json.loads(release_file.read().strip())
-                    releases_db.update_one({
-                        '_id': ver,
-                    }, {
-                        '$set': doc,
-                    }, upsert=True)
-            else:
-                last_modified, etag = generate_last_modifited_etag(file_path)
-                with open(file_path, 'r') as css_file:
-                    releases_db.update_one({
-                        '_id': ver,
-                    }, {'$set': {
-                        file_type: {
-                            'etag': etag,
-                            'last_modified': last_modified,
-                            'data': css_file.read(),
-                            'format': 1,
-                        },
-                    }}, upsert=True)
-
+def sync_styles():
+    subprocess.check_call(['git', 'reset', 'HEAD', '.'], cwd='www/styles')
+    subprocess.check_call(['git', 'add', '.'], cwd='www/styles')
+    changes = subprocess.check_output(
+        ['git', 'status', '-s'],
+        cwd='www/styles',
+    ).decode().rstrip().split('\n')
+    changed = any([True if x[0] == 'M' else False for x in changes])
+    if changed:
+        subprocess.check_call(
+            ['git', 'commit', '-S', '-m'
+           'Update styles ' + cur_date.strftime("%Y%m%d_%H%M")],
+            cwd='www/styles',
+        )
+        subprocess.check_call(['git', 'push'], cwd='www/styles')
 
 if len(sys.argv) > 1:
     cmd = sys.argv[1]
@@ -277,7 +256,6 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     gitlab_host = build_keys['gitlab_host']
     mirror_url = build_keys['mirror_url']
     test_mirror_url = build_keys['test_mirror_url']
-    mongodb_uris = build_keys['mongodb_uris']
 
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
@@ -311,8 +289,8 @@ if cmd == 'version':
     sys.exit(0)
 
 
-if cmd == 'sync-db':
-    sync_db()
+if cmd == 'sync-styles':
+    sync_styles()
 
 
 if cmd == 'sync-releases':
@@ -469,10 +447,8 @@ if cmd == 'set-version':
         subprocess.check_call(['git', 'commit', '-S', '-m', 'Rebuild dist'])
         subprocess.check_call(['git', 'push'])
 
-
-    # Sync db
-    sync_db()
-
+    # Sync styles
+    sync_styles()
 
     # Generate changelog
     version = None
@@ -688,17 +664,15 @@ if cmd == 'upload' or cmd == 'build-upload':
         cwd=pacur_path,
     )
 
+    # Add to github
+    for name, path in iter_packages():
+        post_git_asset(release_id, name, path)
 
     # Sync mirror
     subprocess.check_call([
         'sh',
         'upload-unstable.sh',
     ], cwd=pacur_path)
-
-    # Add to github
-    for name, path in iter_packages():
-        post_git_asset(release_id, name, path)
-
 
 if cmd == 'upload-github':
     if len(args) > 1:
