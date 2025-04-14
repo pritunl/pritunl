@@ -92,4 +92,6 @@ def reserve_queued_user(org, name=None, email=None, pin=None, type=None,
     user_doc.update(reserve_data)
 
     org = organization.Organization(doc=doc['org_doc'])
-    return user.User(org=org, doc=user_doc)
+    usr = user.User(org=org, doc=user_doc)
+    usr.assign_ip_addr()
+    return usr
