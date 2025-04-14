@@ -16,7 +16,7 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 ```bash
 # Install MongoDB if running single host configuration
 sudo tee /etc/yum.repos.d/mongodb-org.repo << EOF
-[mongodb-org-8.0]
+[mongodb-org]
 name=MongoDB Repository
 baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/8.0/x86_64/
 gpgcheck=1
@@ -51,8 +51,12 @@ make DESTDIR="/usr/lib/pritunl" install
 /usr/lib/pritunl/usr/bin/python3 -m ensurepip --upgrade
 /usr/lib/pritunl/usr/bin/python3 -m pip install --upgrade pip
 
-wget https://go.dev/dl/go1.23.6.linux-amd64.tar.gz
-echo "9379441ea310de000f33a4dc767bd966e72ab2826270e038e78b2c53c2e7802d go1.23.6.linux-amd64.tar.gz" | sha256sum -c -
+wget https://go.dev/dl/go1.24.2.linux-amd64.tar.gz
+echo "68097bd680839cbc9d464a0edce4f7c333975e27a90246890e9f1078c7e702ad go1.24.2.linux-amd64.tar.gz" | sha256sum -c -
+
+sudo rm -rf /usr/local/go
+sudo tar -C /usr/local -xf go1.24.2.linux-amd64.tar.gz
+rm -f go1.24.2.linux-amd64.tar.gz
 
 sudo rm -rf /usr/local/go
 sudo tar -C /usr/local -xf go1.23.6.linux-amd64.tar.gz
@@ -60,6 +64,7 @@ rm -f go1.23.6.linux-amd64.tar.gz
 
 tee -a ~/.bashrc << EOF
 export GOPATH=\$HOME/go
+export GOROOT=/usr/local/go
 export PATH=/usr/local/go/bin:\$PATH
 EOF
 source ~/.bashrc
@@ -92,7 +97,7 @@ sudo /usr/lib/pritunl/usr/bin/pip3 install --require-hashes -r requirements.txt
 sudo /usr/lib/pritunl/usr/bin/python3 setup.py install
 sudo ln -sf /usr/lib/pritunl/usr/bin/pritunl /usr/bin/pritunl
 
-cd selinux8
+cd selinux9
 ln -s /usr/share/selinux/devel/Makefile
 make
 sudo make load
