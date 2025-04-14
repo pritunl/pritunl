@@ -184,6 +184,9 @@ class ServerIpPool:
         bulk = []
 
         for user in org.iter_users(include_pool=True):
+            if user.type != CERT_CLIENT:
+                continue
+
             if ip_pool_avial:
                 response = self.collection.update_one({
                     'network': network_hash,
@@ -257,6 +260,9 @@ class ServerIpPool:
             org_id = org.id
 
             for user in org.iter_users(include_pool=True):
+                if user.type != CERT_CLIENT:
+                    continue
+
                 try:
                     remote_ip_addr = next(ip_pool)
                     if network_end and remote_ip_addr > network_end:
@@ -327,6 +333,7 @@ class ServerIpPool:
 
         user_ids = self.users_collection.find({
             'org_id': {'$in': self.server.organizations},
+            'type': CERT_CLIENT,
         }, {
             'user_id': True,
         }).distinct('_id')
