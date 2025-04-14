@@ -637,6 +637,8 @@ class User(mongo.MongoObject):
         return key
 
     def assign_ip_addr(self):
+        if self.type != CERT_CLIENT:
+            return
         for svr in self.org.iter_servers(fields=(
                 'id', 'wg', 'network', 'network_wg', 'network_start',
                 'network_end', 'network_lock')):
