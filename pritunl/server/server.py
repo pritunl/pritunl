@@ -1105,6 +1105,9 @@ class Server(mongo.MongoObject):
                 user_id=user_id)
 
     def get_sync_remotes(self):
+        if not settings.user.conf_sync:
+            return []
+
         remotes = set()
         spec = {
             '_id': {'$in': self.hosts},
