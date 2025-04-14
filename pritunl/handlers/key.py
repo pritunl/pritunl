@@ -1383,12 +1383,12 @@ def key_wg_put(org_id, user_id, server_id):
         flask.request.path, cipher_data64, box_nonce64, public_key64,
         signature64])
 
-    if len(auth_string) > AUTH_SIG_STRING_MAX_LEN:
+    if len(auth_string) > AUTH_SIG_STRING_MAX_LEN or len(auth_nonce) < 8:
         journal.entry(
             journal.USER_WG_FAILURE,
             usr.journal_data,
             remote_address=remote_addr,
-            event_long='Auth string len limit exceeded',
+            event_long='Invalid signature or nonce length',
         )
         return flask.abort(414)
 
