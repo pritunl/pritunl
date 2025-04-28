@@ -24,32 +24,41 @@ enabled=1
 gpgkey=https://pgp.mongodb.com/server-8.0.asc
 EOF
 
-sudo yum -y install mongodb-org
+sudo dnf -y install mongodb-org
 sudo systemctl start mongod
 sudo systemctl enable mongod
+
+# Install OpenVPN
+sudo tee /etc/yum.repos.d/pritunl.repo << EOF
+[pritunl]
+name=Pritunl Repository
+baseurl=https://repo.pritunl.com/stable/yum/oraclelinux/9/
+gpgcheck=1
+enabled=1
+gpgkey=https://raw.githubusercontent.com/pritunl/pgp/master/pritunl_repo_pub.asc
+EOF
+
+sudo dnf --allowerasing -y install pritunl-openvpn
+
+# [Optional] Install ndppd for IPv6 NDP proxying
+sudo dnf -y install pritunl-ndppd
 
 # Set current pritunl version X.XX.XXXX.XX
 # Set to master to run code from repository (only for testing)
 export VERSION="master"
 
-# RHEL EPEL
-sudo yum -y install https://dl.fedoraproject.org/pub/epel/epel-release-latest-9.noarch.rpm
-# Oracle Linux EPEL
-sudo yum -y install oracle-epel-release-el9
-sudo yum-config-manager --enable ol9_developer_EPEL
-
-sudo yum -y install openssl-devel bzip2-devel libffi-devel sqlite-devel xz-devel zlib-devel gcc git openvpn openssl net-tools iptables psmisc ca-certificates selinux-policy selinux-policy-devel wget tar policycoreutils-python-utils
+sudo dnf -y install gcc git-core wget rsync openssl-devel bzip2-devel libffi-devel sqlite-devel xz-devel zlib-devel selinux-policy selinux-policy-devel policycoreutils-python-utils python3 net-tools openssl iptables ipset ca-certificates psmisc
 
 wget https://www.python.org/ftp/python/3.9.21/Python-3.9.21.tar.xz
 echo "3126f59592c9b0d798584755f2bf7b081fa1ca35ce7a6fea980108d752a05bb1 Python-3.9.21.tar.xz" | sha256sum -c -
 
 tar xf Python-3.9.21.tar.xz
 cd ./Python-3.9.21
-mkdir /usr/lib/pritunl
+sudo mkdir /usr/lib/pritunl
 ./configure --prefix=/usr --libdir=/usr/lib --enable-optimizations --enable-ipv6 --enable-loadable-sqlite-extensions --disable-shared --with-lto --with-platlibdir=lib
-make DESTDIR="/usr/lib/pritunl" install
-/usr/lib/pritunl/usr/bin/python3 -m ensurepip --upgrade
-/usr/lib/pritunl/usr/bin/python3 -m pip install --upgrade pip
+sudo make DESTDIR="/usr/lib/pritunl" install
+sudo /usr/lib/pritunl/usr/bin/python3 -m ensurepip --upgrade
+sudo /usr/lib/pritunl/usr/bin/python3 -m pip install --upgrade pip
 
 wget https://go.dev/dl/go1.24.2.linux-amd64.tar.gz
 echo "68097bd680839cbc9d464a0edce4f7c333975e27a90246890e9f1078c7e702ad go1.24.2.linux-amd64.tar.gz" | sha256sum -c -
@@ -57,10 +66,6 @@ echo "68097bd680839cbc9d464a0edce4f7c333975e27a90246890e9f1078c7e702ad go1.24.2.
 sudo rm -rf /usr/local/go
 sudo tar -C /usr/local -xf go1.24.2.linux-amd64.tar.gz
 rm -f go1.24.2.linux-amd64.tar.gz
-
-sudo rm -rf /usr/local/go
-sudo tar -C /usr/local -xf go1.23.6.linux-amd64.tar.gz
-rm -f go1.23.6.linux-amd64.tar.gz
 
 tee -a ~/.bashrc << EOF
 export GOPATH=\$HOME/go
@@ -76,15 +81,10 @@ sudo mkdir -p /usr/lib/pritunl
 sudo mkdir -p /var/lib/pritunl
 sudo virtualenv-3 /usr/lib/pritunl
 
-GOPROXY=direct go install github.com/pritunl/pritunl-web@latest
-GOPROXY=direct go install github.com/pritunl/pritunl-dns@latest
+go install -v github.com/pritunl/pritunl-web@latest
+go install -v github.com/pritunl/pritunl-dns@latest
 sudo rm /usr/bin/pritunl-dns
 sudo rm /usr/bin/pritunl-web
-sudo cp -f ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
-sudo cp -f ~/go/bin/pritunl-web /usr/bin/pritunl-web
-
-go get -v -u github.com/pritunl/pritunl-dns
-go get -v -u github.com/pritunl/pritunl-web
 sudo cp -f ~/go/bin/pritunl-dns /usr/bin/pritunl-dns
 sudo cp -f ~/go/bin/pritunl-web /usr/bin/pritunl-web
 
