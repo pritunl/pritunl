@@ -21,7 +21,7 @@ _states = tunldb.TunlDB()
 
 class Authorizer(object):
     def __init__(self, svr, usr, clients, mode, stage, remote_ip, platform,
-            device_id, device_name, mac_addr, mac_addrs, password,
+            client_ver, device_id, device_name, mac_addr, mac_addrs, password,
             auth_password, auth_token, auth_nonce, auth_timestamp, fw_token,
             sso_token, reauth, callback):
         self.server = svr
@@ -31,6 +31,7 @@ class Authorizer(object):
         self.stage = stage
         self.remote_ip = remote_ip
         self.platform = platform
+        self.client_ver = client_ver
         self.device_id = device_id
         self.device_name = device_name
         self.mac_addr = mac_addr
@@ -130,6 +131,7 @@ class Authorizer(object):
         return {
             'remote_address': self.remote_ip,
             'platform': self.platform,
+            'client_ver': self.client_ver,
             'device_id': self.device_id,
             'device_name': self.device_name,
             'mac_addr': self.mac_addr,
