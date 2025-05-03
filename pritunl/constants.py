@@ -1060,7 +1060,7 @@ SERVER_CIPHERS_OLD = {
     'chacha20poly1205': 'cipher CHACHA20-POLY1305',
 }
 SERVER_CIPHERS = {
-    'none': 'cipher none',
+    'none': 'cipher none\nncp-disable',
     'bf128': 'cipher AES-128-CBC\nncp-ciphers AES-128-GCM:AES-128-CBC',
     'bf256': 'cipher AES-256-CBC\nncp-ciphers AES-256-GCM:AES-256-CBC',
     'aes128': 'cipher AES-128-CBC\nncp-ciphers AES-128-GCM:AES-128-CBC',
