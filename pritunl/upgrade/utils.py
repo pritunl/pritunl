@@ -31,7 +31,7 @@ def setup_cert():
     server_cert = None
     server_key = None
 
-    if _database:
+    if _database is not None:
         settings_collection = get_collection('settings')
         doc = settings_collection.find_one({'_id': 'app'})
         if doc:
@@ -50,7 +50,7 @@ def setup_cert():
 def get_server_port():
     port = settings.conf.port
 
-    if _database:
+    if _database is not None:
         settings_collection = get_collection('settings')
         doc = settings_collection.find_one({'_id': 'app'})
         if doc:
