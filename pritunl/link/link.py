@@ -33,6 +33,7 @@ class Host(mongo.MongoObject):
         'public_address',
         'local_address',
         'address6',
+        'wg_public_key',
         'version',
     }
     fields_default = {
@@ -47,8 +48,8 @@ class Host(mongo.MongoObject):
             hosts_hist_timestamp=None, timeout=None,
             priority=None, backoff=None, backoff_timestamp=None,
             ping_timestamp_ttl=None, static=None, public_address=None,
-            local_address=None, address6=None, version=None,
-            tunnels=None, **kwargs):
+            local_address=None, address6=None, wg_public_key=None,
+            version=None, tunnels=None, **kwargs):
         mongo.MongoObject.__init__(self)
 
         self.link = link
@@ -110,6 +111,9 @@ class Host(mongo.MongoObject):
 
         if address6 is not None:
             self.address6 = address6
+
+        if wg_public_key is not None:
+            self.wg_public_key = wg_public_key
 
         if version is not None:
             self.version = version
@@ -317,7 +321,7 @@ class Host(mongo.MongoObject):
             seconds=self.timeout or settings.vpn.link_timeout)
         self.commit(('public_address', 'address6', 'local_address',
             'version', 'status', 'timestamp', 'hosts', 'hosts_hist',
-            'hosts_hist_timestamp', 'ping_timestamp_ttl'))
+            'wg_public_key', 'hosts_hist_timestamp', 'ping_timestamp_ttl'))
 
         if not self.link.key:
             self.link.generate_key()
@@ -370,6 +374,7 @@ class Host(mongo.MongoObject):
                         'right': active_host.address6 \
                             if self.link.ipv6 else \
                             active_host.public_address,
+                        'wg_public_key': active_host.wg_public_key,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
                     })
@@ -432,6 +437,7 @@ class Host(mongo.MongoObject):
                         'right': active_host.address6 \
                             if self.link.ipv6 else \
                             active_host.public_address,
+                        'wg_public_key': active_host.wg_public_key,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
                     })
@@ -505,6 +511,7 @@ class Host(mongo.MongoObject):
                     'pre_shared_key': self.link.key,
                     'right': active_host.address6 \
                         if self.link.ipv6 else active_host.public_address,
+                    'wg_public_key': active_host.wg_public_key,
                     'left_subnets': left_subnets,
                     'right_subnets': right_subnets,
                 })
@@ -562,6 +569,7 @@ class Host(mongo.MongoObject):
                         'pre_shared_key': self.link.key,
                         'right': host.address6 \
                             if self.link.ipv6 else host.public_address,
+                        'wg_public_key': host.wg_public_key,
                         'left_subnets': left_subnets,
                         'right_subnets': right_subnets,
                     })
