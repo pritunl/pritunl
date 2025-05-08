@@ -16,6 +16,7 @@ import hmac
 import hashlib
 import json
 import os
+import random
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives.ciphers import (
     Cipher, algorithms, modes
@@ -64,6 +65,16 @@ def link_post():
     type = DIRECT if flask.request.json.get('type') == DIRECT \
         else SITE_TO_SITE
     ipv6 = True if flask.request.json.get('ipv6') else False
+
+    if flask.request.json.get('protocol') == 'wg':
+        protocol = 'wg'
+    else:
+        protocol = 'ipsec'
+
+    wg_port = flask.request.json.get('wg_port')
+    if not wg_port or wg_port < 1 or wg_port > 65535:
+        wg_port = random.randint(30000, 32500)
+
     host_check = True if flask.request.json.get('host_check') else False
     action = RESTART if flask.request.json.get(
         'action') == RESTART else HOLD
@@ -79,6 +90,8 @@ def link_post():
         type=type,
         status=ONLINE,
         ipv6=ipv6,
+        protocol=protocol,
+        wg_port=wg_port,
         host_check=host_check,
         action=action,
         preferred_ike=preferred_ike,
@@ -160,6 +173,15 @@ def link_put(link_id):
 
     lnk.ipv6 = True if flask.request.json.get('ipv6') else False
 
+    if flask.request.json.get('protocol') == 'wg':
+        lnk.protocol = 'wg'
+    else:
+        lnk.protocol = 'ipsec'
+
+    lnk.wg_port = flask.request.json.get('wg_port')
+    if not lnk.wg_port or lnk.wg_port < 1 or lnk.wg_port > 65535:
+        lnk.wg_port = random.randint(30000, 32500)
+
     lnk.host_check = True if flask.request.json.get('host_check') else False
 
     lnk.action = RESTART if flask.request.json.get(
@@ -172,8 +194,9 @@ def link_put(link_id):
     lnk.force_preferred = True if flask.request.json.get(
         'force_preferred') else False
 
-    lnk.commit(('name', 'status', 'key', 'ipv6', 'host_check',
-        'action', 'preferred_ike', 'preferred_esp', 'force_preferred'))
+    lnk.commit(('name', 'status', 'key', 'ipv6', 'protocol', 'wg_port',
+        'host_check', 'action', 'preferred_ike', 'preferred_esp',
+        'force_preferred'))
 
     event.Event(type=LINKS_UPDATED)
 
@@ -380,6 +403,8 @@ def link_location_host_post(link_id, location_id):
         flask.request.json.get('public_address'))
     local_address = utils.filter_str(
         flask.request.json.get('local_address'))
+    wg_public_key = utils.filter_base64(
+        flask.request.json.get('wg_public_key'))
 
     hst = link.Host(
         link=lnk,
@@ -393,6 +418,7 @@ def link_location_host_post(link_id, location_id):
         static=static,
         public_address=public_address,
         local_address=local_address,
+        wg_public_key=wg_public_key,
     )
 
     hst.generate_secret()
@@ -707,6 +733,7 @@ def link_state_put():
     host.public_address = flask.request.json.get('public_address')
     host.local_address = flask.request.json.get('local_address')
     host.address6 = flask.request.json.get('address6')
+    host.wg_public_key = flask.request.json.get('wg_public_key')
     if flask.request.json.get('hosts'):
         host.hosts = flask.request.json.get('hosts')
 
