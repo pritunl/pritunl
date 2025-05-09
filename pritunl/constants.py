@@ -1122,6 +1122,7 @@ mute %s
 
 OVPN_INLINE_SERVER_CONF = """\
 ignore-unknown-option ncp-ciphers
+ignore-unknown-option ncp-disable
 port %s
 proto %s
 dev %s
