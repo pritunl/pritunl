@@ -2542,17 +2542,20 @@ class Clients(object):
 
         if not usr.sso_auth_check(self.server, client['password'],
                 client['real_address'], True):
-            logger.error('User failed auth update check',
-                'server',
-                server_id=self.server.id,
-                instance_id=self.instance.id,
-                user_id=client['user_id'],
-            )
-            if len(client_id) > 32:
-                self.instance.disconnect_wg(client_id, "auth_update_err")
-            else:
-                self.instance_com.client_kill(client_id, "auth_update_err")
-            return
+            time.sleep(0.3)
+            if not usr.sso_auth_check(self.server, client['password'],
+                    client['real_address'], True):
+                logger.error('User failed auth update check',
+                    'server',
+                    server_id=self.server.id,
+                    instance_id=self.instance.id,
+                    user_id=client['user_id'],
+                )
+                if len(client_id) > 32:
+                    self.instance.disconnect_wg(client_id, "auth_update_err")
+                else:
+                    self.instance_com.client_kill(client_id, "auth_update_err")
+                return
 
         if not self.server.check_groups(usr.groups) and \
                 usr.type != CERT_SERVER:
