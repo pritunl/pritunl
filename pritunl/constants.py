@@ -113,6 +113,8 @@ NAME_SAFE_CHARS2 = {
     '-', '_',
 }
 
+BASE64_SAFE_CHARS = {'+', '/', '='}
+
 VALID_CHARS = {
     'a', 'b', 'c', 'd', 'e', 'f', 'g',
     'h', 'i', 'j', 'k', 'l', 'm', 'n',
