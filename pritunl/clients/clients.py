@@ -728,6 +728,7 @@ class Clients(object):
                 'mac_addr': mac_addr,
                 'client_id': doc_id,
                 'timestamp': utils.now(),
+                'static': False,
             }, return_document=True)
 
             if doc:
@@ -758,6 +759,7 @@ class Clients(object):
                                 'mac_addr': mac_addr,
                                 'client_id': doc_id,
                                 'timestamp': utils.now(),
+                                'static': False,
                             })
                             virt_address = str(ip_addr) + subnet
                             address_dynamic = True
