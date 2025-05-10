@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add support for connection single sign-on with YubiKey on all user types
+Fix issues with user IP pool management
 
 Version 1.32.4181.41 2025-02-22
 -------------------------------
