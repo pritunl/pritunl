@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add support for WireGuard with Pritunl Link
 Add support for connection single sign-on with YubiKey on all user types
 Fix issues with user IP pool management
 
