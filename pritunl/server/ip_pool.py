@@ -106,7 +106,7 @@ class ServerIpPool:
             except pymongo.errors.DuplicateKeyError:
                 pass
 
-        logger.warning('Failed to assign IP, retrying pool', 'server',
+        logger.error('Failed to assign IP, retrying pool', 'server',
             server_id=self.server.id,
             org_id=org_id,
             user_id=user_id,
