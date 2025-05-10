@@ -861,6 +861,7 @@ class Clients(object):
         device_id = client_data.get('device_id')
         device_name = client_data.get('device_name')
         platform = client_data.get('platform')
+        client_ver = client_data.get('client_ver')
         mac_addr = client_data.get('mac_addr')
         remote_ip = client_data.get('remote_ip')
 
@@ -993,6 +994,7 @@ class Clients(object):
                 'device_id': device_id,
                 'device_name': device_name,
                 'platform': platform,
+                'client_ver': client_ver,
                 'mac_addr': mac_addr,
                 'virt_address': virt_address,
                 'virt_address6': virt_address6,
@@ -1014,6 +1016,7 @@ class Clients(object):
                     org_name=org.name,
                     user_name=user.name,
                     platform=platform,
+                    client_ver=client_ver,
                     device_id=device_id,
                     device_name=device_name,
                     virtual_ip=virt_address,
@@ -1160,6 +1163,7 @@ class Clients(object):
                     org_name=org.name,
                     user_name=user.name,
                     platform=platform,
+                    client_ver=client_ver,
                     device_id=device_id,
                     device_name=device_name,
                     virtual_ip=virt_address,

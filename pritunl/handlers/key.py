@@ -3242,7 +3242,7 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
     key_data = json.loads(plaintext)
 
     client_platform = utils.filter_str(key_data['platform'])
-    client_ver = utils.filter_str(key_data['client_ver'])
+    client_ver = utils.filter_str(key_data.get('client_ver'))
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
     client_device_hostname = utils.filter_str(
