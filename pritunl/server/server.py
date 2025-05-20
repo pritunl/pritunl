@@ -1157,6 +1157,7 @@ class Server(mongo.MongoObject):
             'public_address6': True,
             'auto_public_address6': True,
             'auto_public_host6': True,
+            'priority': True,
         }
 
         if include_link_addr:
@@ -1171,18 +1172,28 @@ class Server(mongo.MongoObject):
         else:
             raise ValueError('Unknown protocol')
 
+        remotes_data = {}
         for doc in self.host_collection.find(spec, project):
             if include_link_addr and doc['link_address']:
                 address = doc['link_address']
                 if ':' in address and settings.vpn.ipv6:
+                    remotes_data[address] = {
+                        'priority': doc.get('priority') or 0,
+                    }
                     remotes6.add('remote %s %s %s' % (
                         address, self.port, protocol6))
                 else:
+                    remotes_data[address] = {
+                        'priority': doc.get('priority') or 0,
+                    }
                     remotes.add('remote %s %s %s' % (
-                        doc['link_address'], self.port, protocol))
+                        address, self.port, protocol))
             else:
                 address = doc.get('auto_public_host') or \
                     doc['public_address'] or doc['auto_public_address']
+                remotes_data[address] = {
+                    'priority': doc.get('priority') or 0,
+                }
                 remotes.add('remote %s %s %s' % (
                     address, self.port, protocol))
 
@@ -1190,6 +1201,9 @@ class Server(mongo.MongoObject):
                     doc.get('public_address6') or \
                     doc.get('auto_public_address6')
                 if address6 and settings.vpn.ipv6:
+                    remotes_data[address6] = {
+                        'priority': doc.get('priority') or 0,
+                    }
                     remotes6.add('remote %s %s %s' % (
                         address6, self.port, protocol6))
 
@@ -1204,7 +1218,7 @@ class Server(mongo.MongoObject):
         if len(remotes) > 1:
             remotes.append('remote-random')
 
-        return '\n'.join(remotes)
+        return '\n'.join(remotes), remotes_data
 
     def get_hosts(self):
         hosts = []
