@@ -40,7 +40,7 @@ class ServerInstanceLink(object):
         self.interface = utils.interface_acquire(
             self.linked_server.adapter_type)
 
-        remotes = self.linked_server.get_key_remotes(True)
+        remotes, _ = self.linked_server.get_key_remotes(True)
 
         client_conf = OVPN_INLINE_LINK_CONF % (
             uuid.uuid4().hex,
