@@ -824,7 +824,8 @@ class User(mongo.MongoObject):
             if 'push' in mode:
                 return mode
 
-    def _get_key_info_str(self, svr, conf_hash, include_sync_keys):
+    def _get_key_info_str(self, svr, conf_hash, remotes_data,
+            include_sync_keys):
         svr.generate_auth_key_commit()
 
         disable_reconnect = not settings.user.reconnect
@@ -867,6 +868,7 @@ class User(mongo.MongoObject):
             'disable_reconnect': disable_reconnect,
             'restrict_client': settings.user.restrict_client,
             'token_ttl': settings.app.sso_client_cache_timeout,
+            'remotes_data': remotes_data,
         }
 
         if settings.user.password_encryption:
@@ -895,7 +897,7 @@ class User(mongo.MongoObject):
             self.org.name, self.name, svr.name)
         if not svr.ca_certificate:
             svr.generate_ca_cert()
-        key_remotes = svr.get_key_remotes()
+        key_remotes, remotes_data = svr.get_key_remotes()
         ca_certificate = svr.ca_certificate
         certificate = utils.get_cert_block(self.certificate)
         private_key = self.private_key.strip()
@@ -917,7 +919,8 @@ class User(mongo.MongoObject):
         conf_hash.update(str(svr.ping_interval).encode())
         conf_hash.update(str(settings.vpn.server_poll_timeout).encode())
         conf_hash.update(ca_certificate.encode())
-        conf_hash.update(self._get_key_info_str(svr, None, False).encode())
+        conf_hash.update(self._get_key_info_str(svr, None,
+            remotes_data, False).encode())
 
         plugin_config = ''
         if settings.local.sub_plan and \
@@ -978,12 +981,13 @@ class User(mongo.MongoObject):
         conf_hash = conf_hash.hexdigest()
 
         client_conf = OVPN_INLINE_CLIENT_CONF % (
-            self._get_key_info_str(svr, conf_hash, include_user_cert),
+            self._get_key_info_str(svr, conf_hash, remotes_data,
+                include_user_cert),
             uuid.uuid4().hex,
             utils.random_name(),
             svr.adapter_type,
             svr.adapter_type,
-            svr.get_key_remotes(),
+            key_remotes,
             CIPHERS[svr.cipher],
             HASHES[svr.hash],
             svr.ping_interval,
