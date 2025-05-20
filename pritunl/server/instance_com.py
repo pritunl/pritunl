@@ -267,8 +267,10 @@ class ServerInstanceCom(object):
                                 'org_name': client.get('org_name'),
                                 'user_id': client.get('user_id'),
                                 'user_name': client.get('user_name'),
-                                'device_id': client.get('device_id'),
-                                'device_name': client.get('device_name'),
+                                'device_id': utils.filter_str2(
+                                    client.get('device_id')),
+                                'device_name': utils.filter_str2(
+                                    client.get('device_name')),
                             }, {
                                 'bytes_sent': bytes_sent,
                                 'bytes_recv': bytes_recv,

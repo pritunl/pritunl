@@ -890,7 +890,7 @@ class Clients(object):
             }, {
                 'user': user.name,
                 'type': 'ovpn',
-                'platform': platform,
+                'platform': utils.filter_str2(platform),
                 'remote_ip': remote_ip,
             })
 
@@ -1072,7 +1072,7 @@ class Clients(object):
             }, {
                 'user': user.name,
                 'type': 'wg',
-                'platform': platform,
+                'platform': utils.filter_str2(platform),
                 'remote_ip': remote_ip,
             })
 
