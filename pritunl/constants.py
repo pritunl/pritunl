@@ -113,6 +113,10 @@ NAME_SAFE_CHARS2 = {
     '-', '_',
 }
 
+PATH_SAFE_CHARS = {
+    '-', '_', '.', '/',
+}
+
 BASE64_SAFE_CHARS = {'+', '/', '='}
 
 VALID_CHARS = {
