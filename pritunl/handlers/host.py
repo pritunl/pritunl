@@ -159,6 +159,9 @@ def host_put(hst=None):
         hst.availability_group = utils.filter_str(
             flask.request.json['availability_group']) or DEFAULT
 
+    if 'priority' in flask.request.json:
+        hst.priority = int(flask.request.json['priority'])
+
     hst.commit(hst.changed)
     event.Event(type=HOSTS_UPDATED)
     messenger.publish('hosts', 'updated')
