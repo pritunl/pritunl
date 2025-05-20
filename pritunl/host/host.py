@@ -35,6 +35,7 @@ class Host(mongo.MongoObject):
         'auto_local_address6',
         'local_networks',
         'availability_group',
+        'priority',
     }
     fields_default = {
         'status': OFFLINE,
@@ -141,6 +142,7 @@ class Host(mongo.MongoObject):
             'local_address6': self.local_address6,
             'local_addr6': self.local_addr6,
             'availability_group': self.availability_group,
+            'priority': self.priority,
         }
 
     def iter_servers(self, fields=None):
