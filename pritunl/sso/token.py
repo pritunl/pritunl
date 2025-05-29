@@ -3,12 +3,13 @@ from pritunl.exceptions import *
 from pritunl import listener
 from pritunl import utils
 from pritunl import settings
+from pritunl import mongo
 
 import threading
+import datetime
 
 _tokens = {}
 _tokens_lock = threading.Lock()
-_last_clean = utils.time_now()
 
 def _on_msg(msg):
     if msg['message'] != 'authorized':
@@ -21,33 +22,43 @@ def _on_msg(msg):
         return
 
     with _tokens_lock:
-        if utils.time_now() - _last_clean > settings.vpn.sso_token_ttl:
-            clean_tokens()
-
         _tokens[token] = {
             'user_id': user_id,
             'server_id': server_id,
-            'timestamp': utils.time_now()
+            'timestamp': utils.now()
         }
 
+def sync_tokens():
+    tokens_collection = mongo.get_collection('server_sso_tokens')
+    new_tokens = {}
+
+    for doc in tokens_collection.find({}):
+        token = doc.get('_id')
+        user_id = doc.get('user_id')
+        server_id = doc.get('server_id')
+        if not token or not user_id or not server_id:
+            continue
+
+        new_tokens[token] = {
+            'user_id': user_id,
+            'server_id': server_id,
+            'timestamp': utils.now()
+        }
+
+    with _tokens_lock:
+        global _tokens
+        _tokens = new_tokens
+
 def check_token(token, user_id, server_id):
-    data = _tokens.get(token)
+    token_ttl = datetime.timedelta(seconds=settings.vpn.sso_token_ttl)
+    with _tokens_lock:
+        data = _tokens.get(token)
     if not data or user_id != data['user_id'] or \
             server_id != data['server_id']:
         return False
-    if utils.time_now() - data[
-            'timestamp'] > settings.vpn.sso_token_ttl:
+    if utils.now() - data['timestamp'] > token_ttl:
         return False
     return True
-
-def clean_tokens():
-    cur_time = utils.time_now()
-    _last_clean = cur_time
-    ttl = settings.vpn.sso_token_ttl * 2
-    for token in list(_tokens.keys()):
-        data = _tokens.get(token)
-        if data and cur_time - data['timestamp'] > ttl:
-            del _tokens[token]
 
 def init_token():
     listener.add_listener('tokens', _on_msg)
