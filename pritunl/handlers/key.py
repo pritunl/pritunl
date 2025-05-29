@@ -3400,7 +3400,7 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
             if sso.check_token(client_sso_token, usr.id, svr.id):
                 authorized = True
                 break
-            time.sleep(0.1)
+            time.sleep(0.2)
 
         if not authorized:
             return flask.abort(428)
@@ -3848,7 +3848,7 @@ def key_wg_wait_post(org_id, user_id, server_id):
             if sso.check_token(client_sso_token, usr.id, svr.id):
                 authorized = True
                 break
-            time.sleep(0.1)
+            time.sleep(0.2)
 
         if not authorized:
             return flask.abort(428)
