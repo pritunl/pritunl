@@ -33,7 +33,7 @@ Commands:
 INIT_PATH = 'pritunl/__init__.py'
 SETUP_PATH = 'setup.py'
 CHANGES_PATH = 'CHANGES'
-BUILD_KEYS_PATH = 'tools/build_keys.json'
+BUILD_KEYS_PATH = os.path.expanduser('~/data/build/pritunl_build.json')
 STABLE_PACUR_PATH = '../pritunl-pacur'
 TEST_PACUR_PATH = '../pritunl-pacur-test'
 BUILD_TARGETS = ('pritunl',)
@@ -81,7 +81,8 @@ def post_git_asset(release_id, file_name, file_path):
         sys.exit(1)
 
 def get_ver(version):
-    day_num = (cur_date - datetime.datetime(2013, 9, 12)).days
+    day_num = (cur_date - datetime.datetime(2013, 9, 12,
+        tzinfo=datetime.timezone.utc)).days
     min_num = int(math.floor(((cur_date.hour * 60) + cur_date.minute) / 14.4))
     ver = re.findall(r'\d+', version)
     ver_str = '.'.join((ver[0], ver[1], str(day_num), str(min_num)))
@@ -124,21 +125,6 @@ def iter_packages():
 
             yield name, path
 
-def generate_last_modifited_etag(file_path):
-    import werkzeug.http
-    file_name = os.path.basename(file_path).encode(
-        sys.getfilesystemencoding())
-    file_mtime = datetime.datetime.utcfromtimestamp(
-        os.path.getmtime(file_path))
-    file_size = int(os.path.getsize(file_path))
-    last_modified = werkzeug.http.http_date(file_mtime)
-
-    return (last_modified, 'wzsdm-%d-%s-%s' % (
-        time.mktime(file_mtime.timetuple()),
-        file_size,
-        zlib.adler32(file_name) & 0xffffffff,
-    ))
-
 def sync_styles():
     subprocess.check_call(['git', 'reset', 'HEAD', '.'], cwd='www/styles')
     subprocess.check_call(['git', 'add', '.'], cwd='www/styles')
@@ -162,58 +148,61 @@ else:
 
 def aes_encrypt(passphrase, data):
     enc_salt = os.urandom(32)
-    enc_iv = os.urandom(16)
+    enc_iv = os.urandom(12)
 
     kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA1(),
+        algorithm=hashes.SHA512(),
         length=32,
         salt=enc_salt,
-        iterations=1000,
+        iterations=10000000,
         backend=default_backend(),
     )
     enc_key = kdf.derive(passphrase.encode())
 
-    data += '\x00' * (16 - (len(data) % 16))
-
     cipher = Cipher(
         algorithms.AES(enc_key),
-        modes.CBC(enc_iv),
+        modes.GCM(enc_iv),
         backend=default_backend()
     ).encryptor()
-    enc_data = cipher.update(data.encode()) + cipher.finalize()
+
+    enc_data = cipher.update(data.encode('utf-8')) + cipher.finalize()
+    auth_tag = cipher.tag
 
     return '\n'.join([
         base64.b64encode(enc_salt).decode('utf-8'),
         base64.b64encode(enc_iv).decode('utf-8'),
         base64.b64encode(enc_data).decode('utf-8'),
+        base64.b64encode(auth_tag).decode('utf-8'),
     ])
 
 def aes_decrypt(passphrase, data):
     data = data.split('\n')
-    if len(data) < 3:
+    if len(data) < 4:
         raise ValueError('Invalid encryption data')
 
     enc_salt = base64.b64decode(data[0])
     enc_iv = base64.b64decode(data[1])
     enc_data = base64.b64decode(data[2])
+    auth_tag = base64.b64decode(data[3])
 
     kdf = PBKDF2HMAC(
-        algorithm=hashes.SHA1(),
+        algorithm=hashes.SHA512(),
         length=32,
         salt=enc_salt,
-        iterations=1000,
+        iterations=10000000,
         backend=default_backend(),
     )
     enc_key = kdf.derive(passphrase.encode())
 
     cipher = Cipher(
         algorithms.AES(enc_key),
-        modes.CBC(enc_iv),
+        modes.GCM(enc_iv, auth_tag),
         backend=default_backend()
     ).decryptor()
-    data = cipher.update(enc_data) + cipher.finalize()
 
-    return data.decode('utf-8').replace('\x00', '')
+    decrypted_data = cipher.update(enc_data) + cipher.finalize()
+
+    return decrypted_data.decode('utf-8')
 
 passphrase = getpass.getpass('Enter passphrase: ')
 
