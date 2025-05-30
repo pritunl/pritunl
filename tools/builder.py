@@ -132,7 +132,7 @@ def sync_styles():
         ['git', 'status', '-s'],
         cwd='www/styles',
     ).decode().rstrip().split('\n')
-    changed = any([True if x[0] == 'M' else False for x in changes])
+    changed = any([True if x[0] == 'A' else False for x in changes])
     if changed:
         subprocess.check_call(
             ['git', 'commit', '-S', '-m'
@@ -243,8 +243,6 @@ with open(BUILD_KEYS_PATH, 'r') as build_keys_file:
     github_token = build_keys['github_token']
     gitlab_token = build_keys['gitlab_token']
     gitlab_host = build_keys['gitlab_host']
-    mirror_url = build_keys['mirror_url']
-    test_mirror_url = build_keys['test_mirror_url']
 
 # Get package info
 with open(INIT_PATH, 'r') as init_file:
