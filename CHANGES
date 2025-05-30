@@ -1,8 +1,7 @@
 Pritunl Changelog
 =================
 
-Version 1.32.4278.45 2025-05-30
--------------------------------
+<%= version %>
 
 Improve connection single sign-on
 
