@@ -505,6 +505,36 @@ class ServerInstance(object):
                 'ERROR Failed to find bridged network interface')
             raise
 
+    def bridge_up(self):
+        if self.server.network_mode != BRIDGE:
+            return
+
+        time.sleep(1)
+
+        try:
+            utils.check_output_logged([
+                'ip',
+                'link',
+                'set',
+                'up',
+                self.interface,
+            ])
+        except BridgeLookupError:
+            time.sleep(1)
+
+            try:
+                utils.check_output_logged([
+                    'ip',
+                    'link',
+                    'set',
+                    'up',
+                    self.interface,
+                ])
+            except BridgeLookupError:
+                self.server.output.push_message(
+                    'ERROR Failed to bring up bridge interface')
+                raise
+
     def bridge_stop(self):
         if self.server.network_mode != BRIDGE:
             return
@@ -1718,6 +1748,8 @@ class ServerInstance(object):
                 self.start_wg()
 
             self.state = 'running'
+
+            self.bridge_up()
 
             if self.is_interrupted():
                 return
