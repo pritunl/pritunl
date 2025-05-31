@@ -86,6 +86,21 @@ class Bridge(object):
             host_broadcast,
         ])
 
+        utils.check_output_logged([
+            'ip',
+            'link',
+            'set',
+            'up',
+            host_interface,
+        ])
+        utils.check_output_logged([
+            'ip',
+            'link',
+            'set',
+            'up',
+            self.bridge_interface,
+        ])
+
         if host_gateway:
             utils.check_output_logged([
                 'route',
