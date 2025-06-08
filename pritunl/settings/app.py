@@ -47,6 +47,7 @@ class SettingsApp(SettingsGroupMongo):
         'log_entry_limit': 50,
         'log_db_delay': 1,
         'log_web_errors': False,
+        'journal_rotate_count': 20,
         'journal_rotate_size': 1000000,
         'rate_limit_sleep': 0.5,
         'short_url_length': 8,
