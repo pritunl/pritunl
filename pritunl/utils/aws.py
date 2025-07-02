@@ -2,7 +2,6 @@ from pritunl.exceptions import *
 from pritunl.constants import *
 from pritunl import settings
 
-import boto.utils
 import boto3
 import requests
 import time
@@ -55,37 +54,7 @@ def get_vpc_id():
 def get_iface_macs():
     return get_instance_metadata("network/interfaces/macs")
 
-def get_metadata1():
-    metadata = boto.utils.get_instance_metadata()
-
-    instance_id = metadata['instance-id']
-    availability_zone = metadata['placement']['availability-zone']
-    vpc_id = None
-    region = None
-
-    for aws_region in AWS_REGIONS:
-        if availability_zone.startswith(aws_region):
-            region = aws_region
-            break
-
-    for iface in list(metadata['network']['interfaces']['macs'].values()):
-        vpc_id = iface['vpc-id']
-        break
-
-    if not vpc_id:
-        raise ValueError('Failed to get AWS VPC ID')
-
-    if not region:
-        raise ValueError('Failed to get AWS region')
-
-    return {
-        'instance_id': instance_id,
-        'availability_zone': availability_zone,
-        'vpc_id': vpc_id,
-        'region': region,
-    }
-
-def get_metadata2():
+def get_metadata():
     instance_id = get_instance_id()
     availability_zone = get_availability_zone()
     region = get_region()
@@ -97,15 +66,6 @@ def get_metadata2():
         'vpc_id': vpc_id,
         'region': region,
     }
-
-def get_metadata():
-    try:
-        return get_metadata2()
-    except:
-        try:
-            return get_metadata1()
-        except:
-            return get_metadata2()
 
 def connect_ec2(aws_key, aws_secret, region):
     return boto3.client(
