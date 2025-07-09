@@ -143,10 +143,10 @@ class ServerInstanceCom(object):
                     self.client['device_id'] = utils.filter_str(env_val)
                 elif env_key == 'UV_NAME':
                     self.client['device_name'] = utils.filter_str(env_val)
-                elif env_key == 'UV_PRITUNL_VER':
-                    self.client['client_ver'] = utils.filter_str(env_val)
                 elif env_key == 'UV_PLATFORM':
                     self.client['platform'] = utils.filter_str(env_val)
+                elif env_key == 'UV_PRITUNL_VER':
+                    self.client['client_ver'] = utils.filter_str(env_val)
                 elif env_key == 'username':
                     self.client['username'] = utils.filter_str(env_val)[:128]
                 elif env_key == 'password':
