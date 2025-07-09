@@ -138,7 +138,7 @@ class ServerInstanceCom(object):
                         self.client['device_name'] = 'chrome-os'
                     self.client['platform'] = utils.filter_str(env_val)
                 elif env_key == 'IV_VER':
-                    self.client['client_ver'] = utils.filter_str(env_val)
+                    self.client['ovpn_ver'] = utils.filter_str(env_val)
                 elif env_key == 'UV_ID':
                     self.client['device_id'] = utils.filter_str(env_val)
                 elif env_key == 'UV_NAME':
