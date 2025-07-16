@@ -11,7 +11,8 @@
       <x-box-label class="user-count" type="default" padding="4px 8px"
         no-select>{{org.userCount}} users</x-box-label>
       <x-form-input type="text" placeholder="Search for user"
-        width="150px" height="30px" model="org.users.search" autocomplete="off"></x-form-input>
+        width="150px" height="30px" model="org.users.search"
+        autocomplete="new-search-user"></x-form-input>
       <x-org-del model="org"></x-org-del>
       <x-btn type="danger" size="sm" modal-attach="x-org-del"
         >Delete Organization</x-btn>
