@@ -393,6 +393,7 @@
         <h4 class="uri-title download-uri-label">Profile URI Link:</h4>
         <input id="uri-input" type="text" class="form-control download-uri"
           spellcheck="false" value="<%= uri_url %>">
+        <a class="btn btn-success copy-profile-uri" title="Copy Profile URI" target="_blank" id="copyProfileURIButton">Copy Profile URI</a>
         <a class="btn btn-success download-client" title="Download Client" href="https://client.pritunl.com/#install" target="_blank">Download Client</a>
         <a class="btn btn-success download-profiles" title="Download Profiles" href="<%= user_key_tar_url %>">Download Profiles</a>
         <a class="btn btn-success download-profiles" title="Download Profiles (zip)" href="<%= user_key_zip_url %>">Download Profiles (zip)</a>
@@ -692,6 +693,7 @@
       var clientElem = document.getElementsByClassName('download-client');
       var uriElem = document.getElementsByClassName('download-uri');
       var uriLabelElem = document.getElementsByClassName('download-uri-label');
+      var uriCopyElem = document.getElementById('copyProfileURIButton');
 
       var shown = true;
 
@@ -759,6 +761,12 @@
       };
 
       showLess();
+
+      document.getElementById('copyProfileURIButton').addEventListener('click', function() {
+        var uriInput = document.getElementById('uri-input');
+        uriInput.select();
+        document.execCommand('copy');
+      });
     </script>
   </body>
 </html>
