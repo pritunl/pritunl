@@ -1022,6 +1022,7 @@ def key_wg_post(org_id, user_id, server_id):
 
     client_platform = utils.filter_str(key_data['platform'])
     client_ver = utils.filter_str(key_data.get('client_ver'))
+    ovpn_ver = utils.filter_str(key_data.get('ovpn_ver'))
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
     client_device_hostname = utils.filter_str(
@@ -1244,6 +1245,7 @@ def key_wg_post(org_id, user_id, server_id):
         sso_token=None,
         platform=client_platform,
         client_ver=client_ver,
+        ovpn_ver=ovpn_ver,
         device_id=client_device_id,
         device_name=client_device_name,
         mac_addr=client_mac_addr,
@@ -1722,6 +1724,7 @@ def key_ovpn_post(org_id, user_id, server_id):
 
     client_platform = utils.filter_str(key_data['platform'])
     client_ver = utils.filter_str(key_data.get('client_ver'))
+    ovpn_ver = utils.filter_str(key_data.get('ovpn_ver'))
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
     client_device_hostname = utils.filter_str(
@@ -1900,6 +1903,7 @@ def key_ovpn_post(org_id, user_id, server_id):
         sso_token=None,
         platform=client_platform,
         client_ver=client_ver,
+        ovpn_ver=ovpn_ver,
         device_id=client_device_id,
         device_name=client_device_name,
         mac_addr=client_mac_addr,
@@ -3243,6 +3247,7 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
 
     client_platform = utils.filter_str(key_data['platform'])
     client_ver = utils.filter_str(key_data.get('client_ver'))
+    ovpn_ver = utils.filter_str(key_data.get('ovpn_ver'))
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
     client_device_hostname = utils.filter_str(
@@ -3432,6 +3437,7 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
         sso_token=sso_token,
         platform=client_platform,
         client_ver=client_ver,
+        ovpn_ver=ovpn_ver,
         device_id=client_device_id,
         device_name=client_device_name,
         mac_addr=client_mac_addr,
@@ -3660,6 +3666,7 @@ def key_wg_wait_post(org_id, user_id, server_id):
 
     client_platform = utils.filter_str(key_data['platform'])
     client_ver = utils.filter_str(key_data.get('client_ver'))
+    ovpn_ver = utils.filter_str(key_data.get('ovpn_ver'))
     client_device_id = utils.filter_str(key_data['device_id'])
     client_device_name = utils.filter_str(key_data['device_name'])
     client_device_hostname = utils.filter_str(
@@ -3897,6 +3904,7 @@ def key_wg_wait_post(org_id, user_id, server_id):
         sso_token=sso_token,
         platform=client_platform,
         client_ver=client_ver,
+        ovpn_ver=ovpn_ver,
         device_id=client_device_id,
         device_name=client_device_name,
         mac_addr=client_mac_addr,
