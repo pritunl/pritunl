@@ -862,6 +862,7 @@ class Clients(object):
         device_name = client_data.get('device_name')
         platform = client_data.get('platform')
         client_ver = client_data.get('client_ver')
+        ovpn_ver = client_data.get('ovpn_ver')
         mac_addr = client_data.get('mac_addr')
         remote_ip = client_data.get('remote_ip')
 
@@ -995,6 +996,7 @@ class Clients(object):
                 'device_name': device_name,
                 'platform': platform,
                 'client_ver': client_ver,
+                'ovpn_ver': ovpn_ver,
                 'mac_addr': mac_addr,
                 'virt_address': virt_address,
                 'virt_address6': virt_address6,
@@ -1017,6 +1019,7 @@ class Clients(object):
                     user_name=user.name,
                     platform=platform,
                     client_ver=client_ver,
+                    ovpn_ver=ovpn_ver,
                     device_id=device_id,
                     device_name=device_name,
                     virtual_ip=virt_address,
@@ -1052,8 +1055,8 @@ class Clients(object):
         self.instance_com.send_client_auth(client_id, key_id, client_conf)
 
     def allow_client_wg(self, user, org, wg_public_key, platform, client_ver,
-            device_id, device_name, password, mac_addr, client_public_address,
-            client_public_address6, remote_ip):
+            ovpn_ver, device_id, device_name, password, mac_addr,
+            client_public_address, client_public_address6, remote_ip):
         try:
             user_id = user.id
             org_id = org.id
@@ -1141,6 +1144,7 @@ class Clients(object):
                 'device_name': device_name,
                 'platform': platform,
                 'client_ver': client_ver,
+                'ovpn_ver': ovpn_ver,
                 'mac_addr': mac_addr,
                 'virt_address': virt_address,
                 'virt_address6': virt_address6,
@@ -1164,6 +1168,7 @@ class Clients(object):
                     user_name=user.name,
                     platform=platform,
                     client_ver=client_ver,
+                    ovpn_ver=ovpn_ver,
                     device_id=device_id,
                     device_name=device_name,
                     virtual_ip=virt_address,
@@ -1309,6 +1314,7 @@ class Clients(object):
         remote_ip = client_data.get('remote_ip')
         platform = client_data.get('platform')
         client_ver = client_data.get('client_ver')
+        ovpn_ver = client_data.get('ovpn_ver')
         device_id = client_data.get('device_id')
         device_name = client_data.get('device_name')
         username = client_data.get('username')
@@ -1399,6 +1405,8 @@ class Clients(object):
                         org_name=org.name,
                         user_name=user.name,
                         platform=platform,
+                        client_ver=client_ver,
+                        ovpn_ver=ovpn_ver,
                         device_id=device_id,
                         device_name=device_name,
                         remote_ip=remote_ip,
@@ -1433,6 +1441,7 @@ class Clients(object):
                 remote_ip=remote_ip,
                 platform=platform,
                 client_ver=client_ver,
+                ovpn_ver=ovpn_ver,
                 device_id=device_id,
                 device_name=device_name,
                 mac_addr=mac_addr,
@@ -1461,9 +1470,9 @@ class Clients(object):
 
     def connect_wg(self, user, org, wg_public_key, auth_password,
             auth_token, auth_nonce, auth_timestamp, sso_token,
-            platform, client_ver, device_id, device_name, mac_addr, mac_addrs,
-            client_public_address, client_public_address6, remote_ip,
-            connect_callback):
+            platform, client_ver, ovpn_ver, device_id, device_name, mac_addr,
+            mac_addrs, client_public_address, client_public_address6,
+            remote_ip, connect_callback):
         response = {
             'sent': False,
             'lock': threading.Lock(),
@@ -1504,6 +1513,7 @@ class Clients(object):
                             wg_public_key=wg_public_key,
                             platform=platform,
                             client_ver=client_ver,
+                            ovpn_ver=ovpn_ver,
                             device_id=device_id,
                             device_name=device_name,
                             password=auth_password,
@@ -1532,6 +1542,7 @@ class Clients(object):
                         user_name=user.name,
                         platform=platform,
                         client_ver=client_ver,
+                        ovpn_ver=ovpn_ver,
                         device_id=device_id,
                         device_name=device_name,
                         remote_ip=remote_ip,
@@ -1569,6 +1580,7 @@ class Clients(object):
                 remote_ip=remote_ip,
                 platform=platform,
                 client_ver=client_ver,
+                ovpn_ver=ovpn_ver,
                 device_id=device_id,
                 device_name=device_name,
                 mac_addr=mac_addr,
@@ -1621,7 +1633,7 @@ class Clients(object):
 
     def open_ovpn(self, user, org, auth_password,
             auth_token, auth_nonce, auth_timestamp, sso_token, platform,
-            client_ver, device_id, device_name, mac_addr, mac_addrs,
+            client_ver, ovpn_ver, device_id, device_name, mac_addr, mac_addrs,
             client_public_address, client_public_address6, remote_ip,
             connect_callback):
         response = {
@@ -1696,6 +1708,7 @@ class Clients(object):
                         user_name=user.name,
                         platform=platform,
                         client_ver=client_ver,
+                        ovpn_ver=ovpn_ver,
                         device_id=device_id,
                         device_name=device_name,
                         remote_ip=remote_ip,
@@ -1729,6 +1742,7 @@ class Clients(object):
                 remote_ip=remote_ip,
                 platform=platform,
                 client_ver=client_ver,
+                ovpn_ver=ovpn_ver,
                 device_id=device_id,
                 device_name=device_name,
                 mac_addr=mac_addr,
