@@ -7,12 +7,31 @@ from pritunl import callqueue
 from pritunl import settings
 from pritunl import logger
 
-import imp
+import sys
 import os
+try:
+    import imp
+    HAS_IMP = True
+except:
+    HAS_IMP = False
+    import importlib.util
 
 _queue = None
 _has_plugins = False
 _handlers = {}
+
+def _load_plugin_module(file_name, file_path):
+    if HAS_IMP:
+        return imp.load_source('plugin_' + file_name, file_path)
+
+    module_name = 'plugin_' + file_name
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    if spec is None:
+        raise ImportError(f"Could not create spec for {file_path}")
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
 
 def init():
     global _queue
@@ -40,7 +59,8 @@ def init():
                 name=file_name,
             )
             plugins_loaded.add(file_name)
-            modules.append(imp.load_source('plugin_' + file_name, file_path))
+            module = _load_plugin_module(file_name, file_path)
+            modules.append(module)
 
     missing_plugins = plugins_required - plugins_loaded
     if missing_plugins:
