@@ -21,9 +21,9 @@ _states = tunldb.TunlDB()
 
 class Authorizer(object):
     def __init__(self, svr, usr, clients, mode, stage, remote_ip, platform,
-            client_ver, device_id, device_name, mac_addr, mac_addrs, password,
-            auth_password, auth_token, auth_nonce, auth_timestamp, fw_token,
-            sso_token, reauth, callback):
+            client_ver, ovpn_ver, device_id, device_name, mac_addr, mac_addrs,
+            password, auth_password, auth_token, auth_nonce, auth_timestamp,
+            fw_token, sso_token, reauth, callback):
         self.server = svr
         self.user = usr
         self.clients = clients
@@ -32,6 +32,7 @@ class Authorizer(object):
         self.remote_ip = remote_ip
         self.platform = platform
         self.client_ver = client_ver
+        self.ovpn_ver = ovpn_ver
         self.device_id = device_id
         self.device_name = device_name
         self.mac_addr = mac_addr
@@ -131,7 +132,8 @@ class Authorizer(object):
         return {
             'remote_address': self.remote_ip,
             'platform': self.platform,
-            'client_ver': self.client_ver,
+            'client_version': self.client_ver,
+            'ovpn_version': self.ovpn_ver,
             'device_id': self.device_id,
             'device_name': self.device_name,
             'mac_addr': self.mac_addr,
@@ -1444,6 +1446,8 @@ class Authorizer(object):
                 mac_addr=self.mac_addr,
                 mac_addrs=self.mac_addrs,
                 platform=self.platform,
+                client_ver=self.client_ver,
+                ovpn_ver=self.ovpn_ver,
                 device_id=self.device_id,
                 device_name=self.device_name,
                 bypass_secondary=self.user.bypass_secondary,
