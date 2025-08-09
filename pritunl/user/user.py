@@ -376,7 +376,8 @@ class User(mongo.MongoObject):
     def disconnect(self):
         messenger.publish('instance', ['user_disconnect', self.id])
 
-    def sso_auth_check(self, svr, password, remote_ip, has_token):
+    def sso_auth_check(self, svr, password, remote_ip, has_token,
+            partial=False):
         modes = self.get_auth_modes(svr)
         auth_server = AUTH_SERVER
         if settings.app.dedicated:
@@ -402,21 +403,22 @@ class User(mongo.MongoObject):
                     )
                     return False
 
-                valid, google_groups = sso.verify_google(self.email)
-                if not valid:
-                    logger.error('Google auth check failed', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
-                    )
-                    return False
+                if not partial or settings.app.sso_google_connection_check:
+                    valid, google_groups = sso.verify_google(self.email)
+                    if not valid:
+                        logger.error('Google auth check failed', 'user',
+                            user_id=self.id,
+                            user_name=self.name,
+                        )
+                        return False
 
-                if settings.app.sso_google_mode == 'groups':
-                    cur_groups = set(self.groups or [])
-                    new_groups = set(google_groups)
+                    if settings.app.sso_google_mode == 'groups':
+                        cur_groups = set(self.groups or [])
+                        new_groups = set(google_groups)
 
-                    if cur_groups != new_groups:
-                        self.groups = list(new_groups)
-                        self.commit('groups')
+                        if cur_groups != new_groups:
+                            self.groups = list(new_groups)
+                            self.commit('groups')
 
                 return True
             except:
@@ -449,21 +451,22 @@ class User(mongo.MongoObject):
                     )
                     return False
 
-                valid, azure_groups = sso.verify_azure(self.name)
-                if not valid:
-                    logger.error('Azure auth check failed', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
-                    )
-                    return False
+                if not partial or settings.app.sso_azure_connection_check:
+                    valid, azure_groups = sso.verify_azure(self.name)
+                    if not valid:
+                        logger.error('Azure auth check failed', 'user',
+                            user_id=self.id,
+                            user_name=self.name,
+                        )
+                        return False
 
-                if settings.app.sso_azure_mode == 'groups':
-                    cur_groups = set(self.groups or [])
-                    new_groups = set(azure_groups)
+                    if settings.app.sso_azure_mode == 'groups':
+                        cur_groups = set(self.groups or [])
+                        new_groups = set(azure_groups)
 
-                    if cur_groups != new_groups:
-                        self.groups = list(new_groups)
-                        self.commit('groups')
+                        if cur_groups != new_groups:
+                            self.groups = list(new_groups)
+                            self.commit('groups')
 
                 return True
             except:
@@ -496,21 +499,22 @@ class User(mongo.MongoObject):
                     )
                     return False
 
-                valid, authzero_groups = sso.verify_authzero(self.name)
-                if not valid:
-                    logger.error('Auth0 auth check failed', 'user',
-                        user_id=self.id,
-                        user_name=self.name,
-                    )
-                    return False
+                if not partial or settings.app.sso_authzero_connection_check:
+                    valid, authzero_groups = sso.verify_authzero(self.name)
+                    if not valid:
+                        logger.error('Auth0 auth check failed', 'user',
+                            user_id=self.id,
+                            user_name=self.name,
+                        )
+                        return False
 
-                if settings.app.sso_authzero_mode == 'groups':
-                    cur_groups = set(self.groups or [])
-                    new_groups = set(authzero_groups)
+                    if settings.app.sso_authzero_mode == 'groups':
+                        cur_groups = set(self.groups or [])
+                        new_groups = set(authzero_groups)
 
-                    if cur_groups != new_groups:
-                        self.groups = list(new_groups)
-                        self.commit('groups')
+                        if cur_groups != new_groups:
+                            self.groups = list(new_groups)
+                            self.commit('groups')
 
                 return True
             except:
