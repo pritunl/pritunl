@@ -1,7 +1,7 @@
 Pritunl Changelog
 =================
 
-<%= verion %>
+<%= version %>
 
 Fix issue with Google single sign-on timeouts
 
