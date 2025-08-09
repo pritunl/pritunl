@@ -9,9 +9,10 @@ from pritunl import logger
 # when user authenticated sucessfully. When allow is False reason will
 # explain why the user was not authenticated.
 def user_connection(host_id, server_id, org_id, user_id, host_name,
-        server_name, org_name, user_name, platform, device_id, device_name,
-        remote_ip, mac_addr, password, auth_password, auth_token, auth_nonce,
-        auth_timestamp, allow, reason, wg_public_key, **kwargs):
+        server_name, org_name, user_name, platform, client_ver, ovpn_ver,
+        device_id, device_name, remote_ip, mac_addr, password, auth_password,
+        auth_token, auth_nonce, auth_timestamp, allow, reason,
+        wg_public_key, **kwargs):
     logger.info('Example log message', 'plugin',
         key1='value1',
         key2='value2',
@@ -27,8 +28,9 @@ def user_connection(host_id, server_id, org_id, user_id, host_name,
 
 # Called after user has connected.
 def user_connected(host_id, server_id, org_id, user_id, host_name,
-        server_name, org_name, user_name, platform, device_id, device_name,
-        virtual_ip, virtual_ip6, remote_ip, mac_addr, wg_public_key, **kwargs):
+        server_name, org_name, user_name, platform, client_ver, ovpn_ver,
+        device_id, device_name, virtual_ip, virtual_ip6, remote_ip, mac_addr,
+        wg_public_key, **kwargs):
     pass
 
 # Called on user disconnect, may not always be called if a server is stopped
