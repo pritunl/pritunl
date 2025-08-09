@@ -32,6 +32,7 @@ import uuid
 import pymongo
 import json
 import datetime
+import random
 import nacl.public
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
@@ -2561,10 +2562,10 @@ class Clients(object):
             return
 
         if not usr.sso_auth_check(self.server, client['password'],
-                client['real_address'], True):
+                client['real_address'], True, True):
             time.sleep(0.3)
             if not usr.sso_auth_check(self.server, client['password'],
-                    client['real_address'], True):
+                    client['real_address'], True, True):
                 logger.error('User failed auth update check',
                     'server',
                     server_id=self.server.id,
@@ -2628,6 +2629,8 @@ class Clients(object):
                 client = self.clients.find_id(client_id)
                 if not client:
                     continue
+
+                time.sleep(settings.app.sso_connection_check_rate / 1000)
 
                 self.clients.update_id(client['id'], {
                     'auth_check_timestamp': time.time(),
