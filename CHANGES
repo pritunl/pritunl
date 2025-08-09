@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.32.4349.59 2025-08-09
+-------------------------------
 
 Fix issue with Google single sign-on timeouts
 Update libraries
