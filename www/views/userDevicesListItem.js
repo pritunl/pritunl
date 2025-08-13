@@ -22,7 +22,39 @@ define([
       this.$('.server-item').tooltip();
       return this;
     },
-    onRegister: function() {
+    onRegister: function(evt) {
+      if (this.model.get('override')) {
+        $(evt.target).attr('disabled', 'disabled');
+        this.model.save({
+          reg_key: null,
+        }, {
+          success: function() {
+            $(evt.target).removeAttr('disabled');
+          }.bind(this),
+          error: function(model, response) {
+            $(evt.target).removeAttr('disabled');
+            var alertView;
+            if (response.responseJSON) {
+              alertView = new AlertView({
+                type: 'danger',
+                message: response.responseJSON.error_msg,
+                dismissable: true
+              });
+              $('.alerts-container').append(alertView.render().el);
+            }
+            else {
+              alertView = new AlertView({
+                type: 'danger',
+                message: 'Failed to register device',
+                dismissable: true
+              });
+              $('.alerts-container').append(alertView.render().el);
+            }
+          }.bind(this)
+        });
+        return;
+      }
+
       var model = this.model.clone();
 
       var modal = new ModalDeviceRegister({
