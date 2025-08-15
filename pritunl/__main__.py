@@ -343,6 +343,7 @@ def main(default_conf=None):
         from pritunl import logger
         from pritunl import mongo
         from pritunl import settings
+        from pritunl import utils
 
         setup.setup_db()
 
@@ -353,6 +354,10 @@ def main(default_conf=None):
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
             size=5000192, max=1000)
+        mongo.get_collection('messages').insert_one({
+            'message': None,
+            'timestamp': utils.now(),
+        })
 
         print('Message cache cleared')
 
