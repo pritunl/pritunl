@@ -71,6 +71,7 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
     collection = mongo.get_collection('messages')
     stall_ttl = settings.mongo.cursor_stall_ttl
     start_time = time.time()
+    cursor = None
     cursor_id = cursor_id or get_cursor_id(channels)
 
     while True:
@@ -94,6 +95,13 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
                     spec['_id'] = {'$gt': cursor_id}
 
             yield
+
+            if cursor:
+                try:
+                    cursor.close()
+                    cursor = None
+                except:
+                    pass
 
             last_event = time.time()
             cursor = collection.find(
@@ -119,10 +127,10 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
 
                         spec = spec.copy()
                         spec['_id'] = {'$gt': cursor_id}
-                        cursor = collection.find(spec).sort(
+                        batch_cursor = collection.find(spec).sort(
                             '$natural', pymongo.ASCENDING)
 
-                        for doc in cursor:
+                        for doc in batch_cursor:
                             if doc.get('message') is not None:
                                 doc.pop('nonce', None)
                                 yield doc
@@ -144,3 +152,14 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
 
         except pymongo.errors.AutoReconnect:
             time.sleep(0.2)
+
+        except pymongo.errors.CursorNotFound:
+            time.sleep(0.2)
+
+        finally:
+            if cursor:
+                try:
+                    cursor.close()
+                    cursor = None
+                except:
+                    pass
