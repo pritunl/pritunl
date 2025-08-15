@@ -88,6 +88,10 @@ def upsert_indexes():
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
             size=5000192, max=1000)
+        mongo.get_collection('messages').insert_one({
+            'message': None,
+            'timestamp': utils.now(),
+        })
 
     upsert_index('logs', 'timestamp', background=True)
     upsert_index('transaction', 'lock_id',
@@ -455,6 +459,10 @@ def setup_mongo():
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
             size=5000192, max=1000)
+        mongo.get_collection('messages').insert_one({
+            'message': None,
+            'timestamp': utils.now(),
+        })
 
     settings.local.mongo_time = None
 
