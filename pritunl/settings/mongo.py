@@ -9,4 +9,5 @@ class SettingsMongo(SettingsGroupMongo):
         'queue_ttl': 15,
         'task_max_attempts': 3,
         'task_ttl': 30,
+        'cursor_stall_ttl': 60,
     }
