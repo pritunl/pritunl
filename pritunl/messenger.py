@@ -83,7 +83,15 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
                 spec['channel'] = {'$in': channels}
 
             if cursor_id:
-                spec['_id'] = {'$gt': cursor_id}
+                cursor_missing = collection.count_documents(
+                    {'_id': cursor_id},
+                    limit=1,
+                ) < 1
+                if cursor_missing:
+                    cursor_id = get_cursor_id(channels)
+
+                if cursor_id:
+                    spec['_id'] = {'$gt': cursor_id}
 
             yield
 
