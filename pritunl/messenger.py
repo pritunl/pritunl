@@ -2,6 +2,7 @@ from pritunl.helpers import *
 from pritunl import mongo
 from pritunl import cache
 from pritunl import utils
+from pritunl import settings
 from pritunl import database
 
 import pymongo
@@ -21,12 +22,6 @@ def publish(channels, message, extra=None):
         for key, val in list(extra.items()):
             doc[key] = val
 
-    # ObjectId must be set by server and ObjectId order must match $natural
-    # order. Docs sent in order on client are not guaranteed to match $natural
-    # order on server. Nonce is added to force an insert from upsert where
-    # insert is not supported.
-    # When using inserts manipulate=False must be set to prevent pymongo
-    # from setting ObjectId locally.
     if isinstance(channels, str):
         doc['channel'] = channels
         collection.insert_one(doc)
@@ -74,6 +69,7 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
         return
 
     collection = mongo.get_collection('messages')
+    stall_ttl = settings.mongo.cursor_stall_ttl
     start_time = time.time()
     cursor_id = cursor_id or get_cursor_id(channels)
 
@@ -91,6 +87,7 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
 
             yield
 
+            last_event = time.time()
             cursor = collection.find(
                 spec,
                 cursor_type=pymongo.cursor.CursorType.TAILABLE_AWAIT,
@@ -100,6 +97,7 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
 
             while cursor.alive:
                 for doc in cursor:
+                    last_event = time.time()
                     cursor_id = doc['_id']
 
                     yield
@@ -126,8 +124,12 @@ def subscribe(channels, cursor_id=None, timeout=None, yield_delay=None,
                 if yield_app_server and check_app_server_interrupt():
                     return
 
-                if timeout and time.time() - start_time >= timeout:
+                cur_time = time.time()
+                if timeout and cur_time - start_time >= timeout:
                     return
+
+                if cur_time - last_event > stall_ttl:
+                    break
 
                 time.sleep(0.2)
                 yield
