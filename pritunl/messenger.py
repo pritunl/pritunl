@@ -31,7 +31,7 @@ def publish(channels, message, extra=None):
             doc_copy = doc.copy()
             doc_copy['channel'] = channel
             docs.append(doc_copy)
-        collection.insert_many(docs)
+        collection.insert_many(docs, ordered=True)
 
 def get_cursor_id(channels):
     if cache.has_cache:
