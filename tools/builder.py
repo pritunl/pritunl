@@ -132,7 +132,8 @@ def sync_styles():
         ['git', 'status', '-s'],
         cwd='www/styles',
     ).decode().rstrip().split('\n')
-    changed = any([True if x[0] == 'A' else False for x in changes])
+    changed = any([True if (len(x) > 0 and x[0] == 'A') else
+        False for x in changes])
     if changed:
         subprocess.check_call(
             ['git', 'commit', '-S', '-m'
