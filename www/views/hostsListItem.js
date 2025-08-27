@@ -15,6 +15,7 @@ define([
     template: _.template(hostsListItemTemplate),
     events: {
       'click .host-title a': 'onSettings',
+      'click .host-settings': 'onSettings',
       'click .host-del': 'onDelete',
       'click .host-cpu-usage-btn': 'onCpuUsageGraph',
       'click .host-mem-usage-btn': 'onMemUsageGraph',
