@@ -29,6 +29,8 @@ define([
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
         'click .dynamic-firewall-toggle': 'onDynamicFirewallSelect',
+        'click .geo-sort-toggle': 'onGeoSortSelect',
+        'click .force-connect-toggle': 'onForceConnectSelect',
         'click .route-dns-toggle': 'onRouteDnsSelect',
         'click .device-auth-toggle': 'onDeviceAuthSelect',
         'click .sso-auth-toggle': 'onSsoAuthSelect',
@@ -295,6 +297,40 @@ define([
     onDynamicFirewallSelect: function() {
       this.setDynamicFirewallSelect(!this.getDynamicFirewallSelect());
     },
+    getGeoSortSelect: function() {
+      return this.$('.geo-sort-toggle .selector').hasClass(
+        'selected');
+    },
+    setGeoSortSelect: function(state) {
+      if (state) {
+        this.$('.geo-sort-toggle .selector').addClass('selected');
+        this.$('.geo-sort-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.geo-sort-toggle .selector').removeClass('selected');
+        this.$('.geo-sort-toggle .selector-inner').hide();
+      }
+    },
+    onGeoSortSelect: function() {
+      this.setGeoSortSelect(!this.getGeoSortSelect());
+    },
+    getForceConnectSelect: function() {
+      return this.$('.force-connect-toggle .selector').hasClass(
+        'selected');
+    },
+    setForceConnectSelect: function(state) {
+      if (state) {
+        this.$('.force-connect-toggle .selector').addClass('selected');
+        this.$('.force-connect-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.force-connect-toggle .selector').removeClass('selected');
+        this.$('.force-connect-toggle .selector-inner').hide();
+      }
+    },
+    onForceConnectSelect: function() {
+      this.setForceConnectSelect(!this.getForceConnectSelect());
+    },
     getRouteDnsSelect: function() {
       return this.$('.route-dns-toggle .selector').hasClass(
         'selected');
@@ -498,6 +534,8 @@ define([
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var dynamicFirewall = this.getDynamicFirewallSelect();
+      var geoSort = this.getGeoSortSelect();
+      var forceConnect = this.getForceConnectSelect();
       var routeDns = this.getRouteDnsSelect();
       var deviceAuth = this.getDeviceAuthSelect();
       var ipv6 = this.getIpv6Select();
@@ -596,6 +634,8 @@ define([
         'restrict_routes': restrictRoutes,
         'wg': wg,
         'dynamic_firewall': dynamicFirewall,
+        'geo_sort': geoSort,
+        'force_connect': forceConnect,
         'route_dns': routeDns,
         'device_auth': deviceAuth,
         'ipv6': ipv6,
