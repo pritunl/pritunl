@@ -26,7 +26,8 @@ define([
       'local_address6': null,
       'local_addr6': null,
       'link_address': null,
-      'availability_group': null
+      'availability_group': null,
+      'priority': null
     },
     url: function() {
       var url = '/host';
