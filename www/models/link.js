@@ -10,6 +10,8 @@ define([
       'name': null,
       'type': null,
       'ipv6': null,
+      'protocol': null,
+      'wg_port': null,
       'host_check': null,
       'action': null,
       'status': null,
