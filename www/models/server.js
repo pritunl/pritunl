@@ -19,6 +19,7 @@ define([
       'bind_address': null,
       'dynamic_firewall': null,
       'geo_sort': null,
+      'force_connect': null,
       'route_dns': null,
       'device_auth': null,
       'port': null,
