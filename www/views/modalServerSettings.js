@@ -16,6 +16,7 @@ define([
     errorMsg: 'Failed to saving server, server error occurred.',
     enterOk: false,
     hasAdvanced: true,
+    hasWarning: false,
     events: function() {
       return _.extend({
         'change .dh-param-bits select': 'onDhParamBits',
@@ -47,6 +48,7 @@ define([
       return this.template(this.model.toJSON());
     },
     postRender: function() {
+      this.hasWarning = false
       this.$('.groups input').select2({
         tags: [],
         tokenSeparators: [',', ' '],
@@ -70,6 +72,7 @@ define([
         this.setAlert('danger', 'Using DH Param Bits less then 2048 is ' +
           'not compatible with newer versions of OpenSSL.', '.dh-param-bits');
       } else {
+        this.hasWarning = false
         this.clearAlert();
       }
     },
@@ -441,11 +444,16 @@ define([
         networkMode !== this.model.get('network_mode') ||
         otpAuth !== this.model.get('otp_auth')
       ) {
-        this.setAlert('warning', 'These changes will require users ' +
-          'that are not using an official Pritunl client to download their ' +
-          'updated profile again before being able to connect. Users ' +
-          'using an official Pritunl client will be able sync the changes.');
+        if (!this.hasWarning) {
+          this.hasWarning = true
+          this.setAlert('warning', 'These changes will require users ' +
+            'that are not using an official Pritunl client to download ' +
+            'their updated profile again before being able to connect. ' +
+            'Users using an official Pritunl client will be able sync ' +
+            'the changes.');
+        }
       } else {
+        this.hasWarning = false
         this.clearAlert();
       }
     },
@@ -580,6 +588,8 @@ define([
         '.pre-connect-msg textarea').val().trim() || null;
       var mssFix =  parseInt(this.$('.mss-fix input').val(), 10) || null;
       var multihome = this.getMultihomeSelect();
+
+      this.hasWarning = false
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
