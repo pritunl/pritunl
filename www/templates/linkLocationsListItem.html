@@ -6,6 +6,7 @@
   <button type="button" class="location-add-peer btn btn-primary btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Add Peer</button>
   <button type="button" class="location-add-host btn btn-primary btn-xs no-select">Add Host</button>
   <button type="button" class="location-add-route btn btn-primary btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Add Route</button>
+  <button type="button" class="link-location-settings btn btn-primary btn-xs no-select" <%= link_type === 'direct' ? 'style="display: none"' : '' %>>Settings</button>
 </div>
 <div class="link-routes">
   <% if (routes.length === 0 && link_type !== 'direct') { %>
