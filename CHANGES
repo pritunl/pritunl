@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= verson %>
 
 Fix issues with event system
+Fix server MTU issues
 
 Version 1.32.4349.59 2025-08-09
 -------------------------------
