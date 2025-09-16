@@ -362,8 +362,21 @@ class ServerInstance(object):
                 settings.vpn.max_routes_per_client
 
         if self.server.mss_fix:
-            server_conf += 'mssfix %s\n' % self.server.mss_fix
-            server_conf += 'tun-mtu %s\n' % self.server.mss_fix
+            if settings.vpn.set_tun_mtu:
+                server_conf += 'tun-mtu %s\n' % self.server.mss_fix
+                server_conf += 'mssfix %s\n' % (
+                    self.server.mss_fix - settings.vpn.mssfix_offset)
+                server_conf += 'push "mssfix %s"\n' % (
+                    self.server.mss_fix - settings.vpn.mssfix_offset)
+                server_conf += 'fragment %s\n' % (
+                    self.server.mss_fix - settings.vpn.mssfix_offset)
+                server_conf += 'push "fragment %s"\n' % (
+                    self.server.mss_fix - settings.vpn.mssfix_offset)
+            else:
+                server_conf += 'mssfix %s\n' % self.server.mss_fix
+                server_conf += 'push "mssfix %s"\n' % self.server.mss_fix
+                server_conf += 'fragment %s\n' % self.server.mss_fix
+                server_conf += 'push "fragment %s"\n' % self.server.mss_fix
 
         if self.server.multihome:
             server_conf += 'multihome\n'
