@@ -6,7 +6,7 @@ import io
 from google.oauth2 import service_account
 from googleapiclient import discovery
 
-def verify_google(user_email):
+def verify_google(user_email, skip_user=False, skip_groups=False):
     user_domain = user_email.split('@')[-1]
 
     if not isinstance(settings.app.sso_match, list):
@@ -18,7 +18,7 @@ def verify_google(user_email):
     google_key = settings.app.sso_google_key
     google_email = settings.app.sso_google_email
 
-    if not google_key or not google_email:
+    if not google_key or not google_email or skip_user:
         return True, []
 
     data = json.loads(google_key)
@@ -39,6 +39,9 @@ def verify_google(user_email):
     data = service.users().get(userKey=user_email).execute()
     if data.get('suspended'):
         return False, []
+
+    if skip_groups:
+        return True, []
 
     results = service.groups().list(userKey=user_email,
         maxResults=settings.app.sso_google_groups_max).execute()
