@@ -361,6 +361,9 @@ class ServerInstance(object):
             server_conf += 'max-routes-per-client %s\n' % \
                 settings.vpn.max_routes_per_client
 
+        if self.server.tun_mtu:
+            server_conf += 'tun-mtu %s\n' % self.server.tun_mtu
+
         if self.server.mss_fix:
             if settings.vpn.set_tun_mtu:
                 server_conf += 'tun-mtu %s\n' % self.server.mss_fix
