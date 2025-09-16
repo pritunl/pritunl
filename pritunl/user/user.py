@@ -403,22 +403,26 @@ class User(mongo.MongoObject):
                     )
                     return False
 
-                if not partial or settings.app.sso_google_connection_check:
-                    valid, google_groups = sso.verify_google(self.email)
-                    if not valid:
-                        logger.error('Google auth check failed', 'user',
-                            user_id=self.id,
-                            user_name=self.name,
-                        )
-                        return False
+                skip_user = settings.app.sso_google_connection_check_skip or (
+                    partial and not settings.app.sso_google_connection_check)
+                skip_groups = settings.app.sso_google_mode != 'groups'
 
-                    if settings.app.sso_google_mode == 'groups':
-                        cur_groups = set(self.groups or [])
-                        new_groups = set(google_groups)
+                valid, google_groups = sso.verify_google(self.email,
+                    skip_user=skip_user, skip_groups=skip_groups)
+                if not valid:
+                    logger.error('Google auth check failed', 'user',
+                        user_id=self.id,
+                        user_name=self.name,
+                    )
+                    return False
 
-                        if cur_groups != new_groups:
-                            self.groups = list(new_groups)
-                            self.commit('groups')
+                if not skip_user and settings.app.sso_google_mode == 'groups':
+                    cur_groups = set(self.groups or [])
+                    new_groups = set(google_groups)
+
+                    if cur_groups != new_groups:
+                        self.groups = list(new_groups)
+                        self.commit('groups')
 
                 return True
             except:
