@@ -83,7 +83,7 @@ def set_global_interrupt():
     except:
         pass
 
-    signal.alarm(3)
+    signal.alarm(10)
 
 def check_app_server_interrupt():
     return _app_server_interrupt
