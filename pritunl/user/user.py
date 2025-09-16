@@ -916,6 +916,7 @@ class User(mongo.MongoObject):
         conf_hash.update(CIPHERS[svr.cipher].encode())
         conf_hash.update(HASHES[svr.hash].encode())
         conf_hash.update(str(svr.lzo_compression).encode())
+        conf_hash.update(str(svr.mss_fix).encode())
         conf_hash.update(str(svr.block_outside_dns).encode())
         conf_hash.update(str(svr.otp_auth).encode())
         conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames].encode())
@@ -1002,7 +1003,7 @@ class User(mongo.MongoObject):
         if svr.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
-        if svr.mss_fix:
+        if settings.vpn.set_tun_mtu:
             client_conf += 'tun-mtu %s\n' % svr.mss_fix
 
         if svr.block_outside_dns:
