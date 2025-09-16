@@ -864,6 +864,13 @@ def key_wg_post(org_id, user_id, server_id):
     auth_nonce = auth_nonce[:32]
     auth_signature = auth_signature[:512]
 
+    instance = server.get_instance(server_id)
+    if not instance or instance.state != 'running':
+        return flask.abort(429)
+
+    if not instance.server.wg:
+        return flask.abort(429)
+
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
                 settings.app.auth_time_window:
@@ -1191,13 +1198,6 @@ def key_wg_post(org_id, user_id, server_id):
                 'error': 'device_signature_invalid',
                 'error_msg': 'Device signature invalid.',
             }, 400)
-
-    instance = server.get_instance(server_id)
-    if not instance or instance.state != 'running':
-        return flask.abort(429)
-
-    if not instance.server.wg:
-        return flask.abort(429)
 
     if instance.server.sso_auth:
         return _key_request_init(org.id, usr.id, svr.id, 'wg')
@@ -1566,6 +1566,10 @@ def key_ovpn_post(org_id, user_id, server_id):
     auth_nonce = auth_nonce[:32]
     auth_signature = auth_signature[:512]
 
+    instance = server.get_instance(server_id)
+    if not instance or instance.state != 'running':
+        return flask.abort(429)
+
     try:
         if abs(int(auth_timestamp) - int(utils.time_now())) > \
                 settings.app.auth_time_window:
@@ -1863,10 +1867,6 @@ def key_ovpn_post(org_id, user_id, server_id):
                 'error': 'device_signature_invalid',
                 'error_msg': 'Device signature invalid.',
             }, 400)
-
-    instance = server.get_instance(server_id)
-    if not instance or instance.state != 'running':
-        return flask.abort(429)
 
     if instance.server.sso_auth:
         return _key_request_init(org.id, usr.id, svr.id, 'ovpn')
