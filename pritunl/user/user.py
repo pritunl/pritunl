@@ -920,10 +920,11 @@ class User(mongo.MongoObject):
         conf_hash.update(CIPHERS[svr.cipher].encode())
         conf_hash.update(HASHES[svr.hash].encode())
         conf_hash.update(str(svr.lzo_compression).encode())
+        conf_hash.update(str(svr.tun_mtu).encode())
         conf_hash.update(str(svr.mss_fix).encode())
+        conf_hash.update(str(svr.fragment).encode())
         conf_hash.update(str(svr.block_outside_dns).encode())
         conf_hash.update(str(svr.otp_auth).encode())
-        conf_hash.update(JUMBO_FRAMES[svr.jumbo_frames].encode())
         conf_hash.update(svr.adapter_type.encode())
         conf_hash.update(str(svr.ping_interval).encode())
         conf_hash.update(str(settings.vpn.server_poll_timeout).encode())
@@ -1007,8 +1008,8 @@ class User(mongo.MongoObject):
         if svr.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
-        if settings.vpn.set_tun_mtu:
-            client_conf += 'tun-mtu %s\n' % svr.mss_fix
+        if svr.tun_mtu:
+            client_conf += 'tun-mtu %s\n' % svr.tun_mtu
 
         if svr.block_outside_dns:
             client_conf += 'ignore-unknown-option block-outside-dns\n'
@@ -1020,7 +1021,6 @@ class User(mongo.MongoObject):
         if svr.tls_auth:
             client_conf += 'key-direction 1\n'
 
-        client_conf += JUMBO_FRAMES[svr.jumbo_frames]
         client_conf += plugin_config
         client_conf += '<ca>\n%s\n</ca>\n' % ca_certificate
         if include_user_cert:
