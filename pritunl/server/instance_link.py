@@ -60,6 +60,9 @@ class ServerInstanceLink(object):
         if self.linked_server.lzo_compression != ADAPTIVE:
             client_conf += 'comp-lzo no\n'
 
+        if self.linked_server.tun_mtu:
+            client_conf += 'tun-mtu %s\n' % svr.tun_mtu
+
         if self.server.debug:
             self.server.output_link.push_message(
                 'Server conf:',
@@ -74,7 +77,6 @@ class ServerInstanceLink(object):
                         link_server_id=self.linked_server.id,
                     )
 
-        client_conf += JUMBO_FRAMES[self.linked_server.jumbo_frames]
         client_conf += '<ca>\n%s\n</ca>\n' % self.linked_server.ca_certificate
 
         if self.linked_server.tls_auth:
