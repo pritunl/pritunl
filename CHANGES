@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Improve server MTU settings
+
 Version 1.32.4387.45 2025-09-16
 -------------------------------
 
