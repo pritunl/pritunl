@@ -365,21 +365,12 @@ class ServerInstance(object):
             server_conf += 'tun-mtu %s\n' % self.server.tun_mtu
 
         if self.server.mss_fix:
-            if settings.vpn.set_tun_mtu:
-                server_conf += 'tun-mtu %s\n' % self.server.mss_fix
-                server_conf += 'mssfix %s\n' % (
-                    self.server.mss_fix - settings.vpn.mssfix_offset)
-                server_conf += 'push "mssfix %s"\n' % (
-                    self.server.mss_fix - settings.vpn.mssfix_offset)
-                server_conf += 'fragment %s\n' % (
-                    self.server.mss_fix - settings.vpn.mssfix_offset)
-                server_conf += 'push "fragment %s"\n' % (
-                    self.server.mss_fix - settings.vpn.mssfix_offset)
-            else:
-                server_conf += 'mssfix %s\n' % self.server.mss_fix
-                server_conf += 'push "mssfix %s"\n' % self.server.mss_fix
-                server_conf += 'fragment %s\n' % self.server.mss_fix
-                server_conf += 'push "fragment %s"\n' % self.server.mss_fix
+            server_conf += 'mssfix %s\n' % self.server.mss_fix
+            server_conf += 'push "mssfix %s"\n' % self.server.mss_fix
+
+        if self.server.fragment:
+            server_conf += 'fragment %s\n' % self.server.fragment
+            server_conf += 'push "fragment %s"\n' % self.server.fragment
 
         if self.server.multihome:
             server_conf += 'multihome\n'
@@ -401,8 +392,6 @@ class ServerInstance(object):
             server_conf += 'ignore-unknown-option allow-compression\n'
             server_conf += 'allow-compression no\n'
             server_conf += 'comp-lzo no\npush "comp-lzo no"\n'
-
-        server_conf += JUMBO_FRAMES[self.server.jumbo_frames]
 
         if push:
             server_conf += push
