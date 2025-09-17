@@ -506,6 +506,22 @@ def server_put_post(server_id=None):
         if mss_fix:
             mss_fix = int(mss_fix) or None
 
+    tun_mtu = None
+    tun_mtu_def = False
+    if 'tun_mtu' in flask.request.json:
+        tun_mtu_def = True
+        tun_mtu = flask.request.json['tun_mtu'] or None
+        if tun_mtu:
+            tun_mtu = int(tun_mtu) or None
+
+    fragment = None
+    fragment_def = False
+    if 'fragment' in flask.request.json:
+        fragment_def = True
+        fragment = flask.request.json['fragment'] or None
+        if fragment:
+            fragment = int(fragment) or None
+
     multihome = False
     multihome_def = False
     if 'multihome' in flask.request.json:
@@ -691,6 +707,8 @@ def server_put_post(server_id=None):
             debug=debug,
             pre_connect_msg=pre_connect_msg,
             mss_fix=mss_fix,
+            tun_mtu=tun_mtu,
+            fragment=fragment,
             multihome=multihome,
         )
         svr.add_host(settings.local.host_id)
@@ -839,6 +857,12 @@ def server_put_post(server_id=None):
         if mss_fix_def and svr.mss_fix != mss_fix:
             allow_online = False
             svr.mss_fix = mss_fix
+        if tun_mtu_def and svr.tun_mtu != tun_mtu:
+            allow_online = False
+            svr.tun_mtu = tun_mtu
+        if fragment_def and svr.fragment != fragment:
+            allow_online = False
+            svr.fragment = fragment
         if multihome_def and svr.multihome != multihome:
             allow_online = False
             svr.multihome = multihome
