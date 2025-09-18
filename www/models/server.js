@@ -61,6 +61,8 @@ define([
       'debug': null,
       'pre_connect_msg': null,
       'mss_fix': null,
+      'tun_mtu': null,
+      'fragment': null,
       'multihome': null
     },
     url: function() {
