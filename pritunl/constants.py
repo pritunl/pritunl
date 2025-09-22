@@ -1015,35 +1015,22 @@ DEVICE_REGISTRATION_LIMIT = 'device_registration_limit'
 DEVICE_REGISTRATION_LIMIT_MSG = 'Too many invalid device registration ' \
     'attempts, device removed.'
 
-RANDOM_ONE = (
-    'snowy',
-    'restless',
-    'calm',
-    'ancient',
-    'summer',
-    'evening',
-    'guarded',
-    'lively',
-    'thawing',
-    'autumn',
-    'thriving',
-    'patient',
-    'winter',
-)
-RANDOM_TWO = (
-    'waterfall',
-    'meadow',
-    'skies',
-    'waves',
-    'fields',
-    'stars',
-    'dreams',
-    'refuge',
-    'forest',
-    'plains',
-    'waters',
-    'plateau',
-    'thunder',
+RANDOM_ELEM = (
+    'iron',
+    'gold',
+    'silver',
+    'copper',
+    'zinc',
+    'neon',
+    'argon',
+    'xenon',
+    'radon',
+    'cobalt',
+    'nickel',
+    'carbon',
+    'helium',
+    'lithium',
+    'silicon',
 )
 
 CIPHERS = {
