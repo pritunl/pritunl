@@ -371,9 +371,8 @@ def roundrobin(*iterables):
             nexts = itertools.cycle(itertools.islice(nexts, pending))
 
 def random_name():
-    return '%s-%s-%s' % (
-        random.choice(RANDOM_ONE),
-        random.choice(RANDOM_TWO),
+    return '%s-%s' % (
+        random.choice(RANDOM_ELEM),
         random.randint(1000, 9999),
     )
 
