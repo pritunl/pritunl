@@ -1016,12 +1016,7 @@ DEVICE_REGISTRATION_LIMIT_MSG = 'Too many invalid device registration ' \
     'attempts, device removed.'
 
 RANDOM_ELEM = (
-    'iron',
-    'gold',
-    'silver',
     'copper',
-    'zinc',
-    'neon',
     'argon',
     'xenon',
     'radon',
@@ -1029,6 +1024,8 @@ RANDOM_ELEM = (
     'nickel',
     'carbon',
     'helium',
+    'nitrogen',
+    'radium',
     'lithium',
     'silicon',
 )
