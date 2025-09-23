@@ -1076,11 +1076,6 @@ ONC_CIPHERS = {
     'aes256': 'AES-256-CBC',
 }
 
-JUMBO_FRAMES = {
-    False: '',
-    True: 'tun-mtu 9000\nfragment 0\nmssfix 0\n',
-}
-
 OVPN_INLINE_SERVER_CONF_OLD = """\
 port %s
 proto %s
