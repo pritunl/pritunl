@@ -27,6 +27,7 @@ define([
       'click .get-otp-auth': 'onGetOtpAuth',
       'click .disable-user': 'onDisableUser',
       'click .enable-user': 'onEnableUser',
+      'click .settings-user': 'onRename',
       'click .toggle-servers': 'onToggleServers'
     },
     initialize: function() {
