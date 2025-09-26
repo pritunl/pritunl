@@ -76,6 +76,7 @@
       <div class="link-peer-disconnected label label-danger no-select" <%= !peer.static && !peer.transited_name && peer.status === 'disconnected' ? '' : 'style="display: none"' %>>Disconnected</div>
       <div class="link-peer-transited label no-select label-success" <%= !peer.static && peer.transited_name && peer.status === 'connected' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
       <div class="link-peer-transited label no-select label-primary" <%= !peer.static && peer.transited_name && peer.status === 'connecting' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
+      <div class="link-peer-transited label no-select label-default" <%= !peer.static && peer.transited_name && peer.status === 'unknown' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
       <div class="link-peer-transited label no-select label-danger" <%= !peer.static && peer.transited_name && peer.status === 'disconnected' ? '' : 'style="display: none"' %>>Transit (<%- peer.transited_name %>)</div>
       <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-add-transit btn btn-primary btn-xs" <%= link_type !== 'direct' && peer.transit === false ? '' : 'style="display: none"' %>>Transit Peer</button>
       <button data-id="<%- peer.id %>" data-name="<%- peer.name %>" type="button" class="link-remove-transit btn btn-warning btn-xs" <%= link_type !== 'direct' && peer.transit === true ? '' : 'style="display: none"' %>>Untransit Peer</button>
