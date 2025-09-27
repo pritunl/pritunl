@@ -87,7 +87,7 @@ def upsert_indexes():
     if prefix + 'messages' not in cur_collections:
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
-            size=5000192, max=1000)
+            size=20971520, max=5000)
         mongo.get_collection('messages').insert_one({
             'message': None,
             'timestamp': utils.now(),
@@ -453,12 +453,12 @@ def setup_mongo():
     if prefix + 'messages' not in cur_collections:
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
-            size=5000192, max=1000)
+            size=20971520, max=5000)
     elif not mongo.get_collection('messages').options().get('capped'):
         mongo.get_collection('messages').drop()
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
-            size=5000192, max=1000)
+            size=20971520, max=5000)
         mongo.get_collection('messages').insert_one({
             'message': None,
             'timestamp': utils.now(),
