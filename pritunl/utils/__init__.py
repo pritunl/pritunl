@@ -1,4 +1,5 @@
 from pritunl.utils.cert import *
+from pritunl.utils.cache import lru_cache_one_arg
 from pritunl.utils.filter import *
 from pritunl.utils.json_helpers import *
 from pritunl.utils.least_common_counter import *
