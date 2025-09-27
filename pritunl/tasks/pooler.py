@@ -5,7 +5,6 @@ class TaskPooler(task.Task):
     type = 'pooler'
 
     def task(self):
-        pooler.fill('org')
         pooler.fill('user')
         pooler.fill('dh_params')
 
