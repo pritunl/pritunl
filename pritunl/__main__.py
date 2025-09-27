@@ -369,7 +369,7 @@ def main(default_conf=None):
         mongo.get_collection('messages').drop()
         mongo.secondary_database.create_collection(
             prefix + 'messages', capped=True,
-            size=5000192, max=1000)
+            size=52428800, max=3000)
         mongo.get_collection('messages').insert_one({
             'message': None,
             'timestamp': utils.now(),
