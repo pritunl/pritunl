@@ -42,16 +42,6 @@ def reserve_pooled(name=None, auth_api=None, type=ORG_DEFAULT):
 
 def new_org(type=ORG_DEFAULT, block=True, **kwargs):
     if type == ORG_DEFAULT:
-        org = reserve_pooled(type=type, **kwargs)
-
-        if not org:
-            org = queue.reserve('queued_org', block=block, type=type,
-                **kwargs)
-
-        if org:
-            new_pooled()
-            return org
-
         org = Organization(type=type, **kwargs)
         org.initialize()
         org.commit()
