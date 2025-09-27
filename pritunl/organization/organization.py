@@ -15,6 +15,7 @@ import pymongo
 import threading
 import hashlib
 import re
+import datetime
 
 class Organization(mongo.MongoObject):
     fields = {
@@ -60,6 +61,7 @@ class Organization(mongo.MongoObject):
         return {
             'id': self.id,
             'name': self.name,
+            'expiration': self.extract_ca_expire(),
             'auth_api': self.auth_api,
             'auth_token': self.auth_token,
             'auth_secret': self.auth_secret,
@@ -118,6 +120,24 @@ class Organization(mongo.MongoObject):
 
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
+
+    def extract_ca_expire(self):
+        pattern = r'Not After\s*:\s*(.+?)(?:\n|$)'
+        match = re.search(pattern, self.ca_certificate, re.MULTILINE)
+
+        if match:
+            date_str = match.group(1).strip()
+
+            try:
+                date_str_clean = date_str.replace('GMT', '').strip()
+                date_str_clean = ' '.join(date_str_clean.split())
+                date_obj = datetime.datetime.strptime(
+                    date_str_clean, '%b %d %H:%M:%S %Y')
+                return date_obj
+            except ValueError:
+                return None
+        else:
+            return None
 
     def generate_auth_token(self):
         self.auth_token = utils.generate_secret()
