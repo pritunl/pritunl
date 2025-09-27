@@ -1314,7 +1314,7 @@ class User(mongo.MongoObject):
         public_key = serialization.load_pem_private_key(
             self.private_key.encode(),
             password=None,
-            backend=default_backend(),
+            unsafe_skip_rsa_key_validation=True,
         ).public_key()
 
         public_key.verify(
