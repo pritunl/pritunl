@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.32.4399.86 2025-09-28
+-------------------------------
 
 Fix performance issues with client connection requests
 Add warning for certificate expiration
