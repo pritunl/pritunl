@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix performance issues with client connection requests
+
 Version 1.32.4388.46 2025-09-17
 -------------------------------
 
