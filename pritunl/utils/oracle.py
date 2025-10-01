@@ -37,7 +37,7 @@ def oracle_get_metadata():
         'private_key': private_key_pem,
         'fingerprint': fingerprint,
         'region_name': metadata['instance']['canonicalRegionName'],
-        'tenancy_ocid': metadata['instance']['compartmentId'],
+        'tenancy_ocid': metadata['instance']['tenantId'],
         'compartment_ocid': metadata['instance']['compartmentId'],
         'vnic_ocid': metadata['vnics'][0]['vnicId'],
     }
