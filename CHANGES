@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Web server updates
+
 Version 1.32.4400.99 2025-09-29
 -------------------------------
 
