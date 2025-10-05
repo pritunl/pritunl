@@ -191,6 +191,11 @@ class Server(mongo.MongoObject):
                 'network': '0.0.0.0/0',
                 'nat': True,
             },
+            {
+                'network': '8.8.8.8/32',
+                'nat': True,
+                'comment': 'DNS Server',
+            },
         ],
         'dns_servers': [],
         'otp_auth': False,
