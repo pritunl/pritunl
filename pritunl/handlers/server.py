@@ -878,6 +878,22 @@ def server_put_post(server_id=None):
             'error_msg': err_msg,
         }, 400)
 
+    dns_server_route = ''
+    for dns_server in svr.dns_servers:
+        try:
+            dns_server_route = str(ipaddress.ip_address(dns_server)) + '/32'
+            break
+        except (ipaddress.AddressValueError, ValueError):
+            pass
+
+    if dns_server_route:
+        for route in svr.routes:
+            if route.get('comment') == 'DNS Server' and \
+                    route['network'] != dns_server_route:
+                route['network'] = dns_server_route
+                if changed:
+                    changed.add('routes')
+
     svr.commit(changed)
 
     if not server_id:
