@@ -45,6 +45,9 @@ class ServerInstance(object):
         self.clean_exit = False
         self.interface = None
         self.interface_wg = None
+        self.table = None
+        self.tables_active = set()
+        self.table_lock = threading.Lock()
         self.wg_started = False
         self.wg_private_key = None
         self.wg_public_key = None
@@ -143,6 +146,7 @@ class ServerInstance(object):
         self.interface = utils.interface_acquire(self.server.adapter_type)
         if self.server.wg:
             self.interface_wg = utils.interface_acquire('wg')
+        self.table = utils.interface_acquire('table')
 
     def resources_release(self):
         interface = self.interface
@@ -153,6 +157,10 @@ class ServerInstance(object):
         if interface_wg:
             utils.interface_release('wg', interface_wg)
             self.interface_wg = None
+        table = self.table
+        if table:
+            utils.interface_release('table', table)
+            self.table = None
 
         _instances_lock.acquire()
         try:
@@ -160,6 +168,134 @@ class ServerInstance(object):
                 _instances.pop(self.server.id)
         finally:
             _instances_lock.release()
+
+    def tables_add(self, vxlan_addr, vxlan_addr6, network):
+        if ':' in network:
+            if vxlan_addr6 == self.vxlan.vxlan_addr6:
+                return
+        else:
+            if vxlan_addr == self.vxlan.vxlan_addr:
+                return
+
+        self.table_lock.acquire()
+        try:
+            if not self.tables_active:
+                self._tables_clear()
+
+            if network not in self.tables_active:
+                if ':' in network:
+                    utils.Process(
+                        ['ip', '-6', 'rule', 'add', 'table', self.table,
+                            'from', network],
+                    ).run(5)
+                else:
+                    utils.Process(
+                        ['ip', 'rule', 'add', 'table', self.table,
+                            'from', network],
+                    ).run(5)
+                self.tables_active.add(network)
+
+            for route in self.table_routes:
+                if ':' in route:
+                    utils.Process(
+                        ['ip', '-6', 'route', 'add', 'table', self.table,
+                            route, 'via', vxlan_addr6],
+                        ignore_states=['File exists'],
+                    ).run(5)
+                else:
+                    utils.Process(
+                        ['ip', 'route', 'add', 'table', self.table,
+                            route, 'via', vxlan_addr],
+                        ignore_states=['File exists'],
+                    ).run(5)
+        except:
+            logger.exception('Failed to add table rule', 'server',
+                server_id=self.server.id,
+                instance_id=self.id,
+                vxlan_addr=vxlan_addr,
+                vxlan_addr6=vxlan_addr6,
+                network=network,
+            )
+        finally:
+            self.table_lock.release()
+
+    def tables_del(self, network):
+        self.table_lock.acquire()
+        try:
+            if ':' in network:
+                utils.Process(
+                    ['ip', '-6', 'rule', 'del', 'from', network],
+                    ignore_states=['No such file'],
+                ).run(5)
+            else:
+                utils.Process(
+                    ['ip', 'rule', 'del', 'from', network],
+                    ignore_states=['No such file'],
+                ).run(5)
+            try:
+                self.tables_active.remove(network)
+            except KeyError:
+                pass
+        finally:
+            self.table_lock.release()
+
+    def _tables_clear(self):
+        networks = self.tables_active.copy()
+        networks.add(self.server.network)
+        if self.server.ipv6:
+            networks.add(self.server.network6)
+        if self.server.wg:
+            networks.add(self.server.network_wg)
+            if self.server.ipv6:
+                networks.add(self.server.network6_wg)
+
+        for network in networks:
+            try:
+                for i in range(3):
+                    if ':' in network:
+                        proc = utils.Process(
+                            ['ip', '-6', 'rule', 'del', 'from', network],
+                            ignore_states=['No such file'],
+                        )
+                    else:
+                        proc = utils.Process(
+                            ['ip', 'rule', 'del', 'from', network],
+                            ignore_states=['No such file'],
+                        )
+
+                    proc.run(5)
+                    if proc.return_code() != 0:
+                        break
+            except:
+                pass
+
+        for i in range(50):
+            proc = utils.Process(
+                ['ip', 'rule', 'del', 'table', self.table],
+                ignore_states=['No such file'],
+            )
+            proc.run(5)
+            if proc.return_code() != 0:
+                break
+
+        if self.server.ipv6:
+            for i in range(50):
+                proc = utils.Process(
+                    ['ip', '-6', 'rule', 'del', 'table', self.table],
+                    ignore_states=['No such file'],
+                )
+                proc.run(5)
+                if proc.return_code() != 0:
+                    break
+
+        self.tables_active = set()
+
+    def tables_clear(self):
+        self.table_lock.acquire()
+        try:
+            self._tables_clear()
+        finally:
+            self.table_lock.release()
 
     def generate_ovpn_conf(self):
         if not self.server.primary_organization or \
@@ -642,6 +778,7 @@ class ServerInstance(object):
                     'Failed to find default IPv6 network interface')
         routes6.reverse()
 
+        table_routes = []
         for route in self.server.get_routes(
                     include_hidden=True,
                     include_server_links=True,
@@ -710,6 +847,9 @@ class ServerInstance(object):
                     nat=False,
                 )
 
+            if not nat:
+                table_routes.append(network)
+
             nat_interface = route['nat_interface']
             if network == '0.0.0.0/0' or network == '::/0':
                 nat_interface = interface
@@ -719,6 +859,8 @@ class ServerInstance(object):
                 nat=nat,
                 nat_interface=nat_interface,
             )
+
+        self.table_routes = table_routes
 
         if self.vxlan:
             self.iptables.add_route(self.vxlan.vxlan_net)
@@ -1253,6 +1395,7 @@ class ServerInstance(object):
             pass
 
     def init_route_advertisements(self):
+        advertise_networks = []
         for route in self.server.get_routes(include_server_links=True):
             advertise = route['advertise']
             vpc_region = route['vpc_region']
@@ -1267,34 +1410,40 @@ class ServerInstance(object):
                 network = netmap
 
             if advertise or (vpc_region and vpc_id):
-                self.reserve_route_advertisement(
-                    vpc_region, vpc_id, network)
+                advertise_networks.append(network)
+
+        if advertise_networks:
+            self.reserve_route_advertisement(
+                vpc_region, vpc_id, advertise_networks, initial_load=True)
 
     def clear_route_advertisements(self):
         for ra_id in self.route_advertisements.copy():
             self.routes_collection.delete_one({
                 '_id': ra_id,
+                'instance_id': self.id,
             })
 
-    def reserve_route_advertisement(self, vpc_region, vpc_id, network):
+    def reserve_route_advertisement(self, vpc_region, vpc_id, networks,
+            initial_load=False):
         cloud_provider = settings.app.cloud_provider
         if not cloud_provider:
             return
 
-        ra_id = '%s_%s_%s' % (self.server.id, vpc_id, network)
         timestamp_spec = utils.now() - datetime.timedelta(
             seconds=settings.vpn.route_ping_ttl)
 
         try:
             self.routes_collection.update_one({
-                '_id': ra_id,
+                '_id': self.server.id,
                 'timestamp': {'$lt': timestamp_spec},
             }, {'$set': {
                 'instance_id': self.id,
                 'server_id': self.server.id,
                 'vpc_region': vpc_region,
                 'vpc_id': vpc_id,
-                'network': network,
+                'networks': networks,
+                'vxlan_addr': self.vxlan.vxlan_addr,
+                'vxlan_addr6': self.vxlan.vxlan_addr6,
                 'timestamp': utils.now(),
             }}, upsert=True)
 
@@ -1312,25 +1461,56 @@ class ServerInstance(object):
                     )
 
             if self.vxlan:
-                if network == self.server.network:
-                    vxlan_net = self.vxlan.vxlan_net
-                    if cloud_provider == 'aws':
-                        utils.add_vpc_route(vxlan_net)
-                    elif cloud_provider == 'oracle':
-                        utils.oracle_add_route(vxlan_net)
+                for network in networks:
+                    if network == self.server.network:
+                        vxlan_net = self.vxlan.vxlan_net
+                        if cloud_provider == 'aws':
+                            utils.add_vpc_route(vxlan_net)
+                        elif cloud_provider == 'oracle':
+                            utils.oracle_add_route(vxlan_net)
+                        elif cloud_provider == 'pritunl':
+                            utils.pritunl_cloud_add_route(vxlan_net)
 
-                elif network == self.server.network6:
-                    vxlan_net6 = utils.net4to6x64(
-                        settings.vpn.ipv6_prefix,
-                        self.vxlan.vxlan_net,
-                    )
-                    if cloud_provider == 'aws':
-                        utils.add_vpc_route(vxlan_net6)
-                    elif cloud_provider == 'oracle':
-                        utils.oracle_add_route(vxlan_net6)
+                    elif network == self.server.network6:
+                        vxlan_net6 = utils.net4to6x64(
+                            settings.vpn.ipv6_prefix,
+                            self.vxlan.vxlan_net,
+                        )
+                        if cloud_provider == 'aws':
+                            utils.add_vpc_route(vxlan_net6)
+                        elif cloud_provider == 'oracle':
+                            utils.oracle_add_route(vxlan_net6)
+                        elif cloud_provider == 'pritunl':
+                            utils.pritunl_cloud_add_route(vxlan_net6)
 
-            self.route_advertisements.add(ra_id)
+            for network in networks:
+                self.tables_del(network)
+
+            logger.info('Advertising routes', 'server',
+                server_id=self.server.id,
+                instance_id=self.id,
+                cloud_provider=cloud_provider,
+                networks=networks,
+            )
+
+            messenger.publish('instance', ['route_advertised',
+                self.server.id, self.vxlan.vxlan_addr,
+                self.vxlan.vxlan_addr6, networks])
+
+            self.route_advertisements.add(self.server.id)
         except pymongo.errors.DuplicateKeyError:
+            if initial_load:
+                doc = self.routes_collection.find_one({
+                    '_id': self.server.id,
+                })
+
+                if doc:
+                    vxlan_addr = doc['vxlan_addr']
+                    vxlan_addr6 = doc['vxlan_addr6']
+                    doc_networks = doc['networks']
+                    for network in doc_networks:
+                        self.tables_add(vxlan_addr, vxlan_addr6, network)
+
             return
         except:
             logger.exception('Failed to add vpc route', 'server',
@@ -1683,6 +1863,9 @@ class ServerInstance(object):
             if self.is_interrupted():
                 return
 
+            self.state = 'clear_table_rules'
+            self.tables_clear()
+
             self.state = 'upsert_iptables_rules'
             self.iptables.upsert_rules()
 
@@ -1902,6 +2085,14 @@ class ServerInstance(object):
                 self.iptables.clear_rules()
             except:
                 logger.exception('Server iptables clean up error', 'server',
+                    server_id=self.server.id,
+                    instance_id=self.id,
+                )
+
+            try:
+                self.tables_clear()
+            except:
+                logger.exception('Server tables clean up error', 'server',
                     server_id=self.server.id,
                     instance_id=self.id,
                 )
