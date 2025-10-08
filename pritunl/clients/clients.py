@@ -2966,7 +2966,7 @@ class Clients(object):
                         self.link_routes6.remove(network_link)
                     except KeyError:
                         pass
-                    utils.del_route(network_link)
+                    utils.del_route6(network_link)
 
                 self.link_routes6.add(network_link)
                 utils.add_route6(
@@ -2974,7 +2974,7 @@ class Clients(object):
                     host_address6.split('/')[0],
                 )
             else:
-                if network_link in self.link_routes6:
+                if network_link in self.link_routes:
                     try:
                         self.link_routes.remove(network_link)
                     except KeyError:
