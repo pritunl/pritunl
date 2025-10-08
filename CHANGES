@@ -5,6 +5,7 @@ Pritunl Changelog
 
 Web server updates
 Update server default routes
+Add support for route advertisements on replicated servers
 
 Version 1.32.4400.99 2025-09-29
 -------------------------------
