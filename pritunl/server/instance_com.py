@@ -230,17 +230,17 @@ class ServerInstanceCom(object):
             if len(msg) > 3:
                 server_id = msg[3]
             self.clients.reconnect_user(user_id, host_id, server_id)
-        elif event_type == 'route_advertisement':
+        elif event_type == 'route_advertisement2':
             server_id = msg[1]
             vpc_region = msg[2]
             vpc_id = msg[3]
-            network = msg[4]
+            networks = msg[4]
 
             if server_id != self.server.id:
                 return
 
             self.instance.reserve_route_advertisement(
-                vpc_region, vpc_id, network)
+                vpc_region, vpc_id, networks)
 
     @interrupter
     def _watch_thread(self):
