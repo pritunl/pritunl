@@ -241,6 +241,17 @@ class ServerInstanceCom(object):
 
             self.instance.reserve_route_advertisement(
                 vpc_region, vpc_id, networks)
+        elif event_type == 'route_advertised':
+            server_id = msg[1]
+            vxlan_addr = msg[2]
+            vxlan_addr6 = msg[3]
+            networks = msg[4]
+
+            if server_id != self.server.id:
+                return
+
+            for network in networks:
+                self.instance.tables_add(vxlan_addr, vxlan_addr6, network)
 
     @interrupter
     def _watch_thread(self):
