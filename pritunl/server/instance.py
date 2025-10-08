@@ -1298,15 +1298,18 @@ class ServerInstance(object):
                 'timestamp': utils.now(),
             }}, upsert=True)
 
-            if cloud_provider == 'aws':
-                utils.add_vpc_route(network)
-            elif cloud_provider == 'oracle':
-                utils.oracle_add_route(network)
-            else:
-                logger.error('Unknown cloud provider type', 'server',
-                    cloud_provider=settings.app.cloud_provider,
-                    network=network,
-                )
+            for network in networks:
+                if cloud_provider == 'aws':
+                    utils.add_vpc_route(network)
+                elif cloud_provider == 'oracle':
+                    utils.oracle_add_route(network)
+                elif cloud_provider == 'pritunl':
+                    utils.pritunl_cloud_add_route(network)
+                else:
+                    logger.error('Unknown cloud provider type', 'server',
+                        cloud_provider=settings.app.cloud_provider,
+                        network=network,
+                    )
 
             if self.vxlan:
                 if network == self.server.network:
