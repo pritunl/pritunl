@@ -87,3 +87,6 @@ class Process(object):
 
             raise subprocess.CalledProcessError(
                 self._return_code, cmd, output=self._stdoutdata)
+
+    def return_code(self):
+        return self._return_code
