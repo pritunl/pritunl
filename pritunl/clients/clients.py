@@ -2899,13 +2899,11 @@ class Clients(object):
                         pass
                     utils.del_route(virt_address)
 
-                if not host_address or \
-                        host_address == settings.local.host.local_addr or \
-                        host_address == self.route_addr:
-                    return
-
-                self.client_routes.add(virt_address)
-                utils.add_route(virt_address, host_address)
+                if host_address and \
+                        host_address != settings.local.host.local_addr and \
+                        host_address != self.route_addr:
+                    self.client_routes.add(virt_address)
+                    utils.add_route(virt_address, host_address)
             except:
                 logger.exception('Failed to add route', 'clients',
                     virt_address=virt_address,
@@ -2925,13 +2923,11 @@ class Clients(object):
                         pass
                     utils.del_route6(virt_address6)
 
-                if not host_address6 or \
-                        host_address6 == settings.local.host.local_addr6 or \
-                        host_address6 == self.route_addr6:
-                    return
-
-                self.client_routes6.add(virt_address6)
-                utils.add_route6(virt_address6, host_address6)
+                if host_address6 and \
+                        host_address6 != settings.local.host.local_addr6 and \
+                        host_address6 != self.route_addr6:
+                    self.client_routes6.add(virt_address6)
+                    utils.add_route6(virt_address6, host_address6)
             except:
                 logger.exception('Failed to add route6', 'clients',
                     virt_address=virt_address,
