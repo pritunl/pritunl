@@ -699,8 +699,26 @@ class Server(mongo.MongoObject):
         virtual_vpc_region = None
         virtual_vpc_id = None
 
+        routes_net = []
+        for route in self.routes:
+            route_network = route['network']
+            if route_network == '0.0.0.0/0' or route_network == 'virtual':
+                continue
+            routes_net.append(ipaddress.ip_network(
+                route_network, strict=False))
+
         if include_dns_routes and settings.vpn.dns_route:
             for dns_server in self.dns_servers:
+                dns_server_ip = ipaddress.ip_address(dns_server)
+
+                has_route = False
+                for route_net in routes_net:
+                    if dns_server_ip in route_net:
+                        has_route = True
+
+                if has_route:
+                    continue
+
                 if ":" in dns_server:
                     dns_network = dns_server + "/128"
                 else:
