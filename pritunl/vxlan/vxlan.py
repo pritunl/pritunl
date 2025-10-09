@@ -371,6 +371,54 @@ class Vxlan(object):
         finally:
             self.running_lock.release()
 
+    def add_host2(self, host_vxlan_id, vxlan_mac, host_dst, host_dst6):
+        self.running_lock.acquire()
+        try:
+            if settings.local.host.local_addr == host_dst:
+                return
+
+            if not self.running:
+                return
+
+            utils.check_output_logged([
+                'bridge',
+                'fdb',
+                'append',
+                '00:00:00:00:00:00',
+                'dev',
+                self.iface_name,
+                'dst',
+                host_dst,
+            ], ignore_states=['File exists'])
+
+            utils.check_output_logged([
+                'arp',
+                '-s',
+                self.get_host_addr(host_vxlan_id),
+                vxlan_mac,
+            ])
+
+            if host_dst6:
+                utils.check_output_logged([
+                    'ip',
+                    '-6',
+                    'neighbour',
+                    'replace',
+                    self.get_host_addr6(host_vxlan_id),
+                    'lladdr',
+                    vxlan_mac,
+                    'dev',
+                    self.iface_name,
+                ])
+        except:
+            logger.error('Failed to add vxlan host', 'vxlan',
+                vxlan_id=self.vxlan_id,
+                server_id=self.server_id,
+            )
+            raise
+        finally:
+            self.running_lock.release()
+
 def _get_ids():
     ids = list(range(0, 256))
     random.shuffle(ids)
