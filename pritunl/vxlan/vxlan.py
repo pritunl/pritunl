@@ -282,12 +282,32 @@ class Vxlan(object):
             self.get_host_addr(host_vxlan_id),
         )
 
-    def add_host(self, host_vxlan_id, vxlan_mac, host_dst, host_dst6):
-        if settings.local.host.local_addr == host_dst:
-            return
+    def flush_fdb(self, host_dst):
+        output = utils.check_output([
+            'bridge', 'fdb', 'show', 'dev', self.iface_name,
+        ])
 
+        for line in output.split('\n'):
+            if f'dst {host_dst}' in line and 'self permanent' in line:
+                parts = line.split()
+                if parts:
+                    mac_addr = parts[0]
+                    try:
+                        utils.check_call_silent([
+                            'bridge', 'fdb', 'del',
+                            mac_addr, 'dev', self.iface_name, 'dst', host_dst,
+                        ])
+                    except:
+                        pass
+
+    def add_host(self, host_vxlan_id, vxlan_mac, host_dst, host_dst6):
         self.running_lock.acquire()
         try:
+            self.flush_fdb(host_dst)
+
+            if settings.local.host.local_addr == host_dst:
+                return
+
             if not self.running:
                 return
 
