@@ -198,13 +198,13 @@ class ServerInstance(object):
             for route in self.table_routes:
                 if ':' in route:
                     utils.Process(
-                        ['ip', '-6', 'route', 'add', 'table', self.table,
+                        ['ip', '-6', 'route', 'replace', 'table', self.table,
                             route, 'via', vxlan_addr6],
                         ignore_states=['File exists'],
                     ).run(5)
                 else:
                     utils.Process(
-                        ['ip', 'route', 'add', 'table', self.table,
+                        ['ip', 'route', 'replace', 'table', self.table,
                             route, 'via', vxlan_addr],
                         ignore_states=['File exists'],
                     ).run(5)
@@ -239,17 +239,21 @@ class ServerInstance(object):
         finally:
             self.table_lock.release()
 
-    def _tables_clear(self):
-        networks = self.tables_active.copy()
-        networks.add(self.server.network)
+    def _tables_clear(self, networks=None):
+        clear_networks = self.tables_active.copy()
+        clear_networks.add(self.server.network)
         if self.server.ipv6:
-            networks.add(self.server.network6)
+            clear_networks.add(self.server.network6)
         if self.server.wg:
-            networks.add(self.server.network_wg)
+            clear_networks.add(self.server.network_wg)
             if self.server.ipv6:
-                networks.add(self.server.network6_wg)
+                clear_networks.add(self.server.network6_wg)
 
-        for network in networks:
+        if networks:
+            for network in networks:
+                clear_networks.add(network)
+
+        for network in clear_networks:
             try:
                 for i in range(3):
                     if ':' in network:
@@ -269,31 +273,22 @@ class ServerInstance(object):
             except:
                 pass
 
-        for i in range(50):
-            proc = utils.Process(
-                ['ip', 'rule', 'del', 'table', self.table],
-                ignore_states=['No such file'],
-            )
-            proc.run(5)
-            if proc.return_code() != 0:
-                break
+        utils.Process(
+            ['ip', 'route', 'flush', 'table', self.table],
+            ignore_states=['No such file'],
+        ).run(5)
 
-        if self.server.ipv6:
-            for i in range(50):
-                proc = utils.Process(
-                    ['ip', '-6', 'rule', 'del', 'table', self.table],
-                    ignore_states=['No such file'],
-                )
-                proc.run(5)
-                if proc.return_code() != 0:
-                    break
+        utils.Process(
+            ['ip', '-6', 'route', 'flush', 'table', self.table],
+            ignore_states=['No such file'],
+        ).run(5)
 
         self.tables_active = set()
 
-    def tables_clear(self):
+    def tables_clear(self, networks=None):
         self.table_lock.acquire()
         try:
-            self._tables_clear()
+            self._tables_clear(networks=networks)
         finally:
             self.table_lock.release()
 
@@ -1483,8 +1478,7 @@ class ServerInstance(object):
                         elif cloud_provider == 'pritunl':
                             utils.pritunl_cloud_add_route(vxlan_net6)
 
-            for network in networks:
-                self.tables_del(network)
+            self.tables_clear(networks=networks)
 
             logger.info('Advertising routes', 'server',
                 server_id=self.server.id,
