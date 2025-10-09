@@ -881,7 +881,12 @@ def server_put_post(server_id=None):
     dns_server_route = ''
     for dns_server in svr.dns_servers:
         try:
-            dns_server_route = str(ipaddress.ip_address(dns_server)) + '/32'
+            if ':' in dns_server:
+                dns_server_route = str(
+                    ipaddress.ip_address(dns_server)) + '/128'
+            else:
+                dns_server_route = str(
+                    ipaddress.ip_address(dns_server)) + '/32'
             break
         except (ipaddress.AddressValueError, ValueError):
             pass
