@@ -273,15 +273,21 @@ class ServerInstance(object):
             except:
                 pass
 
-        utils.Process(
-            ['ip', 'route', 'flush', 'table', self.table],
-            ignore_states=['No such file'],
-        ).run(5)
+        try:
+            utils.Process(
+                ['ip', 'route', 'flush', 'table', self.table],
+                ignore_states=['does not exist'],
+            ).run(5)
+        except:
+            pass
 
-        utils.Process(
-            ['ip', '-6', 'route', 'flush', 'table', self.table],
-            ignore_states=['No such file'],
-        ).run(5)
+        try:
+            utils.Process(
+                ['ip', '-6', 'route', 'flush', 'table', self.table],
+                ignore_states=['does not exist'],
+            ).run(5)
+        except:
+            pass
 
         self.tables_active = set()
 
