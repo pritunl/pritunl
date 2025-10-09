@@ -351,53 +351,17 @@ class Vxlan(object):
             ])
 
             if host_dst6:
-                for i in range(2):
-                    try:
-                        if i == 0:
-                            check_func = utils.check_output
-                        else:
-                            check_func = utils.check_output_logged
-
-                        check_func([
-                            'ip',
-                            '-6',
-                            'neighbour',
-                            'add',
-                            self.get_host_addr6(host_vxlan_id),
-                            'lladdr',
-                            vxlan_mac,
-                            'dev',
-                            self.iface_name,
-                        ], ignore_states=['File exists'])
-
-                        break
-                    except subprocess.CalledProcessError:
-                        if i == 0:
-                            utils.check_output_logged([
-                                'ip',
-                                '-6',
-                                'neighbour',
-                                'del',
-                                self.get_host_addr6(host_vxlan_id),
-                                'dev',
-                                self.iface_name,
-                            ])
-                            for j in range(30):
-                                try:
-                                    utils.check_call_silent([
-                                        'ip',
-                                        '-6',
-                                        'neighbour',
-                                        'del',
-                                        self.get_host_addr6(host_vxlan_id),
-                                        'dev',
-                                        self.iface_name,
-                                    ])
-                                except:
-                                    break
-                                time.sleep(0.5)
-                        else:
-                            raise
+                utils.check_output_logged([
+                    'ip',
+                    '-6',
+                    'neighbour',
+                    'replace',
+                    self.get_host_addr6(host_vxlan_id),
+                    'lladdr',
+                    vxlan_mac,
+                    'dev',
+                    self.iface_name,
+                ])
         except:
             logger.error('Failed to add vxlan host', 'vxlan',
                 vxlan_id=self.vxlan_id,
