@@ -739,7 +739,7 @@ def server_put_post(server_id=None):
             svr.geo_sort = geo_sort
         if force_connect_def:
             svr.force_connect = force_connect
-        if route_dns_def:
+        if route_dns_def and svr.route_dns != route_dns:
             allow_online = False
             svr.route_dns = route_dns
         if device_auth_def and svr.device_auth != device_auth:
@@ -814,16 +814,18 @@ def server_put_post(server_id=None):
         if ping_timeout_def and svr.ping_timeout != ping_timeout:
             allow_online = False
             svr.ping_timeout = ping_timeout
-        if ping_interval_wg_def:
+        if ping_interval_wg_def and svr.ping_interval_wg != ping_interval_wg:
             allow_online = False # TODO
             svr.ping_interval_wg = ping_interval_wg
-        if ping_timeout_wg_def:
+        if ping_timeout_wg_def and svr.ping_timeout_wg != ping_timeout_wg:
             allow_online = False # TODO
             svr.ping_timeout_wg = ping_timeout_wg
-        if link_ping_interval_def:
+        if link_ping_interval_def and \
+                svr.link_ping_interval != link_ping_interval:
             allow_online = False # TODO
             svr.link_ping_interval = link_ping_interval
-        if link_ping_timeout_def:
+        if link_ping_timeout_def and \
+                svr.link_ping_timeout != link_ping_timeout:
             allow_online = False # TODO
             svr.link_ping_timeout = link_ping_timeout
         if inactive_timeout_def and svr.inactive_timeout != inactive_timeout:
