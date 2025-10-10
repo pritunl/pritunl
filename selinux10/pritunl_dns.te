@@ -1,0 +1,58 @@
+policy_module(pritunl_dns, 1.0.0)
+
+require {
+  type pritunl_t;
+  type pritunl_tmp_t;
+  type pritunl_var_log_t;
+
+  type dns_port_t;
+  type http_port_t;
+  type mongod_port_t;
+  type net_conf_t;
+  type node_t;
+  type proc_net_t;
+  type sysctl_net_t;
+  type unreserved_port_t;
+  type cert_t;
+  type sysfs_t;
+}
+
+type pritunl_dns_t;
+type pritunl_dns_exec_t;
+domain_type(pritunl_dns_t)
+domain_entry_file(pritunl_dns_t, pritunl_dns_exec_t)
+init_daemon_domain(pritunl_dns_t, pritunl_dns_exec_t)
+
+type_transition pritunl_t pritunl_dns_exec_t:process pritunl_dns_t;
+
+allow pritunl_dns_t pritunl_t:fifo_file { read write ioctl };
+allow pritunl_dns_t pritunl_t:process sigchld;
+allow pritunl_dns_t pritunl_t:netlink_route_socket { read write ioctl };
+allow pritunl_dns_t pritunl_t:udp_socket { read write ioctl };
+allow pritunl_dns_t pritunl_t:unix_stream_socket { read write ioctl };
+allow pritunl_dns_t pritunl_t:fifo_file ioctl;
+allow pritunl_dns_t pritunl_var_log_t:file append;
+allow pritunl_dns_t pritunl_tmp_t:dir search;
+allow pritunl_dns_t pritunl_tmp_t:file { getattr open read };
+
+allow pritunl_dns_t dns_port_t:tcp_socket { name_bind name_connect };
+allow pritunl_dns_t dns_port_t:udp_socket name_bind;
+allow pritunl_dns_t mongod_port_t:tcp_socket name_connect;
+allow pritunl_dns_t net_conf_t:file { getattr open read };
+allow pritunl_dns_t node_t:tcp_socket node_bind;
+allow pritunl_dns_t node_t:udp_socket node_bind;
+allow pritunl_dns_t proc_net_t:file read;
+allow pritunl_dns_t self:capability { net_bind_service net_admin };
+allow pritunl_dns_t self:capability2 block_suspend;
+allow pritunl_dns_t self:netlink_route_socket { bind create getattr nlmsg_read read write };
+allow pritunl_dns_t self:tcp_socket { accept bind connect create getattr getopt ioctl listen setopt shutdown read write };
+allow pritunl_dns_t self:udp_socket { accept bind connect create getattr getopt ioctl listen setopt shutdown read write };
+allow pritunl_dns_t self:unix_dgram_socket { create ioctl };
+allow pritunl_dns_t sysctl_net_t:dir search;
+allow pritunl_dns_t sysctl_net_t:file { open read };
+allow pritunl_dns_t unreserved_port_t:tcp_socket name_connect;
+allow pritunl_dns_t sysfs_t:file { open read };
+
+allow pritunl_dns_t cert_t:dir { open read search };
+allow pritunl_dns_t cert_t:file { getattr open read };
+allow pritunl_dns_t cert_t:lnk_file { getattr read };
