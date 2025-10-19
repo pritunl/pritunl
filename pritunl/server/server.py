@@ -48,6 +48,7 @@ dict_fields = [
     'network_mode',
     'network_start',
     'network_end',
+    'hide_ovpn',
     'dynamic_firewall',
     'geo_sort',
     'force_connect',
@@ -122,6 +123,7 @@ class Server(mongo.MongoObject):
         'network_mode',
         'network_start',
         'network_end',
+        'hide_ovpn',
         'dynamic_firewall',
         'geo_sort',
         'force_connect',
@@ -202,6 +204,7 @@ class Server(mongo.MongoObject):
         'sso_auth': False,
         'tls_auth': True,
         'lzo_compression': False,
+        'hide_ovpn': False,
         'dynamic_firewall': False,
         'geo_sort': False,
         'force_connect': False,
@@ -234,9 +237,9 @@ class Server(mongo.MongoObject):
 
     def __init__(self, name=None, groups=None, network_wg=None,
             network=None, network_mode=None, network_start=None,
-            network_end=None, dynamic_firewall=None, geo_sort=None,
-            force_connect=None, route_dns=None, device_auth=None,
-            restrict_routes=None, wg=None, ipv6=None,
+            network_end=None, hide_ovpn=None, dynamic_firewall=None,
+            geo_sort=None, force_connect=None, route_dns=None,
+            device_auth=None, restrict_routes=None, wg=None, ipv6=None,
             ipv6_firewall=None, bind_address=None, port=None, protocol=None,
             port_wg=None, dh_param_bits=None, multi_device=None,
             dns_servers=None, search_domain=None, otp_auth=None,
@@ -274,6 +277,8 @@ class Server(mongo.MongoObject):
             self.network_start = network_start
         if network_end is not None:
             self.network_end = network_end
+        if hide_ovpn is not None:
+            self.hide_ovpn = hide_ovpn
         if dynamic_firewall is not None:
             self.dynamic_firewall = dynamic_firewall
         if geo_sort is not None:
@@ -429,6 +434,7 @@ class Server(mongo.MongoObject):
             'network_mode': self.network_mode,
             'network_start': self.network_start,
             'network_end': self.network_end,
+            'hide_ovpn': self.hide_ovpn,
             'dynamic_firewall': self.dynamic_firewall,
             'geo_sort': self.geo_sort,
             'force_connect': self.force_connect,
