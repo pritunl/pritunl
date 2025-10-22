@@ -283,6 +283,23 @@ define([
     onVxlanSelect: function() {
       this.setVxlanSelect(!this.getVxlanSelect());
     },
+    getHideOvpnSelect: function() {
+      return this.$('.hide-ovpn-toggle .selector').hasClass(
+        'selected');
+    },
+    setHideOvpnSelect: function(state) {
+      if (state) {
+        this.$('.hide-ovpn-toggle .selector').addClass('selected');
+        this.$('.hide-ovpn-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.hide-ovpn-toggle .selector').removeClass('selected');
+        this.$('.hide-ovpn-toggle .selector-inner').hide();
+      }
+    },
+    onHideOvpnSelect: function() {
+      this.setHideOvpnSelect(!this.getHideOvpnSelect());
+    },
     getDynamicFirewallSelect: function() {
       return this.$('.dynamic-firewall-toggle .selector').hasClass(
         'selected');
@@ -541,6 +558,7 @@ define([
       var portWg = parseInt(this.$('.port-wg input').val(), 10);
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
+      var hideOvpn = this.getHideOvpnSelect();
       var dynamicFirewall = this.getDynamicFirewallSelect();
       var geoSort = this.getGeoSortSelect();
       var forceConnect = this.getForceConnectSelect();
@@ -643,6 +661,7 @@ define([
         'network_end': networkEnd,
         'restrict_routes': restrictRoutes,
         'wg': wg,
+        'hide_ovpn': hideOvpn,
         'dynamic_firewall': dynamicFirewall,
         'geo_sort': geoSort,
         'force_connect': forceConnect,
