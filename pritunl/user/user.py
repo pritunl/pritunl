@@ -956,6 +956,7 @@ class User(mongo.MongoObject):
                 server_network_stop=svr.network_end,
                 server_hide_ovpn=svr.hide_ovpn,
                 server_dynamic_firewall=svr.dynamic_firewall,
+                server_bypass_sso_auth=svr.bypass_sso_auth,
                 server_device_auth=svr.device_auth,
                 server_restrict_routes=svr.restrict_routes,
                 server_bind_address=svr.bind_address,
