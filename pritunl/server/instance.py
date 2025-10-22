@@ -1748,6 +1748,7 @@ class ServerInstance(object):
             network=self.server.network,
             network6=self.server.network6,
             dynamic_firewall=self.server.dynamic_firewall,
+            bypass_sso_auth=self.server.bypass_sso_auth,
             geo_sort=self.server.geo_sort,
             force_connect=self.server.force_connect,
             sso_auth=self.server.sso_auth,
