@@ -227,6 +227,13 @@ def server_put_post(server_id=None):
         dynamic_firewall = True if flask.request.json['dynamic_firewall'] \
             else False
 
+    bypass_sso_auth = None
+    bypass_sso_auth_def = False
+    if 'bypass_sso_auth' in flask.request.json:
+        bypass_sso_auth_def = True
+        bypass_sso_auth = True if flask.request.json['bypass_sso_auth'] \
+            else False
+
     geo_sort = None
     geo_sort_def = False
     if 'geo_sort' in flask.request.json:
@@ -674,6 +681,7 @@ def server_put_post(server_id=None):
             network_end=network_end,
             hide_ovpn=hide_ovpn,
             dynamic_firewall=dynamic_firewall,
+            bypass_sso_auth=bypass_sso_auth,
             geo_sort=geo_sort,
             force_connect=force_connect,
             route_dns=route_dns,
@@ -745,6 +753,8 @@ def server_put_post(server_id=None):
         if dynamic_firewall_def and svr.dynamic_firewall != dynamic_firewall:
             allow_online = False
             svr.dynamic_firewall = dynamic_firewall
+        if bypass_sso_auth_def:
+            svr.bypass_sso_auth = bypass_sso_auth
         if geo_sort_def:
             svr.geo_sort = geo_sort
         if force_connect_def:
