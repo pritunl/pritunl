@@ -870,7 +870,7 @@ class User(mongo.MongoObject):
             'geo_sort': geo_sort,
             'force_connect': svr.force_connect,
             'device_auth': svr.device_auth,
-            'sso_auth': svr.sso_auth,
+            'sso_auth': svr.sso_auth and not svr.bypass_sso_auth,
             'password_mode': self._get_password_mode(svr),
             'push_auth': True if self.get_push_type(svr) else False,
             'push_auth_ttl': settings.app.sso_client_cache_timeout,
