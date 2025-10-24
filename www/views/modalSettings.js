@@ -1314,6 +1314,10 @@ define([
         '.ap-southeast-2-access-key input').val();
       var apSoutheast2SecretKey = this.$(
         '.ap-southeast-2-secret-key input').val();
+      var apSoutheast3AccessKey = this.$(
+        '.ap-southeast-3-access-key input').val();
+      var apSoutheast3SecretKey = this.$(
+        '.ap-southeast-3-secret-key input').val();
       var apEast1AccessKey = this.$(
         '.ap-east-1-access-key input').val();
       var apEast1SecretKey = this.$(
@@ -1598,6 +1602,8 @@ define([
         ap_southeast_1_secret_key: apSoutheast1SecretKey,
         ap_southeast_2_access_key: apSoutheast2AccessKey,
         ap_southeast_2_secret_key: apSoutheast2SecretKey,
+        ap_southeast_3_access_key: apSoutheast3AccessKey,
+        ap_southeast_3_secret_key: apSoutheast3SecretKey,
         ap_east_1_access_key: apEast1AccessKey,
         ap_east_1_secret_key: apEast1SecretKey,
         ap_south_1_access_key: apSouth1AccessKey,
