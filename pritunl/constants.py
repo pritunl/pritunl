@@ -842,6 +842,10 @@ NETWORK_WG_IN_USE_MSG = 'Network WG address is already in use.'
 PORT_PROTOCOL_IN_USE = 'port_protocol_in_use'
 PORT_PROTOCOL_IN_USE_MSG = 'Port and protocol is already in use.'
 
+BYPASS_SSO_DEVICE_AUTH = 'bypass_sso_device_auth'
+BYPASS_SSO_DEVICE_AUTH_MSG = 'Bypass single sign-on requires ' \
+    'device authentication.'
+
 PING_INTERVAL_TOO_HIGH = 'ping_interval_too_high'
 PING_INTERVAL_TOO_HIGH_MSG = 'Ping interval must be at ' \
     'least 5 seconds shorter than ping timeout.'
