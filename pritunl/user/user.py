@@ -707,11 +707,16 @@ class User(mongo.MongoObject):
         })
 
     def _get_password_mode(self, svr):
-        if svr.sso_auth:
-            return None
-
         modes = self.get_auth_modes(svr)
         password_mode = None
+
+        if svr.bypass_sso_auth:
+            if PIN in modes:
+                password_mode = 'pin'
+            return password_mode
+
+        if svr.sso_auth:
+            return password_mode
 
         if DUO_PASSCODE in modes:
             password_mode = 'duo_otp'
