@@ -464,9 +464,3 @@ class ServerInstanceCom(object):
         thread.start()
 
         self.clients.start()
-
-        if settings.vpn.stress_test:
-            thread = threading.Thread(name="ServerStress",
-                target=self._stress_thread)
-            thread.daemon = True
-            thread.start()
