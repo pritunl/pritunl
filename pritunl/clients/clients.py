@@ -1674,7 +1674,8 @@ class Clients(object):
                             remote_ip,
                         )
 
-                        if self.server.sso_auth:
+                        if not self.server.bypass_sso_auth and \
+                                self.server.sso_auth:
                             conn_sso_token = utils.rand_str(32)
 
                             tokens_collection = mongo.get_collection(
@@ -2558,7 +2559,7 @@ class Clients(object):
                 self.instance_com.client_kill(client_id, "auth_lost_err")
             return
 
-        if usr.bypass_secondary or settings.vpn.stress_test:
+        if self.server.bypass_sso_auth or usr.bypass_secondary:
             return
 
         if not usr.sso_auth_check(self.server, client['password'],
