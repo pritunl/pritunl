@@ -1890,6 +1890,9 @@ class Server(mongo.MongoObject):
         if self.ping_interval_wg+5 > self.ping_timeout_wg:
             return PING_INTERVAL_TOO_HIGH, PING_INTERVAL_TOO_HIGH_MSG
 
+        if self.bypass_sso_auth and not self.device_auth:
+            return BYPASS_SSO_DEVICE_AUTH, BYPASS_SSO_DEVICE_AUTH_MSG
+
         if self.network_mode == BRIDGE:
             if not self.network_start or not self.network_end:
                 return MISSING_PARAMS, MISSING_PARAMS_MSG
