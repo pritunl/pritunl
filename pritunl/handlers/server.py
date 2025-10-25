@@ -753,7 +753,8 @@ def server_put_post(server_id=None):
         if dynamic_firewall_def and svr.dynamic_firewall != dynamic_firewall:
             allow_online = False
             svr.dynamic_firewall = dynamic_firewall
-        if bypass_sso_auth_def:
+        if bypass_sso_auth_def and svr.bypass_sso_auth != bypass_sso_auth:
+            allow_online = False
             svr.bypass_sso_auth = bypass_sso_auth
         if geo_sort_def:
             svr.geo_sort = geo_sort
