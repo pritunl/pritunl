@@ -1199,7 +1199,7 @@ def key_wg_post(org_id, user_id, server_id):
                 'error_msg': 'Device signature invalid.',
             }, 400)
 
-    if instance.server.sso_auth:
+    if not instance.server.bypass_sso_auth and instance.server.sso_auth:
         return _key_request_init(org.id, usr.id, svr.id, 'wg')
 
     wg_keys_collection = mongo.get_collection('wg_keys')
@@ -1868,7 +1868,7 @@ def key_ovpn_post(org_id, user_id, server_id):
                 'error_msg': 'Device signature invalid.',
             }, 400)
 
-    if instance.server.sso_auth:
+    if not instance.server.bypass_sso_auth and instance.server.sso_auth:
         return _key_request_init(org.id, usr.id, svr.id, 'ovpn')
 
     if not instance.server.dynamic_firewall and \
@@ -3392,7 +3392,7 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
     if not instance or instance.state != 'running':
         return flask.abort(429)
 
-    if not instance.server.sso_auth:
+    if instance.server.bypass_sso_auth or not instance.server.sso_auth:
         return flask.abort(431)
 
     clients = instance.instance_com.clients
@@ -3841,7 +3841,7 @@ def key_wg_wait_post(org_id, user_id, server_id):
     if not instance or instance.state != 'running':
         return flask.abort(429)
 
-    if not instance.server.sso_auth:
+    if instance.server.bypass_sso_auth or not instance.server.sso_auth:
         return flask.abort(431)
 
     if not instance.server.wg:
