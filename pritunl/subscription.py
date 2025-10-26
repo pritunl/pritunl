@@ -43,7 +43,7 @@ def update():
         if doc and doc.get('active') and doc.get('plan') and doc.get('data'):
             settings.local.sub_active = True
             settings.local.sub_plan = doc.get('plan')
-            settings.local.sub_plan = doc.get('plan')
+            settings.local.sub_url_key = doc.get('url_key')
             settings.local.sub_styles[doc.get('plan')] = doc.get('data')
 
         try:
@@ -102,6 +102,7 @@ def update():
             response = collection.update_one({
                 '_id': 'subscription',
             }, {'$set': {
+                'url_key': data.get(x(b'dXJsX2tleQ==')),
                 'data':  data[x(b'c3R5bGVz')],
             }})
         except:
