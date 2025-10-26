@@ -37,57 +37,30 @@ def update():
         settings.local.sub_enterprise_buy_url = None
         settings.local.sub_url_key = None
     else:
-        for i in range(2):
-            try:
-                url = x(b'aHR0cHM6Ly9hcHAucHJpdHVubC5jb20vc3Vic2NyaXB0aW9u')
+        doc = collection.find_one({
+            '_id': 'subscription',
+        })
+        if doc and doc.get('active') and doc.get('plan') and doc.get('data'):
+            settings.local.sub_active = True
+            settings.local.sub_plan = doc.get('plan')
+            settings.local.sub_plan = doc.get('plan')
+            settings.local.sub_styles[doc.get('plan')] = doc.get('data')
 
-                response = requests.get(
-                    url,
-                    json={
-                        x(b'aWQ='): settings.app.id,
-                        x(b'bGljZW5zZQ=='): license,
-                        x(b'dmVyc2lvbg=='): settings.local.version_int,
-                    },
-                    timeout=max(settings.app.http_request_timeout, 10),
-                )
+        try:
+            url = x(b'aHR0cHM6Ly9hcHAucHJpdHVubC5jb20vc3Vic2NyaXB0aW9u')
 
-                # License key invalid
-                if response.status_code == 470:
-                    raise ValueError('License key is invalid')
+            response = requests.get(
+                url,
+                json={
+                    x(b'aWQ='): settings.app.id,
+                    x(b'bGljZW5zZQ=='): license,
+                    x(b'dmVyc2lvbg=='): settings.local.version_int,
+                },
+                timeout=max(settings.app.http_request_timeout, 10),
+            )
 
-                if response.status_code == 473:
-                    raise ValueError(('Version %r not recognized by ' +
-                        'subscription server') % settings.local.version_int)
-
-                data = response.json()
-
-                settings.local.sub_active = data[x(b'YWN0aXZl')]
-                settings.local.sub_status = data[x(b'c3RhdHVz')]
-                settings.local.sub_plan = data[x(b'cGxhbg==')]
-                settings.local.sub_quantity = data[x(b'cXVhbnRpdHk=')]
-                settings.local.sub_amount = data[x(b'YW1vdW50')]
-                settings.local.sub_period_end = data[x(b'cGVyaW9kX2VuZA==')]
-                settings.local.sub_trial_end = data[x(b'dHJpYWxfZW5k')]
-                settings.local.sub_cancel_at_period_end = \
-                    data[x(b'Y2FuY2VsX2F0X3BlcmlvZF9lbmQ=')]
-                settings.local.sub_balance = data.get(x(b'YmFsYW5jZQ=='))
-                settings.local.sub_portal_url = \
-                    data.get(x(b'cG9ydGFsX3VybA=='))
-                settings.local.sub_premium_buy_url = \
-                    data.get(x(b'cHJlbWl1bV9idXlfdXJs'))
-                settings.local.sub_enterprise_buy_url = \
-                    data.get(x(b'ZW50ZXJwcmlzZV9idXlfdXJs'))
-                settings.local.sub_url_key = data.get(x(b'dXJsX2tleQ=='))
-                settings.local.sub_styles[data[x(b'cGxhbg==')]] = \
-                    data[x(b'c3R5bGVz')]
-            except:
-                if i < 1:
-                    logger.exception('Failed to check subscription status',
-                        'subscription, retrying...')
-                    time.sleep(1)
-                    continue
-                logger.exception('Failed to check subscription status',
-                    'subscription')
+            # License key invalid
+            if response.status_code == 470:
                 settings.local.sub_active = False
                 settings.local.sub_status = None
                 settings.local.sub_plan = None
@@ -98,7 +71,43 @@ def update():
                 settings.local.sub_cancel_at_period_end = None
                 settings.local.sub_balance = None
                 settings.local.sub_url_key = None
-            break
+                raise ValueError('License key is invalid')
+
+            if response.status_code == 473:
+                raise ValueError(('Version %r not recognized by ' +
+                    'subscription server') % settings.local.version_int)
+
+            data = response.json()
+
+            settings.local.sub_active = data[x(b'YWN0aXZl')]
+            settings.local.sub_status = data[x(b'c3RhdHVz')]
+            settings.local.sub_plan = data[x(b'cGxhbg==')]
+            settings.local.sub_quantity = data[x(b'cXVhbnRpdHk=')]
+            settings.local.sub_amount = data[x(b'YW1vdW50')]
+            settings.local.sub_period_end = data[x(b'cGVyaW9kX2VuZA==')]
+            settings.local.sub_trial_end = data[x(b'dHJpYWxfZW5k')]
+            settings.local.sub_cancel_at_period_end = \
+                data[x(b'Y2FuY2VsX2F0X3BlcmlvZF9lbmQ=')]
+            settings.local.sub_balance = data.get(x(b'YmFsYW5jZQ=='))
+            settings.local.sub_portal_url = \
+                data.get(x(b'cG9ydGFsX3VybA=='))
+            settings.local.sub_premium_buy_url = \
+                data.get(x(b'cHJlbWl1bV9idXlfdXJs'))
+            settings.local.sub_enterprise_buy_url = \
+                data.get(x(b'ZW50ZXJwcmlzZV9idXlfdXJs'))
+            settings.local.sub_url_key = data.get(x(b'dXJsX2tleQ=='))
+            settings.local.sub_styles[data[x(b'cGxhbg==')]] = \
+                data[x(b'c3R5bGVz')]
+
+            response = collection.update_one({
+                '_id': 'subscription',
+            }, {'$set': {
+                'data':  data[x(b'c3R5bGVz')],
+            }})
+        except:
+            logger.exception('Failed to check subscription status',
+                'subscription')
+            return False
 
     if settings.app.license_plan != settings.local.sub_plan and \
             settings.local.sub_plan:
