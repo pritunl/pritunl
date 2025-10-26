@@ -8,10 +8,14 @@ import threading
 
 @interrupter
 def _subscription_thread():
+    ok = True
     while True:
         try:
-            yield interrupter_sleep(SUBSCRIPTION_UPDATE_RATE)
-            subscription.update()
+            if ok:
+                yield interrupter_sleep(SUBSCRIPTION_UPDATE_RATE)
+            else:
+                yield interrupter_sleep(60)
+            ok = subscription.update()
         except GeneratorExit:
             raise
         except:
