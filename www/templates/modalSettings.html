@@ -588,7 +588,7 @@
     </div>
     <div class="email-username form-group">
       <label>SMTP Username</label>
-      <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>">
+      <input type="text" class="form-control" placeholder="Enter SMTP username" value="<%- email_username || '' %>" data-toggle="tooltip" title="SMTP username">
     </div>
     <div class="server-cert form-group">
       <label>Server SSL Certificate</label><br>
@@ -598,11 +598,11 @@
   <div class="settings-right right advanced">
     <div class="email-server form-group">
       <label>SMTP Server</label>
-      <input type="text" class="form-control" placeholder="Enter SMTP server" value="<%- email_server || '' %>">
+      <input type="text" class="form-control" placeholder="Enter SMTP server" value="<%- email_server || '' %>" data-toggle="tooltip" title="SMTP server URL/IP with port (example: email-smtp.sa-east-1.amazonaws.com:587)">
     </div>
     <div class="email-password form-group">
       <label>SMTP Password</label>
-      <input type="password" class="form-control" placeholder="Enter SMTP password" value="<%- email_password %>">
+      <input type="password" class="form-control" placeholder="Enter SMTP password" value="<%- email_password %>" data-toggle="tooltip" title="SMTP password">
     </div>
     <div class="server-key form-group">
       <label>Server SSL Key</label><br>
