@@ -17,6 +17,7 @@ define([
       'network_wg': null,
       'groups': null,
       'bind_address': null,
+      'hide_ovpn': null,
       'dynamic_firewall': null,
       'geo_sort': null,
       'force_connect': null,
