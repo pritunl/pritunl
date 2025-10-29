@@ -10,6 +10,19 @@
       <option value="direct">Direct</option>
     </select>
   </div>
+  <div class="form-group protocol">
+    <label>Protocol</label>
+    <select class="form-control" data-toggle="tooltip" title="Link protocol.">
+      <option value="ipsec">IPsec</option>
+      <option value="wg" selected>WireGuard</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <div class="form-group wg-port">
+      <label>WireGuard Port</label>
+      <input type="text" class="form-control" placeholder="Enter WireGuard port" data-toggle="tooltip" title="Port for WireGuard connections, must be unique to other links. Leave blank for random port">
+    </div>
+  </div>
   <div class="ipv6-toggle toggle-form form-group">
     <label>IPv6</label>
     <div class="selector no-select" data-toggle="tooltip" title="Connect link hosts with IPv6. All link hosts must have an IPv6 address.">
