@@ -8,6 +8,7 @@ define([
     defaults: {
       'id': null,
       'name': null,
+      'expiration': null,
       'user_count': null
     },
     url: function() {
