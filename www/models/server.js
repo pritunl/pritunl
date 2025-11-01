@@ -19,6 +19,7 @@ define([
       'bind_address': null,
       'hide_ovpn': null,
       'dynamic_firewall': null,
+      'bypass_sso_auth': null,
       'geo_sort': null,
       'force_connect': null,
       'route_dns': null,
