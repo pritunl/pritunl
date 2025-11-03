@@ -294,7 +294,8 @@ def sso_request_get():
         )
 
         if resp.status_code != 200:
-            logger.error('Azure auth server error', 'sso',
+            logger.error('Azure auth server error, ' +
+                'check https://docs.pritunl.com/kb/vpn/outage', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
             )
@@ -330,7 +331,8 @@ def sso_request_get():
         )
 
         if resp.status_code != 200:
-            logger.error('Google auth server error', 'sso',
+            logger.error('Google auth server error, ' +
+                'check https://docs.pritunl.com/kb/vpn/outage', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
             )
@@ -369,7 +371,8 @@ def sso_request_get():
         )
 
         if resp.status_code != 200:
-            logger.error('Auth0 auth server error', 'sso',
+            logger.error('Auth0 auth server error, ' +
+                'check https://docs.pritunl.com/kb/vpn/outage', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
             )
@@ -405,7 +408,8 @@ def sso_request_get():
         )
 
         if resp.status_code != 200:
-            logger.error('Slack auth server error', 'sso',
+            logger.error('Slack auth server error, ' +
+                'check https://docs.pritunl.com/kb/vpn/outage', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
             )
@@ -444,7 +448,8 @@ def sso_request_get():
         )
 
         if resp.status_code != 200:
-            logger.error('Saml auth server error', 'sso',
+            logger.error('Saml auth server error, ' +
+                'check https://docs.pritunl.com/kb/vpn/outage', 'sso',
                 status_code=resp.status_code,
                 content=resp.content,
             )
