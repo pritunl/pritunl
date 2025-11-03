@@ -395,7 +395,8 @@ class User(mongo.MongoObject):
                     ))
 
                 if resp.status_code != 200:
-                    logger.error('Google auth check request error', 'user',
+                    logger.error('Google auth check request error, ' +
+                        'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                         user_id=self.id,
                         user_name=self.name,
                         status_code=resp.status_code,
@@ -410,7 +411,8 @@ class User(mongo.MongoObject):
                 valid, google_groups = sso.verify_google(self.email,
                     skip_user=skip_user, skip_groups=skip_groups)
                 if not valid:
-                    logger.error('Google auth check failed', 'user',
+                    logger.error('Google auth check failed, ' +
+                        'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                         user_id=self.id,
                         user_name=self.name,
                     )
@@ -426,7 +428,8 @@ class User(mongo.MongoObject):
 
                 return True
             except:
-                logger.exception('Google auth check error', 'user',
+                logger.exception('Google auth check error, ' +
+                    'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                     user_id=self.id,
                     user_name=self.name,
                 )
@@ -447,7 +450,8 @@ class User(mongo.MongoObject):
                 ))
 
                 if resp.status_code != 200:
-                    logger.error('Azure auth check request error', 'user',
+                    logger.error('Azure auth check request error, ' +
+                        'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                         user_id=self.id,
                         user_name=self.name,
                         status_code=resp.status_code,
@@ -458,7 +462,8 @@ class User(mongo.MongoObject):
                 if not partial or settings.app.sso_azure_connection_check:
                     valid, azure_groups = sso.verify_azure(self.name)
                     if not valid:
-                        logger.error('Azure auth check failed', 'user',
+                        logger.error('Azure auth check failed, check ' +
+                            'https://docs.pritunl.com/kb/vpn/outage', 'user',
                             user_id=self.id,
                             user_name=self.name,
                         )
@@ -474,7 +479,8 @@ class User(mongo.MongoObject):
 
                 return True
             except:
-                logger.exception('Azure auth check error', 'user',
+                logger.exception('Azure auth check error, ' +
+                    'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                     user_id=self.id,
                     user_name=self.name,
                 )
@@ -495,7 +501,8 @@ class User(mongo.MongoObject):
                 ))
 
                 if resp.status_code != 200:
-                    logger.error('Auth0 auth check request error', 'user',
+                    logger.error('Auth0 auth check request error, ' +
+                        'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                         user_id=self.id,
                         user_name=self.name,
                         status_code=resp.status_code,
@@ -506,7 +513,8 @@ class User(mongo.MongoObject):
                 if not partial or settings.app.sso_authzero_connection_check:
                     valid, authzero_groups = sso.verify_authzero(self.name)
                     if not valid:
-                        logger.error('Auth0 auth check failed', 'user',
+                        logger.error('Auth0 auth check failed, check ' +
+                            'https://docs.pritunl.com/kb/vpn/outage', 'user',
                             user_id=self.id,
                             user_name=self.name,
                         )
@@ -522,7 +530,8 @@ class User(mongo.MongoObject):
 
                 return True
             except:
-                logger.exception('Auth0 auth check error', 'user',
+                logger.exception('Auth0 auth check error, ' +
+                    'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                     user_id=self.id,
                     user_name=self.name,
                 )
@@ -543,7 +552,8 @@ class User(mongo.MongoObject):
                     ))
 
                 if resp.status_code != 200:
-                    logger.error('Slack auth check request error', 'user',
+                    logger.error('Slack auth check request error, ' +
+                        'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                         user_id=self.id,
                         user_name=self.name,
                         status_code=resp.status_code,
@@ -553,7 +563,8 @@ class User(mongo.MongoObject):
 
                 return True
             except:
-                logger.exception('Slack auth check error', 'user',
+                logger.exception('Slack auth check error, ' +
+                    'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                     user_id=self.id,
                     user_name=self.name,
                 )
@@ -565,7 +576,8 @@ class User(mongo.MongoObject):
             try:
                 return sso.auth_onelogin(self.name)
             except:
-                logger.exception('OneLogin auth check error', 'user',
+                logger.exception('OneLogin auth check error, ' +
+                    'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                     user_id=self.id,
                     user_name=self.name,
                 )
@@ -577,7 +589,8 @@ class User(mongo.MongoObject):
             try:
                 return sso.auth_jumpcloud(self.name)
             except:
-                logger.exception('JumpCloud auth check error', 'user',
+                logger.exception('JumpCloud auth check error, ' +
+                    'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                     user_id=self.id,
                     user_name=self.name,
                 )
@@ -589,7 +602,8 @@ class User(mongo.MongoObject):
             try:
                 return sso.auth_okta(self.name)
             except:
-                logger.exception('Okta auth check error', 'user',
+                logger.exception('Okta auth check error, ' +
+                    'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                     user_id=self.id,
                     user_name=self.name,
                 )
@@ -605,7 +619,8 @@ class User(mongo.MongoObject):
             try:
                 return sso.verify_radius(self.name, password)[0]
             except:
-                logger.exception('Radius auth check error', 'user',
+                logger.exception('Radius auth check error, ' +
+                    'check https://docs.pritunl.com/kb/vpn/outage', 'user',
                     user_id=self.id,
                     user_name=self.name,
                 )
