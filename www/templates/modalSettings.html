@@ -584,7 +584,7 @@
   <div class="settings-left layout-flex left advanced">
     <div class="email-from form-group">
       <label>SMTP From Address</label>
-      <input type="email" class="form-control" placeholder="Enter SMTP from address" value="<%- email_from || '' %>" data-toggle="tooltip" title="SMTP name and from email address (example: Pritunl <contact@pritunl.com>)">
+      <input type="email" class="form-control" placeholder="Enter SMTP from address" value="<%- email_from || '' %>" data-toggle="tooltip" title="SMTP from email address">
     </div>
     <div class="email-username form-group">
       <label>SMTP Username</label>
@@ -598,7 +598,7 @@
   <div class="settings-right right advanced">
     <div class="email-server form-group">
       <label>SMTP Server</label>
-      <input type="text" class="form-control" placeholder="Enter SMTP server" value="<%- email_server || '' %>" data-toggle="tooltip" title="SMTP server URL/IP with port (example: email-smtp.sa-east-1.amazonaws.com:587)">
+      <input type="text" class="form-control" placeholder="Enter SMTP server" value="<%- email_server || '' %>" data-toggle="tooltip" title="SMTP server address and port">
     </div>
     <div class="email-password form-group">
       <label>SMTP Password</label>
