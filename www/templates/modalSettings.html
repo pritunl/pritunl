@@ -208,6 +208,7 @@
         <option value="none" <%= cloud_provider === 'none' ? 'selected' : '' %>>None</option>
         <option value="aws" <%= cloud_provider === 'aws' ? 'selected' : '' %>>AWS</option>
         <option value="oracle" <%= cloud_provider === 'oracle' ? 'selected' : '' %>>Oracle</option>
+        <option value="pritunl" <%= cloud_provider === 'pritunl' ? 'selected' : '' %>>Pritunl Cloud</option>
       </select>
     </div>
     <div class="sso-okta-app-id form-group" <%= !sso || sso.indexOf('okta') === -1 ? 'style="display: none;"' : '' %>>
@@ -577,6 +578,24 @@
   <div class="oracle-public-key form-group">
     <label>Oracle API Public Key</label><br>
     <textarea class="form-control" rows="4" spellcheck="false" data-toggle="tooltip" title="Generated public key for Oracle API. Copy this public key to the user API keys in the Oracle Cloud console. Clear the input field to generate a new key." ><%- oracle_public_key %></textarea>
+  </div>
+</div>
+</div>
+<div class="pritunl-settings layout-horizontal" <%= cloud_provider === 'pritunl' ? '' : 'style="display: none;"' %>>
+<div class="settings-left layout-flex left">
+  <div class="pritunl-cloud-token form-group">
+    <label>Pritunl Cloud Token</label>
+    <input type="text" class="form-control" placeholder="Enter token" data-toggle="tooltip" title="Enter the Pritunl Cloud API token" value="<%- pritunl_cloud_token || '' %>">
+  </div>
+  <div class="pritunl-cloud-host form-group">
+    <label>Pritunl Cloud Host</label>
+    <input type="text" class="form-control" placeholder="Enter hostname" data-toggle="tooltip" title="Enter the hostname of the Pritunl Cloud web console server" value="<%- pritunl_cloud_host || '' %>">
+  </div>
+</div>
+<div class="settings-right right">
+  <div class="pritunl-cloud-secret form-group">
+    <label>Pritunl Cloud Secret</label>
+    <input type="text" class="form-control" placeholder="Enter secret" data-toggle="tooltip" title="Enter the Pritunl Cloud API secret" value="<%- pritunl_cloud_secret || '' %>">
   </div>
 </div>
 </div>
