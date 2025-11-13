@@ -64,6 +64,12 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="bypass-sso-auth-toggle toggle-form form-group">
+      <label>Bypass Single Sign-On</label>
+      <div class="selector <%= bypass_sso_auth ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Disable single sign-on verification to allow connections during single sign-on outage. Requires device authentication.">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="device-auth-toggle toggle-form form-group">
       <label>Device Authentication</label>
       <div class="selector <%= device_auth ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Require administrator to approve every client device using TPM or Apple Secure Enclave. User will be prompted to provide device PIN to administrator when connecting a new device. Requires Pritunl Client running on Linux with a TPM, Windows 11 or macOS with Secure Enclave.">
