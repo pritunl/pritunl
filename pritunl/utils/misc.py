@@ -541,6 +541,7 @@ def check_openvpn_ver():
             stdout=subprocess.PIPE)
         output, _ = process.communicate()
         output = output.decode().split()[1].strip()
+        output = output.split('_')[0]
 
         version = [int(x) for x in output.split('.')]
 
