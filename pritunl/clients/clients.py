@@ -199,7 +199,9 @@ class Clients(object):
                         client_conf += 'push "redirect-gateway-ipv6 def1"\n'
                         client_conf += 'push "route-ipv6 2000::/3"\n'
 
+            has_dns = False
             if self.server.dns_mapping:
+                has_dns = True
                 client_conf += 'push "dhcp-option DNS %s"\n' % (
                     utils.get_network_gateway(self.server.network))
 
@@ -209,8 +211,12 @@ class Clients(object):
                     (settings.vpn.dns_mapping_push_all_apple and
                      platform in ('ios', 'mac')):
                 for dns_server in self.server.dns_servers:
+                    has_dns = True
                     client_conf += 'push "dhcp-option DNS %s"\n' % \
                         dns_server
+
+            if has_dns:
+                client_conf += 'push "dhcp-option DOMAIN-ROUTE ."\n'
 
             if self.server.search_domain:
                 domains = self.server.search_domain.split(',')
