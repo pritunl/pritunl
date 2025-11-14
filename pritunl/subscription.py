@@ -42,7 +42,18 @@ def update():
         })
         if doc and doc.get('active') and doc.get('plan') and doc.get('data'):
             settings.local.sub_active = True
+            settings.local.sub_status = 'Unknown'
             settings.local.sub_plan = doc.get('plan')
+            settings.local.sub_quantity = -1
+            settings.local.sub_amount = 0
+            settings.local.sub_period_end = None
+            settings.local.sub_trial_end = None
+            settings.local.sub_cancel_at_period_end = None
+            settings.local.sub_balance = None
+            settings.local.sub_portal_url = \
+                'https://app.pritunl.com/subscription/' + doc.get('url_key')
+            settings.local.sub_premium_buy_url = None
+            settings.local.sub_enterprise_buy_url = None
             settings.local.sub_url_key = doc.get('url_key')
             settings.local.sub_styles[doc.get('plan')] = doc.get('data')
 
