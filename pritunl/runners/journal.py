@@ -37,6 +37,7 @@ def _journal_runner_thread():
                             event,
                             default=lambda x: str(x)
                         ).encode() + '\n'.encode())
+                        jfile.flush()
                         size = jfile.tell()
                     if size > settings.app.journal_rotate_size:
                         rotate()
