@@ -82,6 +82,7 @@ def pritunl_cloud_get_routes(metadata=None):
             "Auth-Nonce": nonce,
             "Auth-Signature": sig,
         },
+        timeout=10,
     )
 
     if response.status_code != 200:
@@ -155,6 +156,7 @@ def pritunl_cloud_add_route(dest_network, metadata=None):
             "Auth-Nonce": nonce,
             "Auth-Signature": sig,
         },
+        timeout=10,
         json=vpc_routes,
     )
 
