@@ -48,7 +48,7 @@ makedepends:yum=(
 provides=("${pkgname}")
 conflicts=("${pkgname}")
 sources=(
-    "${url}/archive/refs/heads/master.tar.gz"
+    "pritunl.tar"
     "cacert.pem"
     "cacert2.pem"
     "https://www.python.org/ftp/python/3.9.23/Python-3.9.23.tar.xz"
@@ -98,7 +98,7 @@ build() {
     /usr/lib/${pkgname}/usr/bin/python3 -m ensurepip
     /usr/lib/${pkgname}/usr/bin/python3 -m pip install pip==23.3.2
 
-    cd "${srcdir}/${pkgname}-master"
+    cd "${srcdir}"
     sed -i "s/’/'/" LICENSE
     /usr/lib/${pkgname}/usr/bin/pip3 install --require-hashes -r requirements.txt
     /usr/lib/${pkgname}/usr/bin/python3 setup.py build
@@ -114,7 +114,7 @@ build() {
 }
 
 package() {
-    cd "${srcdir}/${pkgname}-master"
+    cd "${srcdir}"
     mkdir -p "${pkgdir}/var/lib/${pkgname}"
     mkdir -p "${pkgdir}/usr/lib/${pkgname}"
     PYTHONHOME=/usr/lib/pritunl/usr /usr/lib/${pkgname}/usr/bin/python3 setup.py install --root="${pkgdir}"
