@@ -345,6 +345,27 @@ class Organization(mongo.MongoObject):
         for doc in cursor:
             yield user.User(self, doc=doc, fields=fields)
 
+    def iter_users_all(self):
+        spec = {
+            'org_id': self.id,
+            'type':  {
+                '$in': [
+                    CERT_CLIENT,
+                    CERT_SERVER,
+                    CERT_CLIENT_POOL,
+                    CERT_SERVER_POOL,
+                ],
+            },
+        }
+        total = user.User.collection.count_documents(spec)
+
+        def generate():
+            cursor = user.User.collection.find(spec)
+            for doc in cursor:
+                yield user.User(self, doc=doc)
+
+        return total, generate()
+
     def create_user_key_link(self, user_id, one_time=False):
         success = False
         for _ in range(256):
