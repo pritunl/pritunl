@@ -17,6 +17,7 @@ class SettingsUser(SettingsGroupMongo):
         'password_encryption': True,
         'cert_key_bits': 4096,
         'cert_message_digest': 'sha256',
+        'cert_expire_days': 10000,
         'page_count': 10,
         'skip_remote_sso_check': False,
         'conf_sync': True,
