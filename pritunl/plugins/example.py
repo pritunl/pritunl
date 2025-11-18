@@ -6,7 +6,7 @@ from pritunl import logger
 # import boto3
 
 # Called on authorization of user connection attempt. Allow will be True
-# when user authenticated sucessfully. When allow is False reason will
+# when user authenticated successfully. When allow is False reason will
 # explain why the user was not authenticated.
 def user_connection(host_id, server_id, org_id, user_id, host_name,
         server_name, org_name, user_name, platform, client_ver, ovpn_ver,
