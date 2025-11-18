@@ -354,6 +354,60 @@ def main(default_conf=None):
         print('Server ssl certificate successfully renewed')
 
         sys.exit(0)
+    elif cmd == 'renew-org':
+        from pritunl.constants import (
+            CERT_SERVER, CERT_CLIENT_POOL, CERT_SERVER_POOL
+        )
+        from pritunl import setup
+        from pritunl import settings
+        from pritunl import organization
+        from pritunl import server
+        from pritunl import database
+        setup.setup_db()
+
+        if len(args) > 1:
+            org_id = database.ParseObjectId(args[1])
+        else:
+            print('Missing required organization ID. Hold shift and click ' +
+                'the green organization label in the web console to ' +
+                'get the ID.')
+            sys.exit(1)
+
+        org = organization.get_by_id(org_id)
+        if not org:
+            print('Failed to find organization. Hold shift and click ' +
+                'the green organization label in the web console to ' +
+                'get the ID.')
+            sys.exit(1)
+
+        print(f'Renewing organization: {org.name}')
+        org.renew()
+        org.commit()
+
+        i = 0
+        count, users = org.iter_users_all()
+        for usr in users:
+            i += 1
+            if usr.type == CERT_CLIENT_POOL:
+                print(f'Renewing reserve user [{i}/{count}]: {usr.id}')
+            elif usr.type == CERT_SERVER_POOL:
+                print(f'Renewing reserve server user [{i}/{count}]: {usr.id}')
+            elif usr.type == CERT_SERVER:
+                print(f'Renewing server user [{i}/{count}]: {usr.id}')
+            else:
+                print(f'Renewing user [{i}/{count}]: {usr.name}')
+            usr.renew()
+            usr.commit()
+
+        for svr in server.iter_servers():
+            print(f'Refreshing server configuration: {svr.name}')
+            svr.generate_ca_cert()
+            svr.commit('ca_certificate')
+
+        time.sleep(1)
+        print('Organization renewal complete')
+
+        sys.exit(0)
     elif cmd == 'clear-message-cache':
         from pritunl import setup
         from pritunl import logger
