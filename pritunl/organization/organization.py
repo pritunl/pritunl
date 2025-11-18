@@ -121,6 +121,20 @@ class Organization(mongo.MongoObject):
         self.ca_private_key = ca_user.private_key
         self.ca_certificate = ca_user.certificate
 
+    def renew(self):
+        doc = user.User.collection.find_one({
+            'org_id': self.id,
+            'type': CERT_CA,
+        })
+
+        ca_user = user.User(self, doc=doc)
+
+        ca_user.renew()
+        ca_user.commit()
+
+        self.ca_private_key = ca_user.private_key
+        self.ca_certificate = ca_user.certificate
+
     def extract_ca_expire(self):
         pattern = r'Not After\s*:\s*(.+?)(?:\n|$)'
         match = re.search(pattern, self.ca_certificate, re.MULTILINE)
