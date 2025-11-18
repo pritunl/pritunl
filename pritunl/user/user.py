@@ -349,6 +349,126 @@ class User(mongo.MongoObject):
         if block:
             self.load()
 
+    def renew(self):
+        temp_path = utils.get_temp_path()
+        index_path = os.path.join(temp_path, INDEX_NAME)
+        index_attr_path = os.path.join(temp_path, INDEX_ATTR_NAME)
+        serial_path = os.path.join(temp_path, SERIAL_NAME)
+        ssl_conf_path = os.path.join(temp_path, OPENSSL_NAME)
+        reqs_path = os.path.join(temp_path, '%s.csr' % self.id)
+        key_path = os.path.join(temp_path, '%s.key' % self.id)
+        cert_path = os.path.join(temp_path, '%s.crt' % self.id)
+        ca_name = self.id if self.type == CERT_CA else 'ca'
+        ca_cert_path = os.path.join(temp_path, '%s.crt' % ca_name)
+        ca_key_path = os.path.join(temp_path, '%s.key' % ca_name)
+
+        self.org.queue_com.wait_status()
+
+        try:
+            os.makedirs(temp_path)
+
+            with open(index_path, 'a'):
+                os.utime(index_path, None)
+
+            with open(index_attr_path, 'a'):
+                os.utime(index_attr_path, None)
+
+            with open(serial_path, 'w') as serial_file:
+                serial_hex = ('%x' % utils.fnv64a(str(self.id))).upper()
+
+                if len(serial_hex) % 2:
+                    serial_hex = '0' + serial_hex
+
+                serial_file.write('%s\n' % serial_hex)
+
+            with open(ssl_conf_path, 'w') as conf_file:
+                conf_file.write(CERT_CONF % (
+                    settings.user.cert_key_bits,
+                    settings.user.cert_message_digest,
+                    self.org.id,
+                    self.id,
+                    index_path,
+                    serial_path,
+                    temp_path,
+                    ca_cert_path,
+                    ca_key_path,
+                    settings.user.cert_expire_days,
+                    settings.user.cert_message_digest,
+                ))
+
+            self.org.queue_com.wait_status()
+
+            if self.type != CERT_CA:
+                self.org.write_file(
+                    'ca_certificate', ca_cert_path, chmod=0o600)
+                self.org.write_file(
+                    'ca_private_key', ca_key_path, chmod=0o600)
+
+            self.write_file('private_key', key_path, chmod=0o600)
+
+            try:
+                args = [
+                    'openssl', 'req', '-new', '-batch',
+                    '-config', ssl_conf_path,
+                    '-key', key_path,
+                    '-out', reqs_path,
+                    '-reqexts', '%s_req_ext' % self.type.replace(
+                        '_pool', ''),
+                ]
+                self.org.queue_com.popen(args)
+            except (OSError, ValueError):
+                logger.exception(
+                    'Failed to create user cert requests for renewal', 'user',
+                    org_id=self.org.id,
+                    user_id=self.id,
+                )
+                raise
+
+            try:
+                args = ['openssl', 'ca', '-batch']
+
+                if self.type == CERT_CA:
+                    args += ['-selfsign']
+
+                args += [
+                    '-config', ssl_conf_path,
+                    '-in', reqs_path,
+                    '-out', cert_path,
+                    '-extensions', '%s_ext' % self.type.replace('_pool', ''),
+                ]
+
+                self.org.queue_com.popen(args)
+            except (OSError, ValueError):
+                logger.exception('Failed to renew user cert', 'user',
+                    org_id=self.org.id,
+                    user_id=self.id,
+                )
+                raise
+            self.read_file('certificate', cert_path)
+        finally:
+            try:
+                utils.rmtree(temp_path)
+            except subprocess.CalledProcessError:
+                pass
+
+        self.org.queue_com.wait_status()
+
+    def queue_renew(self, block, priority=LOW):
+        if self.type in (CERT_SERVER_POOL, CERT_CLIENT_POOL):
+            queue.start('renew_user_pooled', block=block,
+                org_doc=self.org.export(), user_doc=self.export(),
+                priority=priority)
+        else:
+            retry = True
+            if self.type == CERT_CA:
+                retry = False
+
+            queue.start('renew_user', block=block, org_doc=self.org.export(),
+                user_doc=self.export(), priority=priority, retry=retry)
+
+        if block:
+            self.load()
+
     def remove(self):
         self.audit_collection.delete_many({
             'user_id': self.id,
