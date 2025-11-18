@@ -594,6 +594,9 @@ class ServerInstance(object):
                         continue
                     server_conf += return_val.strip() + '\n'
 
+        self.server.generate_ca_cert()
+        self.server.commit('ca_certificate')
+
         server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
 
         if self.server.tls_auth:
