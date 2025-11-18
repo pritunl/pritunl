@@ -1789,6 +1789,8 @@ class ServerInstance(object):
         startup_keepalive_thread.daemon = True
 
         self.state = 'init'
+        if self.server.debug:
+            self.server.output.push_message('State: ' + self.state)
         timer = threading.Timer(settings.vpn.startup_timeout, timeout)
         timer.daemon = True
         timer.start()
@@ -1802,18 +1804,24 @@ class ServerInstance(object):
                 return
 
             self.state = 'temp_path'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             os.makedirs(self._temp_path)
 
             if self.is_interrupted():
                 return
 
             self.state = 'ip_forwarding'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.enable_ip_forwarding()
 
             if self.is_interrupted():
                 return
 
             self.state = 'bridge_start'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.bridge_start()
 
             if self.is_interrupted():
@@ -1822,6 +1830,8 @@ class ServerInstance(object):
             if self.server.replicating and self.server.vxlan:
                 try:
                     self.state = 'get_vxlan'
+                    if self.server.debug:
+                        self.server.output.push_message('State: ' + self.state)
                     self.vxlan = vxlan.get_vxlan(self.server.id, self.id,
                         self.server.ipv6)
 
@@ -1829,6 +1839,8 @@ class ServerInstance(object):
                         return
 
                     self.state = 'start_vxlan'
+                    if self.server.debug:
+                        self.server.output.push_message('State: ' + self.state)
                     self.vxlan.start()
 
                     if self.is_interrupted():
@@ -1840,41 +1852,57 @@ class ServerInstance(object):
                     )
 
             self.state = 'generate_ovpn_conf'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.generate_ovpn_conf()
 
             if self.is_interrupted():
                 return
 
             self.state = 'generate_iptables_rules'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.generate_iptables_rules()
 
             if self.server.wg:
                 self.state = 'generate_iptables_rules_wg'
+                if self.server.debug:
+                    self.server.output.push_message('State: ' + self.state)
                 self.generate_iptables_rules_wg()
 
             if self.is_interrupted():
                 return
 
             self.state = 'publish'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.publish('started')
 
             if self.is_interrupted():
                 return
 
             self.state = 'startup_keepalive'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             startup_keepalive_thread.start()
 
             if self.is_interrupted():
                 return
 
             self.state = 'clear_table_rules'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.tables_clear()
 
             self.state = 'upsert_iptables_rules'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.iptables.upsert_rules()
 
             if self.server.wg:
                 self.state = 'upsert_iptables_rules_wg'
+                if self.server.debug:
+                    self.server.output.push_message('State: ' + self.state)
                 self.iptables_wg.upsert_rules()
 
             if self.is_interrupted():
@@ -1882,6 +1910,8 @@ class ServerInstance(object):
 
             if self.server.dynamic_firewall:
                 self.state = 'dyanmic_firewall'
+                if self.server.debug:
+                    self.server.output.push_message('State: ' + self.state)
                 firewall.open_server(self.server.id, self.id,
                     self.server.port, self.server.protocol,
                     self.server.port_wg if self.server.wg else 0)
@@ -1890,12 +1920,16 @@ class ServerInstance(object):
                     return
 
             self.state = 'init_route_advertisements'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.init_route_advertisements()
 
             if self.is_interrupted():
                 return
 
             self.state = 'openvpn_start'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.process = self.openvpn_start()
             self.start_threads(cursor_id)
             self.openvpn_output()
@@ -1904,6 +1938,8 @@ class ServerInstance(object):
                 return
 
             self.state = 'instance_com_start'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
             self.instance_com = ServerInstanceCom(self.server, self)
             self.instance_com.start()
 
@@ -1912,6 +1948,8 @@ class ServerInstance(object):
 
             if send_events:
                 self.state = 'events'
+                if self.server.debug:
+                    self.server.output.push_message('State: ' + self.state)
                 event.Event(type=SERVERS_UPDATED)
                 event.Event(type=SERVER_HOSTS_UPDATED,
                     resource_id=self.server.id)
@@ -1928,6 +1966,8 @@ class ServerInstance(object):
                         continue
 
                     self.state = 'instance_link'
+                    if self.server.debug:
+                        self.server.output.push_message('State: ' + self.state)
                     instance_link = ServerInstanceLink(
                         server=self.server,
                         linked_server=linked_server,
@@ -1940,9 +1980,13 @@ class ServerInstance(object):
 
             if self.server.wg:
                 self.state = 'start_wg'
+                if self.server.debug:
+                    self.server.output.push_message('State: ' + self.state)
                 self.start_wg()
 
             self.state = 'running'
+            if self.server.debug:
+                self.server.output.push_message('State: ' + self.state)
 
             self.bridge_up()
 
