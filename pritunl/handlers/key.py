@@ -686,6 +686,12 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
     key_hash = key_hash[:256]
     remote_addr = utils.get_remote_addr()
 
+    version = flask.request.args.get('ver', None)
+    if version:
+        version = int(version)
+    else:
+        version = 0
+
     if not settings.user.conf_sync:
         return utils.jsonify({})
 
@@ -813,7 +819,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         )
         return flask.abort(409)
 
-    key_conf = usr.sync_conf(server_id, key_hash)
+    key_conf = usr.sync_conf(server_id, key_hash, version)
     if key_conf:
         usr.audit_event('user_profile',
             'User profile synced from pritunl client',
