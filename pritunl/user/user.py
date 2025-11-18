@@ -1071,6 +1071,7 @@ class User(mongo.MongoObject):
         conf_hash.update(str(svr.ping_interval).encode())
         conf_hash.update(str(settings.vpn.server_poll_timeout).encode())
         conf_hash.update(ca_certificate.encode())
+        conf_hash.update(certificate.encode())
         conf_hash.update(self._get_key_info_str(svr, None,
             remotes_data, False).encode())
 
@@ -1173,7 +1174,9 @@ class User(mongo.MongoObject):
                 client_conf += '<%s>\n%s\n</%s>\n' % (
                     tls_mode, svr.tls_auth_key, tls_mode)
 
-            client_conf += '<cert>\n%s\n</cert>\n' % certificate
+        client_conf += '<cert>\n%s\n</cert>\n' % certificate
+
+        if include_user_cert:
             client_conf += '<key>\n%s\n</key>\n' % private_key
 
         return file_name, client_conf, conf_hash
