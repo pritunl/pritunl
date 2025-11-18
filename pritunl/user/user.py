@@ -263,6 +263,7 @@ class User(mongo.MongoObject):
                     temp_path,
                     ca_cert_path,
                     ca_key_path,
+                    settings.user.cert_expire_days,
                     settings.user.cert_message_digest,
                 ))
 
