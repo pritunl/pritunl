@@ -1037,7 +1037,7 @@ class User(mongo.MongoObject):
             data, indent=1, separators=(",", ": ")
         ).replace("\n", "\n#")
 
-    def _generate_conf(self, svr, include_user_cert=True):
+    def _generate_conf(self, svr, include_user_cert=True, version=0):
         if not self.sync_token or not self.sync_secret:
             self.sync_token = utils.generate_secret()
             self.sync_secret = utils.generate_secret()
@@ -1054,6 +1054,7 @@ class User(mongo.MongoObject):
         private_key = self.private_key.strip()
 
         conf_hash = utils.unsafe_md5()
+        conf_hash.update(str(version).encode())
         conf_hash.update(self.name.encode())
         conf_hash.update(self.org.name.encode())
         conf_hash.update(svr.name.encode())
@@ -1411,11 +1412,11 @@ class User(mongo.MongoObject):
 
         return svr
 
-    def build_key_conf(self, server_id, include_user_cert=True):
+    def build_key_conf(self, server_id, include_user_cert=True, version=0):
         svr = self.get_server(server_id)
 
         conf_name, client_conf, conf_hash = self._generate_conf(svr,
-            include_user_cert)
+            include_user_cert, version)
 
         return {
             'name': conf_name,
@@ -1423,9 +1424,9 @@ class User(mongo.MongoObject):
             'hash': conf_hash,
         }
 
-    def sync_conf(self, server_id, conf_hash):
+    def sync_conf(self, server_id, conf_hash, version):
         try:
-            key = self.build_key_conf(server_id, False)
+            key = self.build_key_conf(server_id, False, version)
         except (NotFound, UserNotInServerGroups):
             return
 
