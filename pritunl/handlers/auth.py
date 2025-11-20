@@ -15,7 +15,9 @@ from pritunl import database
 import flask
 import time
 import random
-import hashlib
+import json
+import base64
+import nacl.secret
 
 def _auth_radius(username, password, remote_addr):
     sso_mode = settings.app.sso
@@ -408,10 +410,18 @@ def auth_session_post():
 
     utils.set_flask_sig()
 
+    timestamp = int(utils.time_now())
+    cipher_data = json.dumps({
+        'id': str(admin.id),
+        'ttl': timestamp + settings.app.session_timeout,
+    })
+    nacl_box = nacl.secret.SecretBox(settings.local.web_secret)
+    token = nacl_box.encrypt(cipher_data.encode())
+
     return utils.jsonify({
         'authenticated': True,
         'default': admin.default or False,
-    })
+    }, token=base64.urlsafe_b64encode(token).decode())
 
 @app.app.route('/auth/session', methods=['DELETE'])
 @auth.open_auth
