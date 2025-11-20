@@ -550,9 +550,6 @@ def check_session(csrf_check):
             )
             return False
 
-        flask.session['timestamp'] = int(utils.time_now())
-        utils.set_flask_sig()
-
     if administrator.disabled:
         journal.entry(
             journal.ADMIN_AUTH_FAILURE,
