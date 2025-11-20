@@ -73,6 +73,7 @@ class SettingsApp(SettingsGroupMongo):
         'dh_param_bits_pool': [2048],
         'cookie_secret': None,
         'cookie_secret2': None,
+        'cookie_web_secret': None,
         'email_server': None,
         'email_username': None,
         'email_password': None,
