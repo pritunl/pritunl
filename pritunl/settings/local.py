@@ -13,6 +13,7 @@ class SettingsLocal(SettingsGroupLocal):
         'se_encryption_key': None,
         'se_client_key': None,
         'se_client_pub_key': None,
+        'web_secret': None,
         'quiet': False,
         'public_ip': None,
         'public_ip6': None,
