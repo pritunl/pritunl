@@ -3,6 +3,7 @@ from pritunl.utils.misc import fnv32a
 from pritunl.constants import *
 from pritunl import mongo
 from pritunl import database
+from pritunl import settings
 
 import datetime
 import calendar
@@ -36,7 +37,7 @@ def json_default(obj):
 
     raise TypeError(repr(obj) + ' is not JSON serializable')
 
-def jsonify(data=None, status_code=None):
+def jsonify(data=None, status_code=None, token=None):
     if not isinstance(data, str):
         data = json.dumps(data, default=lambda x: str(x))
     response = flask.Response(response=data, mimetype='application/json')
@@ -44,6 +45,15 @@ def jsonify(data=None, status_code=None):
         'no-cache, no-store, must-revalidate')
     response.headers.add('Pragma', 'no-cache')
     response.headers.add('Expires', 0)
+    if token is not None:
+        response.set_cookie(
+            key='token',
+            value=token,
+            max_age=datetime.timedelta(seconds=settings.app.session_timeout),
+            secure=True,
+            httponly=True,
+            path='/',
+        )
     if status_code is not None:
         response.status_code = status_code
     return response
