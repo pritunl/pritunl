@@ -231,6 +231,7 @@ def _run_server(restart):
                 internal_addr,
                 server_cert or '',
                 server_key or '',
+                settings.app.cookie_web_secret,
             ))
 
         utils.systemd_start(SYSTEMD_WEB_SERVICE)
@@ -269,6 +270,7 @@ def _run_server(restart):
                 'INTERNAL_ADDRESS': internal_addr,
                 'SSL_CERT': server_cert or '',
                 'SSL_KEY': server_key or '',
+                'WEB_SECRET': settings.app.cookie_web_secret,
             }),
         )
 
