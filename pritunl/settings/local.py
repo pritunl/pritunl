@@ -34,4 +34,5 @@ class SettingsLocal(SettingsGroupLocal):
         'sub_portal_url': False,
         'sub_url_key': False,
         'sub_styles': {},
+        'admin_api': False,
     }
