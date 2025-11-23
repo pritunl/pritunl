@@ -645,6 +645,11 @@ def new_admin(**kwargs):
 
     return admin
 
+def admin_api_count():
+    return Administrator.collection.count_documents({
+        'auth_api': True,
+    })
+
 def super_user_count():
     return Administrator.collection.count_documents({
         'super_user': {'$ne': False},
