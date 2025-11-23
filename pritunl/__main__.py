@@ -21,6 +21,7 @@ Commands:
   renew-ssl-cert        Renew the Lets Encrypt server ssl certificate
   reconfigure           Reconfigure database connection
   clear-message-cache   Clear the cache of the internal message system
+  disable-admin-api     Disable API key authentication for all admin users
   override-device-key   Allow device registration without key for 8 hours
   require-device-key    Remove device registration key override
   get-mongodb           Get the current mongodb uri
@@ -430,6 +431,16 @@ def main(default_conf=None):
         })
 
         print('Message cache cleared')
+
+        sys.exit(0)
+    elif cmd == 'disable-admin-api':
+        from pritunl import setup
+        from pritunl import auth
+
+        setup.setup_db()
+        auth.disable_admin_api()
+
+        print('Administrator API token authentication disabled')
 
         sys.exit(0)
     elif cmd == 'destroy-secondary':
