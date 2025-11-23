@@ -216,6 +216,7 @@ def server_thread():
             'INTERNAL_ADDRESS': 'localhost:%s' % settings.conf.internal_port,
             'SSL_CERT': server_cert or '',
             'SSL_KEY': server_key or '',
+            'WEB_STRICT': 'true',
             'WEB_SECRET': '',
         }),
     )
