@@ -147,7 +147,7 @@ def admin_put(admin_id):
 
             admin.audit_event('admin_updated',
                 'Administrator token authentication %s' % (
-                    'disabled' if auth_api else 'enabled'),
+                    'enabled' if auth_api else 'disabled'),
                 remote_addr=remote_addr,
             )
 
@@ -155,7 +155,7 @@ def admin_put(admin_id):
                 journal.ADMIN_UPDATE,
                 admin.journal_data,
                 event_long='Administrator token authentication %s' % (
-                    'disabled' if auth_api else 'enabled'),
+                    'enabled' if auth_api else 'disabled'),
                 remote_addr=remote_addr,
             )
 
