@@ -619,6 +619,16 @@ def reset_password():
 
     return DEFAULT_USERNAME, default_admin.default_password
 
+def disable_admin_api():
+    admin_collection = mongo.get_collection('administrators')
+    admin_collection.update_many(
+        {},
+        {'$set': {
+            'auth_api': False,
+        }},
+    )
+    event.Event(type=ADMINS_UPDATED)
+
 def iter_admins(fields=None):
     if fields:
         fields = {key: True for key in fields}
