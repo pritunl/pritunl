@@ -130,7 +130,7 @@ def before_request():
 
 @app.after_request
 def after_request(response):
-    if settings.app.check_requests and not flask.g.valid:
+    if not flask.g.valid:
         raise ValueError('Request not authorized')
 
     response.headers.add('X-Frame-Options', 'DENY')
