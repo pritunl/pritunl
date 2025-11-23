@@ -11,6 +11,7 @@ from pritunl import journal
 from pritunl import plugins
 from pritunl import sso
 from pritunl import database
+from pritunl import event
 
 import base64
 import os
@@ -475,6 +476,20 @@ def check_session(csrf_check):
             return False
     else:
         if not flask.session:
+            return False
+
+        validated = flask.request.headers.get('PR-Validated', None)
+        if validated != 'true':
+            logger.error(
+                'Request missing external web server validation',
+                'auth',
+                path=flask.request.path,
+            )
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                remote_address=utils.get_remote_addr(),
+                event_long='Request session not validated by external web',
+            )
             return False
 
         admin_id = utils.session_opt_str('admin_id')
