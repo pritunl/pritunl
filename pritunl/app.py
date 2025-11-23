@@ -26,6 +26,7 @@ _cur_key = None
 _cur_port = None
 _cur_redirect_server = None
 _cur_reverse_proxy = None
+_cur_admin_api = None
 _update_lock = threading.Lock()
 _watch_event = threading.Event()
 
@@ -36,6 +37,7 @@ def update_server(delay=0):
     global _cur_port
     global _cur_redirect_server
     global _cur_reverse_proxy
+    global _cur_admin_api
 
     if not settings.local.server_ready.is_set():
         return
@@ -57,7 +59,8 @@ def update_server(delay=0):
                 _cur_port != settings.app.server_port or \
                 _cur_redirect_server != settings.app.redirect_server or \
                 _cur_reverse_proxy != (settings.app.reverse_proxy_header if
-                    settings.app.reverse_proxy else ''):
+                    settings.app.reverse_proxy else '') or \
+                _cur_admin_api != settings.local.admin_api:
             logger.info('Settings changed, restarting server...', 'app',
                 ssl_changed=_cur_ssl != settings.app.server_ssl,
                 cert_changed=_cur_cert != settings.app.server_cert,
@@ -68,6 +71,8 @@ def update_server(delay=0):
                 reverse_proxy_changed= _cur_reverse_proxy != (
                     settings.app.reverse_proxy_header if
                     settings.app.reverse_proxy else ''),
+                admin_api_auth_changed= _cur_admin_api != \
+                    settings.local.admin_api,
             )
 
             _cur_ssl = settings.app.server_ssl
@@ -77,6 +82,7 @@ def update_server(delay=0):
             _cur_redirect_server = settings.app.redirect_server
             _cur_reverse_proxy = settings.app.reverse_proxy_header if \
                 settings.app.reverse_proxy else ''
+            _cur_admin_api = settings.local.admin_api
 
             if settings.app.server_auto_restart:
                 restart_server(delay=delay)
@@ -179,10 +185,20 @@ def _run_server(restart):
         ssl_version=ssl.OPENSSL_VERSION,
     )
 
+    webStrict = not settings.local.admin_api
+
     logger.info('Starting server', 'app',
         selinux_context=context,
         ssl_version=ssl.OPENSSL_VERSION,
+        web_auth_strict=webStrict,
     )
+
+    if not webStrict:
+        logger.warning(
+            'Server has administrator API keys configured, ' +
+                'disabling strict external web authentication',
+            'app',
+        )
 
     app_server = cheroot.wsgi.Server(
         ('localhost', settings.app.server_internal_port),
@@ -231,6 +247,7 @@ def _run_server(restart):
                 internal_addr,
                 server_cert or '',
                 server_key or '',
+                'true' if webStrict else 'false',
                 settings.app.cookie_web_secret,
             ))
 
@@ -270,6 +287,7 @@ def _run_server(restart):
                 'INTERNAL_ADDRESS': internal_addr,
                 'SSL_CERT': server_cert or '',
                 'SSL_KEY': server_key or '',
+                'WEB_STRICT': 'true' if webStrict else 'false',
                 'WEB_SECRET': settings.app.cookie_web_secret,
             }),
         )
@@ -342,6 +360,7 @@ def run_server():
     global _cur_port
     global _cur_redirect_server
     global _cur_reverse_proxy
+    global _cur_admin_api
     _cur_ssl = settings.app.server_ssl
     _cur_cert = settings.app.server_cert
     _cur_key = settings.app.server_key
@@ -349,6 +368,7 @@ def run_server():
     _cur_redirect_server = settings.app.redirect_server
     _cur_reverse_proxy = settings.app.reverse_proxy_header if \
         settings.app.reverse_proxy else ''
+    _cur_admin_api = settings.local.admin_api
 
     logger.LogEntry(message='Web server started.')
 
