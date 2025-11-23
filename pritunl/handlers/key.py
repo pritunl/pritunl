@@ -307,7 +307,7 @@ def user_linked_key_zip_archive_get(key_id):
 
     return resp
 
-@app.app.route('/key_onc/<key_id>.onc', methods=['GET'])
+@app.app.route('/key/<key_id>.onc', methods=['GET'])
 @auth.open_auth
 def user_linked_key_onc_archive_get(key_id):
     key_id = key_id[:128]
@@ -533,7 +533,7 @@ def user_linked_key_page_get(short_code):
     if settings.local.sub_active:
         conf_links += '<a class="btn btn-success download-chrome" ' + \
             'title="Download Chrome OS Profile" ' + \
-            'href="/key_onc/%s.onc">Download Chrome OS Profile</a>\n' % (
+            'href="/key/%s.onc">Download Chrome OS Profile</a>\n' % (
                 doc['key_id'])
 
     has_servers = False
