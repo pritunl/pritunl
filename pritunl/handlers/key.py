@@ -113,7 +113,7 @@ def _find_doc(query, one_time=None, one_time_new=False):
 
     return doc
 
-@app.app.route('/key/<org_id>/<user_id>.tar', methods=['GET'])
+@app.app.route('/data/<org_id>/<user_id>.tar', methods=['GET'])
 @auth.session_light_auth
 def user_key_tar_archive_get(org_id, user_id):
     remote_addr = utils.get_remote_addr()
@@ -133,7 +133,7 @@ def user_key_tar_archive_get(org_id, user_id):
 
     return resp
 
-@app.app.route('/key/<org_id>/<user_id>.zip', methods=['GET'])
+@app.app.route('/data/<org_id>/<user_id>.zip', methods=['GET'])
 @auth.session_light_auth
 def user_key_zip_archive_get(org_id, user_id):
     remote_addr = utils.get_remote_addr()
@@ -153,7 +153,7 @@ def user_key_zip_archive_get(org_id, user_id):
 
     return resp
 
-@app.app.route('/key_onc/<org_id>/<user_id>.onc', methods=['GET'])
+@app.app.route('/data/<org_id>/<user_id>.onc', methods=['GET'])
 @auth.session_light_auth
 def user_key_onc_archive_get(org_id, user_id):
     remote_addr = utils.get_remote_addr()
@@ -173,7 +173,7 @@ def user_key_onc_archive_get(org_id, user_id):
 
     return resp
 
-@app.app.route('/key/<org_id>/<user_id>', methods=['GET'])
+@app.app.route('/data/<org_id>/<user_id>', methods=['GET'])
 @auth.session_auth
 def user_key_link_get(org_id, user_id):
     remote_addr = utils.get_remote_addr()
@@ -194,7 +194,7 @@ def user_key_link_get(org_id, user_id):
 
     return utils.jsonify(org.create_user_key_link(user_id))
 
-@app.app.route('/key/<org_id>/<user_id>/<server_id>.key', methods=['GET'])
+@app.app.route('/data/<org_id>/<user_id>/<server_id>.key', methods=['GET'])
 @auth.session_light_auth
 def user_linked_key_conf_get(org_id, user_id, server_id):
     remote_addr = utils.get_remote_addr()
