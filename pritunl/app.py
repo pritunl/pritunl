@@ -354,6 +354,8 @@ def setup_server_cert():
         _cur_key = settings.app.server_key
 
 def run_server():
+    settings.local.admin_api = auth.admin_api_count() > 0
+
     global _cur_ssl
     global _cur_cert
     global _cur_key
