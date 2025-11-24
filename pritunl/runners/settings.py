@@ -2,6 +2,7 @@ from pritunl.helpers import *
 from pritunl import settings
 from pritunl import listener
 from pritunl import logger
+from pritunl import auth
 
 import threading
 
@@ -11,6 +12,7 @@ def _check():
 
     try:
         settings.reload_mongo()
+        settings.local.admin_api = auth.admin_api_count() > 0
     except:
         logger.exception('Settings check failed', 'runners')
 
