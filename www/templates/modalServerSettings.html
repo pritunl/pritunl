@@ -115,6 +115,10 @@
       <label>Ping Interval</label>
       <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip" title="Optional, interval to ping client" value="<%- ping_interval || '' %>" min="0" autocapitalize="off">
     </div>
+    <div class="ping-interval-wg form-group" <%= wg ? '' : 'style="display: none;"' %>>
+      <label>WireGuard Ping Interval</label>
+      <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip" title="Optional, interval to ping WireGuard client" value="<%- ping_interval_wg || '' %>" min="0" autocapitalize="off">
+    </div>
     <div class="link-ping-interval form-group">
       <label>User Link Ping Interval</label>
       <input type="number" class="form-control" placeholder="Enter ping interval" data-toggle="tooltip"
