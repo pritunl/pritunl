@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add offline subscription
 Web server updates
 Update server default routes
 Add support for route advertisements on replicated servers
