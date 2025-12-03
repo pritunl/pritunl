@@ -2,7 +2,7 @@ targets=(
     "oraclelinux-10"
 )
 pkgname="pritunl"
-pkgver="1.32.4400.99"
+pkgver="1.32.4465.96"
 pkgrel="2"
 pkgdesc="Enterprise VPN Server"
 pkgdesclong=(
