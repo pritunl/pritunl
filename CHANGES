@@ -4,6 +4,7 @@ Pritunl Changelog
 <%= version %>
 
 Add offline subscription
+Add sso outage bypass mode
 Web server updates
 Update server default routes
 Add secondary request nacl token
