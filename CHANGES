@@ -6,6 +6,7 @@ Pritunl Changelog
 Add offline subscription
 Web server updates
 Update server default routes
+Add secondary request nacl token
 Add support for route advertisements on replicated servers
 Add support for Pritunl Cloud
 
