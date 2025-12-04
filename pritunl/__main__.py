@@ -5,6 +5,8 @@ import sys
 import os
 import time
 import json
+import uuid
+import shutil
 
 USAGE = """\
 Usage: pritunl [command] [options]
@@ -365,6 +367,8 @@ def main(default_conf=None):
         from pritunl import server
         from pritunl import database
         setup.setup_db()
+        temp_path = '/tmp/pritunl_' + uuid.uuid4().hex
+        settings.conf.temp_path = temp_path
 
         if len(args) > 1:
             org_id = database.ParseObjectId(args[1])
@@ -408,6 +412,7 @@ def main(default_conf=None):
         time.sleep(1)
         print('Organization renewal complete')
 
+        shutil.rmtree(temp_path, ignore_errors=True)
         sys.exit(0)
     elif cmd == 'clear-message-cache':
         from pritunl import setup
