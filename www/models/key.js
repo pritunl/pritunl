@@ -14,7 +14,7 @@ define([
       'uri_url': null
     },
     url: function() {
-      return '/key/' + this.get('organization') + '/' + this.get('user');
+      return '/data/' + this.get('organization') + '/' + this.get('user');
     }
   });
 
