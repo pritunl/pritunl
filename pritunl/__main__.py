@@ -21,6 +21,7 @@ Commands:
   reset-version         Reset database version to server version
   reset-ssl-cert        Reset the server ssl certificate
   renew-ssl-cert        Renew the Lets Encrypt server ssl certificate
+  renew-org             Renew organization and user certificates
   reconfigure           Reconfigure database connection
   clear-message-cache   Clear the cache of the internal message system
   disable-admin-api     Disable API key authentication for all admin users
