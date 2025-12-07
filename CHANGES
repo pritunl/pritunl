@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix renew organization certificates command
+
 Version 1.32.4465.96 2025-12-03
 -------------------------------
 
