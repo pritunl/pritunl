@@ -51,13 +51,13 @@ sources=(
     "pritunl.tar"
     "cacert.pem"
     "cacert2.pem"
-    "https://www.python.org/ftp/python/3.9.23/Python-3.9.23.tar.xz"
+    "https://www.python.org/ftp/python/3.9.25/Python-3.9.25.tgz"
 )
 hashsums=(
     "8c41ad79d31d7984f25bdbbe1ba4f001186e578d8af6d249414c9ff5df0d57c3"
     "f524fc21859b776e18df01a87880efa198112214e13494275dbcbd9bcb71d976"
     "2c11c3ce08ffc40d390319c72bc10d4f908e9c634494d65ed2cbc550731fd524"
-    "61a42919e13d539f7673cf11d1c404380e28e540510860b9d242196e165709c9"
+    "a7438eabd3a48139f42d4e058096af8d880b0bb6e8fb8c78838892e4ce5583f2"
 )
 backup=(
     "etc/${pkgname}.conf"
@@ -66,7 +66,7 @@ backup=(
 )
 
 build() {
-    cd "${srcdir}/Python-3.9.23"
+    cd "${srcdir}/Python-3.9.25"
     gcc_major=$(gcc -dumpversion | cut -d. -f1)
     base_cflags="-fstack-protector-strong -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -Werror=format-security -mtune=generic -grecord-gcc-switches"
     if [ "$gcc_major" -ge 7 ]; then
@@ -93,8 +93,8 @@ build() {
     echo "LDFLAGS_NODIST: $LDFLAGS_NODIST"
     echo "####################################################################"
 
-    ./configure --prefix=/usr --libdir=/usr/lib --enable-optimizations --enable-ipv6 --enable-loadable-sqlite-extensions --disable-shared --with-lto --with-computed-gotos=yes --with-platlibdir=lib
-    make DESTDIR=/usr/lib/${pkgname} install
+    ./configure --prefix=/usr/lib/${pkgname}/usr --libdir=/usr/lib/${pkgname}/usr/lib --enable-optimizations --enable-ipv6 --enable-loadable-sqlite-extensions --disable-shared --with-lto --with-computed-gotos=yes --with-platlibdir=lib
+    make install
     /usr/lib/${pkgname}/usr/bin/python3 -m ensurepip
     /usr/lib/${pkgname}/usr/bin/python3 -m pip install pip==23.3.2
 
@@ -117,7 +117,7 @@ package() {
     cd "${srcdir}"
     mkdir -p "${pkgdir}/var/lib/${pkgname}"
     mkdir -p "${pkgdir}/usr/lib/${pkgname}"
-    PYTHONHOME=/usr/lib/pritunl/usr /usr/lib/${pkgname}/usr/bin/python3 setup.py install --root="${pkgdir}"
+    PYTHONHOME=/usr/lib/${pkgname}/usr /usr/lib/${pkgname}/usr/bin/python3 setup.py install --root="${pkgdir}"
     mkdir -p ${pkgdir}/usr/bin
     ln -s /usr/lib/${pkgname}/usr/bin/${pkgname} ${pkgdir}/usr/bin/${pkgname}
     rsync --archive /usr/lib/${pkgname}/ ${pkgdir}/usr/lib/${pkgname}/
