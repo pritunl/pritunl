@@ -154,8 +154,8 @@
       <input type="text" class="form-control" placeholder="Enter tunnel MTU" data-toggle="tooltip" title="Optional, connection MTU value. This option sets the OpenVPN and WireGuard tunnel interface MTU value on both the client and server. Changing this option can break client configurations if not updated with configuration sync or reimported. Try adjusting MSS MTU and Fragment MTU before attempting to modify this value. This option should be left blank to allow the server to detect the optimal MTU. Refer to the debugging documentation to resolve MTU issues. Should never exceed 1500" value="<%- tun_mtu || '' %>" autocapitalize="off">
     </div>
     <div class="mss-fix form-group">
-      <label>Connection MTU</label>
-      <input type="text" class="form-control" placeholder="Enter connection MTU" data-toggle="tooltip" title="Optional, connection MTU and MSS fix value. This option should be left blank to allow the server to detect the optimal MTU. Refer to the debugging documentation to resolve MTU issues" value="<%- mss_fix || '' %>" autocapitalize="off">
+      <label>MSS MTU</label>
+      <input type="text" class="form-control" placeholder="Enter MSS MTU" data-toggle="tooltip" title="Optional, connection MSS fix value. This option sets the maximum segment size for TCP connections. This will only affect OpenVPN connections using TCP. The value will be pushed to the client on connection and does not require client configuration changes. This option should be left blank to allow the server to detect the optimal MTU. Refer to the debugging documentation to resolve MTU issues. Should never exceed 1420" value="<%- mss_fix || '' %>" autocapitalize="off">
     </div>
     <div class="max-devices form-group">
       <label>Max Devices</label>
