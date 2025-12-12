@@ -157,6 +157,10 @@
       <label>MSS MTU</label>
       <input type="text" class="form-control" placeholder="Enter MSS MTU" data-toggle="tooltip" title="Optional, connection MSS fix value. This option sets the maximum segment size for TCP connections. This will only affect OpenVPN connections using TCP. The value will be pushed to the client on connection and does not require client configuration changes. This option should be left blank to allow the server to detect the optimal MTU. Refer to the debugging documentation to resolve MTU issues. Should never exceed 1420" value="<%- mss_fix || '' %>" autocapitalize="off">
     </div>
+    <div class="fragment form-group">
+      <label>Fragment MTU</label>
+      <input type="text" class="form-control" placeholder="Enter fragment MTU" data-toggle="tooltip" title="Optional, fragment MTU value. This controls the maximum UDP packet size. This will only affect OpenVPN connections using UDP. The value will be pushed to the client on connection and does not require client configuration changes. This option should be left blank to allow the server to detect the optimal MTU. Refer to the debugging documentation to resolve MTU issues. Should never exceed 1440" value="<%- fragment || '' %>" autocapitalize="off">
+    </div>
     <div class="max-devices form-group">
       <label>Max Devices</label>
       <input type="number" class="form-control" placeholder="Enter max devices" data-toggle="tooltip" title="Maximum number of devices per client connected to a server." min="0" value="<%- max_devices === -1 ? '' : max_devices %>" autocapitalize="off">
