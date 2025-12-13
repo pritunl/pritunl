@@ -188,6 +188,10 @@
       <label>Ping Timeout</label>
       <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, timeout for client ping. Must be greater then ping interval" min="0" value="<%- ping_timeout || '' %>" autocapitalize="off">
     </div>
+    <div class="ping-timeout-wg form-group" <%= wg ? '' : 'style="display: none;"' %>>
+      <label>WireGuard Ping Timeout</label>
+      <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, timeout for WireGuard client ping. Must be greater then ping interval" min="0" value="<%- ping_timeout_wg || '' %>" autocapitalize="off">
+    </div>
     <div class="link-ping-timeout form-group">
       <label>User Link Ping Timeout</label>
       <input type="number" class="form-control" placeholder="Enter ping timeout" data-toggle="tooltip" title="Optional, ping timeout used when multiple users have the same network link to failover to another user when one network link fails." min="0" step="0.1" value="<%- link_ping_timeout || '' %>" autocapitalize="off">
