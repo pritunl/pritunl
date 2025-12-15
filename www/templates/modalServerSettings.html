@@ -276,6 +276,12 @@
         <span class="selector-inner glyphicon glyphicon-ok"></span>
       </div>
     </div>
+    <div class="force-connect-toggle toggle-form form-group">
+      <label>Force Client Connection</label>
+      <div class="selector <%= force_connect ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Pritunl Client will prevent user from disabling profiles for this server">
+        <span class="selector-inner glyphicon glyphicon-ok"></span>
+      </div>
+    </div>
     <div class="ipv6-firewall-toggle toggle-form form-group" <%= ipv6 ? '' : 'style="display: none;"' %>>
       <label>Routed IPv6 Firewall</label>
       <div class="selector <%= ipv6_firewall ? 'selected' : '' %> no-select" data-toggle="tooltip" title="Enabled firewall when routed IPv6 is used">
