@@ -1046,11 +1046,11 @@ CIPHERS = {
 }
 CIPHERS_DCO = {
     'none': 'cipher none',
-    'bf128': 'cipher AES-128-CBC\ndata-ciphers AES-128-GCM',
-    'bf256': 'cipher AES-256-CBC\ndata-ciphers AES-256-GCM',
-    'aes128': 'cipher AES-128-CBC\ndata-ciphers AES-128-GCM',
-    'aes192': 'cipher AES-256-CBC\ndata-ciphers AES-256-GCM',
-    'aes256': 'cipher AES-256-CBC\ndata-ciphers AES-256-GCM',
+    'bf128': 'cipher AES-128-GCM\ndata-ciphers AES-128-GCM',
+    'bf256': 'cipher AES-256-GCM\ndata-ciphers AES-256-GCM',
+    'aes128': 'cipher AES-128-GCM\ndata-ciphers AES-128-GCM',
+    'aes192': 'cipher AES-256-GCM\ndata-ciphers AES-256-GCM',
+    'aes256': 'cipher AES-256-GCM\ndata-ciphers AES-256-GCM',
     'chacha20poly1205': 'cipher CHACHA20-POLY1305\ndata-ciphers CHACHA20-POLY1305',
 }
 
