@@ -1754,6 +1754,7 @@ class ServerInstance(object):
             route_count=len(self.server.routes),
             network=self.server.network,
             network6=self.server.network6,
+            ovpn_dco=self.server.ovpn_dco,
             dynamic_firewall=self.server.dynamic_firewall,
             bypass_sso_auth=self.server.bypass_sso_auth,
             geo_sort=self.server.geo_sort,
