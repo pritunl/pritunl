@@ -439,7 +439,10 @@ class ServerInstance(object):
             raise ValueError('Unknown protocol')
 
         if utils.check_openvpn_ver():
-            server_ciphers = SERVER_CIPHERS
+            if self.server.ovpn_dco:
+                server_ciphers = SERVER_CIPHERS_DCO
+            else:
+                server_ciphers = SERVER_CIPHERS
             server_conf_template = OVPN_INLINE_SERVER_CONF
         else:
             server_ciphers = SERVER_CIPHERS_OLD
