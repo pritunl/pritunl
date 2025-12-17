@@ -49,6 +49,7 @@ dict_fields = [
     'network_start',
     'network_end',
     'hide_ovpn',
+    'ovpn_dco',
     'dynamic_firewall',
     'bypass_sso_auth',
     'geo_sort',
@@ -125,6 +126,7 @@ class Server(mongo.MongoObject):
         'network_start',
         'network_end',
         'hide_ovpn',
+        'ovpn_dco',
         'dynamic_firewall',
         'bypass_sso_auth',
         'geo_sort',
@@ -240,19 +242,19 @@ class Server(mongo.MongoObject):
 
     def __init__(self, name=None, groups=None, network_wg=None,
             network=None, network_mode=None, network_start=None,
-            network_end=None, hide_ovpn=None, dynamic_firewall=None,
-            bypass_sso_auth=None, geo_sort=None, force_connect=None,
-            route_dns=None, device_auth=None, restrict_routes=None, wg=None,
-            ipv6=None, ipv6_firewall=None, bind_address=None, port=None,
-            protocol=None, port_wg=None, dh_param_bits=None, multi_device=None,
-            dns_servers=None, search_domain=None, otp_auth=None,
-            sso_auth=None, cipher=None, hash=None, block_outside_dns=None,
-            jumbo_frames=None, lzo_compression=None, inter_client=None,
-            ping_interval=None, ping_timeout=None, ping_interval_wg=None,
-            ping_timeout_wg=None, link_ping_interval=None,
-            link_ping_timeout=None, inactive_timeout=None,
-            session_timeout=None,allowed_devices=None, max_clients=None,
-            max_devices=None, replica_count=None, vxlan=None,
+            network_end=None, hide_ovpn=None, ovpn_dco=None,
+            dynamic_firewall=None, bypass_sso_auth=None, geo_sort=None,
+            force_connect=None, route_dns=None, device_auth=None,
+            restrict_routes=None, wg=None, ipv6=None, ipv6_firewall=None,
+            bind_address=None, port=None, protocol=None, port_wg=None,
+            dh_param_bits=None, multi_device=None, dns_servers=None,
+            search_domain=None, otp_auth=None, sso_auth=None, cipher=None,
+            hash=None, block_outside_dns=None, jumbo_frames=None,
+            lzo_compression=None, inter_client=None, ping_interval=None,
+            ping_timeout=None, ping_interval_wg=None, ping_timeout_wg=None,
+            link_ping_interval=None, link_ping_timeout=None,
+            inactive_timeout=None, session_timeout=None, allowed_devices=None,
+            max_clients=None, max_devices=None, replica_count=None, vxlan=None,
             dns_mapping=None, debug=None, pre_connect_msg=None, mss_fix=None,
             tun_mtu=None, fragment=None, multihome=None, **kwargs):
         mongo.MongoObject.__init__(self)
@@ -282,6 +284,8 @@ class Server(mongo.MongoObject):
             self.network_end = network_end
         if hide_ovpn is not None:
             self.hide_ovpn = hide_ovpn
+        if ovpn_dco is not None:
+            self.ovpn_dco = ovpn_dco
         if dynamic_firewall is not None:
             self.dynamic_firewall = dynamic_firewall
         if bypass_sso_auth is not None:
@@ -440,6 +444,7 @@ class Server(mongo.MongoObject):
             'network_start': self.network_start,
             'network_end': self.network_end,
             'hide_ovpn': self.hide_ovpn,
+            'ovpn_dco': self.ovpn_dco,
             'dynamic_firewall': self.dynamic_firewall,
             'bypass_sso_auth': self.bypass_sso_auth,
             'geo_sort': self.geo_sort,
