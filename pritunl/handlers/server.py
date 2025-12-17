@@ -220,6 +220,12 @@ def server_put_post(server_id=None):
         hide_ovpn = True if flask.request.json['hide_ovpn'] \
             else False
 
+    ovpn_dco = None
+    ovpn_dco_def = False
+    if 'ovpn_dco' in flask.request.json:
+        ovpn_dco_def = True
+        ovpn_dco = True if flask.request.json['ovpn_dco'] else False
+
     dynamic_firewall = None
     dynamic_firewall_def = False
     if 'dynamic_firewall' in flask.request.json:
@@ -680,6 +686,7 @@ def server_put_post(server_id=None):
             network_start=network_start,
             network_end=network_end,
             hide_ovpn=hide_ovpn,
+            ovpn_dco=ovpn_dco,
             dynamic_firewall=dynamic_firewall,
             bypass_sso_auth=bypass_sso_auth,
             geo_sort=geo_sort,
@@ -750,6 +757,9 @@ def server_put_post(server_id=None):
             svr.network_end = network_end
         if hide_ovpn_def:
             svr.hide_ovpn = hide_ovpn
+        if ovpn_dco_def and svr.ovpn_dco != ovpn_dco:
+            allow_online = False
+            svr.ovpn_dco = ovpn_dco
         if dynamic_firewall_def and svr.dynamic_firewall != dynamic_firewall:
             allow_online = False
             svr.dynamic_firewall = dynamic_firewall
