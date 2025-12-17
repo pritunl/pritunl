@@ -57,7 +57,8 @@ class ServerInstanceLink(object):
             settings.vpn.server_poll_timeout,
         )
 
-        if self.linked_server.lzo_compression != ADAPTIVE:
+        if self.linked_server.lzo_compression != ADAPTIVE and \
+                not self.linked_server.ovpn_dco:
             client_conf += 'comp-lzo no\n'
 
         if self.linked_server.tun_mtu:
