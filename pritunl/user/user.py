@@ -1007,6 +1007,7 @@ class User(mongo.MongoObject):
             'sync_hosts': svr.get_sync_remotes(),
             'sync_hash': conf_hash,
             'hide_ovpn': svr.hide_ovpn,
+            'ovpn_dco': svr.ovpn_dco,
             'dynamic_firewall': svr.dynamic_firewall,
             'geo_sort': geo_sort,
             'force_connect': svr.force_connect,
@@ -1053,6 +1054,11 @@ class User(mongo.MongoObject):
         certificate = utils.get_cert_block(self.certificate)
         private_key = self.private_key.strip()
 
+        if svr.ovpn_dco:
+            ciphers = CIPHERS_DCO
+        else:
+            ciphers = CIPHERS
+
         conf_hash = utils.unsafe_md5()
         conf_hash.update(str(version).encode())
         conf_hash.update(self.name.encode())
@@ -1061,7 +1067,7 @@ class User(mongo.MongoObject):
         conf_hash.update(svr.protocol.encode())
         for key_remote in sorted(key_remotes):
             conf_hash.update(key_remote.encode())
-        conf_hash.update(CIPHERS[svr.cipher].encode())
+        conf_hash.update(ciphers[svr.cipher].encode())
         conf_hash.update(HASHES[svr.hash].encode())
         conf_hash.update(str(svr.lzo_compression).encode())
         conf_hash.update(str(svr.tun_mtu).encode())
@@ -1099,6 +1105,7 @@ class User(mongo.MongoObject):
                 server_network_start=svr.network_start,
                 server_network_stop=svr.network_end,
                 server_hide_ovpn=svr.hide_ovpn,
+                server_ovpn_dco=svr.ovpn_dco,
                 server_dynamic_firewall=svr.dynamic_firewall,
                 server_bypass_sso_auth=svr.bypass_sso_auth,
                 server_device_auth=svr.device_auth,
@@ -1145,7 +1152,7 @@ class User(mongo.MongoObject):
             svr.adapter_type,
             svr.adapter_type,
             key_remotes,
-            CIPHERS[svr.cipher],
+            ciphers[svr.cipher],
             HASHES[svr.hash],
             svr.ping_interval,
             svr.ping_timeout,
