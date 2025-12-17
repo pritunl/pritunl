@@ -42,13 +42,18 @@ class ServerInstanceLink(object):
 
         remotes, _ = self.linked_server.get_key_remotes(True)
 
+        if self.linked_server.ovpn_dco:
+            ciphers = CIPHERS_DCO
+        else:
+            ciphers = CIPHERS
+
         client_conf = OVPN_INLINE_LINK_CONF % (
             uuid.uuid4().hex,
             utils.random_name(),
             self.interface,
             self.linked_server.adapter_type,
             remotes,
-            CIPHERS[self.linked_server.cipher],
+            ciphers[self.linked_server.cipher],
             HASHES[self.linked_server.hash],
             4 if self.server.debug else 1,
             8 if self.server.debug else 3,
