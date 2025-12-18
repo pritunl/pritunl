@@ -165,7 +165,7 @@ class SettingsApp(SettingsGroupMongo):
         'acme_timestamp': None,
         'acme_key': None,
         'acme_domain': None,
-        'acme_renew': 6912000,
+        'acme_renew': 2592000,
         'server_cert': None,
         'server_key': None,
         'cloud_provider': None,
