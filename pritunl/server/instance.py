@@ -1824,6 +1824,16 @@ class ServerInstance(object):
             if self.is_interrupted():
                 return
 
+            if self.server.ovpn_dco:
+                self.state = 'ovpn_dco'
+                try:
+                    utils.check_output_logged([
+                        'modprobe',
+                        'ovpn-dco-v2',
+                    ])
+                except:
+                    pass
+
             self.state = 'bridge_start'
             if self.server.debug:
                 self.server.output.push_message('State: ' + self.state)
