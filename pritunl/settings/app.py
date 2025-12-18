@@ -15,7 +15,6 @@ class SettingsApp(SettingsGroupMongo):
         'reverse_proxy_header': 'X-Forwarded-For',
         'reverse_proxy_proto_header': 'X-Forwarded-Proto',
         'redirect_server': True,
-        'check_requests': True,
         'demo_mode': False,
         'allow_insecure_session': False,
         'auditing': None,
