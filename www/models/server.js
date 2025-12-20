@@ -18,6 +18,7 @@ define([
       'groups': null,
       'bind_address': null,
       'hide_ovpn': null,
+      'ovpn_dco': null,
       'dynamic_firewall': null,
       'bypass_sso_auth': null,
       'geo_sort': null,
