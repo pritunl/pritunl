@@ -33,11 +33,23 @@ define([
       this.$('.user-count').text(this.model.get('user_count') + ' users');
     },
     render: function() {
+      var ttl = this.model.ttl();
+      var ttlAlert = '';
+      if (ttl === -1) {
+        ttlAlert = 'Certificate has Expired';
+      } else if (ttl > 0) {
+        ttlAlert = 'Expires in ' + ttl + ' days';
+      }
+
       this.$el.html(this.template(_.extend({
+        ttl_alert: ttlAlert,
         sort_active: this.usersListView.collection.getSort()
       }, this.model.toJSON())));
       this.$el.append(this.usersListView.render().el);
       this.$('.org-title').tooltip({
+        container: this.el
+      });
+      this.$('.ttl-alert').tooltip({
         container: this.el
       });
       this.$('.download-key').tooltip();
