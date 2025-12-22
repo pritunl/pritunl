@@ -13,5 +13,6 @@
   <div class="route-nat-netmap label label-success no-select" <%= nat && !net_gateway && nat_netmap ? '' : 'style="display: none;"' %>>NAT Mapped</div>
   <div class="route-net-gateway label label-purple no-select" <%= net_gateway ? '' : 'style="display: none;"' %>>Net Gateway</div>
   <div class="route-server-link label label-primary no-select" <%= server_link ? '' : 'style="display: none;"' %>>Server Link</div>
+  <button type="button" class="server-settings-route btn btn-primary btn-xs">Settings</button>
   <button type="button" <%- network === '::/0' || virtual_network || network_link || server_link ? 'disabled' : '' %> class="server-remove-route btn btn-danger btn-xs">Remove Route</button>
 </div>
