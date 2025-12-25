@@ -2,6 +2,7 @@
   <div class="label label-success toggle-hidden no-select">Organization</div><div class="label label-danger ttl-alert no-select" data-toggle="tooltip" title="This organization must be recreated after expiration. Check organization expiration documentation for more information"><%- ttl_alert %></div><h2 class="users-list-title title"><a class="org-title no-select" data-toggle="tooltip" title="Click to modify this organization"><%- name %></a><span class="org-id title"> (<%- id %>)</span></h2>
   <button type="button" class="org-del btn btn-danger btn-sm">Delete Organization</button>
   <button type="button" class="org-sort btn btn-primary btn-sm">Sort by <%- sort_active ? 'Name' : 'Last Active' %></button>
+  <button type="button" class="org-settings btn btn-primary btn-sm">Settings</button>
   <input type="text" class="org-search form-control" placeholder="Search for user" autocomplete="new-search-user">
   <div class="user-count label label-default no-select">
     <%- user_count %> users
