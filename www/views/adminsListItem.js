@@ -22,6 +22,7 @@ define([
       'click .admin-username': 'onModify',
       'click .audit-admin': 'onAuditAdmin',
       'click .get-otp-auth': 'onGetOtpAuth',
+      'click .settings-admin': 'onModify',
       'click .disable-admin': 'onDisableAdmin',
       'click .enable-admin': 'onEnableAdmin'
     },
