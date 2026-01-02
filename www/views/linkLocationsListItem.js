@@ -49,6 +49,7 @@ define([
       'mousedown .link-conf-host': 'onHostConf',
       'mousedown .link-ubnt-conf-host': 'onHostUbntConf',
       'mousedown .host-name': 'onModifyHost',
+      'mousedown .link-settings-host': 'onModifyHost',
       'mousedown .location-settings': 'onSettings',
       'mousedown .location-del': 'onDelete'
     },
