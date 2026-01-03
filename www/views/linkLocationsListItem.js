@@ -51,6 +51,7 @@ define([
       'mousedown .host-name': 'onModifyHost',
       'mousedown .link-settings-host': 'onModifyHost',
       'mousedown .location-settings': 'onSettings',
+      'mousedown .link-location-settings': 'onSettings',
       'mousedown .location-del': 'onDelete'
     },
     render: function() {
