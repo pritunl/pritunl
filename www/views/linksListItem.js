@@ -17,6 +17,7 @@ define([
     template: _.template(linksListItemTemplate),
     events: {
       'click .link-title a': 'onSettings',
+      'click .link-settings': 'onSettings',
       'click .link-del': 'onDelete',
       'click .link-rekey': 'onRekey',
       'click .link-start, .link-stop': 'onOperation',
