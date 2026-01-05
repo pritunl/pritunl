@@ -73,6 +73,7 @@ define([
     onOk: function() {
       var name = this.$('.name input').val();
       var linkType = this.$('.link-type select').val();
+      var protocol = this.$('.protocol select').val();
       var ipv6 = this.getIpv6Select();
       var hostCheck = this.getHostCheckSelect();
       var linkAction = this.$('.link-action select').val();
