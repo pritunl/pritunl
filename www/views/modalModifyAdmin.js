@@ -84,7 +84,11 @@ define([
         auth_token: true,
         auth_secret: true
       }, {
-        success: function() {
+        success: function(model, response) {
+          if (response && response.token && response.secret) {
+            this.$('.api-token input').val(response.token);
+            this.$('.api-secret input').val(response.secret);
+          }
           this.clearLoading();
           this.setAlert(
             'success', 'Successfully generated a new api key.');
