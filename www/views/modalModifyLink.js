@@ -72,6 +72,7 @@ define([
     },
     onOk: function() {
       var name = this.$('.name input').val();
+      var protocol = this.$('.protocol select').val();
       var ipv6 = this.getIpv6Select();
       var hostCheck = this.getHostCheckSelect();
       var linkAction = this.$('.link-action select').val();
@@ -87,6 +88,7 @@ define([
       this.setLoading('Saving link...');
       this.model.save({
         name: name,
+        protocol: protocol,
         ipv6: ipv6,
         host_check: hostCheck,
         action: linkAction,
