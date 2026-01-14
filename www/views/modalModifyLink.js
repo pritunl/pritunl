@@ -79,6 +79,7 @@ define([
       var preferredIke = this.$('.preferred-ike input').val();
       var preferredEsp = this.$('.preferred-esp input').val();
       var forcePreferred = this.getForcePreferredSelect();
+      var wgPort = parseInt(this.$('.wg-port input').val(), 10) || null;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
@@ -94,7 +95,8 @@ define([
         action: linkAction,
         preferred_ike: preferredIke,
         preferred_esp: preferredEsp,
-        force_preferred: forcePreferred
+        force_preferred: forcePreferred,
+        wg_port: wgPort
       }, {
         success: function() {
           this.close(true);
