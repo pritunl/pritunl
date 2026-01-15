@@ -328,7 +328,7 @@ class Clients(object):
             'gateway': network_gateway,
             'gateway6': network_gateway6,
             'port': self.server.port_wg,
-            'mtu': self.server.mss_fix,
+            'mtu': self.server.tun_mtu,
             'ping_interval': self.server.ping_interval_wg,
             'ping_timeout': self.server.ping_timeout_wg,
             'web_port': settings.app.server_port,
