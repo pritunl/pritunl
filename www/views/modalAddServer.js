@@ -40,19 +40,13 @@ define([
     _get_free_network: function() {
       var i;
       var network;
+      var octet;
 
-      for (i = 0; i < 64; i++) {
-        network = '192.168.' + this._rand(215, 250) + '.0/24';
+      for (i = 0; i < 512; i++) {
+        octet = this._rand(0, 63) * 4;
+        network = '10.' + this._rand(0, 255) + '.' + octet + '.0/22';
         if (this.usedNetworks.indexOf(network) === -1) {
           break;
-        }
-      }
-      if (this.usedNetworks.indexOf(network) !== -1) {
-        for (i = 0; i < 512; i++) {
-          network = '192.168.' + this._rand(15, 215) + '.0/24';
-          if (this.usedNetworks.indexOf(network) === -1) {
-            break;
-          }
         }
       }
 
