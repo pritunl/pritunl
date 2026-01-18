@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Update server defaults
 Add ovpn dco support
 Fix wg mtu issues
 
