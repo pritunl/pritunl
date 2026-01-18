@@ -1,4 +1,4 @@
-Copyright (c) 2013-2024 Pritunl
+Copyright (c) 2013-2025 Pritunl
 
                                LICENSE SUMMARY
 
@@ -105,6 +105,18 @@ with Licensor; (iii) Licensee warrants that feature does not infringe any 3rd
 party patent, trademark, trade-secret or any other intellectual property
 right; and (iv) Licensee developed, envisioned or created the feature solely
 by himself.
+
+Contribution: Licensee may submit additional code for the Software,
+provided, however, that (i) Licensee hereby irrevocably assigns all right,
+title, and interest in such contribution to Licensor upon submission; (ii)
+Licensee hereby grants Licensor a perpetual, worldwide, royalty-free,
+irrevocable license to use, modify, sublicense, and relicense such
+contribution under any license terms Licensor chooses, including without
+limitation less restrictive licenses such as AGPL; and (iii) Licensee
+represents and warrants that the contribution is Licensee's original work
+and does not infringe upon any third-party intellectual property rights; and
+(iv) Licensee also waives any moral rights in the contribution to the extent
+permitted by law.
 
                                  LIABILITY
 
