@@ -30,6 +30,7 @@ define([
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
         'click .dynamic-firewall-toggle': 'onDynamicFirewallSelect',
+        'click .bypass-sso-auth-toggle': 'onBypassSsoAuthSelect',
         'click .geo-sort-toggle': 'onGeoSortSelect',
         'click .force-connect-toggle': 'onForceConnectSelect',
         'click .route-dns-toggle': 'onRouteDnsSelect',
