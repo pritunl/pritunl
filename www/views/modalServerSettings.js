@@ -49,7 +49,7 @@ define([
       return this.template(this.model.toJSON());
     },
     postRender: function() {
-      this.hasWarning = false
+      this.hasWarning = false;
       this.$('.groups input').select2({
         tags: [],
         tokenSeparators: [',', ' '],
@@ -73,7 +73,7 @@ define([
         this.setAlert('danger', 'Using DH Param Bits less then 2048 is ' +
           'not compatible with newer versions of OpenSSL.', '.dh-param-bits');
       } else {
-        this.hasWarning = false
+        this.hasWarning = false;
         this.clearAlert();
       }
     },
