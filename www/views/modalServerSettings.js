@@ -220,29 +220,11 @@ define([
         this.$('.ipv6-toggle .selector').addClass('selected');
         this.$('.ipv6-toggle .selector-inner').show();
 
-        if (dnsServers.indexOf('8.8.4.4') !== -1 &&
-            dnsServers.indexOf('2001:4860:4860::8844') === -1) {
-          dnsServers.unshift('2001:4860:4860::8844');
-        }
-        if (dnsServers.indexOf('8.8.8.8') !== -1 &&
-            dnsServers.indexOf('2001:4860:4860::8888') === -1) {
-          dnsServers.unshift('2001:4860:4860::8888');
-        }
-
         this.$('.ipv6-firewall-toggle').show();
       }
       else {
         this.$('.ipv6-toggle .selector').removeClass('selected');
         this.$('.ipv6-toggle .selector-inner').hide();
-
-        var i = dnsServers.indexOf('2001:4860:4860::8888');
-        if (i !== -1) {
-          dnsServers.splice(i, 1);
-        }
-        i = dnsServers.indexOf('2001:4860:4860::8844');
-        if (i !== -1) {
-          dnsServers.splice(i, 1);
-        }
 
         this.$('.ipv6-firewall-toggle').hide();
       }
