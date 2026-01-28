@@ -283,6 +283,23 @@ define([
     onHideOvpnSelect: function() {
       this.setHideOvpnSelect(!this.getHideOvpnSelect());
     },
+    getOvpnDcoSelect: function() {
+      return this.$('.ovpn-dco-toggle .selector').hasClass(
+        'selected');
+    },
+    setOvpnDcoSelect: function(state) {
+      if (state) {
+        this.$('.ovpn-dco-toggle .selector').addClass('selected');
+        this.$('.ovpn-dco-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.ovpn-dco-toggle .selector').removeClass('selected');
+        this.$('.ovpn-dco-toggle .selector-inner').hide();
+      }
+    },
+    onOvpnDcoSelect: function() {
+      this.setOvpnDcoSelect(!this.getOvpnDcoSelect());
+    },
     getDynamicFirewallSelect: function() {
       return this.$('.dynamic-firewall-toggle .selector').hasClass(
         'selected');
