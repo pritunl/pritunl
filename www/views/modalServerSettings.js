@@ -318,6 +318,23 @@ define([
     onDynamicFirewallSelect: function() {
       this.setDynamicFirewallSelect(!this.getDynamicFirewallSelect());
     },
+    getBypassSsoAuthSelect: function() {
+      return this.$('.bypass-sso-auth-toggle .selector').hasClass(
+        'selected');
+    },
+    setBypassSsoAuthSelect: function(state) {
+      if (state) {
+        this.$('.bypass-sso-auth-toggle .selector').addClass('selected');
+        this.$('.bypass-sso-auth-toggle .selector-inner').show();
+      }
+      else {
+        this.$('.bypass-sso-auth-toggle .selector').removeClass('selected');
+        this.$('.bypass-sso-auth-toggle .selector-inner').hide();
+      }
+    },
+    onBypassSsoAuthSelect: function() {
+      this.setBypassSsoAuthSelect(!this.getBypassSsoAuthSelect());
+    },
     getGeoSortSelect: function() {
       return this.$('.geo-sort-toggle .selector').hasClass(
         'selected');
