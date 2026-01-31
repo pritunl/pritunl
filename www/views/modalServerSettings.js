@@ -30,6 +30,7 @@ define([
         'click .multi-device-toggle': 'onMultiDeviceSelect',
         'click .vxlan-toggle': 'onVxlanSelect',
         'click .hide-ovpn-toggle': 'onHideOvpnSelect',
+        'click .ovpn-dco-toggle': 'onOvpnDcoSelect',
         'click .dynamic-firewall-toggle': 'onDynamicFirewallSelect',
         'click .bypass-sso-auth-toggle': 'onBypassSsoAuthSelect',
         'click .geo-sort-toggle': 'onGeoSortSelect',
