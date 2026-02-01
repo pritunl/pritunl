@@ -1441,6 +1441,12 @@ class ServerInstance(object):
             seconds=settings.vpn.route_ping_ttl)
 
         try:
+            vxlan_addr = None
+            vxlan_addr6 = None
+            if self.vxlan:
+                vxlan_addr = self.vxlan.vxlan_addr
+                vxlan_addr6 = self.vxlan.vxlan_addr6
+
             self.routes_collection.update_one({
                 '_id': self.server.id,
                 'timestamp': {'$lt': timestamp_spec},
@@ -1450,8 +1456,8 @@ class ServerInstance(object):
                 'vpc_region': vpc_region,
                 'vpc_id': vpc_id,
                 'networks': networks,
-                'vxlan_addr': self.vxlan.vxlan_addr,
-                'vxlan_addr6': self.vxlan.vxlan_addr6,
+                'vxlan_addr': vxlan_addr,
+                'vxlan_addr6': vxlan_addr6,
                 'timestamp': utils.now(),
             }}, upsert=True)
 
@@ -1500,9 +1506,10 @@ class ServerInstance(object):
                 networks=networks,
             )
 
-            messenger.publish('instance', ['route_advertised',
-                self.server.id, self.vxlan.vxlan_addr,
-                self.vxlan.vxlan_addr6, networks])
+            if self.vxlan:
+                messenger.publish('instance', ['route_advertised',
+                    self.server.id, self.vxlan.vxlan_addr,
+                    self.vxlan.vxlan_addr6, networks])
 
             self.route_advertisements.add(self.server.id)
         except pymongo.errors.DuplicateKeyError:
@@ -1514,9 +1521,10 @@ class ServerInstance(object):
                 if doc:
                     vxlan_addr = doc['vxlan_addr']
                     vxlan_addr6 = doc['vxlan_addr6']
-                    doc_networks = doc['networks']
-                    for network in doc_networks:
-                        self.tables_add(vxlan_addr, vxlan_addr6, network)
+                    if vxlan_addr or vxlan_addr6:
+                        doc_networks = doc['networks']
+                        for network in doc_networks:
+                            self.tables_add(vxlan_addr, vxlan_addr6, network)
 
             return
         except:
@@ -1525,7 +1533,7 @@ class ServerInstance(object):
                 instance_id=self.id,
                 vpc_region=vpc_region,
                 vpc_id=vpc_id,
-                network=network,
+                networks=networks,
             )
 
     def start_wg(self):
