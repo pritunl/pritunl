@@ -481,7 +481,7 @@ define([
         otpAuth !== this.model.get('otp_auth')
       ) {
         if (!this.hasWarning) {
-          this.hasWarning = true
+          this.hasWarning = true;
           this.setAlert('warning', 'These changes will require users ' +
             'that are not using an official Pritunl client to download ' +
             'their updated profile again before being able to connect. ' +
@@ -489,7 +489,7 @@ define([
             'the changes.');
         }
       } else {
-        this.hasWarning = false
+        this.hasWarning = false;
         this.clearAlert();
       }
     },
