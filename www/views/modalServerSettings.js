@@ -578,6 +578,7 @@ define([
       var protocol = this.$('select.protocol').val();
       var dhParamBits = parseInt(this.$('.dh-param-bits select').val(), 10);
       var hideOvpn = this.getHideOvpnSelect();
+      var ovpnDco = this.getOvpnDcoSelect();
       var dynamicFirewall = this.getDynamicFirewallSelect();
       var geoSort = this.getGeoSortSelect();
       var forceConnect = this.getForceConnectSelect();
@@ -681,6 +682,7 @@ define([
         'restrict_routes': restrictRoutes,
         'wg': wg,
         'hide_ovpn': hideOvpn,
+        'ovpn_dco': ovpnDco,
         'dynamic_firewall': dynamicFirewall,
         'geo_sort': geoSort,
         'force_connect': forceConnect,
