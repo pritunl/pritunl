@@ -1466,6 +1466,7 @@ class ServerInstance(object):
                     utils.add_vpc_route(network)
                 elif cloud_provider == 'oracle':
                     utils.oracle_add_route(network)
+                    time.sleep(0.3)
                 elif cloud_provider == 'pritunl':
                     utils.pritunl_cloud_add_route(network)
                 else:
@@ -1482,6 +1483,7 @@ class ServerInstance(object):
                             utils.add_vpc_route(vxlan_net)
                         elif cloud_provider == 'oracle':
                             utils.oracle_add_route(vxlan_net)
+                            time.sleep(0.3)
                         elif cloud_provider == 'pritunl':
                             utils.pritunl_cloud_add_route(vxlan_net)
 
@@ -1494,6 +1496,7 @@ class ServerInstance(object):
                             utils.add_vpc_route(vxlan_net6)
                         elif cloud_provider == 'oracle':
                             utils.oracle_add_route(vxlan_net6)
+                            time.sleep(0.3)
                         elif cloud_provider == 'pritunl':
                             utils.pritunl_cloud_add_route(vxlan_net6)
 
