@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issues with route advertisement
+
 Version 1.32.4512.98 2026-01-19
 -------------------------------
 
