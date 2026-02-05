@@ -580,6 +580,7 @@ define([
       var hideOvpn = this.getHideOvpnSelect();
       var ovpnDco = this.getOvpnDcoSelect();
       var dynamicFirewall = this.getDynamicFirewallSelect();
+      var bypassSsoAuth = this.getBypassSsoAuthSelect();
       var geoSort = this.getGeoSortSelect();
       var forceConnect = this.getForceConnectSelect();
       var routeDns = this.getRouteDnsSelect();
@@ -684,6 +685,7 @@ define([
         'hide_ovpn': hideOvpn,
         'ovpn_dco': ovpnDco,
         'dynamic_firewall': dynamicFirewall,
+        'bypass_sso_auth': bypassSsoAuth,
         'geo_sort': geoSort,
         'force_connect': forceConnect,
         'route_dns': routeDns,
