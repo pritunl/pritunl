@@ -593,6 +593,10 @@ define([
       var interClient = this.getInterClientSelect();
       var pingInterval = parseInt(this.$('.ping-interval input').val(), 10);
       var pingTimeout = parseInt(this.$('.ping-timeout input').val(), 10);
+      var pingIntervalWg = parseInt(this.$(
+        '.ping-interval-wg input').val(), 10);
+      var pingTimeoutWg = parseInt(this.$(
+        '.ping-timeout-wg input').val(), 10);
       var linkPingInterval = parseFloat(
         this.$('.link-ping-interval input').val(), 10);
       var linkPingTimeout = parseFloat(
@@ -703,6 +707,8 @@ define([
         'inter_client': interClient,
         'ping_interval': pingInterval,
         'ping_timeout': pingTimeout,
+        'ping_interval_wg': pingIntervalWg,
+        'ping_timeout_wg': pingTimeoutWg,
         'link_ping_interval': linkPingInterval,
         'link_ping_timeout': linkPingTimeout,
         'inactive_timeout': inactiveTimeout,
