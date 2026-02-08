@@ -632,7 +632,7 @@ define([
       var mssFix =  parseInt(this.$('.mss-fix input').val(), 10) || null;
       var multihome = this.getMultihomeSelect();
 
-      this.hasWarning = false
+      this.hasWarning = false;
 
       if (!name) {
         this.setAlert('danger', 'Name can not be empty.', '.name');
