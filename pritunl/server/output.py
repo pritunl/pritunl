@@ -47,7 +47,7 @@ class ServerOutput(object):
             doc_ids.append(doc['_id'])
 
         if doc_ids:
-            self.collection.delete_one({
+            self.collection.delete_many({
                 '_id': {'$in': doc_ids},
             })
 
