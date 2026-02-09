@@ -630,6 +630,7 @@ define([
       var preConnectMsg = this.$(
         '.pre-connect-msg textarea').val().trim() || null;
       var mssFix =  parseInt(this.$('.mss-fix input').val(), 10) || null;
+      var tunMtu =  parseInt(this.$('.tun-mtu input').val(), 10) || null;
       var multihome = this.getMultihomeSelect();
 
       this.hasWarning = false;
@@ -721,6 +722,7 @@ define([
         'dns_mapping': dnsMapping,
         'debug': debug,
         'mss_fix': mssFix,
+        'tun_mtu': tunMtu,
         'multihome': multihome,
         'pre_connect_msg': preConnectMsg
       };
