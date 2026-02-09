@@ -78,13 +78,13 @@ class ServerOutput(object):
             {'$match': {
                 'server_id': self.server_id,
             }},
+            {'$sort': {
+                'timestamp': pymongo.ASCENDING,
+            }},
             {'$project': {
                 '_id': False,
                 'timestamp': True,
                 'output': True,
-            }},
-            {'$sort': {
-                'timestamp': pymongo.ASCENDING,
             }},
             {'$group': {
                 '_id': None,
