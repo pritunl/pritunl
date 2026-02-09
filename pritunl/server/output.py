@@ -83,7 +83,6 @@ class ServerOutput(object):
             }},
             {'$project': {
                 '_id': False,
-                'timestamp': True,
                 'output': True,
             }},
             {'$group': {
