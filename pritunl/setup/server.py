@@ -81,6 +81,13 @@ def index_get():
     else:
         return redirect('setup')
 
+@app.route('/login', methods=['GET'])
+def login_get():
+    if setup_state == 'upgrade':
+        return redirect('upgrade')
+    else:
+        return redirect('setup')
+
 @app.route('/setup', methods=['GET'])
 def setup_get():
     if setup_state == 'upgrade':
