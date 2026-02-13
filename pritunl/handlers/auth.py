@@ -448,7 +448,7 @@ def auth_delete():
 
     return utils.jsonify({
         'authenticated': False,
-    })
+    }, token=False)
 
 @app.app.route('/state', methods=['GET'])
 @auth.session_light_auth
