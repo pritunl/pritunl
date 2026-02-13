@@ -205,8 +205,6 @@ def server_thread():
     web_process_state = True
     web_process = subprocess.Popen(
         ['pritunl-web'],
-        stdout=subprocess.PIPE,
-        stderr=subprocess.PIPE,
         env=dict(os.environ, **{
             'REVERSE_PROXY_HEADER': '',
             'REVERSE_PROXY_PROTO_HEADER': '',
