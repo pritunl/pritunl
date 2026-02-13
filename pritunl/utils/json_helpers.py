@@ -45,7 +45,14 @@ def jsonify(data=None, status_code=None, token=None):
         'no-cache, no-store, must-revalidate')
     response.headers.add('Pragma', 'no-cache')
     response.headers.add('Expires', 0)
-    if token is not None:
+    if token is False:
+        response.delete_cookie(
+            key='token',
+            path='/',
+            secure=True,
+            httponly=True,
+        )
+    elif token is not None:
         response.set_cookie(
             key='token',
             value=token,
