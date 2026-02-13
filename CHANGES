@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Update libraries
+
 Version 1.32.4528.97 2026-02-04
 -------------------------------
 
