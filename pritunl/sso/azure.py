@@ -106,8 +106,21 @@ def _verify_azure_1(user_name):
     return True, roles
 
 def _verify_azure_2(user_name):
+    if settings.app.sso_azure_region in ("us-gov", "us-gov2"):
+        loginUrl = "https://login.microsoftonline.us"
+        graphUrl = "https://graph.microsoft.us"
+    elif settings.app.sso_azure_region in ("us-dod", "us-dod2"):
+        loginUrl = "https://login.microsoftonline.us"
+        graphUrl = "https://dod-graph.microsoft.us"
+    elif settings.app.sso_azure_region in ("china", "china2"):
+        loginUrl = "https://login.partner.microsoftonline.cn"
+        loginUrl = "https://microsoftgraph.chinacloudapi.cn"
+    else:
+        loginUrl = "https://login.microsoftonline.com"
+        graphUrl = "https://graph.microsoft.com"
+
     response = requests.post(
-        'https://login.microsoftonline.com/%s/oauth2/token' % \
+        loginUrl + '/%s/oauth2/token' % \
         settings.app.sso_azure_directory_id,
         headers={
             'Content-Type': 'application/x-www-form-urlencoded',
@@ -116,7 +129,7 @@ def _verify_azure_2(user_name):
             'grant_type': 'client_credentials',
             'client_id': settings.app.sso_azure_app_id,
             'client_secret': settings.app.sso_azure_app_secret,
-            'resource': 'https://graph.microsoft.com',
+            'resource': graphUrl,
         },
         timeout=30,
     )
@@ -135,7 +148,7 @@ def _verify_azure_2(user_name):
     access_token = data['access_token']
 
     response = requests.get(
-        'https://graph.microsoft.com/v1.0/%s/users/%s' % (
+        graphUrl + '/v1.0/%s/users/%s' % (
             settings.app.sso_azure_directory_id,
             urllib.parse.quote(user_name),
         ),
@@ -175,7 +188,7 @@ def _verify_azure_2(user_name):
         )
         return False, []
 
-    url = 'https://graph.microsoft.com/v1.0/users/%s/memberOf' % (
+    url = graphUrl + '/v1.0/users/%s/memberOf' % (
         data['id'],
     )
     roles = []
