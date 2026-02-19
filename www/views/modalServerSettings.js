@@ -631,6 +631,7 @@ define([
         '.pre-connect-msg textarea').val().trim() || null;
       var mssFix =  parseInt(this.$('.mss-fix input').val(), 10) || null;
       var tunMtu =  parseInt(this.$('.tun-mtu input').val(), 10) || null;
+      var fragment =  parseInt(this.$('.fragment input').val(), 10) || null;
       var multihome = this.getMultihomeSelect();
 
       this.hasWarning = false;
@@ -723,6 +724,7 @@ define([
         'debug': debug,
         'mss_fix': mssFix,
         'tun_mtu': tunMtu,
+        'fragment': fragment,
         'multihome': multihome,
         'pre_connect_msg': preConnectMsg
       };
