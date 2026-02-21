@@ -1242,6 +1242,12 @@ define([
         '.oracle-user-ocid input').val();
       var oraclePublicKey = this.$(
         '.oracle-public-key textarea').val();
+      var pritunlCloudHost = this.$(
+        '.pritunl-cloud-host input').val();
+      var pritunlCloudToken = this.$(
+        '.pritunl-cloud-token input').val();
+      var pritunlCloudSecret = this.$(
+        '.pritunl-cloud-secret input').val();
       var usEast1AccessKey = this.$(
         '.us-east-1-access-key input').val();
       var usEast1SecretKey = this.$(
@@ -1566,6 +1572,9 @@ define([
         route53_zone: route53Zone,
         oracle_user_ocid: oracleUserOcid,
         oracle_public_key: oraclePublicKey,
+        pritunl_cloud_host: pritunlCloudHost,
+        pritunl_cloud_token: pritunlCloudToken,
+        pritunl_cloud_secret: pritunlCloudSecret,
         us_east_1_access_key: usEast1AccessKey,
         us_east_1_secret_key: usEast1SecretKey,
         us_east_2_access_key: usEast2AccessKey,
