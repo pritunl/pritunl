@@ -531,8 +531,6 @@ class ServerInstance(object):
         else:
             server_conf += 'ignore-unknown-option allow-compression\n'
             server_conf += 'allow-compression no\n'
-            if not self.server.ovpn_dco:
-                server_conf += 'comp-lzo no\npush "comp-lzo no"\n'
 
         if push:
             server_conf += push
