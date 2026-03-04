@@ -3086,5 +3086,21 @@ class Clients(object):
             'instance_id': self.instance.id,
         })
 
+        try:
+            doc_ids = []
+            for client in self.clients.find_all():
+                doc_id = client.get('doc_id')
+                if doc_id:
+                    doc_ids.append(doc_id)
+
+            if doc_ids:
+                self.collection.delete_many({
+                    '_id': {'$in': doc_ids},
+                })
+        except:
+            logger.exception('Failed to clean clients', 'clients',
+                client_count=len(doc_ids),
+            )
+
         if self.server.route_clients:
             self.clear_routes()
