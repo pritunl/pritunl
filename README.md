@@ -48,11 +48,11 @@ export VERSION="X.XX.XXXX.XX"
 
 sudo dnf -y install gcc git-core wget rsync openssl-devel bzip2-devel libffi-devel sqlite-devel xz-devel zlib-devel selinux-policy selinux-policy-devel policycoreutils-python-utils python3 net-tools openssl iptables ipset ca-certificates psmisc
 
-wget https://www.python.org/ftp/python/3.9.23/Python-3.9.23.tar.xz
-echo "61a42919e13d539f7673cf11d1c404380e28e540510860b9d242196e165709c9 Python-3.9.23.tar.xz" | sha256sum -c - && tar xf Python-3.9.23.tar.xz
-rm Python-3.9.23.tar.xz
+wget https://www.python.org/ftp/python/3.9.25/Python-3.9.25.tgz
+echo "a7438eabd3a48139f42d4e058096af8d880b0bb6e8fb8c78838892e4ce5583f2 Python-3.9.25.tgz" | sha256sum -c - && tar xf Python-3.9.25.tgz
+rm Python-3.9.25.tgz
 
-cd "./Python-3.9.23"
+cd "./Python-3.9.25"
 gcc_major=$(gcc -dumpversion | cut -d. -f1)
 base_cflags="-fstack-protector-strong -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -Werror=format-security -mtune=generic -grecord-gcc-switches"
 if [ "$gcc_major" -ge 7 ]; then
@@ -78,14 +78,14 @@ sudo mkdir /usr/lib/pritunl
 ./configure --prefix=/usr --libdir=/usr/lib --enable-optimizations --enable-ipv6 --enable-loadable-sqlite-extensions --disable-shared --with-lto --with-computed-gotos=yes --with-platlibdir=lib
 sudo make DESTDIR="/usr/lib/pritunl" install
 cd ../
-sudo rm -rf ./Python-3.9.23
+sudo rm -rf ./Python-3.9.25
 sudo /usr/lib/pritunl/usr/bin/python3 -m ensurepip
 sudo /usr/lib/pritunl/usr/bin/python3 -m pip install pip==23.3.2
 
 sudo rm -rf /usr/local/go
-wget https://go.dev/dl/go1.25.5.linux-amd64.tar.gz
-echo "9e9b755d63b36acf30c12a9a3fc379243714c1c6d3dd72861da637f336ebb35b go1.25.5.linux-amd64.tar.gz" | sha256sum -c - && sudo tar -C /usr/local -xf go1.25.5.linux-amd64.tar.gz
-rm -f go1.25.5.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.26.0.linux-amd64.tar.gz
+echo "aac1b08a0fb0c4e0a7c1555beb7b59180b05dfc5a3d62e40e9de90cd42f88235 go1.26.0.linux-amd64.tar.gz" | sha256sum -c - && sudo tar -C /usr/local -xf go1.26.0.linux-amd64.tar.gz
+rm -f go1.26.0.linux-amd64.tar.gz
 
 tee -a ~/.bashrc << 'EOF'
 export GOPATH=$HOME/go
