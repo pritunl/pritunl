@@ -1159,9 +1159,6 @@ class User(mongo.MongoObject):
             settings.vpn.server_poll_timeout,
         )
 
-        if svr.lzo_compression != ADAPTIVE and not svr.ovpn_dco:
-            client_conf += 'comp-lzo no\n'
-
         if svr.tun_mtu:
             client_conf += 'tun-mtu %s\n' % svr.tun_mtu
 
