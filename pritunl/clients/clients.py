@@ -215,7 +215,7 @@ class Clients(object):
                     client_conf += 'push "dhcp-option DNS %s"\n' % \
                         dns_server
 
-            if has_dns:
+            if has_dns and settings.vpn.domain_route:
                 client_conf += 'push "dhcp-option DOMAIN-ROUTE ."\n'
 
             if self.server.search_domain:
