@@ -23,6 +23,7 @@ class SettingsVpn(SettingsGroupMongo):
         'dns_route': True,
         'dns_mapping_push_all': True,
         'dns_mapping_push_all_apple': False,
+        'domain_route': False,
         'http_request_timeout': 10,
         'op_timeout': 25,
         'startup_timeout': 300,
