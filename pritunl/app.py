@@ -133,6 +133,7 @@ def after_request(response):
     if not flask.g.valid:
         raise ValueError('Request not authorized')
 
+    response.headers.add('Cache-Control', 'no-store')
     response.headers.add('X-Frame-Options', 'DENY')
     response.headers.add('X-XSS-Protection', '1; mode=block')
     response.headers.add('X-Content-Type-Options', 'nosniff')
