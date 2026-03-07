@@ -231,8 +231,8 @@ def _auth_plugin(username, password, remote_addr):
             reason_long='Invalid username',
         )
         return utils.jsonify({
-            'error': AUTH_INVALID,
-            'error_msg': AUTH_INVALID_MSG,
+            'error': AUTH_INVALID_USERNAME,
+            'error_msg': AUTH_INVALID_USERNAME_MSG,
         }, 401)
 
     has_plugin, valid, org_id, groups = sso.plugin_login_authenticate(
@@ -250,8 +250,8 @@ def _auth_plugin(username, password, remote_addr):
             reason_long='Invalid username',
         )
         return utils.jsonify({
-            'error': AUTH_INVALID,
-            'error_msg': AUTH_INVALID_MSG,
+            'error': AUTH_INVALID_USERNAME,
+            'error_msg': AUTH_INVALID_USERNAME_MSG,
         }, 401)
 
     if not valid:
