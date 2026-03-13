@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.32.4565.56 2026-03-13
+-------------------------------
 
 Use pritunl web server systemd unit by default
 Improve ovpn dco compatibility
