@@ -709,7 +709,7 @@ AUTH_INVALID = 'auth_invalid'
 AUTH_INVALID_MSG = 'Authentication credentials are not valid.'
 
 AUTH_INVALID_USERNAME = 'auth_invalid_username'
-AUTH_INVALID_USERNAME_MSG = 'Authentication credentials are not valid.'
+AUTH_INVALID_USERNAME_MSG = 'Authentication username is not valid.'
 
 AUTH_DISABLED = 'auth_disabled'
 AUTH_DISABLED_MSG = 'Authentication credentials are disabled.'
