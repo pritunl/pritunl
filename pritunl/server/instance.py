@@ -438,7 +438,8 @@ class ServerInstance(object):
         else:
             raise ValueError('Unknown protocol')
 
-        if utils.check_openvpn_ver():
+        ovpn_comp = utils.check_openvpn_ver()
+        if ovpn_comp >= 1:
             if self.server.ovpn_dco:
                 server_ciphers = SERVER_CIPHERS_DCO
             else:
@@ -522,17 +523,12 @@ class ServerInstance(object):
             server_conf += 'ignore-unknown-option fast-io\n'
             server_conf += 'fast-io\n'
 
-        # Pritunl v0.10.x did not include comp-lzo in client conf
-        # if lzo_compression is adaptive dont include comp-lzo in server conf
-        if self.server.lzo_compression == ADAPTIVE:
-            pass
-        elif self.server.lzo_compression:
-            server_conf += 'comp-lzo yes\npush "comp-lzo yes"\n'
+        server_conf += 'ignore-unknown-option allow-compression\n'
+        server_conf += 'allow-compression no\n'
+        if ovpn_comp >= 2:
+            server_conf += 'compress migrate\n'
         else:
-            server_conf += 'ignore-unknown-option allow-compression\n'
-            server_conf += 'allow-compression no\n'
-            if not self.server.ovpn_dco:
-                server_conf += 'comp-lzo no\npush "comp-lzo no"\n'
+            server_conf += 'comp-lzo no\npush "comp-lzo no"\n'
 
         if push:
             server_conf += push
