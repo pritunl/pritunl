@@ -1210,7 +1210,7 @@ OVPN_ONC_NET_CONF = """\
           "Cipher": "%s",
           "ClientCertType": "Ref",
           "ClientCertRef": "%s",
-          "CompLZO": "%s",%s
+          "CompLZO": "false",%s
           "Port": %s,
           "Proto": "%s",
           "PushPeerInfo": true,
