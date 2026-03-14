@@ -546,18 +546,21 @@ def check_openvpn_ver():
         version = [int(x) for x in output.split('.')]
 
         if version[0] > 2:
-            return True
+            return 2
+
+        if version[0] == 2 and version[1] >= 6:
+            return 2
 
         if version[0] == 2 and version[1] > 3:
-            return True
+            return 1
 
         if version[0] == 2 and version[1] == 3 and version[2] > 2:
-            return True
+            return 1
     except:
         from pritunl import logger
         logger.exception('Failed to check openvpn version', 'utils')
 
-    return False
+    return 0
 
 def systemd_available():
     for proc in psutil.process_iter():
