@@ -1069,7 +1069,6 @@ class User(mongo.MongoObject):
             conf_hash.update(key_remote.encode())
         conf_hash.update(ciphers[svr.cipher].encode())
         conf_hash.update(HASHES[svr.hash].encode())
-        conf_hash.update(str(svr.lzo_compression).encode())
         conf_hash.update(str(svr.tun_mtu).encode())
         conf_hash.update(str(svr.mss_fix).encode())
         conf_hash.update(str(svr.fragment).encode())
@@ -1263,7 +1262,6 @@ class User(mongo.MongoObject):
             HASHES[svr.hash],
             ONC_CIPHERS[svr.cipher],
             user_cert_id,
-            'adaptive' if svr.lzo_compression == ADAPTIVE else 'false',
             extra_hosts,
             primary_port,
             svr.protocol,
