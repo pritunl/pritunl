@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Fix issues with openvpn 2.7
+
 Version 1.32.4565.56 2026-03-13
 -------------------------------
 
