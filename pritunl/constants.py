@@ -1171,8 +1171,8 @@ nobind
 persist-tun
 %s
 auth %s
-verb 2
-mute 3
+verb 4
+mute 4
 push-peer-info
 ping %s
 ping-restart %s
