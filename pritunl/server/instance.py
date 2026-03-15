@@ -1834,7 +1834,14 @@ class ServerInstance(object):
             if self.server.ovpn_dco:
                 self.state = 'ovpn_dco'
                 try:
-                    utils.check_output_logged([
+                    utils.check_call_silent([
+                        'modprobe',
+                        'ovpn',
+                    ])
+                except:
+                    pass
+                try:
+                    utils.check_call_silent([
                         'modprobe',
                         'ovpn-dco-v2',
                     ])
