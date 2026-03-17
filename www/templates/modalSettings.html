@@ -72,9 +72,9 @@
         <option value="slack" <%= sso === 'slack' ? 'selected' : '' %>>Slack</option>
         <option value="slack_duo" <%= sso === 'slack_duo' ? 'selected' : '' %>>Slack + Duo Security</option>
         <option value="slack_yubico" <%= sso === 'slack_yubico' ? 'selected' : '' %>>Slack + Yubico</option>
-        <option value="google" <%= sso === 'google' ? 'selected' : '' %>>Google Apps</option>
-        <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Apps + Duo Security</option>
-        <option value="google_yubico" <%= sso === 'google_yubico' ? 'selected' : '' %>>Google Apps + Yubico</option>
+        <option value="google" <%= sso === 'google' ? 'selected' : '' %>>Google Workspace</option>
+        <option value="google_duo" <%= sso === 'google_duo' ? 'selected' : '' %>>Google Workspace + Duo Security</option>
+        <option value="google_yubico" <%= sso === 'google_yubico' ? 'selected' : '' %>>Google Workspace + Yubico</option>
         <option value="azure" <%= sso === 'azure' ? 'selected' : '' %>>Azure</option>
         <option value="azure_duo" <%= sso === 'azure_duo' ? 'selected' : '' %>>Azure + Duo Security</option>
         <option value="azure_yubico" <%= sso === 'azure_yubico' ? 'selected' : '' %>>Azure + Yubico</option>
@@ -262,8 +262,8 @@
       <input type="text" class="form-control" placeholder="Enter Azure application secret" value="<%- sso_azure_app_secret || '' %>" data-toggle="tooltip" title="Azure Application Secret">
     </div>
     <div class="sso-match-google form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
-      <label>Google Apps Domain</label>
-      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google Apps domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
+      <label>Google Workspace Domain</label>
+      <input type="text" class="form-control" spellcheck="false" placeholder="Enter Google Workspace domain" value="<%- sso_match || '' %>" data-toggle="tooltip" title="Google apps domain to match against users email address. Multiple domains can be entrered sperated by a comma. (example: pritunl.com)">
     </div>
     <div class="sso-google-email form-group" <%= !sso || sso.indexOf('google') === -1 ? 'style="display: none;"' : '' %>>
       <label>Google Admin Email</label>
