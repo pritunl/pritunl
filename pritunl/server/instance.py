@@ -507,11 +507,9 @@ class ServerInstance(object):
 
         if self.server.mss_fix:
             server_conf += 'mssfix %s\n' % self.server.mss_fix
-            server_conf += 'push "mssfix %s"\n' % self.server.mss_fix
 
         if self.server.fragment:
             server_conf += 'fragment %s\n' % self.server.fragment
-            server_conf += 'push "fragment %s"\n' % self.server.fragment
 
         if self.server.multihome:
             server_conf += 'multihome\n'
