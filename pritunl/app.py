@@ -13,6 +13,7 @@ import threading
 import flask
 import time
 import subprocess
+import sys
 import os
 import base64
 import cheroot.wsgi
@@ -201,6 +202,7 @@ def _run_server(restart):
         journal.WEB_SERVER_START,
         selinux_context=context,
         ssl_version=ssl.OPENSSL_VERSION,
+        python_version=sys.version,
     )
 
     webStrict = not settings.local.admin_api
