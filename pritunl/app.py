@@ -8,6 +8,7 @@ from pritunl import utils
 from pritunl import monitoring
 from pritunl import auth
 from pritunl import acme
+from pritunl import __version__
 
 import threading
 import flask
@@ -198,20 +199,23 @@ def _run_server(restart):
     except:
         context = 'none'
 
-    journal.entry(
-        journal.WEB_SERVER_START,
-        selinux_context=context,
-        ssl_version=ssl.OPENSSL_VERSION,
-        python_version=sys.version,
-    )
-
     webStrict = not settings.local.admin_api
 
-    logger.info('Starting server', 'app',
-        selinux_context=context,
-        ssl_version=ssl.OPENSSL_VERSION,
-        web_auth_strict=webStrict,
+    journal.entry(
+        journal.WEB_SERVER_START,
+        version=__version__,
         python_version=sys.version,
+        ssl_version=ssl.OPENSSL_VERSION,
+        selinux_context=context,
+        web_auth_strict=webStrict,
+    )
+
+    logger.info('Starting server', 'app',
+        version=__version__,
+        python_version=sys.version,
+        ssl_version=ssl.OPENSSL_VERSION,
+        selinux_context=context,
+        web_auth_strict=webStrict,
     )
 
     if not webStrict:
