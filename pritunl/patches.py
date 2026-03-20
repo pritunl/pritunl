@@ -1,3 +1,6 @@
+import warnings
+warnings.filterwarnings('ignore', category=SyntaxWarning, module='iptc')
+
 import requests
 import os
 
