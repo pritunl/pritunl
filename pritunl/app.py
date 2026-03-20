@@ -211,6 +211,7 @@ def _run_server(restart):
         selinux_context=context,
         ssl_version=ssl.OPENSSL_VERSION,
         web_auth_strict=webStrict,
+        python_version=sys.version,
     )
 
     if not webStrict:
