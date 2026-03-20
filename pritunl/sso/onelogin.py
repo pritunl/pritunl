@@ -14,7 +14,7 @@ def _get_base_url():
 
 def _get_access_token():
     response = requests.post(
-        _get_base_url() + '/auth/oauth2/token',
+        _get_base_url() + '/auth/oauth2/v2/token',
         headers={
             'Authorization': 'client_id:%s, client_secret:%s' % (
                 settings.app.sso_onelogin_id,
@@ -28,77 +28,37 @@ def _get_access_token():
     )
 
     if response.status_code != 200:
-        logger.error('OneLogin api error', 'sso',
+        logger.error('OneLogin api error getting access token', 'sso',
             status_code=response.status_code,
             response=response.content,
         )
         return None
 
-    return response.json()['data'][0]['access_token']
+    return response.json()['access_token']
 
 def auth_onelogin(username):
-    if not settings.app.sso_onelogin_id or \
-            not settings.app.sso_onelogin_secret:
-        try:
-            response = requests.get(
-                ONELOGIN_URL + '/api/v3/users/username/%s' % (
-                    urllib.parse.quote(username)),
-                auth=(settings.app.sso_onelogin_key, 'x'),
-                )
-        except http.client.HTTPException:
-            logger.exception('OneLogin api error', 'sso',
-                username=username,
-            )
-            return False
-
-        if response.status_code == 200:
-            data = xml.etree.ElementTree.fromstring(response.content)
-            if data.find('status').text == '1':
-                return True
-
-            logger.warning('OneLogin user disabled', 'sso',
-                username=username,
-            )
-        elif response.status_code == 404:
-            logger.error('OneLogin user not found', 'sso',
-                username=username,
-            )
-        elif response.status_code == 406:
-            logger.warning('OneLogin user disabled', 'sso',
-                username=username,
-            )
-        else:
-            logger.error('OneLogin api error', 'sso',
-                username=username,
-                status_code=response.status_code,
-                response=response.content,
-            )
-        return False
-
     access_token = _get_access_token()
+    
     if not access_token:
         return False
 
     response = requests.get(
-        _get_base_url() + '/api/1/users',
+        _get_base_url() + '/api/2/users?username=%s' % urllib.parse.quote(username),
         headers={
-            'Authorization': 'bearer:%s' % access_token,
+            'Authorization': 'bearer: %s' % access_token,
             'Content-Type': 'application/json',
-        },
-        params={
-            'username': username,
         },
     )
 
     if response.status_code != 200:
-        logger.error('OneLogin api error', 'sso',
+        logger.error('OneLogin api error getting user', 'sso',
             username=username,
             status_code=response.status_code,
             response=response.content,
         )
         return False
 
-    users = response.json()['data']
+    users = response.json()
     if not users:
         logger.error('OneLogin user not found', 'sso',
             username=username,
@@ -106,7 +66,7 @@ def auth_onelogin(username):
         return False
 
     user = users[0]
-    if user['status'] != 1:
+    if user['state'] != 1:
         logger.warning('OneLogin user disabled', 'sso',
             username=username,
         )
@@ -124,21 +84,21 @@ def auth_onelogin(username):
     user_id = user['id']
 
     response = requests.get(
-        _get_base_url() + '/api/1/users/%d/apps' % user_id,
+        _get_base_url() + '/api/2/users/%d/apps' % user_id,
         headers={
-            'Authorization': 'bearer:%s' % access_token,
+            'Authorization': 'bearer: %s' % access_token,
         },
     )
 
     if response.status_code != 200:
-        logger.error('OneLogin api error', 'sso',
+        logger.error('OneLogin api error getting apps', 'sso',
             username=username,
             status_code=response.status_code,
             response=response.content,
         )
         return False
 
-    applications = response.json()['data']
+    applications = response.json()
     if not applications:
         logger.error('OneLogin user apps not found', 'sso',
             username=username,
@@ -158,6 +118,7 @@ def auth_onelogin(username):
 
 def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     access_token = _get_access_token()
+    
     if not access_token:
         return False
 
@@ -168,24 +129,22 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         return False
 
     response = requests.get(
-        _get_base_url() + '/api/1/users',
+        _get_base_url() + '/api/2/users?username=%s' % urllib.parse.quote(username),
         headers={
-            'Authorization': 'bearer:%s' % access_token,
-        },
-        params={
-            'username': username,
+            'Authorization': 'bearer: %s' % access_token,
+            'Content-Type': 'application/json',
         },
     )
 
     if response.status_code != 200:
-        logger.error('OneLogin api error', 'sso',
+        logger.error('OneLogin api error getting  users', 'sso',
             username=username,
             status_code=response.status_code,
             response=response.content,
         )
         return False
 
-    users = response.json()['data']
+    users = response.json()
     if not users:
         logger.error('OneLogin user not found', 'sso',
             username=username,
@@ -193,7 +152,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         return False
 
     user = users[0]
-    if user['status'] != 1:
+    if user['state'] != 1:
         logger.error('OneLogin user disabled', 'sso',
             username=username,
         )
@@ -202,14 +161,14 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
     user_id = user['id']
 
     response = requests.get(
-        _get_base_url() + '/api/1/users/%d/otp_devices' % user_id,
+        _get_base_url() + '/api/2/mfa/users/%d/devices' % user_id,
         headers={
-            'Authorization': 'bearer:%s' % access_token,
+            'Authorization': 'bearer: %s' % access_token,
         },
     )
 
     if response.status_code != 200:
-        logger.error('OneLogin api error', 'sso',
+        logger.error('OneLogin api error getting devices', 'sso',
             username=username,
             onelogin_mode=onelogin_mode,
             status_code=response.status_code,
@@ -218,19 +177,16 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         return False
 
     device_id = None
-    devices = response.json()['data']['otp_devices']
+    devices = response.json()
     needs_trigger = False
     for device in devices:
-        if device['auth_factor_name'] != 'OneLogin Protect':
+        if device['auth_factor_name'] != 'OneLogin':
             continue
 
         if device['default']:
-            device_id = device['id']
-            needs_trigger = bool(device.get('needs_trigger'))
+            device_id = device['device_id']
+            needs_trigger = True
             break
-        elif not device_id:
-            device_id = device['id']
-            needs_trigger = bool(device.get('needs_trigger'))
 
     if not device_id:
         if 'none' in onelogin_mode:
@@ -247,23 +203,23 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
 
         return False
 
-    state_token = None
     if needs_trigger or 'push' in onelogin_mode:
         response = requests.post(
-            _get_base_url() + '/api/1/users/%d/otp_devices/%d/trigger' % (
-                user_id, device_id),
+            _get_base_url() + '/api/2/mfa/users/%d/verifications' % (
+                user_id),
             headers={
-                'Authorization': 'bearer:%s' % access_token,
+                'Authorization': 'bearer: %s' % access_token,
                 'Content-Type': 'application/json',
                 'X-Forwarded-For': remote_ip,
             },
             json={
-                'ipaddr': remote_ip,
+                'device_id': device_id,
+                'otp': passcode,
             },
         )
 
-        if response.status_code != 200:
-            logger.error('OneLogin api error', 'sso',
+        if response.status_code != 201:
+            logger.error('OneLogin api error creating verification', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
                 status_code=response.status_code,
@@ -271,15 +227,13 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             )
             return False
 
-        activate = response.json()['data']
+        activate = response.json()['id']
         if not activate:
             logger.error('OneLogin activate empty', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
             )
             return False
-
-        state_token = activate[0]['state_token']
 
     start = utils.time_now()
     while True:
@@ -291,22 +245,17 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             )
             return False
 
-        response = requests.post(
-            _get_base_url() + '/api/1/users/%d/otp_devices/%d/verify' % (
-                user_id, device_id),
+        response = requests.get(
+            _get_base_url() + '/api/2/mfa/users/%d/verifications/%s' % (
+                user_id, activate),
             headers={
-                'Authorization': 'bearer:%s' % access_token,
+                'Authorization': 'bearer: %s' % access_token,
                 'Content-Type': 'application/json',
-                'X-Forwarded-For': remote_ip,
-            },
-            json={
-                'state_token': state_token,
-                'otp_token': passcode,
             },
         )
 
         if response.status_code != 200 and response.status_code != 401:
-            logger.error('OneLogin api error', 'sso',
+            logger.error('OneLogin api error activating mfa', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
                 status_code=response.status_code,
@@ -322,10 +271,13 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             )
             return False
 
-        if response.status_code == 401:
-            if 'Authentication pending' in verify['message']:
+        if response.status_code == 200:
+            if verify == "pending":
                 time.sleep(0.5)
                 continue
+            
+            if verify == "accepted":
+                return True
 
             logger.error('OneLogin secondary rejected', 'sso',
                 username=username,
@@ -334,7 +286,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             )
             return False
 
-        if response.status_code != 200 or verify['type'] != "success":
+        if response.status_code != 200:
             logger.error('OneLogin verify bad data', 'sso',
                 username=username,
                 onelogin_mode=onelogin_mode,
