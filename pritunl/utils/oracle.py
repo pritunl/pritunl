@@ -166,11 +166,19 @@ def oracle_add_route(dest_network):
     subnet = _oci_get('%s/subnets/%s' % (base_url, subnet_ocid), mdata)
     vcn_ocid = subnet['vcnId']
 
-    tables = _oci_get(
-        '%s/routeTables?compartmentId=%s&vcnId=%s' % (
-            base_url, mdata['compartment_ocid'], vcn_ocid),
-        mdata,
-    )
+    if settings.app.oracle_subnet_only:
+        route_table = subnet['routeTableId']
+        table = _oci_get(
+            '%s/routeTables/%s' % (base_url, route_table),
+            mdata,
+        )
+        tables = [table]
+    else:
+        tables = _oci_get(
+            '%s/routeTables?compartmentId=%s&vcnId=%s' % (
+                base_url, mdata['compartment_ocid'], vcn_ocid),
+            mdata,
+        )
 
     for table in tables:
         exists = False
