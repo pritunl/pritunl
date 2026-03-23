@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.34.4575.42 2026-03-23
+-------------------------------
 
 Migrate to python 3.12
 Update libraries
