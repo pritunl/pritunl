@@ -1784,6 +1784,7 @@ class ServerInstance(object):
             self.server.dh_param_bits = 2048
             self.server.commit('dh_param_bits')
             self.server.queue_dh_params(block=True)
+            event.Event(type=SERVERS_UPDATED)
 
         def timeout():
             logger.error(
