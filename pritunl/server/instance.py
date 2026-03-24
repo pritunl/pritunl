@@ -1776,11 +1776,14 @@ class ServerInstance(object):
         )
 
         if self.server.dh_param_bits < 2048:
-            logger.warning('Using DH params less than 2048 is not '
-                'compatibile with newer versions of OpenSSL',
+            logger.info('Regenerating DH params to 2048 bits',
+                'server',
                 server_id=self.server.id,
                 instance_id=self.id,
             )
+            self.server.dh_param_bits = 2048
+            self.server.commit('dh_param_bits')
+            self.server.queue_dh_params(block=True)
 
         def timeout():
             logger.error(
