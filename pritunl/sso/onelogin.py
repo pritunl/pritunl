@@ -25,6 +25,7 @@ def _get_access_token():
         json={
             'grant_type': 'client_credentials',
         },
+        timeout=30,
     )
 
     if response.status_code != 200:
@@ -44,6 +45,7 @@ def auth_onelogin(username):
                 ONELOGIN_URL + '/api/v3/users/username/%s' % (
                     urllib.parse.quote(username)),
                 auth=(settings.app.sso_onelogin_key, 'x'),
+                timeout=30,
                 )
         except http.client.HTTPException:
             logger.exception('OneLogin api error', 'sso',
@@ -88,6 +90,7 @@ def auth_onelogin(username):
         params={
             'username': username,
         },
+        timeout=30,
     )
 
     if response.status_code != 200:
@@ -128,6 +131,7 @@ def auth_onelogin(username):
         headers={
             'Authorization': 'bearer:%s' % access_token,
         },
+        timeout=30,
     )
 
     if response.status_code != 200:
@@ -175,6 +179,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         params={
             'username': username,
         },
+        timeout=30,
     )
 
     if response.status_code != 200:
@@ -206,6 +211,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
         headers={
             'Authorization': 'bearer:%s' % access_token,
         },
+        timeout=30,
     )
 
     if response.status_code != 200:
@@ -260,6 +266,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             json={
                 'ipaddr': remote_ip,
             },
+            timeout=30,
         )
 
         if response.status_code != 200:
@@ -303,6 +310,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 'state_token': state_token,
                 'otp_token': passcode,
             },
+            timeout=30,
         )
 
         if response.status_code != 200 and response.status_code != 401:

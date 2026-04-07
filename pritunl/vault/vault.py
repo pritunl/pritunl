@@ -24,6 +24,7 @@ def init():
         headers={
             'User-Agent': 'pritunl',
         },
+        timeout=10,
     )
 
     if resp.status_code != 200:
@@ -93,6 +94,7 @@ def init_host_key():
             'Content-Type': 'application/json',
         },
         data=json.dumps(payload),
+        timeout=10,
     )
 
     if resp.status_code != 200:
@@ -109,6 +111,7 @@ def init_server_key():
             'User-Agent': 'pritunl',
             'Accept': 'application/json',
         },
+        timeout=10,
     )
 
     if resp.status_code != 200:
@@ -238,6 +241,7 @@ def init_master_key(cipher_data):
             'Content-Type': 'application/json',
         },
         data=json.dumps(payload),
+        timeout=10,
     )
 
     if resp.status_code != 200:
