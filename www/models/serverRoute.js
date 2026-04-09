@@ -20,6 +20,7 @@ define([
       'nat_netmap': null,
       'net_gateway': null,
       'advertise': null,
+      'advertise_resource': null,
       'vpc_region': null,
       'vpc_id': null
     },
