@@ -95,7 +95,7 @@ def pritunl_cloud_get_routes(metadata=None):
 
     return response.json()
 
-def pritunl_cloud_add_route(dest_network, metadata=None):
+def pritunl_cloud_add_route(dest_network, metadata=None, route_table_ids=None):
     if not metadata:
         metadata = pritunl_cloud_get_metadata()
 
