@@ -133,7 +133,7 @@ def oracle_get_metadata():
         'vnic_ocid': metadata['vnics'][0]['vnicId'],
     }
 
-def oracle_add_route(dest_network):
+def oracle_add_route(dest_network, route_table_ids=None):
     mdata = oracle_get_metadata()
     region = mdata['region_name']
     base_url = 'https://iaas.%s.oraclecloud.com/20160918' % region
@@ -166,7 +166,15 @@ def oracle_add_route(dest_network):
     subnet = _oci_get('%s/subnets/%s' % (base_url, subnet_ocid), mdata)
     vcn_ocid = subnet['vcnId']
 
-    if settings.app.oracle_subnet_only:
+    if route_table_ids:
+        tables = []
+        for rt_id in route_table_ids:
+            table = _oci_get(
+                '%s/routeTables/%s' % (base_url, rt_id),
+                mdata,
+            )
+            tables.append(table)
+    elif settings.app.oracle_subnet_only:
         route_table = subnet['routeTableId']
         table = _oci_get(
             '%s/routeTables/%s' % (base_url, route_table),
