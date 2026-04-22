@@ -1398,6 +1398,7 @@ class ServerInstance(object):
 
     def init_route_advertisements(self):
         advertise_networks = []
+        advertise_resources = {}
         for route in self.server.get_routes(include_server_links=True):
             advertise = route['advertise']
             vpc_region = route['vpc_region']
@@ -1413,10 +1414,15 @@ class ServerInstance(object):
 
             if advertise or (vpc_region and vpc_id):
                 advertise_networks.append(network)
+                route_resource = route.get('advertise_resource')
+                if route_resource:
+                    advertise_resources[network] = route_resource
 
         if advertise_networks:
             self.reserve_route_advertisement(
-                vpc_region, vpc_id, advertise_networks, initial_load=True)
+                vpc_region, vpc_id, advertise_networks,
+                advertise_resources=advertise_resources,
+                initial_load=True)
 
     def clear_route_advertisements(self):
         for ra_id in self.route_advertisements.copy():
@@ -1426,7 +1432,7 @@ class ServerInstance(object):
             })
 
     def reserve_route_advertisement(self, vpc_region, vpc_id, networks,
-            initial_load=False):
+            advertise_resources=None, initial_load=False):
         cloud_provider = settings.app.cloud_provider
         if not cloud_provider:
             return
@@ -1456,13 +1462,20 @@ class ServerInstance(object):
             }}, upsert=True)
 
             for network in networks:
+                resource = None
+                if advertise_resources:
+                    resource = advertise_resources.get(network)
+
                 if cloud_provider == 'aws':
-                    utils.add_vpc_route(network)
+                    utils.add_vpc_route(network,
+                        route_table_ids=resource)
                 elif cloud_provider == 'oracle':
-                    utils.oracle_add_route(network)
+                    utils.oracle_add_route(network,
+                        route_table_ids=resource)
                     time.sleep(settings.app.oarcle_api_delay)
                 elif cloud_provider == 'pritunl':
-                    utils.pritunl_cloud_add_route(network)
+                    utils.pritunl_cloud_add_route(network,
+                        route_table_ids=resource)
                 else:
                     logger.error('Unknown cloud provider type', 'server',
                         cloud_provider=settings.app.cloud_provider,
