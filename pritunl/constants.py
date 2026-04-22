@@ -994,6 +994,9 @@ DUO_USER_INVALID_MSG = 'Username is invalid.'
 SSO_ORG_NULL = 'sso_org_null'
 SSO_ORG_NULL_MSG = 'The SSO organization must be set.'
 
+SSO_URL_MISSING = 'sso_url_missing'
+SSO_URL_MISSING_MSG = 'Missing required single sign-on domain.'
+
 NO_ADMINS_ENABLED = 'no_admins_enabled'
 NO_ADMINS_ENABLED_MSG = 'At least one super administrator must be enabled.'
 
