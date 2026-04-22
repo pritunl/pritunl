@@ -1078,11 +1078,14 @@ def server_route_post(server_id):
     nat_interface = flask.request.json.get('nat_interface') or None
     nat_netmap = flask.request.json.get('nat_netmap') or None
     advertise = True if flask.request.json.get('advertise') else False
+    advertise_resource = flask.request.json.get(
+        'advertise_resource') or None
     net_gateway = True if flask.request.json.get('net_gateway') else False
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            nat_netmap, advertise, None, None, net_gateway, comment, metric)
+            nat_netmap, advertise, advertise_resource, None, None,
+            net_gateway, comment, metric)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
@@ -1151,12 +1154,13 @@ def server_routes_post(server_id):
         nat_interface = route_data.get('nat_interface') or None
         nat_netmap = route_data.get('nat_netmap') or None
         advertise = True if route_data.get('advertise') else False
+        advertise_resource = route_data.get('advertise_resource') or None
         net_gateway = True if route_data.get('net_gateway') else False
 
         try:
             route = svr.upsert_route(route_network, nat_route, nat_interface,
-                nat_netmap, advertise, None, None, net_gateway, comment,
-                metric)
+                nat_netmap, advertise, advertise_resource, None, None,
+                net_gateway, comment, metric)
         except ServerOnlineError:
             return utils.jsonify({
                 'error': SERVER_ROUTE_ONLINE,
@@ -1223,11 +1227,14 @@ def server_route_put(server_id, route_network):
     nat_interface = flask.request.json.get('nat_interface') or None
     nat_netmap = flask.request.json.get('nat_netmap') or None
     advertise = True if flask.request.json.get('advertise') else False
+    advertise_resource = flask.request.json.get(
+        'advertise_resource') or None
     net_gateway = True if flask.request.json.get('net_gateway') else False
 
     try:
         route = svr.upsert_route(route_network, nat_route, nat_interface,
-            nat_netmap, advertise, None, None, net_gateway, comment, metric)
+            nat_netmap, advertise, advertise_resource, None, None,
+            net_gateway, comment, metric)
     except ServerOnlineError:
         return utils.jsonify({
             'error': SERVER_ROUTE_ONLINE,
