@@ -47,6 +47,7 @@ class TaskRoute(task.Task):
                     continue
 
                 networks = []
+                advertise_resources = {}
                 for route in svr.get_routes(include_server_links=True):
                     route_advertise = route['advertise'] or \
                         (route['vpc_region'] and route['vpc_id'])
@@ -58,9 +59,14 @@ class TaskRoute(task.Task):
 
                     if route_advertise:
                         networks.append(route_network)
+                        route_resource = route.get('advertise_resource')
+                        if route_resource:
+                            advertise_resources[route_network] = \
+                                route_resource
 
                 messenger.publish('instance', ['route_advertisement2',
-                    server_id, vpc_region, vpc_id, networks])
+                    server_id, vpc_region, vpc_id, networks,
+                    advertise_resources])
         except GeneratorExit:
             raise
         except:
