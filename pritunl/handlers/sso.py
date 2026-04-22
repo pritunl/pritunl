@@ -267,7 +267,7 @@ def sso_request_get():
 
     state = utils.rand_str(64)
     secret = utils.rand_str(64)
-    callback = utils.get_url_root() + '/sso/callback'
+    callback = sso.server_sso_url() + '/sso/callback'
     auth_server = AUTH_SERVER
     if settings.app.dedicated:
         auth_server = settings.app.dedicated
