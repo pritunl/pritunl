@@ -75,7 +75,7 @@ def connect_ec2(aws_key, aws_secret, region):
         region_name=region,
     )
 
-def add_vpc_route(network):
+def add_vpc_route(network, route_table_ids=None):
     time.sleep(0.1)
 
     mdata = get_metadata()
@@ -94,16 +94,21 @@ def add_vpc_route(network):
 
     ec2_conn = connect_ec2(aws_key, aws_secret, mdata['region'])
 
-    response = ec2_conn.describe_route_tables(
-        Filters=[
-            {
-                'Name': 'vpc-id',
-                'Values': [
-                    mdata['vpc_id'],
-                ],
-            },
-        ],
-    )
+    if route_table_ids:
+        response = ec2_conn.describe_route_tables(
+            RouteTableIds=route_table_ids,
+        )
+    else:
+        response = ec2_conn.describe_route_tables(
+            Filters=[
+                {
+                    'Name': 'vpc-id',
+                    'Values': [
+                        mdata['vpc_id'],
+                    ],
+                },
+            ],
+        )
     if not response:
         raise VpcRouteTableNotFound('Failed to find VPC routing table')
 
