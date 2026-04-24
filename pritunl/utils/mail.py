@@ -26,7 +26,11 @@ def send_email(to_addr, subject, text_body, html_body):
     msg.attach(email.mime.text.MIMEText(html_body, 'html'))
 
     try:
-        context = ssl.create_default_context()
+        context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        if settings.app.email_skip_verify:
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+        context.minimum_version = ssl.TLSVersion.TLSv1_2
         if not email_username and not email_password:
             smtp_conn = smtplib.SMTP(email_server)
             if settings.app.email_tls:
