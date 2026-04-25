@@ -233,7 +233,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode, platform):
                 'X-Forwarded-For': remote_ip,
             },
             json=verify_data,
-            timeout=30,
+            timeout=60,
         )
     except http.client.HTTPException:
         logger.exception('Okta api error', 'sso',
@@ -314,7 +314,7 @@ def auth_okta_secondary(username, passcode, remote_ip, okta_mode, platform):
                     'User-Agent': useragent,
                     'Authorization': 'SSWS %s' % settings.app.sso_okta_token,
                 },
-                timeout=30,
+                timeout=60,
             )
         except http.client.HTTPException:
             logger.exception('Okta poll api error', 'sso',
