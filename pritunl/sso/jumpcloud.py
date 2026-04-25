@@ -17,6 +17,7 @@ def auth_jumpcloud(username):
                 'Accept': 'application/json',
                 'X-Api-Key': settings.app.sso_jumpcloud_secret,
             },
+            timeout=30,
         )
     except http.client.HTTPException:
         logger.exception('JumpCloud api error', 'sso',
@@ -72,6 +73,7 @@ def auth_jumpcloud(username):
                 'Accept': 'application/json',
                 'X-Api-Key': settings.app.sso_jumpcloud_secret,
             },
+            timeout=30,
         )
     except http.client.HTTPException:
         logger.exception('JumpCloud api error', 'sso',

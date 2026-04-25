@@ -68,6 +68,7 @@ class Batch(object):
                 'Content-Type': 'application/json',
             },
             data=json.dumps(payload),
+            timeout=10,
         )
 
         if resp.status_code != 200:
