@@ -266,7 +266,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
             json={
                 'ipaddr': remote_ip,
             },
-            timeout=30,
+            timeout=60,
         )
 
         if response.status_code != 200:
@@ -310,7 +310,7 @@ def auth_onelogin_secondary(username, passcode, remote_ip, onelogin_mode):
                 'state_token': state_token,
                 'otp_token': passcode,
             },
-            timeout=30,
+            timeout=60,
         )
 
         if response.status_code != 200 and response.status_code != 401:
