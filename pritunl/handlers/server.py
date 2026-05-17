@@ -9,10 +9,10 @@ from pritunl import event
 from pritunl import server
 from pritunl import organization
 from pritunl import auth
-from pritunl import ipaddress
 
 import flask
 import random
+import ipaddress
 
 def _network_invalid():
     return utils.jsonify({
