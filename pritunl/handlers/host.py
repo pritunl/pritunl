@@ -6,11 +6,11 @@ from pritunl import logger
 from pritunl import event
 from pritunl import auth
 from pritunl import messenger
-from pritunl import ipaddress
 from pritunl import server
 from pritunl import settings
 
 import flask
+import ipaddress
 
 @app.app.route('/host', methods=['GET'])
 @app.app.route('/host/<hst>', methods=['GET'])
