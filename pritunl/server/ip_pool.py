@@ -1,12 +1,12 @@
 from pritunl.helpers import *
 from pritunl import mongo
-from pritunl import ipaddress
 from pritunl import organization
 from pritunl import logger
 from pritunl import settings
 from pritunl import utils
 
 import pymongo
+import ipaddress
 
 class ServerIpPool:
     def __init__(self, server):
