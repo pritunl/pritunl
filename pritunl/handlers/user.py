@@ -11,13 +11,13 @@ from pritunl import app
 from pritunl import auth
 from pritunl import mongo
 from pritunl import messenger
-from pritunl import ipaddress
 from pritunl import callqueue
 from pritunl import journal
 
 import flask
 import time
 import threading
+import ipaddress
 
 _users_background = False
 _users_background_lock = threading.Lock()
