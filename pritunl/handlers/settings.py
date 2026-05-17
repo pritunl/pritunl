@@ -7,13 +7,13 @@ from pritunl import journal
 from pritunl import server
 from pritunl import auth
 from pritunl import event
-from pritunl import ipaddress
 from pritunl import server
 from pritunl import organization
 from pritunl import logger
 from pritunl import database
 
 import flask
+import ipaddress
 
 _changes_audit_text = {
     'username': 'Administrator username changed',
