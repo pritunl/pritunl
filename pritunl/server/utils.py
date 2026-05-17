@@ -6,10 +6,10 @@ from pritunl.server.server import Server, dict_fields
 from pritunl.constants import *
 from pritunl.exceptions import *
 from pritunl import mongo
-from pritunl import ipaddress
 from pritunl import settings
 
 import math
+import ipaddress
 
 def new_server(**kwargs):
     server = Server(**kwargs)
