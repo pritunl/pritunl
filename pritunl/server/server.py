@@ -16,7 +16,6 @@ from pritunl import queue
 from pritunl import event
 from pritunl import messenger
 from pritunl import organization
-from pritunl import ipaddress
 from pritunl import journal
 
 import os
@@ -27,6 +26,7 @@ import datetime
 import base64
 import nacl.utils
 import nacl.public
+import ipaddress
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
