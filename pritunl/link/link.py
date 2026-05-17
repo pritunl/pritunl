@@ -3,7 +3,6 @@ from pritunl.exceptions import *
 from pritunl.helpers import *
 from pritunl import utils
 from pritunl import mongo
-from pritunl import ipaddress
 from pritunl import settings
 
 import hashlib
@@ -11,6 +10,7 @@ import json
 import datetime
 import pymongo
 import collections
+import ipaddress
 
 class Host(mongo.MongoObject):
     fields = {
