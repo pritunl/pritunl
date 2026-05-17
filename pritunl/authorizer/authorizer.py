@@ -6,7 +6,6 @@ from pritunl import sso
 from pritunl import plugins
 from pritunl import mongo
 from pritunl import tunldb
-from pritunl import ipaddress
 from pritunl import limiter
 from pritunl import utils
 from pritunl import journal
@@ -16,6 +15,7 @@ import uuid
 import hashlib
 import base64
 import pymongo
+import ipaddress
 
 _states = tunldb.TunlDB()
 
