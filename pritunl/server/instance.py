@@ -13,7 +13,6 @@ from pritunl import event
 from pritunl import messenger
 from pritunl import organization
 from pritunl import iptables
-from pritunl import ipaddress
 from pritunl import plugins
 from pritunl import vxlan
 from pritunl import database
@@ -31,6 +30,7 @@ import pymongo
 import datetime
 import pwd
 import grp
+import ipaddress
 
 _instances = {}
 _instances_lock = threading.Lock()
@@ -807,7 +807,7 @@ class ServerInstance(object):
             if is6:
                 if not interface:
                     for route_net, route_intf in routes6:
-                        if network_obj in route_net:
+                        if network_obj.subnet_of(route_net):
                             interface = route_intf
                             break
 
@@ -823,7 +823,7 @@ class ServerInstance(object):
             else:
                 if not interface:
                     for route_net, route_intf in routes:
-                        if network_obj in route_net:
+                        if network_obj.subnet_of(route_net):
                             interface = route_intf
                             break
 
@@ -989,7 +989,7 @@ class ServerInstance(object):
             if is6:
                 if not interface:
                     for route_net, route_intf in routes6:
-                        if network_obj in route_net:
+                        if network_obj.subnet_of(route_net):
                             interface = route_intf
                             break
 
@@ -1005,7 +1005,7 @@ class ServerInstance(object):
             else:
                 if not interface:
                     for route_net, route_intf in routes:
-                        if network_obj in route_net:
+                        if network_obj.subnet_of(route_net):
                             interface = route_intf
                             break
 
