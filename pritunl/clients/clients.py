@@ -4,7 +4,6 @@ from pritunl import utils
 from pritunl import mongo
 from pritunl import limiter
 from pritunl import logger
-from pritunl import ipaddress
 from pritunl import settings
 from pritunl import event
 from pritunl import docdb
@@ -33,6 +32,7 @@ import pymongo
 import json
 import datetime
 import random
+import ipaddress
 import nacl.public
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import padding
