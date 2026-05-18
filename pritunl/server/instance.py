@@ -1000,7 +1000,7 @@ class ServerInstance(object):
                             'server',
                             server_id=self.server.id,
                             network=network,
-                            )
+                        )
                         interface = default_interface6
             else:
                 if not interface:
@@ -1016,7 +1016,7 @@ class ServerInstance(object):
                             'server',
                             server_id=self.server.id,
                             network=network,
-                            )
+                        )
                         interface = default_interface
 
             nat = route['nat']
