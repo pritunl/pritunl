@@ -7,7 +7,6 @@ from pritunl import utils
 from pritunl import queue
 from pritunl import logger
 from pritunl import messenger
-from pritunl import ipaddress
 from pritunl import sso
 from pritunl import auth
 from pritunl import plugins
@@ -25,6 +24,7 @@ import hmac
 import json
 import uuid
 import pymongo
+import ipaddress
 import urllib.request, urllib.parse, urllib.error
 import requests
 from cryptography.hazmat.backends import default_backend
