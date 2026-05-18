@@ -1,11 +1,11 @@
 from pritunl.constants import *
-from pritunl import ipaddress
 from pritunl import utils
 from pritunl import database
 
 import threading
 import datetime
 import random
+import ipaddress
 
 def setup_demo():
     from pritunl import settings
