@@ -1,7 +1,6 @@
 from pritunl.utils.misc import check_output_logged
 
 from pritunl.constants import *
-from pritunl import ipaddress
 from pritunl import settings
 
 import flask
@@ -10,6 +9,7 @@ import netifaces
 import collections
 import threading
 import random
+import ipaddress
 import pyroute2.iproute
 import pyroute2.netlink
 import socket
