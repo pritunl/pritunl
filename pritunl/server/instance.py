@@ -1437,6 +1437,7 @@ class ServerInstance(object):
         if not cloud_provider:
             return
 
+        oracle_api_delay = settings.app.oracle_api_delay / 1000
         timestamp_spec = utils.now() - datetime.timedelta(
             seconds=settings.vpn.route_ping_ttl)
 
@@ -1472,7 +1473,7 @@ class ServerInstance(object):
                 elif cloud_provider == 'oracle':
                     utils.oracle_add_route(network,
                         route_table_ids=resource)
-                    time.sleep(settings.app.oarcle_api_delay)
+                    time.sleep(oracle_api_delay)
                 elif cloud_provider == 'pritunl':
                     utils.pritunl_cloud_add_route(network,
                         route_table_ids=resource)
@@ -1490,7 +1491,7 @@ class ServerInstance(object):
                             utils.add_vpc_route(vxlan_net)
                         elif cloud_provider == 'oracle':
                             utils.oracle_add_route(vxlan_net)
-                            time.sleep(settings.app.oarcle_api_delay)
+                            time.sleep(oracle_api_delay)
                         elif cloud_provider == 'pritunl':
                             utils.pritunl_cloud_add_route(vxlan_net)
 
@@ -1503,7 +1504,7 @@ class ServerInstance(object):
                             utils.add_vpc_route(vxlan_net6)
                         elif cloud_provider == 'oracle':
                             utils.oracle_add_route(vxlan_net6)
-                            time.sleep(settings.app.oarcle_api_delay)
+                            time.sleep(oracle_api_delay)
                         elif cloud_provider == 'pritunl':
                             utils.pritunl_cloud_add_route(vxlan_net6)
 
