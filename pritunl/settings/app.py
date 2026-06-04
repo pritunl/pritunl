@@ -180,7 +180,7 @@ class SettingsApp(SettingsGroupMongo):
         'oracle_private_key': None,
         'oracle_public_key': None,
         'oracle_subnet_only': False,
-        'oarcle_api_delay': 500,
+        'oracle_api_delay': 500,
         'web_systemd': True,
         'us_east_1_access_key': None,
         'us_east_1_secret_key': None,
