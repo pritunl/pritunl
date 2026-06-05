@@ -525,12 +525,13 @@ class Server(mongo.MongoObject):
         return utils.net4to6x64(settings.vpn.ipv6_prefix_wg, self.network)
 
     def ip4to4wg(self, addr):
-        addr = ipaddress.ip_network(addr, strict=False)
+        addr = ipaddress.ip_interface(addr)
+        prefixlen = addr.network.prefixlen
         wg_net = ipaddress.ip_network(self.network_wg, strict=False)
         addr_bin = bin(int(
-            wg_net.network_address))[2:].zfill(32)[:addr.prefixlen] + \
-            bin(int(addr.network_address))[2:].zfill(32)[addr.prefixlen:]
-        return utils.long_to_ip(int(addr_bin, 2)) + '/%d' % addr.prefixlen
+            wg_net.network_address))[2:].zfill(32)[:prefixlen] + \
+            bin(int(addr.ip))[2:].zfill(32)[prefixlen:]
+        return utils.long_to_ip(int(addr_bin, 2)) + '/%d' % prefixlen
 
     def ip4to6(self, addr):
         routed_subnet6 = settings.local.host.routed_subnet6
