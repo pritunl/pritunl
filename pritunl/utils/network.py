@@ -159,8 +159,8 @@ def network_addr(ip, subnet):
         subnet_to_cidr(subnet))
 
 def parse_network(network):
-    address = ipaddress.ip_network(network, strict=False)
-    return str(address.network_address), str(address.netmask)
+    address = ipaddress.ip_interface(network)
+    return str(address.ip), str(address.netmask)
 
 def get_network_gateway(network):
     return str(next(ipaddress.ip_network(network).hosts()))
