@@ -297,6 +297,19 @@ def settings_get():
 
     if settings.app.demo_mode:
         utils.demo_set_cache(response)
+
+    if settings.app.sso and not settings.app.server_sso_url:
+        if settings.app.acme_domain:
+            domain = settings.app.acme_domain
+        else:
+            domain = utils.clean_domain(utils.get_url_root())
+
+        logger.info('Automatically configuring single sign-on url', 'app',
+            sso_url=domain,
+        )
+        settings.app.server_sso_url = domain
+        settings.commit()
+
     return utils.jsonify(response)
 
 @app.app.route('/settings', methods=['PUT'])
