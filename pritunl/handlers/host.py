@@ -62,12 +62,12 @@ def host_put(hst=None):
             flask.request.json['name']) or utils.random_name()
 
     if 'public_address' in flask.request.json:
-        public_address = utils.filter_str(
+        public_address = utils.clean_domain(
             flask.request.json['public_address'])
         hst.public_address = public_address
 
     if 'public_address6' in flask.request.json:
-        public_address6 = utils.filter_str(
+        public_address6 = utils.clean_domain(
             flask.request.json['public_address6'])
         hst.public_address6 = public_address6
 
@@ -136,22 +136,22 @@ def host_put(hst=None):
         hst.proxy_ndp = proxy_ndp
 
     if 'local_address' in flask.request.json:
-        local_address = utils.filter_str(
+        local_address = utils.clean_domain(
             flask.request.json['local_address'])
         hst.local_address = local_address
 
     if 'local_address6' in flask.request.json:
-        local_address6 = utils.filter_str(
+        local_address6 = utils.clean_domain(
             flask.request.json['local_address6'])
         hst.local_address6 = local_address6
 
     if 'link_address' in flask.request.json:
-        link_address = utils.filter_str(
+        link_address = utils.clean_domain(
             flask.request.json['link_address'])
         hst.link_address = link_address
 
     if 'sync_address' in flask.request.json:
-        sync_address = utils.filter_str(
+        sync_address = utils.clean_domain(
             flask.request.json['sync_address'])
         hst.sync_address = sync_address
 
