@@ -391,12 +391,8 @@ def settings_put():
     if 'acme_domain' in flask.request.json:
         settings_commit = True
 
-        acme_domain = utils.filter_str(
+        acme_domain = utils.clean_domain(
             flask.request.json['acme_domain'] or None)
-        if acme_domain:
-            acme_domain = acme_domain.replace('https://', '')
-            acme_domain = acme_domain.replace('http://', '')
-            acme_domain = acme_domain.replace('/', '')
 
         if acme_domain != settings.app.acme_domain:
             if not acme_domain:
@@ -408,8 +404,6 @@ def settings_put():
                 update_cert = True
             else:
                 update_acme = True
-        if acme_domain:
-            acme_domain = acme_domain.strip()
         settings.app.acme_domain = acme_domain
 
     if 'auditing' in flask.request.json:
@@ -440,7 +434,8 @@ def settings_put():
 
     if 'influxdb_url' in flask.request.json:
         settings_commit = True
-        influxdb_url = flask.request.json['influxdb_url'] or None
+        influxdb_url = utils.clean_url(
+            flask.request.json['influxdb_url'] or None)
         settings.app.influxdb_url = influxdb_url
 
     if 'influxdb_token' in flask.request.json:
@@ -475,7 +470,8 @@ def settings_put():
 
     if 'email_server' in flask.request.json:
         settings_commit = True
-        email_server = flask.request.json['email_server'] or None
+        email_server = utils.clean_domain(
+            flask.request.json['email_server'] or None)
         if email_server != settings.app.email_server:
             changes.add('smtp')
         settings.app.email_server = email_server
@@ -572,12 +568,10 @@ def settings_put():
 
     if 'sso_authzero_domain' in flask.request.json:
         settings_commit = True
-        sso_authzero_domain = flask.request.json[
-            'sso_authzero_domain'] or None
+        sso_authzero_domain = utils.clean_domain(
+            flask.request.json['sso_authzero_domain'] or None)
         if sso_authzero_domain != settings.app.sso_authzero_domain:
             changes.add('sso')
-        if sso_authzero_domain:
-            sso_authzero_domain = sso_authzero_domain.strip()
         settings.app.sso_authzero_domain = sso_authzero_domain
 
     if 'sso_authzero_app_id' in flask.request.json:
@@ -638,11 +632,10 @@ def settings_put():
 
     if 'sso_duo_host' in flask.request.json:
         settings_commit = True
-        sso_duo_host = flask.request.json['sso_duo_host'] or None
+        sso_duo_host = utils.clean_domain(
+            flask.request.json['sso_duo_host'] or None)
         if sso_duo_host != settings.app.sso_duo_host:
             changes.add('sso')
-        if sso_duo_host:
-            sso_duo_host = sso_duo_host.strip()
         settings.app.sso_duo_host = sso_duo_host
 
     if 'sso_duo_mode' in flask.request.json:
@@ -661,11 +654,10 @@ def settings_put():
 
     if 'sso_radius_host' in flask.request.json:
         settings_commit = True
-        sso_radius_host = flask.request.json['sso_radius_host'] or None
+        sso_radius_host = utils.clean_domain(
+            flask.request.json['sso_radius_host'] or None)
         if sso_radius_host != settings.app.sso_radius_host:
             changes.add('sso')
-        if sso_radius_host:
-            sso_radius_host = sso_radius_host.strip()
         settings.app.sso_radius_host = sso_radius_host
 
     if 'sso_org' in flask.request.json:
@@ -690,21 +682,18 @@ def settings_put():
 
     if 'sso_saml_url' in flask.request.json:
         settings_commit = True
-        sso_saml_url = flask.request.json['sso_saml_url'] or None
+        sso_saml_url = utils.clean_url(
+            flask.request.json['sso_saml_url'] or None)
         if sso_saml_url != settings.app.sso_saml_url:
             changes.add('sso')
-        if sso_saml_url:
-            sso_saml_url = sso_saml_url.strip()
         settings.app.sso_saml_url = sso_saml_url
 
     if 'sso_saml_issuer_url' in flask.request.json:
         settings_commit = True
-        sso_saml_issuer_url = flask.request.json['sso_saml_issuer_url'] or \
-            None
+        sso_saml_issuer_url = utils.clean_url(
+            flask.request.json['sso_saml_issuer_url'] or None)
         if sso_saml_issuer_url != settings.app.sso_saml_issuer_url:
             changes.add('sso')
-        if sso_saml_issuer_url:
-            sso_saml_issuer_url = sso_saml_issuer_url.strip()
         settings.app.sso_saml_issuer_url = sso_saml_issuer_url
 
     if 'sso_saml_cert' in flask.request.json:
@@ -821,12 +810,10 @@ def settings_put():
 
     if 'server_sso_url' in flask.request.json:
         settings_commit = True
-        server_sso_url = \
-            flask.request.json['server_sso_url'] or None
+        server_sso_url = utils.clean_url(
+            flask.request.json['server_sso_url'] or None)
         if server_sso_url != settings.app.server_sso_url:
             changes.add('sso')
-        if server_sso_url:
-            server_sso_url = server_sso_url.strip()
         settings.app.server_sso_url = server_sso_url
 
     if 'restrict_import' in flask.request.json:
@@ -892,14 +879,16 @@ def settings_put():
         settings.app.theme = theme
 
     if 'public_address' in flask.request.json:
-        public_address = flask.request.json['public_address'] or None
+        public_address = utils.clean_domain(
+            flask.request.json['public_address'] or None)
 
         if public_address != settings.local.host.public_addr:
             settings.local.host.public_address = public_address
             settings.local.host.commit('public_address')
 
     if 'public_address6' in flask.request.json:
-        public_address6 = flask.request.json['public_address6'] or None
+        public_address6 = utils.clean_domain(
+            flask.request.json['public_address6'] or None)
 
         if public_address6 != settings.local.host.public_addr6:
             settings.local.host.public_address6 = public_address6
@@ -1006,8 +995,8 @@ def settings_put():
     if settings.app.cloud_provider == 'pritunl':
         if 'pritunl_cloud_host' in flask.request.json:
             settings_commit = True
-            settings.app.pritunl_cloud_host = utils.filter_str(
-                flask.request.json['pritunl_cloud_host']) or None
+            settings.app.pritunl_cloud_host = utils.clean_domain(
+                flask.request.json['pritunl_cloud_host'] or None)
         if 'pritunl_cloud_token' in flask.request.json:
             settings_commit = True
             settings.app.pritunl_cloud_token = utils.filter_str(
