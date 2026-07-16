@@ -482,6 +482,7 @@
           <button id="sso-login-duo" class="btn sso-login sso-login-duo" onclick="return onDuo()"><img alt="duo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAG4AAAAjCAYAAAB1nT9JAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAA3XAAAN1wFCKJt4AAAAB3RJTUUH3wkQEjgP6jfnwAAAA/1JREFUaN7d23uIVVUUx/HPGicNosgeZphgYBFl+cdY1B8aYQ+j/snEDOlhIL0gKlKD6J9KsUAKih5GSFRiWJKIikpilvmEpJQsk0pU/MNSfIT5mNUf9wzIYOg4M/fuccHhnnvvYa/f2d+91tlnsXdk5kYM1Xk7jP34A5vxLRZHxO6ONpSZX+D+Tuq5Ev9UOjpjyyPiyTO4h8twN0bgOgzC+TgHB7ATv+B7LIuInzrSfrOus3Orox9uwgQcz8xleDMilqq/Rb3byMw78BzuRK//uaxvdQxpG6CZuQnv4OOIOHwqP03d3HG9MApLMnNlZg51llpm3pCZ32BpFWm9OtjEELyPXzNzbKPBnWjDsS4zp2RmnEXAIjMnY32VFjtrA/F5Zs7NzAtLAAe9MR2zM7PPWQCtNz7B69W9daWNwarMHFQCuDYbh696Mrwqa3yI8d3o5lqsPBm8pgbe+yh80IMDbhoeroOfgVicmReUAg4eycyHemC0PYgX6+jyGrxbEjh4KzP79SBol+LtBrgen5n3lgTuIrzcgwLuJVzcIN8zMrO5FHAwsSdEXWZegscbKOHqarZZDLg+eKwHRNsEtepQI+2JksDR+dpkPWxMARqGZ2b/ksC1VKmo1DTZF8MKkNKEkSWBC7QUHG0tBWWoYU2Fdc7ggsGVpG1wM77E2kIEbS8Y3HbMLETL780R8WqJj5TSBEXEIiwqRU9zZj6F/oXoWRERy3GowMnJrRhZiJwdzbhLrRZWgm2pPvcUmAUuxwOFaFle2uSk7Rm3tUBwf5bUTyWBS2yqztcXCG4zWgvRsqkkcJsiYl91vrG0dBkR+/FjAVJasbokcEtO6KRWzC0w6pYWoGFDROwpBdwRzGv328wCXwvm4d8Ga5hNOSWcORHxV7vUtLGk96ZK017MaeSLd1vUlwBun9p6wpPZJBwtLOrew94G+Z4eEcdLAfda+2g7YYT/jFcKjLpGVJvmR8SKti+NBjc7Ihac4pppWFwYvIX4rI4ut7UfwI0E9zWmnkYntWIs1hWWMqfW6Rm8CxMj4mAJ4Bbg2Yg4dpoj/CBux/KCou44JmN+N7rZivERsbP9H/UGdxRvYFJEHOlgRx1Qq6vOKKWCERFHMUVtWf2RLm5+IcZFxK6T/VlPcGsxOiI+iog8w446FhEvqG2u+KEQeBkRszAaa7qgyZ14JiKeb58eT7Tmbr6v4/gOsyJidRd21qrMbMF9eBq36Zq9cJ3RtFVtZfbNeLQaXB3ZarUFn1azx1NGb1eCO4yD2IHf1ArFKyPi7+4a6VUlY15mDsA9uAXXY0BVdemKykt2UNcarKkWF43AjbgKV+A8tR2ph7BbbffuBqyKiG0d8fMfeH43oVcTpHAAAAAASUVORK5CYII="> Sign in with Duo</button>
         </form>
         <form id="tf-login-form" class="login-form" onsubmit="return onTwoFactor();">
+          <div id="local-otp-alert" class="alert alert-success"></div>
           <input id="otp-code" type="text" name="otp-code" class="otp-code form-control" placeholder="Two-factor authentication code" autocapitalize="off" spellcheck="false" autocomplete="off" autofocus>
           <input id="yubico-code" type="password" name="yubico-code" class="yubico-code form-control" placeholder="Insert YubiKey" autocapitalize="off" autocomplete="off" spellcheck="false">
           <input id="tf-submit" class="login-button btn" type="submit" value="Sign in">
@@ -501,6 +502,7 @@
       var duoLoginForm = document.getElementById('duo-login-form');
       var userInput = document.getElementById('username');
       var otpUserInput = document.getElementById('otp-code');
+      var localOtpAlertDiv = document.getElementById('local-otp-alert');
       var yubicoUserInput = document.getElementById('yubico-code');
       var duoUserInput = document.getElementById('duo-username');
       var passInput = document.getElementById('password');
@@ -596,11 +598,22 @@
               } else {
                 yubicoUserInput.style.display = 'none';
               }
-              if (data['otp_auth']) {
+              if (data['otp_auth'] || data['local_otp_auth']) {
                 otpUserInput.style.display = 'block';
                 otpUserInput.focus();
               } else {
                 otpUserInput.style.display = 'none';
+              }
+              if (data['local_otp_auth']) {
+                localOtpAlertDiv.textContent = 'Run the command on the ' +
+                  'server to generate an authentication code:';
+                var localOtpCmd = document.createElement('div');
+                localOtpCmd.textContent = 'sudo pritunl local-otp ' +
+                  username.replace(/[^a-zA-Z0-9\-=_@.:+]/g, '');
+                localOtpAlertDiv.appendChild(localOtpCmd);
+                localOtpAlertDiv.style.display = 'block';
+              } else {
+                localOtpAlertDiv.style.display = 'none';
               }
 
               loginForm.style.display = 'none';
