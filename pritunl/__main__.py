@@ -138,6 +138,20 @@ def main(default_conf=None):
                 '  username: "%s"\n  password: "%s"' % (username, password))
 
         sys.exit(0)
+    elif cmd == 'local-otp':
+        from pritunl import setup
+        from pritunl import auth
+
+        if len(args) != 2:
+            raise ValueError('Invalid arguments')
+
+        setup.setup_db()
+        local_otp_code = auth.generate_local_otp(args[1])
+
+        print('Administrator local two-factor authentication code: %s' % (
+            local_otp_code))
+
+        sys.exit(0)
     elif cmd == 'reconfigure':
         from pritunl import setup
         from pritunl import settings
