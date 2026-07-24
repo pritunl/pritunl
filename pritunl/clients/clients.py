@@ -1364,6 +1364,9 @@ class Clients(object):
             _, password = password.split('<%=AUTH_TOKEN=%>')
             password = password or None
 
+        if client_data.get('injected_sso_token'):
+            sso_token = client_data['injected_sso_token']
+
         try:
             if not _limiter.validate(remote_ip):
                 self.instance_com.send_client_deny(client_id, key_id,
@@ -1385,6 +1388,13 @@ class Clients(object):
             if not user:
                 self.instance_com.send_client_deny(client_id, key_id,
                     'User is not valid')
+                return
+
+            if not reauth and self.server.sso_auth and \
+                    self.server.sso_webauth and not user.link_server_id and \
+                    not has_token and not sso_token and \
+                    'webauth' in (client_data.get('iv_sso') or ''):
+                self.sso_webauth_request(client_data, org, user)
                 return
 
             def callback(allow, reason=None, doc_id=None):
@@ -1474,6 +1484,84 @@ class Clients(object):
 
     def connect(self, client_data, reauth=False):
         self.call_queue.put(self._connect, client_data, reauth)
+
+    def sso_webauth_request(self, client_data, org, user):
+        from pritunl import sso
+
+        client_id = client_data['client_id']
+        key_id = client_data['key_id']
+        timeout = settings.vpn.sso_webauth_timeout
+
+        state = utils.rand_str(64)
+        token = utils.rand_str(32)
+
+        mongo.get_collection('key_tokens').insert_one({
+            '_id': state,
+            'org_id': org.id,
+            'user_id': user.id,
+            'server_id': self.server.id,
+            'mode': 'ovpn',
+            'token': token,
+            'type': KEY_REQUEST_AUTH,
+            'secret': None,
+            'timestamp': utils.now(),
+        })
+
+        url = sso.server_sso_url() + '/key/request?state=' + state
+        extra = 'WEB_AUTH::' + url
+
+        logger.info('Sending sso web auth pending challenge', 'clients',
+            user_name=user.name,
+            org_name=org.name,
+            server_name=self.server.name,
+        )
+
+        thread = threading.Thread(
+            name="SsoWebauthPoll",
+            target=self.sso_webauth_poll,
+            args=(client_data, token),
+        )
+        thread.daemon = True
+        thread.start()
+
+        self.instance_com.send_client_pending_auth(client_id, key_id,
+            extra, timeout)
+
+    def sso_webauth_poll(self, client_data, token):
+        from pritunl import sso
+
+        client_id = client_data['client_id']
+        key_id = client_data['key_id']
+        timeout = settings.vpn.sso_webauth_timeout
+
+        for _ in range(timeout * 5):
+            time.sleep(0.2)
+
+            if self.instance.sock_interrupt:
+                return
+
+            if sso.check_token(token, client_data['user_id'], self.server.id):
+                self.sso_webauth_approve(client_data)
+                return
+
+        try:
+            self.instance_com.send_client_deny(client_id, key_id,
+                'Web authentication timed out')
+        except:
+            pass
+
+    def sso_webauth_approve(self, client_data):
+        sso_token = utils.rand_str(32)
+        mongo.get_collection('server_sso_tokens').insert_one({
+            '_id': sso_token,
+            'user_id': client_data['user_id'],
+            'server_id': self.server.id,
+            'stage': 'connect',
+            'timestamp': utils.now(),
+        })
+
+        client_data['injected_sso_token'] = sso_token
+        self.call_queue.put(self._connect, client_data, False)
 
     def connect_wg(self, user, org, wg_public_key, auth_password,
             auth_token, auth_nonce, auth_timestamp, sso_token,

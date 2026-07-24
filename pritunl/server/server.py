@@ -68,6 +68,7 @@ dict_fields = [
     'search_domain',
     'otp_auth',
     'sso_auth',
+    'sso_webauth',
     'cipher',
     'hash',
     'block_outside_dns',
@@ -140,6 +141,7 @@ class Server(mongo.MongoObject):
         'search_domain',
         'otp_auth',
         'sso_auth',
+        'sso_webauth',
         'tls_auth',
         'tls_auth_key',
         'lzo_compression',
@@ -206,6 +208,7 @@ class Server(mongo.MongoObject):
         'dns_servers': [],
         'otp_auth': False,
         'sso_auth': False,
+        'sso_webauth': False,
         'tls_auth': True,
         'lzo_compression': False,
         'hide_ovpn': False,
@@ -248,7 +251,8 @@ class Server(mongo.MongoObject):
             restrict_routes=None, wg=None, ipv6=None, ipv6_firewall=None,
             bind_address=None, port=None, protocol=None, port_wg=None,
             dh_param_bits=None, multi_device=None, dns_servers=None,
-            search_domain=None, otp_auth=None, sso_auth=None, cipher=None,
+            search_domain=None, otp_auth=None, sso_auth=None,
+            sso_webauth=None, cipher=None,
             hash=None, block_outside_dns=None, jumbo_frames=None,
             lzo_compression=None, inter_client=None, ping_interval=None,
             ping_timeout=None, ping_interval_wg=None, ping_timeout_wg=None,
@@ -326,6 +330,8 @@ class Server(mongo.MongoObject):
             self.otp_auth = otp_auth
         if sso_auth is not None:
             self.sso_auth = sso_auth
+        if sso_webauth is not None:
+            self.sso_webauth = sso_webauth
         if cipher is not None:
             self.cipher = cipher
         if hash is not None:
@@ -457,6 +463,7 @@ class Server(mongo.MongoObject):
             'search_domain': self.search_domain,
             'otp_auth': True if self.otp_auth else False,
             'sso_auth': True if self.sso_auth else False,
+            'sso_webauth': True if self.sso_webauth else False,
             'cipher': self.cipher,
             'hash': self.hash,
             'block_outside_dns': self.block_outside_dns,
