@@ -63,6 +63,10 @@ class ServerInstanceCom(object):
             reason, ((' "%s"' % client_reason) if client_reason else '')))
         self.push_output('ERROR User auth failed "%s"' % reason)
 
+    def send_client_pending_auth(self, client_id, key_id, extra, timeout):
+        self.sock_send('client-pending-auth %s %s "%s" %s\n' % (
+            client_id, key_id, extra, timeout))
+
     def push_output(self, message):
         self.server.output.push_message(message)
 
@@ -139,6 +143,8 @@ class ServerInstanceCom(object):
                     self.client['platform'] = utils.filter_str(env_val)
                 elif env_key == 'IV_VER':
                     self.client['ovpn_ver'] = utils.filter_str(env_val)
+                elif env_key == 'IV_SSO':
+                    self.client['iv_sso'] = utils.filter_str(env_val)
                 elif env_key == 'UV_ID':
                     self.client['device_id'] = utils.filter_str(env_val)
                 elif env_key == 'UV_NAME':

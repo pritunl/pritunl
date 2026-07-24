@@ -1779,6 +1779,7 @@ class ServerInstance(object):
             geo_sort=self.server.geo_sort,
             force_connect=self.server.force_connect,
             sso_auth=self.server.sso_auth,
+            sso_webauth=self.server.sso_webauth,
             route_dns=self.server.route_dns,
             device_auth=self.server.device_auth,
             host_id=settings.local.host.id,
