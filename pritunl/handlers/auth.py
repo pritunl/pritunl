@@ -365,12 +365,13 @@ def auth_session_post():
         time.sleep(random.randint(0, 100) / 1000.)
         return _auth_plugin(username, password, remote_addr)
 
-    if (not otp_code and admin.otp_auth) or \
+    if (not otp_code and (admin.otp_auth or admin.local_otp_auth)) or \
             (not yubico_key and admin.yubikey_id):
         return utils.jsonify({
             'error': AUTH_OTP_REQUIRED,
             'error_msg': AUTH_OTP_REQUIRED_MSG,
             'otp_auth': admin.otp_auth,
+            'local_otp_auth': admin.local_otp_auth,
             'yubico_auth': bool(admin.yubikey_id),
         }, 402)
 
