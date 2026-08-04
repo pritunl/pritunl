@@ -281,6 +281,7 @@ def admin_post():
     yubikey_id = flask.request.json.get('yubikey_id') or None
     yubikey_id = yubikey_id[:12] if yubikey_id else None
     otp_auth = flask.request.json.get('otp_auth', False)
+    local_otp_auth = flask.request.json.get('local_otp_auth', False)
     auth_api = flask.request.json.get('auth_api', False)
     disabled = flask.request.json.get('disabled', False)
     super_user = flask.request.json.get('super_user', False)
@@ -293,6 +294,7 @@ def admin_post():
             yubikey_id=yubikey_id,
             default=False,
             otp_auth=otp_auth,
+            local_otp_auth=local_otp_auth,
             auth_api=auth_api,
             disabled=disabled,
             super_user=super_user,
