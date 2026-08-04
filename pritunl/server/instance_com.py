@@ -65,7 +65,7 @@ class ServerInstanceCom(object):
         self.push_output('ERROR User auth failed "%s"' % reason)
 
     def send_client_pending_auth(self, client_id, key_id, extra, timeout):
-        if pending_auth_supports_kid():
+        if utils.check_auth_supports_kid():
             self.sock_send('client-pending-auth %s %s "%s" %s\n' % (
                 client_id, key_id, extra, timeout))
         else:
