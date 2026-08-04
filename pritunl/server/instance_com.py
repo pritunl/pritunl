@@ -20,6 +20,24 @@ import uuid
 import random
 import bson
 import ipaddress
+import subprocess
+
+_pending_auth_kid = None
+
+def pending_auth_supports_kid():
+    global _pending_auth_kid
+    if _pending_auth_kid is None:
+        supported = False
+        try:
+            proc = subprocess.Popen(['openvpn', '--version'],
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            ver = proc.communicate()[0].decode().split()[1]
+            major, minor = ver.split('.')[:2]
+            supported = (int(major), int(minor)) >= (2, 6)
+        except:
+            supported = False
+        _pending_auth_kid = supported
+    return _pending_auth_kid
 
 class ServerInstanceCom(object):
     def __init__(self, svr, instance):
@@ -62,6 +80,14 @@ class ServerInstanceCom(object):
         self.sock_send('client-deny %s %s "%s"%s\n' % (client_id, key_id,
             reason, ((' "%s"' % client_reason) if client_reason else '')))
         self.push_output('ERROR User auth failed "%s"' % reason)
+
+    def send_client_pending_auth(self, client_id, key_id, extra, timeout):
+        if pending_auth_supports_kid():
+            self.sock_send('client-pending-auth %s %s "%s" %s\n' % (
+                client_id, key_id, extra, timeout))
+        else:
+            self.sock_send('client-pending-auth %s "%s" %s\n' % (
+                client_id, extra, timeout))
 
     def push_output(self, message):
         self.server.output.push_message(message)
@@ -139,6 +165,8 @@ class ServerInstanceCom(object):
                     self.client['platform'] = utils.filter_str(env_val)
                 elif env_key == 'IV_VER':
                     self.client['ovpn_ver'] = utils.filter_str(env_val)
+                elif env_key == 'IV_SSO':
+                    self.client['iv_sso'] = utils.filter_str(env_val)
                 elif env_key == 'UV_ID':
                     self.client['device_id'] = utils.filter_str(env_val)
                 elif env_key == 'UV_NAME':

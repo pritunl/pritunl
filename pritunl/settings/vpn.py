@@ -30,6 +30,7 @@ class SettingsVpn(SettingsGroupMongo):
         'link_timeout': 10,
         'firewall_connect_timeout': 180,
         'sso_token_ttl': 300,
+        'sso_webauth_timeout': 180,
         'drop_permissions': False,
         'bandwidth_update_rate': 15,
         'tls_mode': 'tls-auth',
