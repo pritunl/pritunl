@@ -22,23 +22,6 @@ import bson
 import ipaddress
 import subprocess
 
-_pending_auth_kid = None
-
-def pending_auth_supports_kid():
-    global _pending_auth_kid
-    if _pending_auth_kid is None:
-        supported = False
-        try:
-            proc = subprocess.Popen(['openvpn', '--version'],
-                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-            ver = proc.communicate()[0].decode().split()[1]
-            major, minor = ver.split('.')[:2]
-            supported = (int(major), int(minor)) >= (2, 6)
-        except:
-            supported = False
-        _pending_auth_kid = supported
-    return _pending_auth_kid
-
 class ServerInstanceCom(object):
     def __init__(self, svr, instance):
         self.server = svr
