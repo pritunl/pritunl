@@ -1365,8 +1365,8 @@ class Clients(object):
             _, password = password.split('<%=AUTH_TOKEN=%>')
             password = password or None
 
-        if client_data.get('injected_sso_token'):
-            sso_token = client_data['injected_sso_token']
+        if client_data.get('ovpn_sso_token'):
+            sso_token = client_data['ovpn_sso_token']
 
         try:
             if not _limiter.validate(remote_ip):
@@ -1563,7 +1563,7 @@ class Clients(object):
             'timestamp': utils.now(),
         })
 
-        client_data['injected_sso_token'] = sso_token
+        client_data['ovpn_sso_token'] = sso_token
         self.call_queue.put(self._connect, client_data, False)
 
     def connect_wg(self, user, org, wg_public_key, auth_password,
