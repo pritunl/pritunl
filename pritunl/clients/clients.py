@@ -1552,7 +1552,15 @@ class Clients(object):
 
     def sso_webauth_approve(self, client_data):
         sso_token = utils.rand_str(32)
-        mongo.get_collection('server_sso_tokens').insert_one({
+
+        messenger.publish('tokens', 'authorized', extra={
+            'user_id': client_data['user_id'],
+            'server_id': self.server.id,
+            'token': sso_token,
+        })
+
+        tokens_collection = mongo.get_collection('server_sso_tokens')
+        tokens_collection.insert_one({
             '_id': sso_token,
             'user_id': client_data['user_id'],
             'server_id': self.server.id,
