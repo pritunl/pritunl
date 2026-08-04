@@ -1489,7 +1489,6 @@ class Clients(object):
     def sso_webauth_request(self, client_data, org, user):
         client_id = client_data['client_id']
         key_id = client_data['key_id']
-        timeout = settings.vpn.sso_webauth_timeout
 
         state = utils.rand_str(64)
         token = utils.rand_str(32)
@@ -1524,14 +1523,13 @@ class Clients(object):
         thread.start()
 
         self.instance_com.send_client_pending_auth(client_id, key_id,
-            extra, timeout)
+            extra, settings.vpn.sso_webauth_timeout)
 
     def sso_webauth_poll(self, client_data, token):
         client_id = client_data['client_id']
         key_id = client_data['key_id']
-        timeout = settings.vpn.sso_webauth_timeout
 
-        for _ in range(timeout * 5):
+        for _ in range(settings.vpn.sso_webauth_timeout * 5):
             time.sleep(0.2)
 
             if self.instance.sock_interrupt:
