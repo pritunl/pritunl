@@ -19,6 +19,7 @@ from pritunl import journal
 from pritunl import database
 from pritunl import firewall
 from pritunl import callbacks
+from pritunl import sso
 
 import time
 import collections
@@ -1486,8 +1487,6 @@ class Clients(object):
         self.call_queue.put(self._connect, client_data, reauth)
 
     def sso_webauth_request(self, client_data, org, user):
-        from pritunl import sso
-
         client_id = client_data['client_id']
         key_id = client_data['key_id']
         timeout = settings.vpn.sso_webauth_timeout
@@ -1528,8 +1527,6 @@ class Clients(object):
             extra, timeout)
 
     def sso_webauth_poll(self, client_data, token):
-        from pritunl import sso
-
         client_id = client_data['client_id']
         key_id = client_data['key_id']
         timeout = settings.vpn.sso_webauth_timeout
