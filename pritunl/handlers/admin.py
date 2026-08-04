@@ -287,6 +287,12 @@ def admin_post():
     super_user = flask.request.json.get('super_user', False)
     remote_addr = utils.get_remote_addr()
 
+    if otp_auth and local_otp_auth:
+        return utils.jsonify({
+            'error': ADMIN_INVALID_OTP,
+            'error_msg': ADMIN_INVALID_OTP_MSG,
+        }, 400)
+
     try:
         admin = auth.new_admin(
             username=username,
