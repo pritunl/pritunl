@@ -134,8 +134,8 @@ class Clients(object):
 
         client_conf += 'push "ping %s"\n' % self.server.ping_interval
         if settings.app.sso_cache and not self.server.dynamic_firewall and \
-            not self.server.device_auth and \
-            not self.server.sso_auth and settings.user.reconnect:
+                not self.server.device_auth and \
+                not self.server.sso_auth and settings.user.reconnect:
             client_conf += 'push "ping-restart %s"\n' % \
                 self.server.ping_timeout
         elif (user.has_password(self.server) and has_token) or \
