@@ -34,6 +34,7 @@ def send_email(to_addr, subject, text_body, html_body):
             email_port = 0
 
         context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+        context.load_default_certs()
         if settings.app.email_skip_verify:
             context.check_hostname = False
             context.verify_mode = ssl.CERT_NONE
