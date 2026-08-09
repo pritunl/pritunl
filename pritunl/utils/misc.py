@@ -318,6 +318,15 @@ def generate_secret_len(n):
             return x
     raise ValueError('Failed to generate secret')
 
+def generate_secret_lc_len(n):
+    l = int(n*2.5)
+    for i in range(10):
+        x = re.sub(r'[^a-z0-9]+', '', base64.b64encode(
+            os.urandom(l)).decode())[:n]
+        if len(x) == n:
+            return x
+    raise ValueError('Failed to generate secret')
+
 def generate_random_mac():
     random_digits = [random.choice('0123456789ABCDEF') for _ in range(10)]
     return '02:' + ':'.join(
