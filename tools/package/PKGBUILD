@@ -29,6 +29,7 @@ depends:yum=(
     "ipset"
     "ca-certificates"
     "psmisc"
+    "kernel-modules-extra"
 )
 
 makedepends:yum=(
