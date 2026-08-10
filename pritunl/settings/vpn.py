@@ -6,6 +6,7 @@ class SettingsVpn(SettingsGroupMongo):
         'ipv6': True,
         'ipv6_route_all': True,
         'lib_iptables': False,
+        'route_table_throws': True,
         'call_queue_threads': 16,
         'client_ttl': 300,
         'server_poll_timeout': 4,
