@@ -27,6 +27,7 @@ import psutil
 import urllib.parse
 
 _null = open(os.devnull, 'w')
+_pending_auth_kid = None
 
 if hasattr(sys, 'frozen'):
     _srcfile = 'logging%s__init__%s' % (os.sep, __file__[-4:])
@@ -543,6 +544,21 @@ def get_url_root():
         url_root = url_root[:-1]
 
     return url_root
+
+def check_auth_supports_kid():
+    global _pending_auth_kid
+    if _pending_auth_kid is None:
+        supported = False
+        try:
+            proc = subprocess.Popen(['openvpn', '--version'],
+                stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            ver = proc.communicate()[0].decode().split()[1]
+            major, minor = ver.split('.')[:2]
+            supported = (int(major), int(minor)) >= (2, 6)
+        except:
+            supported = False
+        _pending_auth_kid = supported
+    return _pending_auth_kid
 
 def check_openvpn_ver():
     try:
