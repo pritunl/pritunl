@@ -207,19 +207,20 @@ class ServerInstance(object):
                     ).run(5)
                 self.tables_active.add(network)
 
-            for route in self.table_throw_routes:
-                if ':' in route:
-                    utils.Process(
-                        ['ip', '-6', 'route', 'replace', 'table', self.table,
-                            'throw', route],
-                        ignore_states=['File exists'],
-                    ).run(5)
-                else:
-                    utils.Process(
-                        ['ip', 'route', 'replace', 'table', self.table,
-                            'throw', route],
-                        ignore_states=['File exists'],
-                    ).run(5)
+            if settings.vpn.route_table_throws:
+                for route in self.table_throw_routes:
+                    if ':' in route:
+                        utils.Process(
+                            ['ip', '-6', 'route', 'replace', 'table',
+                                self.table, 'throw', route],
+                            ignore_states=['File exists'],
+                        ).run(5)
+                    else:
+                        utils.Process(
+                            ['ip', 'route', 'replace', 'table', self.table,
+                                'throw', route],
+                            ignore_states=['File exists'],
+                        ).run(5)
 
             for route in self.table_routes:
                 if ':' in route:
