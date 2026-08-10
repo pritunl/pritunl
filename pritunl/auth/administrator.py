@@ -631,6 +631,24 @@ def reset_password():
 
     return DEFAULT_USERNAME, default_admin.default_password
 
+def generate_local_otp(username):
+    admin = get_by_username(username)
+
+    if not admin:
+        logger.error('Administrator username does not exist', 'auth')
+        return
+
+    if not admin.local_otp_auth:
+        logger.error(
+            'Administrator does not have local two-factor '+
+            'authentication enabled',
+            'auth',
+        )
+
+    admin.generate_local_otp_code()
+
+    return admin.local_otp_code
+
 def disable_admin_api():
     admin_collection = mongo.get_collection('administrators')
     admin_collection.update_many(
