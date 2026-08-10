@@ -269,6 +269,11 @@ class Administrator(mongo.MongoObject):
 
         return True
 
+    def generate_local_otp_code(self):
+        self.local_otp_code = utils.generate_secret_lc()
+        self.local_otp_timestamp = utils.now()
+        self.commit(('local_otp_code', 'local_otp_timestamp'))
+
     def generate_token(self):
         self.token = utils.generate_secret()
 
