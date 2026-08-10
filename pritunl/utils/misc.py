@@ -310,6 +310,9 @@ def filter_path(in_str):
 def generate_secret():
     return generate_secret_len(32)
 
+def generate_secret_lc():
+    return generate_secret_lc_len(32)
+
 def generate_secret_len(n):
     l = int(n*1.3)
     for i in range(10):
