@@ -150,6 +150,8 @@ class Administrator(mongo.MongoObject):
 
     def auth_check(self, password, otp_code=None, yubico_key=None,
             remote_addr=None):
+        invalid = False
+
         if not self.test_password(password):
             journal.entry(
                 journal.ADMIN_AUTH_FAILURE,
@@ -158,13 +160,12 @@ class Administrator(mongo.MongoObject):
                 reason=journal.ADMIN_AUTH_REASON_INVALID_PASSWORD,
                 reason_long='Invalid password',
             )
-
             self.audit_event(
                 'admin_auth',
                 'Administrator login failed, invalid password',
                 remote_addr=remote_addr,
             )
-            return False
+            invalid = True
 
         if self.otp_auth and not self.verify_otp_code(otp_code):
             journal.entry(
@@ -174,13 +175,31 @@ class Administrator(mongo.MongoObject):
                 reason=journal.ADMIN_AUTH_REASON_INVALID_OTP,
                 reason_long='Invalid two-factor authentication code',
             )
-
             self.audit_event(
                 'admin_auth',
                 'Administrator login failed, ' +
                     'invalid two-factor authentication code',
                 remote_addr=remote_addr,
             )
+            invalid = True
+
+        if self.local_otp_auth and not self.verify_local_otp_code(otp_code):
+            journal.entry(
+                journal.ADMIN_AUTH_FAILURE,
+                self.journal_data,
+                remote_address=remote_addr,
+                reason=journal.ADMIN_AUTH_REASON_INVALID_LOCAL_OTP,
+                reason_long='Invalid local two-factor authentication code',
+            )
+            self.audit_event(
+                'admin_auth',
+                'Administrator login failed, ' +
+                    'invalid local two-factor authentication code',
+                remote_addr=remote_addr,
+            )
+            invalid = True
+
+        if invalid:
             return False
 
         if self.yubikey_id:
