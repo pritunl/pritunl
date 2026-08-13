@@ -1,7 +1,6 @@
 from pritunl.server.instance_com import ServerInstanceCom
 from pritunl.server.instance_link import ServerInstanceLink
 from pritunl.server.bridge import add_interface, rem_interface
-from pritunl.server.utils import iter_servers
 
 from pritunl.constants import *
 from pritunl.exceptions import *
@@ -726,6 +725,8 @@ class ServerInstance(object):
         rem_interface(self.server.network, self.interface)
 
     def generate_iptables_rules(self):
+        from pritunl.server.utils import iter_servers
+
         server_addr = utils.get_network_gateway(self.server.network)
         server_addr6 = utils.get_network_gateway(self.server.network6)
         ipv6_firewall = self.server.ipv6_firewall and \
