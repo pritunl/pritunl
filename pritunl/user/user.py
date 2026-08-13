@@ -791,7 +791,7 @@ class User(mongo.MongoObject):
     def unassign_ip_addr(self):
         for svr in self.org.iter_servers(fields=(
                 'id', 'wg', 'network', 'network_wg', 'network_start',
-                'network_end', 'network_lock')):
+                'network_end', 'network_lock', 'ipv6')):
             svr.unassign_ip_addr(self.org.id, self.id)
 
     def generate_otp_secret(self):
