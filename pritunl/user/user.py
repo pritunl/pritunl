@@ -785,7 +785,7 @@ class User(mongo.MongoObject):
             return
         for svr in self.org.iter_servers(fields=(
                 'id', 'wg', 'network', 'network_wg', 'network_start',
-                'network_end', 'network_lock')):
+                'network_end', 'network_lock', 'ipv6')):
             svr.assign_ip_addr(self.org.id, self.id)
 
     def unassign_ip_addr(self):
