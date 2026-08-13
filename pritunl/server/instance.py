@@ -825,7 +825,7 @@ class ServerInstance(object):
         vpn_networks = []
         for svr in iter_servers(fields=(
                 'id', 'wg', 'network', 'network_wg', 'network_start',
-                'network_end', 'network_lock')):
+                'network_end', 'network_lock', 'ipv6')):
             if svr.id == self.server.id or not svr.network:
                 continue
 
