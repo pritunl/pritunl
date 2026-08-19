@@ -223,7 +223,7 @@ def admin_put(admin_id):
 
             admin.audit_event('admin_updated',
                 'Administrator two-step authentication %s' % (
-                    'disabled' if otp_auth else 'enabled'),
+                    'enabled' if otp_auth else 'disabled'),
                 remote_addr=remote_addr,
             )
 
@@ -231,11 +231,41 @@ def admin_put(admin_id):
                 journal.ADMIN_UPDATE,
                 admin.journal_data,
                 event_long='Administrator two-step authentication %s' % (
-                    'disabled' if otp_auth else 'enabled'),
+                    'enabled' if otp_auth else 'disabled'),
                 remote_addr=remote_addr,
             )
 
         admin.otp_auth = otp_auth
+
+    local_otp_auth = flask.request.json.get('local_otp_auth')
+    if local_otp_auth is not None:
+        if local_otp_auth != admin.local_otp_auth:
+            if not local_otp_auth:
+                admin.otp_secret = None
+            elif not admin.otp_secret:
+                admin.generate_otp_secret()
+
+            admin.audit_event('admin_updated',
+                'Administrator local two-step authentication %s' % (
+                    'enabled' if local_otp_auth else 'disabled'),
+                remote_addr=remote_addr,
+            )
+
+            journal.entry(
+                journal.ADMIN_UPDATE,
+                admin.journal_data,
+                event_long='Administrator local two-step authentication %s' % (
+                    'enabled' if local_otp_auth else 'disabled'),
+                remote_addr=remote_addr,
+            )
+
+        admin.local_otp_auth = local_otp_auth
+
+    if admin.otp_auth and admin.local_otp_auth:
+        return utils.jsonify({
+            'error': ADMIN_INVALID_OTP,
+            'error_msg': ADMIN_INVALID_OTP_MSG,
+        }, 400)
 
     otp_secret = flask.request.json.get('otp_secret')
     if otp_secret == True:
