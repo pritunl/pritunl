@@ -293,6 +293,32 @@ class Administrator(mongo.MongoObject):
         self.local_otp_timestamp = utils.now()
         self.commit(('local_otp_code', 'local_otp_timestamp'))
 
+    def verify_local_otp_code(self, code):
+        if not code or not self.local_otp_code or not self.local_otp_timestamp:
+            return False
+
+        if not utils.const_compare(self.local_otp_code, code):
+            return False
+
+        if utils.now() - self.local_otp_timestamp > datetime.timedelta(
+                seconds=settings.app.auth_local_otp_ttl):
+            logger.warning(
+                'Admin local two-factor authentication code expired',
+                'auth',
+                local_otp_timestamp=self.local_otp_timestamp,
+            )
+            return False
+
+        response = self.collection.update_one({
+            '_id': self.id,
+            'local_otp_code': code,
+        }, {'$set': {
+            'local_otp_code': None,
+            'local_otp_timestamp': None,
+        }})
+
+        return bool(response.modified_count)
+
     def generate_token(self):
         self.token = utils.generate_secret()
 
