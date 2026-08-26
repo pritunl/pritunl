@@ -230,7 +230,7 @@ class ServerIpPool:
             )
 
     def unassign_ip_pool_org(self, org_id):
-        self.collection.update_one({
+        self.collection.update_many({
             'server_id': self.server.id,
             'network': self.server.network_hash,
             'org_id': org_id,
