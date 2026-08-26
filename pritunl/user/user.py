@@ -847,8 +847,13 @@ class User(mongo.MongoObject):
         password_mode = None
 
         if svr.bypass_sso_auth:
+            if OTP_PASSCODE in modes:
+                password_mode = 'otp'
             if PIN in modes:
-                password_mode = 'pin'
+                if password_mode:
+                    password_mode += '_pin'
+                else:
+                    password_mode = 'pin'
             return password_mode
 
         if svr.sso_auth:
