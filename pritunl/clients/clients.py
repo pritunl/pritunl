@@ -598,6 +598,8 @@ class Clients(object):
             if client_id in self.iroutes_index:
                 for network in self.iroutes_index[client_id]:
                     iroute = self.iroutes.get(network)
+                    if not iroute:
+                        continue
 
                     if iroute['primary_slaves'] or iroute['secondary_slaves']:
                         return True
