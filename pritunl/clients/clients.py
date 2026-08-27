@@ -2864,7 +2864,8 @@ class Clients(object):
                                     "ping_lost_err")
                             continue
 
-                        if self.server.multi_device:
+                        if self.server.multi_device or \
+                                client['address_dynamic']:
                             response = self.pool_collection.update_one({
                                 'client_id': client['doc_id'],
                             }, {'$set': {
@@ -3192,12 +3193,19 @@ class Clients(object):
             'instance_id': self.instance.id,
         })
 
+        doc_ids = []
+        dynamic_doc_ids = []
+        static_doc_ids = []
         try:
-            doc_ids = []
             for client in self.clients.find_all():
                 doc_id = client.get('doc_id')
-                if doc_id:
-                    doc_ids.append(doc_id)
+                if not doc_id:
+                    continue
+                doc_ids.append(doc_id)
+                if client.get('address_dynamic'):
+                    dynamic_doc_ids.append(doc_id)
+                else:
+                    static_doc_ids.append(doc_id)
 
             if doc_ids:
                 self.collection.delete_many({
