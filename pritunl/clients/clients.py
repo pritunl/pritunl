@@ -842,7 +842,7 @@ class Clients(object):
                 if doc['_id'] == cur_id:
                     continue
 
-                if conn_count > self.server.max_devices:
+                if conn_count >= self.server.max_devices:
                     messenger.publish('instance', [
                         'user_disconnect_id',
                         user_id,
