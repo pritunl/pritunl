@@ -646,6 +646,7 @@ class Clients(object):
                         'server_id': self.server.id,
                         'user_id': user_id,
                         'mac_addr': mac_addr,
+                        'client_id': doc.get('client_id'),
                     }, {'$set': {
                         'server_id': self.server.id,
                         'user_id': user_id,
@@ -683,6 +684,7 @@ class Clients(object):
                             'server_id': self.server.id,
                             'user_id': user_id,
                             'mac_addr': mac_addr,
+                            'client_id': doc.get('client_id'),
                         }, {'$set': {
                             'server_id': self.server.id,
                             'user_id': user_id,
