@@ -829,7 +829,7 @@ class Clients(object):
 
         if self.server.multi_device and self.server.max_devices:
             if not virt_address:
-                raise ValueError('Failed to get virtual address')
+                return None, False, False
 
             cur_id = utils.ip_to_long(virt_address.split('/')[0])
             conn_count = 0
