@@ -463,7 +463,7 @@ class Organization(mongo.MongoObject):
             if server.status == ONLINE:
                 server.stop()
 
-        server_collection.update_one({
+        server_collection.update_many({
             'organizations': self.id,
         }, {'$pull': {
             'organizations': self.id,
