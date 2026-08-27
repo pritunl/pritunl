@@ -3208,5 +3208,28 @@ class Clients(object):
                 client_count=len(doc_ids),
             )
 
+        try:
+            if dynamic_doc_ids:
+                self.pool_collection.update_many({
+                    'server_id': self.server.id,
+                    'client_id': {'$in': dynamic_doc_ids},
+                }, {'$set': {
+                    'user_id': None,
+                    'mac_addr': None,
+                    'client_id': None,
+                    'timestamp': None,
+                }})
+
+            if static_doc_ids and self.server.multi_device:
+                self.pool_collection.delete_many({
+                    'server_id': self.server.id,
+                    'client_id': {'$in': static_doc_ids},
+                })
+        except:
+            logger.exception('Failed to release client pool', 'clients',
+                server_id=self.server.id,
+                client_count=len(doc_ids),
+            )
+
         if self.server.route_clients:
             self.clear_routes()
