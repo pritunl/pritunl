@@ -639,6 +639,7 @@ class Clients(object):
                 if doc:
                     orig_virt_address = virt_address
                     virt_address = utils.long_to_ip(doc['_id']) + subnet
+                    doc_static = bool(doc.get('static'))
 
                     response = self.pool_collection.update_one({
                         '_id': doc['_id'],
@@ -651,11 +652,12 @@ class Clients(object):
                         'mac_addr': mac_addr,
                         'client_id': doc_id,
                         'timestamp': utils.now(),
-                        'static': True,
+                        'static': doc_static,
                     }})
 
                     if bool(response.modified_count):
                         device_found = True
+                        address_dynamic = not doc_static
                         messenger.publish('instance', [
                             'user_disconnect_id',
                             user_id,
