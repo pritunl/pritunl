@@ -2519,24 +2519,23 @@ class Clients(object):
                     server_id=self.server.id,
                 )
 
-        if self.server.multi_device:
-            if client['address_dynamic']:
-                self.pool_collection.update_one({
-                    'server_id': self.server.id,
-                    'user_id': client.get('user_id'),
-                    'client_id': doc_id,
-                }, {'$set': {
-                    'user_id': None,
-                    'mac_addr': None,
-                    'client_id': None,
-                    'timestamp': None,
-                }})
-            else:
-                self.pool_collection.delete_many({
-                    'server_id': self.server.id,
-                    'user_id': client.get('user_id'),
-                    'client_id': doc_id,
-                })
+        if client['address_dynamic']:
+            self.pool_collection.update_one({
+                'server_id': self.server.id,
+                'user_id': client.get('user_id'),
+                'client_id': doc_id,
+            }, {'$set': {
+                'user_id': None,
+                'mac_addr': None,
+                'client_id': None,
+                'timestamp': None,
+            }})
+        elif self.server.multi_device:
+            self.pool_collection.delete_many({
+                'server_id': self.server.id,
+                'user_id': client.get('user_id'),
+                'client_id': doc_id,
+            })
 
         self.call_queue.put(self._disconnected, client)
 
