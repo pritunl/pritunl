@@ -759,10 +759,13 @@ class Clients(object):
                         utils.long_to_ip(last_addr))
 
                 network = ipaddress.IPv4Network(self.server.network)
-                ip_pool = utils.get_ip_pool_reverse(network, last_addr)
+                ip_pool = utils.get_ip_pool_reverse(network, last_addr,
+                    self.server.network_start, self.server.network_end)
 
                 if ip_pool:
+                    last_ip_addr = None
                     for ip_addr in ip_pool:
+                        last_ip_addr = ip_addr
                         try:
                             self.pool_collection.insert_one({
                                 '_id': int(ip_addr._ip),
@@ -786,6 +789,13 @@ class Clients(object):
                         }, {'$set': {
                             'pool_cursor': utils.ip_to_long(
                                 virt_address.split('/')[0]),
+                        }})
+                    elif last_ip_addr is not None:
+                        self.server_collection.update_one({
+                            '_id': self.server.id,
+                            'status': ONLINE,
+                        }, {'$set': {
+                            'pool_cursor': int(last_ip_addr._ip),
                         }})
 
         if not virt_address:
