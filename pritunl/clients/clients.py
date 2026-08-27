@@ -2919,9 +2919,10 @@ class Clients(object):
                     doc_ids.append(doc_id)
 
             try:
-                self.collection.delete_one({
-                    '_id': {'$in': doc_ids},
-                })
+                if doc_ids:
+                    self.collection.delete_many({
+                        '_id': {'$in': doc_ids},
+                    })
             except:
                 logger.exception('Error removing client', 'server',
                     server_id=self.server.id,
