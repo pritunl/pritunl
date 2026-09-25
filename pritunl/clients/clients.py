@@ -1521,7 +1521,7 @@ class Clients(object):
             'org_id': org.id,
             'user_id': user.id,
             'server_id': self.server.id,
-            'mode': 'ovpn',
+            'mode': 'ovpn_webauth',
             'token': token,
             'type': KEY_REQUEST_AUTH,
             'secret': None,
