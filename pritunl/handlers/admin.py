@@ -113,7 +113,8 @@ def admin_put(admin_id):
     super_user = flask.request.json.get('super_user')
     if super_user is not None:
         if super_user != admin.super_user:
-            if not super_user and auth.super_user_count() < 2:
+            if not super_user and auth.super_user_count(
+                    exclude_id=admin.id) < 1:
                 return utils.jsonify({
                     'error': NO_SUPER_USERS,
                     'error_msg': NO_SUPER_USERS_MSG,
@@ -192,7 +193,8 @@ def admin_put(admin_id):
     disabled = flask.request.json.get('disabled')
     if disabled is not None:
         if disabled != admin.disabled:
-            if disabled and admin.super_user and auth.super_user_count() < 2:
+            if disabled and admin.super_user and auth.super_user_count(
+                    exclude_id=admin.id) < 1:
                 return utils.jsonify({
                     'error': NO_ADMINS_ENABLED,
                     'error_msg': NO_ADMINS_ENABLED_MSG,
@@ -372,7 +374,7 @@ def admin_delete(admin_id):
     admin = auth.get_by_id(admin_id)
     remote_addr = utils.get_remote_addr()
 
-    if admin.super_user and auth.super_user_count() < 2:
+    if admin.super_user and auth.super_user_count(exclude_id=admin.id) < 1:
         return utils.jsonify({
             'error': NO_ADMINS,
             'error_msg': NO_ADMINS_MSG,
