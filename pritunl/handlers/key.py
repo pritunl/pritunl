@@ -2382,11 +2382,15 @@ def _key_sso_validate(key_doc, username, email, sso_mode, org_id, groups,
         'timestamp': utils.now(),
     })
 
+    success_url = utils.get_url_root() + "/success"
+    if key_doc.get('mode') == 'ovpn_webauth':
+        success_url += "?mode=webauth"
+
     if http_redirect:
-        return utils.redirect(utils.get_url_root() + "/success")
+        return utils.redirect(success_url)
     else:
         return utils.jsonify({
-            'redirect': utils.get_url_root() + "/success",
+            'redirect': success_url,
         }, 200)
 
 @app.app.route('/key/callback', methods=['GET'])
