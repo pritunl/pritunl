@@ -518,6 +518,12 @@ def server_put_post(server_id=None):
         sso_auth_def = True
         sso_auth = True if flask.request.json['sso_auth'] else False
 
+    sso_webauth = False
+    sso_webauth_def = False
+    if 'sso_webauth' in flask.request.json:
+        sso_webauth_def = True
+        sso_webauth = True if flask.request.json['sso_webauth'] else False
+
     mss_fix = None
     mss_fix_def = False
     if 'mss_fix' in flask.request.json:
@@ -707,6 +713,7 @@ def server_put_post(server_id=None):
             search_domain=search_domain,
             otp_auth=otp_auth,
             sso_auth=sso_auth,
+            sso_webauth=sso_webauth,
             cipher=cipher,
             hash=hash,
             block_outside_dns=block_outside_dns,
@@ -822,6 +829,9 @@ def server_put_post(server_id=None):
         if sso_auth_def and svr.sso_auth != sso_auth:
             allow_online = False
             svr.sso_auth = sso_auth
+        if sso_webauth_def and svr.sso_webauth != sso_webauth:
+            allow_online = False
+            svr.sso_webauth = sso_webauth
         if cipher_def and svr.cipher != cipher:
             allow_online = False
             svr.cipher = cipher
