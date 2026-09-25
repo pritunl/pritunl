@@ -682,7 +682,7 @@ def settings_put():
 
     if 'sso_saml_url' in flask.request.json:
         settings_commit = True
-        sso_saml_url = utils.clean_url(
+        sso_saml_url = utils.clean_domain(
             flask.request.json['sso_saml_url'] or None)
         if sso_saml_url != settings.app.sso_saml_url:
             changes.add('sso')
@@ -690,7 +690,7 @@ def settings_put():
 
     if 'sso_saml_issuer_url' in flask.request.json:
         settings_commit = True
-        sso_saml_issuer_url = utils.clean_url(
+        sso_saml_issuer_url = utils.clean_domain(
             flask.request.json['sso_saml_issuer_url'] or None)
         if sso_saml_issuer_url != settings.app.sso_saml_issuer_url:
             changes.add('sso')
@@ -810,7 +810,7 @@ def settings_put():
 
     if 'server_sso_url' in flask.request.json:
         settings_commit = True
-        server_sso_url = utils.clean_url(
+        server_sso_url = utils.clean_domain(
             flask.request.json['server_sso_url'] or None)
         if server_sso_url != settings.app.server_sso_url:
             changes.add('sso')
