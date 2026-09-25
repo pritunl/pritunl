@@ -735,11 +735,14 @@ def admin_api_count():
         'auth_api': True,
     })
 
-def super_user_count():
-    return Administrator.collection.count_documents({
+def super_user_count(exclude_id=None):
+    query = {
         'super_user': {'$ne': False},
         'disabled': {'$ne': True},
-    })
+    }
+    if exclude_id:
+        query['_id'] = {'$ne': exclude_id}
+    return Administrator.collection.count_documents(query)
 
 has_default_pass = None
 def has_default_password():
