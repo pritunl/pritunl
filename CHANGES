@@ -3,6 +3,7 @@ Pritunl Changelog
 
 <%= version %>
 
+Add OpenVPN mobile sso support
 Add local otp admin authentication
 Fix IP pool issues
 Improve routing options
