@@ -177,6 +177,11 @@ class ServerInstance(object):
         if not self.vxlan:
             return
 
+        if not settings.vpn.route_tables:
+            if self.tables_active:
+                self.tables_clear()
+            return
+
         if ':' in network:
             if not vxlan_addr6 or vxlan_addr6 == self.vxlan.vxlan_addr6:
                 return
