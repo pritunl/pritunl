@@ -1254,7 +1254,7 @@ class Clients(object):
         return True, client_conf
 
     def decrypt_rsa(self, cipher_data):
-        if len(cipher_data) > 1024:
+        if len(cipher_data) > 2048:
             raise ValueError('Sender cipher data too long')
 
         cipher_data = base64.b64decode(cipher_data)
@@ -1282,7 +1282,7 @@ class Clients(object):
         if len(sender_pub_key64) > 128:
             raise ValueError('Sender pub key too long')
 
-        if len(cipher_data64) > 256:
+        if len(cipher_data64) > 512:
             raise ValueError('Sender cipher data too long')
 
         sender_pub_key64 += '=' * (-len(sender_pub_key64) % 4)
@@ -1314,7 +1314,7 @@ class Clients(object):
         if len(sender_pub_key64) > 128:
             raise ValueError('Sender pub key too long')
 
-        if len(cipher_data64) > 256:
+        if len(cipher_data64) > 512:
             raise ValueError('Sender cipher data too long')
 
         sender_pub_key64 += '=' * (-len(sender_pub_key64) % 4)
