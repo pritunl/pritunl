@@ -129,9 +129,15 @@ def success_get():
     static_file = static.StaticFile(settings.conf.www_path,
         'success.html', cache=False, gzip=False)
 
+    body_class = ''
     if settings.app.theme == 'dark':
+        body_class += 'dark '
+    if flask.request.args.get('mode') == 'webauth':
+        body_class += 'webauth '
+
+    if body_class:
         static_file.data = static_file.data.replace(
-            '<body>', '<body class="dark">')
+            '<body>', '<body class="' + body_class.strip() + '">')
 
     return static_file.get_response()
 
