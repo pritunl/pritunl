@@ -242,11 +242,6 @@ def admin_put(admin_id):
     local_otp_auth = flask.request.json.get('local_otp_auth')
     if local_otp_auth is not None:
         if local_otp_auth != admin.local_otp_auth:
-            if not local_otp_auth:
-                admin.otp_secret = None
-            elif not admin.otp_secret:
-                admin.generate_otp_secret()
-
             admin.audit_event('admin_updated',
                 'Administrator local two-step authentication %s' % (
                     'enabled' if local_otp_auth else 'disabled'),
