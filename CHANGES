@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.34.4763.45 2026-09-27
+-------------------------------
 
 Add OpenVPN mobile sso support
 Add local otp admin authentication
