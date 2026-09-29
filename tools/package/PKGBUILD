@@ -53,16 +53,16 @@ sources=(
     "cacert.pem"
     "cacert2.pem"
     "cacert39.pem"
-    "https://github.com/openssl/openssl/releases/download/openssl-3.0.21/openssl-3.0.21.tar.gz"
-    "https://www.python.org/ftp/python/3.12.13/Python-3.12.13.tgz"
+    "https://github.com/openssl/openssl/releases/download/openssl-3.0.22/openssl-3.0.22.tar.gz"
+    "https://www.python.org/ftp/python/3.12.14/Python-3.12.14.tgz"
 )
 hashsums=(
     "8a04a68752a2d57f2cfdebb08b1d261a4edc64f076ec59727e7a30df4f8ab476"
     "f524fc21859b776e18df01a87880efa198112214e13494275dbcbd9bcb71d976"
     "2c11c3ce08ffc40d390319c72bc10d4f908e9c634494d65ed2cbc550731fd524"
     "fc9165a12403263e7ebfbdad7be7a3eac0fa5d325d3c70465f28d3690072ca28"
-    "617e29af8e421f46649484a4937e48c685e47f46488167c982f88bc4ec1d522f"
-    "0816c4761c97ecdb3f50a3924de0a93fd78cb63ee8e6c04201ddfaedca500b0b"
+    "67ebca7e50d17383028045486653492195b83db95f8558709701bb47b5c1ef81"
+    "6c6df908d2c3fd24e6d76869e92542abd0f33aec9dfc18df8875f89660286d43"
 )
 backup=(
     "etc/${pkgname}.conf"
@@ -71,7 +71,7 @@ backup=(
 )
 
 build() {
-    cd "${srcdir}/Python-3.12.13"
+    cd "${srcdir}/Python-3.12.14"
     gcc_major=$(gcc -dumpversion | cut -d. -f1)
     base_cflags="-fstack-protector-strong -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -Werror=format-security -mtune=generic -grecord-gcc-switches"
     if [ "$gcc_major" -ge 7 ]; then
