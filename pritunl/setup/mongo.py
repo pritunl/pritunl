@@ -7,7 +7,7 @@ from pritunl import auth
 from pritunl import utils
 
 import pymongo
-import pymongo.helpers
+import pymongo.helpers_shared
 import time
 import collections
 import base64
@@ -33,16 +33,16 @@ coll_indexes = collections.defaultdict(set)
 def upsert_index(coll_name, index, **kwargs):
     coll = mongo.get_collection(coll_name)
 
-    keys = pymongo.helpers._index_list(index)
-    name = pymongo.helpers._gen_index_name(keys)
+    keys = pymongo.helpers_shared._index_list(index)
+    name = pymongo.helpers_shared._gen_index_name(keys)
     coll_indexes[coll_name].add(name)
 
     try:
         coll.create_index(index, **kwargs)
     except:
         try:
-            keys = pymongo.helpers._index_list(index)
-            name = pymongo.helpers._gen_index_name(keys)
+            keys = pymongo.helpers_shared._index_list(index)
+            name = pymongo.helpers_shared._gen_index_name(keys)
             coll.drop_index(name)
         except:
             pass
@@ -50,8 +50,8 @@ def upsert_index(coll_name, index, **kwargs):
 
 def drop_index(coll, index, **kwargs):
     try:
-        keys = pymongo.helpers._index_list(index)
-        name = pymongo.helpers._gen_index_name(keys)
+        keys = pymongo.helpers_shared._index_list(index)
+        name = pymongo.helpers_shared._gen_index_name(keys)
         coll.drop_index(name)
     except:
         pass
