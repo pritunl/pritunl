@@ -18,10 +18,10 @@ information can be found at the home page [pritunl.com](https://pritunl.com)
 sudo tee /etc/yum.repos.d/mongodb-org.repo << EOF
 [mongodb-org]
 name=MongoDB Repository
-baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/8.2/x86_64/
+baseurl=https://repo.mongodb.org/yum/redhat/10/mongodb-org/9.0/x86_64/
 gpgcheck=1
 enabled=1
-gpgkey=https://pgp.mongodb.com/server-8.0.asc
+gpgkey=https://www.mongodb.org/static/pgp/server-9.asc
 EOF
 
 sudo dnf -y install mongodb-org
@@ -32,7 +32,7 @@ sudo systemctl enable mongod
 sudo tee /etc/yum.repos.d/pritunl.repo << EOF
 [pritunl]
 name=Pritunl Repository
-baseurl=https://repo.pritunl.com/stable/yum/oraclelinux/9/
+baseurl=https://repo.pritunl.com/stable/yum/almalinux/10/
 gpgcheck=1
 enabled=1
 gpgkey=https://raw.githubusercontent.com/pritunl/pgp/master/pritunl_repo_pub.asc
@@ -48,11 +48,11 @@ export VERSION="X.XX.XXXX.XX"
 
 sudo dnf -y install gcc git-core wget rsync openssl-devel bzip2-devel libffi-devel sqlite-devel xz-devel zlib-devel selinux-policy selinux-policy-devel policycoreutils-python-utils python3 net-tools openssl iptables ipset ca-certificates psmisc
 
-wget https://www.python.org/ftp/python/3.12.13/Python-3.12.13.tgz
-echo "a7438eabd3a48139f42d4e058096af8d880b0bb6e8fb8c78838892e4ce5583f2 Python-3.12.13.tgz" | sha256sum -c - && tar xf Python-3.12.13.tgz
-rm Python-3.12.13.tgz
+wget https://www.python.org/ftp/python/3.12.14/Python-3.12.14.tgz
+echo "6c6df908d2c3fd24e6d76869e92542abd0f33aec9dfc18df8875f89660286d43 Python-3.12.14.tgz" | sha256sum -c - && tar xf Python-3.12.14.tgz
+rm Python-3.12.14.tgz
 
-cd "./Python-3.12.13"
+cd "./Python-3.12.14"
 gcc_major=$(gcc -dumpversion | cut -d. -f1)
 base_cflags="-fstack-protector-strong -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -Werror=format-security -mtune=generic -grecord-gcc-switches"
 if [ "$gcc_major" -ge 7 ]; then
@@ -79,12 +79,12 @@ sudo mkdir /usr/lib/pritunl
 sudo make ENSUREPIP=no install
 sudo /usr/lib/pritunl/usr/bin/python3 -m ensurepip
 cd ../
-sudo rm -rf ./Python-3.12.13
+sudo rm -rf ./Python-3.12.14
 
 sudo rm -rf /usr/local/go
-wget https://go.dev/dl/go1.26.1.linux-amd64.tar.gz
-echo "031f088e5d955bab8657ede27ad4e3bc5b7c1ba281f05f245bcc304f327c987a go1.26.1.linux-amd64.tar.gz" | sha256sum -c - && sudo tar -C /usr/local -xf go1.26.1.linux-amd64.tar.gz
-rm -f go1.26.1.linux-amd64.tar.gz
+wget https://go.dev/dl/go1.27.2.linux-amd64.tar.gz
+echo "ecbadb99091a3f46e31f5f934b068b1864eafa7995211b39eaddf76996045fe5 go1.27.2.linux-amd64.tar.gz" | sha256sum -c - && sudo tar -C /usr/local -xf go1.27.2.linux-amd64.tar.gz
+rm -f go1.27.2.linux-amd64.tar.gz
 
 tee -a ~/.bashrc << 'EOF'
 export GOPATH=$HOME/go
