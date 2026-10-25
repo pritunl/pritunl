@@ -48,11 +48,11 @@ export VERSION="X.XX.XXXX.XX"
 
 sudo dnf -y install gcc git-core wget rsync openssl-devel bzip2-devel libffi-devel sqlite-devel xz-devel zlib-devel selinux-policy selinux-policy-devel policycoreutils-python-utils python3 net-tools openssl iptables ipset ca-certificates psmisc
 
-wget https://www.python.org/ftp/python/3.12.14/Python-3.12.14.tgz
-echo "6c6df908d2c3fd24e6d76869e92542abd0f33aec9dfc18df8875f89660286d43 Python-3.12.14.tgz" | sha256sum -c - && tar xf Python-3.12.14.tgz
-rm Python-3.12.14.tgz
+wget https://www.python.org/ftp/python/3.12.15/Python-3.12.15.tgz
+echo "de1a241a519e0a3374fea98988d0b52c886743f9d953f23be8269cc7b59c5fab Python-3.12.15.tgz" | sha256sum -c - && tar xf Python-3.12.15.tgz
+rm Python-3.12.15.tgz
 
-cd "./Python-3.12.14"
+cd "./Python-3.12.15"
 gcc_major=$(gcc -dumpversion | cut -d. -f1)
 base_cflags="-fstack-protector-strong -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -Werror=format-security -mtune=generic -grecord-gcc-switches"
 if [ "$gcc_major" -ge 7 ]; then
@@ -79,7 +79,7 @@ sudo mkdir /usr/lib/pritunl
 sudo make ENSUREPIP=no install
 sudo /usr/lib/pritunl/usr/bin/python3 -m ensurepip
 cd ../
-sudo rm -rf ./Python-3.12.14
+sudo rm -rf ./Python-3.12.15
 
 sudo rm -rf /usr/local/go
 wget https://go.dev/dl/go1.27.2.linux-amd64.tar.gz
