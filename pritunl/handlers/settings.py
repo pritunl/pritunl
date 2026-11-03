@@ -654,8 +654,13 @@ def settings_put():
 
     if 'sso_radius_host' in flask.request.json:
         settings_commit = True
-        sso_radius_host = utils.clean_domain(
-            flask.request.json['sso_radius_host'] or None)
+        sso_radius_hosts = []
+        for radius_host in str(
+                flask.request.json['sso_radius_host'] or '').split(','):
+            radius_host = utils.clean_domain(radius_host)
+            if radius_host:
+                sso_radius_hosts.append(radius_host)
+        sso_radius_host = ','.join(sso_radius_hosts) or None
         if sso_radius_host != settings.app.sso_radius_host:
             changes.add('sso')
         settings.app.sso_radius_host = sso_radius_host
