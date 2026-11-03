@@ -51,6 +51,40 @@ def clean_domain(in_str):
         return '%s:%d' % (host, port)
     return host
 
+def clean_address(in_str):
+    if in_str is None:
+        return None
+    in_str = str(in_str).strip()
+    if not in_str:
+        return None
+
+    if '://' not in in_str:
+        try:
+            return str(ipaddress.ip_address(in_str))
+        except ValueError:
+            pass
+        in_str = 'http://' + in_str
+
+    try:
+        parsed = urllib.parse.urlsplit(in_str)
+        hostname = parsed.hostname
+        port = parsed.port
+    except ValueError:
+        return None
+
+    if not hostname or port is not None:
+        return None
+    hostname = hostname.lower()
+
+    try:
+        return str(ipaddress.ip_address(hostname))
+    except ValueError:
+        pass
+
+    if not _domain_re.match(hostname):
+        return None
+    return hostname
+
 def clean_url(in_str):
     if in_str is None:
         return None
