@@ -16,6 +16,8 @@ import hashlib
 import base64
 import pymongo
 import ipaddress
+import nacl.signing
+import nacl.exceptions
 
 _states = tunldb.TunlDB()
 
@@ -23,7 +25,8 @@ class Authorizer(object):
     def __init__(self, svr, usr, clients, mode, stage, remote_ip, platform,
             client_ver, ovpn_ver, device_id, device_name, mac_addr, mac_addrs,
             password, auth_password, auth_token, auth_nonce, auth_timestamp,
-            fw_token, sso_token, reauth, callback):
+            fw_token, sso_token, reauth, callback, auth_token_public_key=None,
+            auth_token_signature=None):
         self.server = svr
         self.user = usr
         self.clients = clients
@@ -41,6 +44,8 @@ class Authorizer(object):
         self.password_pin = None
         self.auth_password = auth_password
         self.auth_token = auth_token
+        self.auth_token_public_key = auth_token_public_key or None
+        self.auth_token_signature = auth_token_signature or None
         self.fw_token = fw_token
         self.sso_token = sso_token
         self.auth_nonce = auth_nonce
@@ -101,6 +106,8 @@ class Authorizer(object):
             'authorizer',
             user_name=self.user.name,
             factors=self.modes,
+            mode=mode,
+            stage=stage,
         )
 
     @property
@@ -230,8 +237,21 @@ class Authorizer(object):
                 'device_name': self.device_name,
                 'auth_token': self.server_auth_token,
             })
-            if doc:
-                self.has_token = True
+            if not doc:
+                return
+
+            doc_public_key = doc.get('auth_token_public_key') or None
+            if doc_public_key != self.auth_token_public_key:
+                logger.warning(
+                    'Client authentication token public key mismatch',
+                    'authorizer',
+                    user_name=self.user.name,
+                    org_name=self.user.org.name,
+                    server_name=self.server.name,
+                )
+                return
+
+            self.has_token = True
 
     def _check_fw_token(self):
         if (not self.server.dynamic_firewall and not
@@ -325,12 +345,20 @@ class Authorizer(object):
     def _update_token(self):
         if settings.app.sso_client_cache and self.server_auth_token and \
                 not self.has_token:
-            logger.info(
-                'Storing authentication cache token',
-                'authorizer',
-                user_name=self.user.name,
-                factors=self.modes,
-            )
+            if self.auth_token_public_key:
+                logger.info(
+                    'Storing signed authentication cache token',
+                    'authorizer',
+                    user_name=self.user.name,
+                    factors=self.modes,
+                )
+            else:
+                logger.info(
+                    'Storing authentication cache token',
+                    'authorizer',
+                    user_name=self.user.name,
+                    factors=self.modes,
+                )
 
             self.sso_client_cache_collection.replace_one({
                 'user_id': self.user.id,
@@ -343,8 +371,35 @@ class Authorizer(object):
                 'device_id': self.device_id,
                 'device_name': self.device_name,
                 'auth_token': self.server_auth_token,
+                'auth_token_public_key': self.auth_token_public_key,
                 'timestamp': utils.now(),
             }, upsert=True)
+
+    def _verify_token_signature(self):
+        if not self.auth_token or not self.auth_token_public_key or \
+                not self.auth_token_signature:
+            return False
+
+        try:
+            if len(self.auth_token_public_key) > 64 or \
+                    len(self.auth_token_signature) > 128:
+                return False
+
+            public_key = base64.b64decode(self.auth_token_public_key)
+            signature = base64.b64decode(self.auth_token_signature)
+            if len(public_key) != 32 or len(signature) != 64:
+                return False
+
+            verify_key = nacl.signing.VerifyKey(public_key)
+            verify_key.verify('&'.join([
+                self.auth_token,
+                self.auth_nonce,
+                str(int(self.auth_timestamp)),
+            ]).encode(), signature)
+        except (nacl.exceptions.CryptoError, ValueError, TypeError):
+            return False
+
+        return True
 
     def _check_auth_data(self):
         if not self.auth_token and not self.auth_nonce and \
@@ -406,6 +461,26 @@ class Authorizer(object):
             )
 
             raise AuthError('Auth timestamp expired')
+
+        if self.auth_token_public_key or self.auth_token_signature:
+            if not self._verify_token_signature():
+                self.user.audit_event(
+                    'user_connection',
+                    ('User connection to "%s" denied. ' +
+                        'Auth token signature invalid') % \
+                        self.server.name,
+                    remote_addr=self.remote_ip,
+                )
+
+                journal.entry(
+                    journal.USER_CONNECT_FAILURE,
+                    self.journal_data,
+                    self.user.journal_data,
+                    self.server.journal_data,
+                    event_long='Auth token signature invalid',
+                )
+
+                raise AuthError('Auth token signature invalid')
 
         if self.auth_token:
             auth_token_hash = hashlib.sha512()
