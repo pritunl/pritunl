@@ -391,7 +391,7 @@ def settings_put():
     if 'acme_domain' in flask.request.json:
         settings_commit = True
 
-        acme_domain = utils.clean_domain(
+        acme_domain = utils.clean_address(
             flask.request.json['acme_domain'] or None)
 
         if acme_domain != settings.app.acme_domain:
@@ -884,7 +884,7 @@ def settings_put():
         settings.app.theme = theme
 
     if 'public_address' in flask.request.json:
-        public_address = utils.clean_domain(
+        public_address = utils.clean_address(
             flask.request.json['public_address'] or None)
 
         if public_address != settings.local.host.public_addr:
@@ -892,7 +892,7 @@ def settings_put():
             settings.local.host.commit('public_address')
 
     if 'public_address6' in flask.request.json:
-        public_address6 = utils.clean_domain(
+        public_address6 = utils.clean_address(
             flask.request.json['public_address6'] or None)
 
         if public_address6 != settings.local.host.public_addr6:
