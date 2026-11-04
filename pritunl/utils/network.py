@@ -15,10 +15,10 @@ import pyroute2.netlink
 import socket
 
 _used_interfaces = set()
-_tun_interfaces = collections.deque(['tun%s' % _x for _x in range(100)])
-_tap_interfaces = collections.deque(['tap%s' % _x for _x in range(100)])
-_wg_interfaces = collections.deque(['wg%s' % _x for _x in range(100)])
-_tables = collections.deque(['%s' % _x for _x in range(100, 200)])
+_tun_interfaces = collections.deque(['tun%s' % _x for _x in range(200)])
+_tap_interfaces = collections.deque(['tap%s' % _x for _x in range(200)])
+_wg_interfaces = collections.deque(['wg%s' % _x for _x in range(200)])
+_tables = collections.deque(['%s' % _x for _x in range(100, 300)])
 _sock = None
 _sockfd = None
 _ip_route = pyroute2.iproute.IPRoute()
