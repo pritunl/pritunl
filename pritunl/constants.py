@@ -120,6 +120,14 @@ PATH_SAFE_CHARS = {
 
 BASE64_SAFE_CHARS = {'+', '/', '='}
 
+INTERFACE_SAFE_CHARS = {
+    '-', '_', '.',
+}
+
+PEM_SAFE_CHARS = {
+    '+', '/', '=', '-', ' ', '\n',
+}
+
 VALID_CHARS = {
     'a', 'b', 'c', 'd', 'e', 'f', 'g',
     'h', 'i', 'j', 'k', 'l', 'm', 'n',
