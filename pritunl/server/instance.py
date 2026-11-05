@@ -69,10 +69,10 @@ class ServerInstance(object):
         self.ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
         self.wg_private_key_path = os.path.join(
             self._temp_path, WG_PRIVATE_KEY_NAME)
-        self.management_socket_path = os.path.join(
+        self.management_socket_path = utils.filter_path(os.path.join(
             settings.conf.var_run_path,
             MANAGEMENT_SOCKET_NAME % self.id,
-        )
+        ))
 
     @cached_static_property
     def collection(cls):
@@ -382,6 +382,7 @@ class ServerInstance(object):
 
             metric = route.get('metric')
             if metric:
+                metric = int(metric)
                 if ':' in network:
                     metric_def = ' %s %s' % (gateway6, metric)
                 else:
@@ -394,6 +395,7 @@ class ServerInstance(object):
             netmap = route.get('nat_netmap')
             if netmap:
                 network = netmap
+            network = str(ipaddress.ip_interface(network))
 
             if route['net_gateway']:
                 if ':' in network:
@@ -424,7 +426,7 @@ class ServerInstance(object):
                     network = route['network']
                     metric = route.get('metric')
                     if metric:
-                        metric = ' %s' % metric
+                        metric = ' %s' % int(metric)
                     else:
                         metric = ''
 
@@ -434,6 +436,7 @@ class ServerInstance(object):
                     netmap = route.get('nat_netmap')
                     if netmap:
                         network = netmap
+                    network = str(ipaddress.ip_interface(network))
 
                     if ':' in network:
                         push += 'route-ipv6 %s %s%s\n' % (
@@ -448,7 +451,8 @@ class ServerInstance(object):
             push += 'push "route %s %s"\n' % utils.parse_network(
                 self.vxlan.vxlan_net)
             if self.server.ipv6:
-                push += 'push "route-ipv6 %s"\n' % self.vxlan.vxlan_net6
+                push += 'push "route-ipv6 %s"\n' % ipaddress.ip_interface(
+                    self.vxlan.vxlan_net6)
 
         if self.server.network_mode == BRIDGE:
             host_int_data = self.host_interface_data
@@ -456,17 +460,18 @@ class ServerInstance(object):
             host_netmask = host_int_data['netmask']
 
             server_line = 'server-bridge %s %s %s %s' % (
-                host_address,
-                host_netmask,
-                self.server.network_start,
-                self.server.network_end,
+                ipaddress.ip_address(host_address),
+                ipaddress.ip_address(host_netmask),
+                ipaddress.ip_address(self.server.network_start),
+                ipaddress.ip_address(self.server.network_end),
             )
         else:
             server_line = 'server %s %s' % utils.parse_network(
                 self.server.network)
 
             if self.server.ipv6:
-                server_line += '\nserver-ipv6 ' + self.server.network6
+                server_line += '\nserver-ipv6 %s' % ipaddress.ip_interface(
+                    self.server.network6)
 
         if self.server.protocol == 'tcp':
             if (self.server.ipv6 or settings.vpn.ipv6) and \
@@ -495,14 +500,14 @@ class ServerInstance(object):
             server_conf_template = OVPN_INLINE_SERVER_CONF_OLD
 
         server_conf = server_conf_template % (
-            self.server.port,
+            int(self.server.port),
             protocol,
-            self.interface,
+            utils.filter_interface(self.interface),
             server_line,
             self.management_socket_path,
-            self.server.max_clients,
-            self.server.ping_interval,
-            self.server.ping_timeout + 20,
+            int(self.server.max_clients),
+            int(self.server.ping_interval),
+            int(self.server.ping_timeout + 20),
             server_ciphers[self.server.cipher],
             HASHES[self.server.hash],
             6 if self.server.debug else 2,
@@ -532,7 +537,8 @@ class ServerInstance(object):
                 unix_user, unix_group)
 
         if self.server.bind_address:
-            server_conf += 'local %s\n' % self.server.bind_address
+            server_conf += 'local %s\n' % ipaddress.ip_address(
+                self.server.bind_address)
 
         if self.server.inter_client:
             server_conf += 'client-to-client\n'
@@ -541,20 +547,21 @@ class ServerInstance(object):
             server_conf += 'duplicate-cn\n'
 
         if self.server.protocol == 'udp':
-            server_conf += 'replay-window 128\n'
+            server_conf += 'replay-window %d\n' % int(
+                settings.vpn.replay_window)
 
         if settings.vpn.max_routes_per_client:
-            server_conf += 'max-routes-per-client %s\n' % \
-                settings.vpn.max_routes_per_client
+            server_conf += 'max-routes-per-client %d\n' % \
+                int(settings.vpn.max_routes_per_client)
 
         if self.server.tun_mtu:
-            server_conf += 'tun-mtu %s\n' % self.server.tun_mtu
+            server_conf += 'tun-mtu %d\n' % int(self.server.tun_mtu)
 
         if self.server.mss_fix:
-            server_conf += 'mssfix %s\n' % self.server.mss_fix
+            server_conf += 'mssfix %d\n' % int(self.server.mss_fix)
 
         if self.server.fragment:
-            server_conf += 'fragment %s\n' % self.server.fragment
+            server_conf += 'fragment %d\n' % int(self.server.fragment)
 
         if self.server.multihome:
             server_conf += 'multihome\n'
@@ -640,18 +647,24 @@ class ServerInstance(object):
         self.server.generate_ca_cert()
         self.server.commit('ca_certificate')
 
-        server_conf += '<ca>\n%s\n</ca>\n' % self.server.ca_certificate
+        server_conf += '<ca>\n%s\n</ca>\n' % utils.filter_pem(
+            self.server.ca_certificate)
 
         if self.server.tls_auth:
             tls_mode = settings.vpn.tls_mode
+            if tls_mode not in ('tls-auth', 'tls-crypt'):
+                raise ValueError('Unknown tls mode')
             server_conf += \
                 'key-direction 0\n<%s>\n%s\n</%s>\n' % (
-                    tls_mode, self.server.tls_auth_key, tls_mode)
+                    tls_mode, utils.filter_pem(self.server.tls_auth_key),
+                    tls_mode)
 
-        server_conf += '<cert>\n%s\n</cert>\n' % utils.get_cert_block(
-            self.primary_user.certificate)
-        server_conf += '<key>\n%s\n</key>\n' % self.primary_user.private_key
-        server_conf += '<dh>\n%s\n</dh>\n' % self.server.dh_params
+        server_conf += '<cert>\n%s\n</cert>\n' % utils.filter_pem(
+            utils.get_cert_block(self.primary_user.certificate))
+        server_conf += '<key>\n%s\n</key>\n' % utils.filter_pem(
+            self.primary_user.private_key)
+        server_conf += '<dh>\n%s\n</dh>\n' % utils.filter_pem(
+            self.server.dh_params)
 
         with open(self.ovpn_conf_path, 'w') as ovpn_conf:
             if drop_permissions:
