@@ -391,7 +391,7 @@ def settings_put():
     if 'acme_domain' in flask.request.json:
         settings_commit = True
 
-        acme_domain = utils.clean_address(
+        acme_domain = utils.clean_domain(
             flask.request.json['acme_domain'] or None)
 
         if acme_domain != settings.app.acme_domain:
