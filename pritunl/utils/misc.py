@@ -307,6 +307,22 @@ def filter_path(in_str):
         return in_str
     return ''.join(x for x in in_str if x.isalnum() or x in PATH_SAFE_CHARS)
 
+def filter_interface(in_str):
+    if in_str is not None:
+        in_str = str(in_str)
+    if not in_str:
+        return in_str
+    return ''.join(x for x in in_str if (x.isalnum() and ord(x) < 128) or
+        x in INTERFACE_SAFE_CHARS)[:15]
+
+def filter_pem(in_str):
+    if in_str is not None:
+        in_str = str(in_str)
+    if not in_str:
+        return in_str
+    return ''.join(x for x in in_str if (x.isalnum() and ord(x) < 128) or
+        x in PEM_SAFE_CHARS)
+
 def generate_secret():
     return generate_secret_len(32)
 
