@@ -1492,6 +1492,8 @@ class Clients(object):
                 auth_token=auth_token,
                 auth_nonce=auth_nonce,
                 auth_timestamp=auth_timestamp,
+                auth_token_public_key=None,
+                auth_token_signature=None,
                 fw_token=fw_token,
                 sso_token=sso_token,
                 reauth=reauth,
@@ -1593,7 +1595,8 @@ class Clients(object):
             auth_token, auth_nonce, auth_timestamp, sso_token,
             platform, client_ver, ovpn_ver, device_id, device_name, mac_addr,
             mac_addrs, client_public_address, client_public_address6,
-            remote_ip, connect_callback):
+            remote_ip, connect_callback, auth_token_public_key=None,
+            auth_token_signature=None):
         response = {
             'sent': False,
             'lock': threading.Lock(),
@@ -1711,6 +1714,8 @@ class Clients(object):
                 auth_token=auth_token,
                 auth_nonce=auth_nonce,
                 auth_timestamp=auth_timestamp,
+                auth_token_public_key=auth_token_public_key,
+                auth_token_signature=auth_token_signature,
                 fw_token=None,
                 sso_token=sso_token,
                 reauth=False,
@@ -1756,7 +1761,8 @@ class Clients(object):
             auth_token, auth_nonce, auth_timestamp, sso_token, platform,
             client_ver, ovpn_ver, device_id, device_name, mac_addr, mac_addrs,
             client_public_address, client_public_address6, remote_ip,
-            connect_callback):
+            connect_callback, auth_token_public_key=None,
+            auth_token_signature=None):
         response = {
             'sent': False,
             'lock': threading.Lock(),
@@ -1874,6 +1880,8 @@ class Clients(object):
                 auth_token=auth_token,
                 auth_nonce=auth_nonce,
                 auth_timestamp=auth_timestamp,
+                auth_token_public_key=auth_token_public_key,
+                auth_token_signature=auth_token_signature,
                 fw_token=None,
                 sso_token=sso_token,
                 reauth=False,
