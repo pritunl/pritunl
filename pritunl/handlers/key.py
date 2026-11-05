@@ -226,6 +226,8 @@ def user_linked_key_conf_get(org_id, user_id, server_id):
 def user_linked_key_tar_archive_get(key_id):
     key_id = key_id[:128]
     remote_addr = utils.get_remote_addr()
+    utils.rand_sleep()
+
     doc = _find_doc({
         'key_id': key_id,
     })
@@ -269,6 +271,8 @@ def user_linked_key_tar_archive_get(key_id):
 def user_linked_key_zip_archive_get(key_id):
     key_id = key_id[:128]
     remote_addr = utils.get_remote_addr()
+    utils.rand_sleep()
+
     doc = _find_doc({
         'key_id': key_id,
     })
@@ -312,6 +316,8 @@ def user_linked_key_zip_archive_get(key_id):
 def user_linked_key_onc_archive_get(key_id):
     key_id = key_id[:128]
     remote_addr = utils.get_remote_addr()
+    utils.rand_sleep()
+
     doc = _find_doc({
         'key_id': key_id,
     })
@@ -358,6 +364,7 @@ def user_key_pin_put(key_id):
 
     key_id = key_id[:128]
     remote_addr = utils.get_remote_addr()
+    utils.rand_sleep()
 
     doc = _find_doc({
         'key_id': key_id,
@@ -441,6 +448,7 @@ def user_key_pin_put(key_id):
 def user_linked_key_page_get(short_code):
     short_code = short_code[:128]
     remote_addr = utils.get_remote_addr()
+    utils.rand_sleep()
 
     doc = _find_doc({
         'short_id': short_code,
@@ -557,6 +565,7 @@ def user_linked_key_page_delete(short_code):
     utils.rand_sleep()
     short_code = short_code[:128]
     remote_addr = utils.get_remote_addr()
+    utils.rand_sleep()
 
     journal.entry(
         journal.USER_PROFILE_DELETE,
@@ -576,6 +585,7 @@ def user_linked_key_page_delete(short_code):
 def user_uri_key_page_get(short_code):
     short_code = short_code[:128]
     remote_addr = utils.get_remote_addr()
+    utils.rand_sleep()
 
     doc = _find_doc({
         'short_id': short_code,
@@ -613,6 +623,7 @@ def user_linked_key_conf_get(key_id, server_id):
     key_id = key_id[:128]
     server_id = server_id
     remote_addr = utils.get_remote_addr()
+    utils.rand_sleep()
 
     doc = _find_doc({
         'key_id': key_id,
@@ -760,7 +771,7 @@ def key_sync_get(org_id, user_id, server_id, key_hash):
         )
         return flask.abort(410)
 
-    if auth_token != usr.sync_token:
+    if not utils.const_compare(auth_token, usr.sync_token):
         journal.entry(
             journal.USER_SYNC_FAILURE,
             usr.journal_data,
@@ -913,7 +924,7 @@ def key_wg_post(org_id, user_id, server_id):
         )
         return flask.abort(410)
 
-    if auth_token != usr.sync_token:
+    if not utils.const_compare(auth_token, usr.sync_token):
         journal.entry(
             journal.USER_WG_FAILURE,
             usr.journal_data,
@@ -1049,6 +1060,8 @@ def key_wg_post(org_id, user_id, server_id):
     else:
         client_mac_addrs = None
     client_auth_token = key_data['token']
+    client_auth_token_public_key = key_data.get('token_public_key')
+    client_auth_token_signature = key_data.get('token_signature')
     client_auth_nonce = utils.filter_str(key_data['nonce'])
     client_auth_password = key_data['password']
     client_auth_timestamp = int(key_data['timestamp'])
@@ -1246,6 +1259,8 @@ def key_wg_post(org_id, user_id, server_id):
         wg_public_key=client_wg_public_key,
         auth_password=client_auth_password,
         auth_token=client_auth_token,
+        auth_token_public_key=client_auth_token_public_key,
+        auth_token_signature=client_auth_token_signature,
         auth_nonce=client_auth_nonce,
         auth_timestamp=client_auth_timestamp,
         sso_token=None,
@@ -1748,6 +1763,8 @@ def key_ovpn_post(org_id, user_id, server_id):
     else:
         client_mac_addrs = None
     client_auth_token = key_data['token']
+    client_auth_token_public_key = key_data.get('token_public_key')
+    client_auth_token_signature = key_data.get('token_signature')
     client_auth_nonce = utils.filter_str(key_data['nonce'])
     client_auth_password = key_data['password']
     client_auth_timestamp = int(key_data['timestamp'])
@@ -1904,6 +1921,8 @@ def key_ovpn_post(org_id, user_id, server_id):
         org=org,
         auth_password=client_auth_password,
         auth_token=client_auth_token,
+        auth_token_public_key=client_auth_token_public_key,
+        auth_token_signature=client_auth_token_signature,
         auth_nonce=client_auth_nonce,
         auth_timestamp=client_auth_timestamp,
         sso_token=None,
@@ -3276,6 +3295,8 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
     else:
         client_mac_addrs = None
     client_auth_token = key_data['token']
+    client_auth_token_public_key = key_data.get('token_public_key')
+    client_auth_token_signature = key_data.get('token_signature')
     client_auth_nonce = utils.filter_str(key_data['nonce'])
     client_auth_password = key_data['password']
     client_auth_timestamp = int(key_data['timestamp'])
@@ -3447,6 +3468,8 @@ def key_ovpn_wait_post(org_id, user_id, server_id):
         org=org,
         auth_password=client_auth_password,
         auth_token=client_auth_token,
+        auth_token_public_key=client_auth_token_public_key,
+        auth_token_signature=client_auth_token_signature,
         auth_nonce=client_auth_nonce,
         auth_timestamp=client_auth_timestamp,
         sso_token=sso_token,
@@ -3695,6 +3718,8 @@ def key_wg_wait_post(org_id, user_id, server_id):
     else:
         client_mac_addrs = None
     client_auth_token = key_data['token']
+    client_auth_token_public_key = key_data.get('token_public_key')
+    client_auth_token_signature = key_data.get('token_signature')
     client_auth_nonce = utils.filter_str(key_data['nonce'])
     client_auth_password = key_data['password']
     client_auth_timestamp = int(key_data['timestamp'])
@@ -3914,6 +3939,8 @@ def key_wg_wait_post(org_id, user_id, server_id):
         wg_public_key=client_wg_public_key,
         auth_password=client_auth_password,
         auth_token=client_auth_token,
+        auth_token_public_key=client_auth_token_public_key,
+        auth_token_signature=client_auth_token_signature,
         auth_nonce=client_auth_nonce,
         auth_timestamp=client_auth_timestamp,
         sso_token=sso_token,
