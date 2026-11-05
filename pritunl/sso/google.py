@@ -4,6 +4,7 @@ from pritunl import utils
 
 import json
 import time
+import random
 import base64
 import requests
 import urllib.parse
@@ -18,9 +19,89 @@ GOOGLE_SCOPES = [
     'https://www.googleapis.com/auth/admin.directory.user.readonly',
     'https://www.googleapis.com/auth/admin.directory.group.readonly',
 ]
+GOOGLE_REQUEST_TIMEOUT = 15
+GOOGLE_REQUEST_ATTEMPTS = 2
+GOOGLE_RETRY_STATUS_CODES = (408, 429, 500, 502, 503, 504)
+GOOGLE_TOKEN_RETRY_ERRORS = (
+    'internal_failure',
+    'server_error',
+    'temporarily_unavailable',
+)
+GOOGLE_DIRECTORY_RETRY_REASONS = (
+    'rateLimitExceeded',
+    'userRateLimitExceeded',
+    'quotaExceeded',
+)
 
 def _base64url(data):
     return base64.urlsafe_b64encode(data).decode().rstrip('=')
+
+class _BearerAuth(requests.auth.AuthBase):
+    def __init__(self, token):
+        self.token = token
+
+    def __call__(self, request):
+        request.headers['Authorization'] = 'Bearer %s' % self.token
+        return request
+
+def _request(method, url, retry_check, **kwargs):
+    kwargs.setdefault('timeout', GOOGLE_REQUEST_TIMEOUT)
+
+    for attempt in range(1, GOOGLE_REQUEST_ATTEMPTS):
+        try:
+            response = requests.request(method, url, **kwargs)
+        except requests.exceptions.SSLError:
+            raise
+        except (requests.exceptions.Timeout,
+                requests.exceptions.ConnectionError) as error:
+            logger.warning('Google api request failed, retrying', 'sso',
+                url=url,
+                attempt=attempt,
+                error=str(error),
+            )
+        else:
+            if not retry_check(response):
+                return response
+
+            logger.warning('Bad status from Google api, retrying', 'sso',
+                url=url,
+                attempt=attempt,
+                status_code=response.status_code,
+            )
+            response.close()
+
+        time.sleep(2 ** (attempt - 1) + random.uniform(0, 0.5))
+
+    return requests.request(method, url, **kwargs)
+
+def _token_retry_check(response):
+    if response.status_code in GOOGLE_RETRY_STATUS_CODES:
+        return True
+
+    if response.status_code != 400:
+        return False
+
+    try:
+        data = response.json()
+    except ValueError:
+        return False
+
+    return isinstance(data, dict) and \
+        data.get('error') in GOOGLE_TOKEN_RETRY_ERRORS
+
+def _directory_retry_check(response):
+    if response.status_code in GOOGLE_RETRY_STATUS_CODES:
+        return True
+
+    if response.status_code != 403:
+        return False
+
+    try:
+        errors = response.json()['error']['errors']
+        return any(error.get('reason') in GOOGLE_DIRECTORY_RETRY_REASONS
+            for error in errors)
+    except (ValueError, KeyError, TypeError, AttributeError):
+        return False
 
 def _get_access_token(key_data, google_email):
     header = {
@@ -55,13 +136,11 @@ def _get_access_token(key_data, google_email):
         hashes.SHA256(),
     )
 
-    response = requests.post(
-        GOOGLE_TOKEN_URL,
+    response = _request('POST', GOOGLE_TOKEN_URL, _token_retry_check,
         data={
             'grant_type': 'urn:ietf:params:oauth:grant-type:jwt-bearer',
             'assertion': '%s.%s' % (signing_input, _base64url(signature)),
         },
-        timeout=30,
     )
 
     if response.status_code != 200:
@@ -92,15 +171,13 @@ def verify_google(user_email, skip_user=False, skip_groups=False):
     if not access_token:
         return False, []
 
-    headers = {
-        'Authorization': 'Bearer %s' % access_token,
-    }
+    auth = _BearerAuth(access_token)
 
-    response = requests.get(
+    response = _request('GET',
         GOOGLE_DIRECTORY_URL + '/users/%s' % urllib.parse.quote(
             user_email, safe=''),
-        headers=headers,
-        timeout=30,
+        _directory_retry_check,
+        auth=auth,
     )
 
     if response.status_code != 200:
@@ -118,14 +195,13 @@ def verify_google(user_email, skip_user=False, skip_groups=False):
     if skip_groups:
         return True, []
 
-    response = requests.get(
-        GOOGLE_DIRECTORY_URL + '/groups',
-        headers=headers,
+    response = _request('GET', GOOGLE_DIRECTORY_URL + '/groups',
+        _directory_retry_check,
+        auth=auth,
         params={
             'userKey': user_email,
             'maxResults': settings.app.sso_google_groups_max,
         },
-        timeout=30,
     )
 
     if response.status_code != 200:
