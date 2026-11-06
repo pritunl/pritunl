@@ -151,7 +151,7 @@ def host_put(hst=None):
         hst.link_address = link_address
 
     if 'sync_address' in flask.request.json:
-        sync_address = utils.clean_address(
+        sync_address = utils.clean_domain(
             flask.request.json['sync_address'])
         hst.sync_address = sync_address
 
