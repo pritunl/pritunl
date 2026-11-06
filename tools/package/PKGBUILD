@@ -54,7 +54,7 @@ sources=(
     "cacert2.pem"
     "cacert39.pem"
     "https://github.com/openssl/openssl/releases/download/openssl-3.0.22/openssl-3.0.22.tar.gz"
-    "https://www.python.org/ftp/python/3.12.14/Python-3.12.14.tgz"
+    "https://www.python.org/ftp/python/3.12.16/Python-3.12.16.tgz"
 )
 hashsums=(
     "8a04a68752a2d57f2cfdebb08b1d261a4edc64f076ec59727e7a30df4f8ab476"
@@ -62,7 +62,7 @@ hashsums=(
     "2c11c3ce08ffc40d390319c72bc10d4f908e9c634494d65ed2cbc550731fd524"
     "fc9165a12403263e7ebfbdad7be7a3eac0fa5d325d3c70465f28d3690072ca28"
     "67ebca7e50d17383028045486653492195b83db95f8558709701bb47b5c1ef81"
-    "6c6df908d2c3fd24e6d76869e92542abd0f33aec9dfc18df8875f89660286d43"
+    "710c3e75dac8b2f258d9cd0f76e5c4c2e9175fac9e249c98901552f7cf33b7dd"
 )
 backup=(
     "etc/${pkgname}.conf"
@@ -71,7 +71,7 @@ backup=(
 )
 
 build() {
-    cd "${srcdir}/Python-3.12.14"
+    cd "${srcdir}/Python-3.12.16"
     gcc_major=$(gcc -dumpversion | cut -d. -f1)
     base_cflags="-fstack-protector-strong -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -Werror=format-security -mtune=generic -grecord-gcc-switches"
     if [ "$gcc_major" -ge 7 ]; then
