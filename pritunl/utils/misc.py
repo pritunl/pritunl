@@ -506,6 +506,7 @@ def base64raw_encode(data):
 
 def sync_public_ip(attempts=1, timeout=5):
     from pritunl import logger
+    from pritunl.utils.filter import clean_address
 
     for i in range(attempts):
         url = settings.app.public_ip_server
@@ -519,8 +520,10 @@ def sync_public_ip(attempts=1, timeout=5):
             request = urllib.request.Request(url)
             request.add_header('User-Agent', 'pritunl')
             response = urllib.request.urlopen(request, timeout=timeout)
-            settings.local.public_ip = str(json.load(response)['ip'])
-            break
+            public_ip = clean_address(json.load(response)['ip'])
+            if public_ip:
+                settings.local.public_ip = public_ip
+                break
         except:
             pass
 
@@ -530,7 +533,9 @@ def sync_public_ip(attempts=1, timeout=5):
                 settings.app.public_ip6_server)
             request.add_header('User-Agent', 'pritunl')
             response = urllib.request.urlopen(request, timeout=timeout)
-            settings.local.public_ip6 = str(json.load(response)['ip'])
+            public_ip6 = clean_address(json.load(response)['ip'])
+            if public_ip6:
+                settings.local.public_ip6 = public_ip6
         except:
             pass
 
