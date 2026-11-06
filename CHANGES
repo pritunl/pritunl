@@ -1,7 +1,8 @@
 Pritunl Changelog
 =================
 
-<%= version %>
+Version 1.34.4803.56 2026-11-06
+-------------------------------
 
 Fix host settings modification
 
