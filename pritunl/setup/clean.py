@@ -3,6 +3,7 @@ from pritunl import logger
 
 import subprocess
 import time
+import shlex
 
 def setup_clean():
     try:
@@ -132,10 +133,10 @@ def setup_clean():
             if '--comment pritunl' not in line:
                 continue
 
+            rule_args = shlex.split(line[3:])
             try:
-                utils.check_call_silent([
-                    'iptables -t %s -D %s' % (table, line[3:]),
-                ], shell=True)
+                utils.check_call_silent(
+                    ['iptables', '-t', table, '-D'] + rule_args)
             except subprocess.CalledProcessError:
                 pass
     except:
