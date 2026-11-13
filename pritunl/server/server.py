@@ -1623,7 +1623,6 @@ class Server(mongo.MongoObject):
         self.tls_auth_path = os.path.join(
             self.tls_auth_temp_path, TLS_AUTH_NAME)
 
-        os.makedirs(self.tls_auth_temp_path)
         args = [
             'openvpn', '--genkey',
             '--secret', self.tls_auth_path,
