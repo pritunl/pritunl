@@ -40,7 +40,6 @@ class QueueDhParams(queue.Queue):
         dh_param_path = os.path.join(temp_path, DH_PARAM_NAME)
 
         try:
-            os.makedirs(temp_path)
             args = [
                 'openssl', 'dhparam',
                 '-out', dh_param_path,
