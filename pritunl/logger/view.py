@@ -141,7 +141,6 @@ class LogView(object):
         output_path = os.path.join(temp_path, LOG_ARCHIVE_NAME)
 
         try:
-            os.makedirs(temp_path)
             tar_file = tarfile.open(archive_path, 'w')
             try:
                 with open(output_path, 'w') as log_file:
