@@ -65,10 +65,9 @@ class ServerInstance(object):
         self.tun_nat = False
         self.server_links = []
         self.route_advertisements = set()
-        self._temp_path = utils.get_temp_path()
-        self.ovpn_conf_path = os.path.join(self._temp_path, OVPN_CONF_NAME)
-        self.wg_private_key_path = os.path.join(
-            self._temp_path, WG_PRIVATE_KEY_NAME)
+        self._temp_path = None
+        self.ovpn_conf_path = None
+        self.wg_private_key_path = None
         self.management_socket_path = utils.filter_path(os.path.join(
             settings.conf.var_run_path,
             MANAGEMENT_SOCKET_NAME % self.id,
@@ -1954,7 +1953,11 @@ class ServerInstance(object):
             self.state = 'temp_path'
             if self.server.debug:
                 self.server.output.push_message('State: ' + self.state)
-            os.makedirs(self._temp_path)
+            self._temp_path = utils.get_temp_path()
+            self.ovpn_conf_path = os.path.join(
+                self._temp_path, OVPN_CONF_NAME)
+            self.wg_private_key_path = os.path.join(
+                self._temp_path, WG_PRIVATE_KEY_NAME)
 
             if self.is_interrupted():
                 return
@@ -2362,7 +2365,8 @@ class ServerInstance(object):
                         'instances_count': -1,
                     },
                 })
-                utils.rmtree(self._temp_path)
+                if self._temp_path:
+                    utils.rmtree(self._temp_path)
             except:
                 logger.exception('Server clean up error', 'server',
                     server_id=self.server.id,
