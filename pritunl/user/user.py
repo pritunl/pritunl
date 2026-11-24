@@ -236,8 +236,6 @@ class User(mongo.MongoObject):
         self.org.queue_com.wait_status()
 
         try:
-            os.makedirs(temp_path)
-
             with open(index_path, 'a'):
                 os.utime(index_path, None)
 
@@ -366,8 +364,6 @@ class User(mongo.MongoObject):
         self.org.queue_com.wait_status()
 
         try:
-            os.makedirs(temp_path)
-
             with open(index_path, 'a'):
                 os.utime(index_path, None)
 
@@ -1288,7 +1284,6 @@ class User(mongo.MongoObject):
         key_archive_path = os.path.join(temp_path, '%s.tar' % self.id)
 
         try:
-            os.makedirs(temp_path)
             tar_file = tarfile.open(key_archive_path, 'w')
             try:
                 for svr in self.iter_servers():
@@ -1317,7 +1312,6 @@ class User(mongo.MongoObject):
         key_archive_path = os.path.join(temp_path, '%s.zip' % self.id)
 
         try:
-            os.makedirs(temp_path)
             zip_file = zipfile.ZipFile(key_archive_path, 'w')
             try:
                 for svr in self.iter_servers():
@@ -1348,8 +1342,6 @@ class User(mongo.MongoObject):
         temp_path = utils.get_temp_path()
 
         try:
-            os.makedirs(temp_path)
-
             user_cert_path = os.path.join(temp_path, '%s.crt' % self.id)
             user_key_path = os.path.join(temp_path, '%s.key' % self.id)
             user_p12_path = os.path.join(temp_path, '%s.p12' % self.id)
