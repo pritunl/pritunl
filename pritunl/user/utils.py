@@ -74,7 +74,10 @@ def reserve_pooled_user(org, name=None, email=None, pin=None, type=CERT_CLIENT,
         return usr
 
 def get_user(org, id, fields=None):
-    return User(org=org, id=id, fields=fields)
+    return User(org=org, spec={
+        '_id': id,
+        'org_id': org.id,
+    }, fields=fields)
 
 def find_user(org, name=None, type=None, resource_id=None):
     spec = {
