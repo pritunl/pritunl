@@ -1,6 +1,10 @@
 Pritunl Changelog
 =================
 
+<%= version %>
+
+Restrict Google Workspace to admin groups for organization matching
+
 Version 1.34.4803.56 2026-11-06
 -------------------------------
 
