@@ -214,6 +214,8 @@ def verify_google(user_email, skip_user=False, skip_groups=False):
 
     groups = []
     for group in response.json().get('groups') or []:
+        if not group.get('adminCreated'):
+            continue
         groups.append(utils.filter_unicode(group['name']))
 
     return True, groups
