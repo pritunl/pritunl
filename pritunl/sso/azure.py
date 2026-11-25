@@ -95,6 +95,9 @@ def _verify_azure_1(user_name):
     for membership in data['value']:
         if membership.get('objectType') != 'Group':
             continue
+        if settings.app.sso_azure_security_groups_only and \
+                not membership.get('securityEnabled'):
+            continue
         display_name = utils.filter_unicode(membership.get('displayName'))
         if not display_name:
             continue
@@ -220,6 +223,10 @@ def _verify_azure_2(user_name):
         data = response.json()
 
         for group_data in data['value']:
+            if settings.app.sso_azure_security_groups_only and \
+                    not group_data.get('securityEnabled'):
+                continue
+
             display_name = utils.filter_unicode(group_data.get('displayName'))
             if not display_name:
                 continue
